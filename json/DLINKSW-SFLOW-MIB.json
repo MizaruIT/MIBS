@@ -1,0 +1,814 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddress",
+      "InetAddressIPv4",
+      "InetAddressIPv6",
+      "InetAddressType"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "Counter32",
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "MODULE-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "iso",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "Integer32",
+      "Gauge32",
+      "Counter64"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "RowStatus",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "dlinkSwSFlowMIB": {
+    "name": "dlinkSwSFlowMIB",
+    "oid": "1.3.6.1.4.1.171.14.36",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-04-10 00:00",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "201304100000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "The structure of sFlow for the proprietary enterprise."
+  },
+  "dSFlowMIBNotifications": {
+    "name": "dSFlowMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.36.0",
+    "class": "objectidentity"
+  },
+  "dSFlowMIBObjects": {
+    "name": "dSFlowMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.36.1",
+    "class": "objectidentity"
+  },
+  "dSFlowMIBConformance": {
+    "name": "dSFlowMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.36.2",
+    "class": "objectidentity"
+  },
+  "DSFlowDataSource": {
+    "name": "DSFlowDataSource",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Identifies the ifIndex of interface as the source of sFlow data. DSFlowDataSources of this traditional form are called 'port-based'. Ideally the sampling entity will perform sampling on all flows originating from or destined to the specified interface. However, if the switch architecture only allows input or output sampling then the sampling agent is permitted to only sample input flows input or output flows. Each packet must only be considered once for sampling, irrespective of the number of ports it will be forwarded to. Note: Since each DSFlowDataSource operates independently a packet that crosses multiple DataSources may generate multiple flow records."
+  },
+  "DSFlowInstance": {
+    "name": "DSFlowInstance",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "If more than one sFlow sampler is available for this DSFlowDataSource then individual samplers are distinguished using the DSFlowInstance variable. The value of DSFlowInstance ranges from 1..n where n is the number of samplers associated with this DSFlowDataSource. Note: Each sFlow sampler instance must operate independently of all other instances. Setting an attribute of one sampler must not alter the the behavior and settings of other sampler instances."
+  },
+  "DSFlowReceiver": {
+    "name": "DSFlowReceiver",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "Identify the sFlow receiver associated with this resource. A value of zero indicates that this resource is available. If non-zero the value must correspond to a valid, active dSFlowRcvrIndex. If the value is currently zero it may be set to any active entry in the dSFlowRcvrTable. If the value is not zero then a set to anything other than zero or its current value will result in an SNMP error (bad value). Setting to zero frees the resource and returns all the values in this entry to their default values. If an entry in the dSFlowRcvrTable expires, either because the dSFlowRcvrOwner is set to the empty string or because the dSFlowRcvrCurrentTimeout reaches zero, then the agent must mark all associated resources as available (by setting the associated DSFlowReceiver entry to zero) and all values in these records must be restored to their default values. This mechanism provides no enforcement and relies on the cooperation of management entities in order to ensure that competition for a resource is fairly resolved. A management entity should not make any changes to a resource without first acquiring it by successfully writing its dSFlowRcvrIndex value as the DSFlowReceiver for the resource."
+  },
+  "dSFlowVersion": {
+    "name": "dSFlowVersion",
+    "oid": "1.3.6.1.4.1.171.14.36.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "1.3;;",
+        "format": "string"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Uniquely identifies the version and implementation of this MIB. The version string must have the following structure: <MIB Version>;<Organization>;<Software Revision> where: <MIB Version> must be '1.3', the version of referred SFLOW-MIB, which is defined by sFlow.org. <Organization> the name of the organization responsible for the agent implementation. <Revision> the specific software build of this agent. As an example, the string '1.3;InMon Corp.;2.1.1' indicates that this agent implements version '1.2' of the SFLOW MIB, that it was developed by 'InMon Corp.' and that the software build is '2.1.1'. The MIB Version will change with each revision of the SFLOW-MIB. Management entities must check the MIB Version and not attempt to manage agents with MIB Versions greater than that for which they were designed. Note: The sFlow Datagram Format has an independent version number which may change independently from <MIB Version>. <MIB Version> applies to the structure and semantics of the SFLOW MIB only."
+  },
+  "dSFlowAgentAddressIPv4": {
+    "name": "dSFlowAgentAddressIPv4",
+    "oid": "1.3.6.1.4.1.171.14.36.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IPv4 address associated with this agent."
+  },
+  "dSFlowAgentAddressIPv6": {
+    "name": "dSFlowAgentAddressIPv6",
+    "oid": "1.3.6.1.4.1.171.14.36.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv6",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IPv6 address associated with this agent. If the IPv6 is not supported on this agent, 0::0 will be displayed."
+  },
+  "dSFlowRcvrTable": {
+    "name": "dSFlowRcvrTable",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of the receivers of sFlow information."
+  },
+  "dSFlowRcvrEntry": {
+    "name": "dSFlowRcvrEntry",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Attributes of an sFlow Receiver."
+  },
+  "dSFlowRcvrIndex": {
+    "name": "dSFlowRcvrIndex",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index into dSFlowReceiverTable. The number of supported receivers is project dependent."
+  },
+  "dSFlowRcvrOwner": {
+    "name": "dSFlowRcvrOwner",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The entity making use of this dSFlowRcvrTable entry. The empty string indicates that the entry is currently unclaimed. An entity wishing to claim a dSFlowRcvrTable entry must ensure that the entry is unclaimed before trying to claim it. The entry is claimed by setting the owner string. The entry must be claimed before any changes can be made to the receiver's other objects. When a management entity is finished using the receiver, it should set the value of dSFlowRcvrOwner back to unclaimed. The agent must restore all other entities this row to their default values when the owner is set to unclaimed. It must also free all other resources associated with this dSFlowRcvrTable entry. This mechanism provides no enforcement and relies on the cooperation of management entities in order to ensure that competition for a receiver entry is fairly resolved."
+  },
+  "dSFlowRcvrAdminTimeout": {
+    "name": "dSFlowRcvrAdminTimeout",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2000000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The expire time (in seconds) configured for the receiver. A management entity wanting to maintain control of the receiver is responsible for setting a new value before the old one expires. When the interval expires, the agent is responsible for restoring all other entities in this row to their default values. It must also free all other resources associated with this dSFlowRcvrTable entry. When set, 0 means infinite that the receiver will never be expired."
+  },
+  "dSFlowRcvrCurrentTimeout": {
+    "name": "dSFlowRcvrCurrentTimeout",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time (in seconds) remaining before the receiver is released."
+  },
+  "dSFlowRcvrMaximumDatagramSize": {
+    "name": "dSFlowRcvrMaximumDatagramSize",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 700,
+            "max": 1400
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1400,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum number of data bytes that can be sent in a single sample datagram. The manager should set this value to avoid fragmentation of the sFlow datagrams."
+  },
+  "dSFlowRcvrAddressType": {
+    "name": "dSFlowRcvrAddressType",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "ipv4",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The address type of the sFlow collector."
+  },
+  "dSFlowRcvrAddress": {
+    "name": "dSFlowRcvrAddress",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "00000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The IP address of the sFlow collector. If set to 0.0.0.0 no sFlow datagrams will be sent."
+  },
+  "dSFlowRcvrVrfName": {
+    "name": "dSFlowRcvrVrfName",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specify the name of the routing forwarding instance."
+  },
+  "dSFlowRcvrPort": {
+    "name": "dSFlowRcvrPort",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 6343,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The UDP port of the remote sFlow collector."
+  },
+  "dSFlowRcvrDatagramVersion": {
+    "name": "dSFlowRcvrDatagramVersion",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The version of sFlow datagrams that should be sent."
+  },
+  "dSFlowRcvrReset": {
+    "name": "dSFlowRcvrReset",
+    "oid": "1.3.6.1.4.1.171.14.36.1.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "reset": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "noOp",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object reset the receiver when set to 'reset'. No action is taken if this object is set to 'noOp'. When read, the value 'noOp' is returned."
+  },
+  "dSFlowFsTable": {
+    "name": "dSFlowFsTable",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of the flow samplers within a device."
+  },
+  "dSFlowFsEntry": {
+    "name": "dSFlowFsEntry",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsDataSource",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Attributes of a flow sampler."
+  },
+  "dSFlowFsDataSource": {
+    "name": "dSFlowFsDataSource",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DSFlowDataSource",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the source of the data for this flow sampler."
+  },
+  "dSFlowFsInstance": {
+    "name": "dSFlowFsInstance",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DSFlowInstance",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The instance index for uniquely identifying the flow sampler when multiple flow samplers are associated with one interface."
+  },
+  "dSFlowFsReceiver": {
+    "name": "dSFlowFsReceiver",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DSFlowReceiver",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index of the sFlow receiver for this flow sampler."
+  },
+  "dSFlowFsDirection": {
+    "name": "dSFlowFsDirection",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "inbound",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the flow direction which will be sampled. 'inbound' - sample ingress packets. 'outbound' - sample egress packets."
+  },
+  "dSFlowFsAdminSamplingRate": {
+    "name": "dSFlowFsAdminSamplingRate",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65536
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The configured sampling rate for packet sampling from this source. Set to N to sample 1/Nth of the packets in the monitored flows. An agent should choose its own algorithm to introduce variance into the sampling so that exactly every Nth packet is not counted. A sampling rate of 1 counts all packets. A sampling rate of 0 disables sampling. The agent is permitted to have minimum and maximum allowable values for the sampling rate. A minimum rate lets the agent designer set an upper bound on the overhead associated with sampling, and a maximum rate may be the result of hardware restrictions (such as counter size). In addition not all values between the maximum and minimum may be realizable as the sampling rate (again because of implementation considerations). When the sampling rate is set the agent is free to adjust the value so that it lies between the maximum and minimum values and has the closest achievable value. When read, the configured sampling rate will be returned."
+  },
+  "dSFlowFsActiveSamplingRate": {
+    "name": "dSFlowFsActiveSamplingRate",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The statistical sampling rate for packet sampling from this source. When read, the agent must return the actual sampling rate it will be using (after the adjustments previously described). The sampling algorithm must converge so that over time the number of packets sampled approaches 1/Nth of the total number of packets in the monitored flows."
+  },
+  "dSFlowFsMaximumHeaderSize": {
+    "name": "dSFlowFsMaximumHeaderSize",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 18,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 128,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum number of bytes that should be copied from a sampled packet. The agent may have an internal maximum and minimum permissible sizes. If an attempt is made to set this value outside the permissible range then the agent should adjust the value to the closest permissible value."
+  },
+  "dSFlowFsRowStatus": {
+    "name": "dSFlowFsRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.36.1.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the status of this entry."
+  },
+  "dSFlowCpTable": {
+    "name": "dSFlowCpTable",
+    "oid": "1.3.6.1.4.1.171.14.36.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of the counter pollers within a device."
+  },
+  "dSFlowCpEntry": {
+    "name": "dSFlowCpEntry",
+    "oid": "1.3.6.1.4.1.171.14.36.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowCpDataSource",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowCpInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Attributes of a counter poller."
+  },
+  "dSFlowCpDataSource": {
+    "name": "dSFlowCpDataSource",
+    "oid": "1.3.6.1.4.1.171.14.36.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DSFlowDataSource",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Identifies the source of the data for the counter poller."
+  },
+  "dSFlowCpInstance": {
+    "name": "dSFlowCpInstance",
+    "oid": "1.3.6.1.4.1.171.14.36.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DSFlowInstance",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The instance instance index for uniquely identifying the counter poller when multiple Pollers are associated with one interface."
+  },
+  "dSFlowCpReceiver": {
+    "name": "dSFlowCpReceiver",
+    "oid": "1.3.6.1.4.1.171.14.36.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DSFlowReceiver",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The sflow receiver's index for this counter poller."
+  },
+  "dSFlowCpInterval": {
+    "name": "dSFlowCpInterval",
+    "oid": "1.3.6.1.4.1.171.14.36.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 120
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum number of seconds between successive samples of the counters associated with this data source. A sampling interval of 0 disables counter sampling. The agent is permitted to have minimum and maximum allowable values for the counter polling interval. A minimum interval lets the agent designer set an upper bound on the overhead associated with polling, and a maximum interval may be the result of implementation restrictions (such as counter size). In addition not all values between the maximum and minimum may be realizable as the sampling interval (again because of implementation considerations)."
+  },
+  "dSFlowCpRowStatus": {
+    "name": "dSFlowCpRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.36.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the status of this entry."
+  },
+  "dSFlowMIBCompliances": {
+    "name": "dSFlowMIBCompliances",
+    "oid": "1.3.6.1.4.1.171.14.36.2.1",
+    "class": "objectidentity"
+  },
+  "dSFlowMIBGroups": {
+    "name": "dSFlowMIBGroups",
+    "oid": "1.3.6.1.4.1.171.14.36.2.2",
+    "class": "objectidentity"
+  },
+  "dSFlowCompliance": {
+    "name": "dSFlowCompliance",
+    "oid": "1.3.6.1.4.1.171.14.36.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dSFlowAgentGroup",
+        "module": "DLINKSW-SFLOW-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-SFLOW-MIB."
+  },
+  "dSFlowAgentGroup": {
+    "name": "dSFlowAgentGroup",
+    "oid": "1.3.6.1.4.1.171.14.36.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowVersion"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowAgentAddressIPv4"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowAgentAddressIPv6"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrOwner"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrAdminTimeout"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrCurrentTimeout"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrMaximumDatagramSize"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrAddressType"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrAddress"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrPort"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrVrfName"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrDatagramVersion"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowRcvrReset"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsReceiver"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsDirection"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsAdminSamplingRate"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsActiveSamplingRate"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsMaximumHeaderSize"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowFsRowStatus"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowCpReceiver"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowCpInterval"
+      },
+      {
+        "module": "DLINKSW-SFLOW-MIB",
+        "object": "dSFlowCpRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects for managing the generation and transportation of sFlow data records."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-SFLOW-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:27:19 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-SFLOW-MIB"
+  }
+}

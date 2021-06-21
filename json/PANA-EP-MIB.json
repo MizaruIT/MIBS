@@ -1,0 +1,503 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "IPSEC-SPD-MIB": [
+      "spdIPDestinationType",
+      "spdIPDestinationAddress",
+      "spdActionExecuted",
+      "spdIPEndpointAddType",
+      "spdIPEndpointAddress",
+      "spdMIB",
+      "spdIPSourceType",
+      "spdIPSourceAddress"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-IDENTITY",
+      "iso",
+      "OBJECT-TYPE",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "MibIdentifier",
+      "Bits",
+      "Counter32",
+      "Gauge32",
+      "Unsigned32",
+      "IpAddress",
+      "MODULE-IDENTITY",
+      "TimeTicks",
+      "Integer32"
+    ],
+    "SNMPv2-TC": [
+      "PhysAddress",
+      "TEXTUAL-CONVENTION",
+      "TimeStamp",
+      "StorageType",
+      "DisplayString",
+      "RowStatus",
+      "TimeInterval"
+    ]
+  },
+  "panaMIB": {
+    "name": "panaMIB",
+    "oid": "1.3.6.1.2.1.153.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2006-05-28 00:00",
+        "description": "Removed L2 notif"
+      },
+      {
+        "revision": "2005-12-28 00:00",
+        "description": "L2 Filter indexing modified"
+      },
+      {
+        "revision": "2005-06-28 00:00",
+        "description": "L2 protection generic parameters"
+      },
+      {
+        "revision": "2005-02-05 00:00",
+        "description": "L2 generic filters"
+      },
+      {
+        "revision": "2004-10-22 00:00",
+        "description": "Version 02, draft-ietf-pana-snmp-02.txt"
+      },
+      {
+        "revision": "2004-02-05 00:00",
+        "description": "Version 01, draft-yacine-pana-paa2ep-snmp-01.txt"
+      },
+      {
+        "revision": "2003-10-31 00:00",
+        "description": "Initial version, draft-yacine-pana-paa2ep-snmp-00.txt"
+      }
+    ],
+    "lastupdated": "200605280000Z",
+    "organization": "IETF PANA Working Group",
+    "contactinfo": "Yacine El Mghazli Alcatel Route de Nozay 91460 Marcoussis France Email: yacine.el_mghazli@alcatel.fr Yoshihiro Ohba Toshiba America Research, Inc. 1, Telcordia Drive Piscataway, NJ 08854 USA Email: yohba@tari.toshiba.com",
+    "description": "The MIB module for defining additional PANA-specific objects to the IPsec SPD MIB. Copyright (C) The Internet Society (2003). This version of this MIB module is part of RFC XXXX, see the RFC itself for full legal notices."
+  },
+  "panaConfigObjects": {
+    "name": "panaConfigObjects",
+    "oid": "1.3.6.1.2.1.153.1.1",
+    "class": "objectidentity"
+  },
+  "panaNotificationObjects": {
+    "name": "panaNotificationObjects",
+    "oid": "1.3.6.1.2.1.153.1.2",
+    "class": "objectidentity"
+  },
+  "panaConformanceObjects": {
+    "name": "panaConformanceObjects",
+    "oid": "1.3.6.1.2.1.153.1.3",
+    "class": "objectidentity"
+  },
+  "PanaKey": {
+    "name": "PanaKey",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The PanaKey is used to carry a key. When the key does not exist, the length of the key becomes zero."
+  },
+  "PanaKeyName": {
+    "name": "PanaKeyName",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The PanaKeyName is used to carry the name of a PanaKey. When the key name does not exist, the length of the key name becomes zero."
+  },
+  "panaL2FilterTable": {
+    "name": "panaL2FilterTable",
+    "oid": "1.3.6.1.2.1.153.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Link-layer filter definitions."
+  },
+  "panaL2FilterEntry": {
+    "name": "panaL2FilterEntry",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltEpIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the Link-layer filter table."
+  },
+  "panaL2FiltEpIfIndex": {
+    "name": "panaL2FiltEpIfIndex",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index identifying the EP interface where the filter policy must be enforced on."
+  },
+  "panaL2FiltAddr": {
+    "name": "panaL2FiltAddr",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The authorized device Link-layer address (DI). For example, for a 802.x interface, this object normally contains a MAC address. For interfaces which do not have such an address (e.g., a serial line), this object should contain an octet string of zero length."
+  },
+  "panaL2FiltPmk": {
+    "name": "panaL2FiltPmk",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PanaKey",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is PMK (Pairwise Master Key) used for bootstraping link-layer ciphers."
+  },
+  "panaL2FiltPmkName": {
+    "name": "panaL2FiltPmkName",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PanaKeyName",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the name of the panaL2Pmk."
+  },
+  "panaL2FiltPmkLifetime": {
+    "name": "panaL2FiltPmkLifetime",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeInterval",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the lifetime of panaL2Pmk."
+  },
+  "panaL2FiltLastChanged": {
+    "name": "panaL2FiltLastChanged",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when this row was last modified or created either through SNMP SETs or by some other external means."
+  },
+  "panaL2FiltStorageType": {
+    "name": "panaL2FiltStorageType",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "nonVolatile",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this row. Rows in this table which were created through an external process may have a storage type of readOnly or permanent."
+  },
+  "panaL2FiltRowStatus": {
+    "name": "panaL2FiltRowStatus",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the conceptual status of this row."
+  },
+  "panaNotificationVariables": {
+    "name": "panaNotificationVariables",
+    "oid": "1.3.6.1.2.1.153.1.2.1",
+    "class": "objectidentity"
+  },
+  "panaNotifications": {
+    "name": "panaNotifications",
+    "oid": "1.3.6.1.2.1.153.1.2.0",
+    "class": "objectidentity"
+  },
+  "panaEpIfIndex": {
+    "name": "panaEpIfIndex",
+    "oid": "1.3.6.1.2.1.153.1.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Contains the interface index on which the packet triggered the notification in question."
+  },
+  "panaL2SourceAddress": {
+    "name": "panaL2SourceAddress",
+    "oid": "1.3.6.1.2.1.153.1.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Contains the source Link layer address of the packet which triggered the notification in question. For example, for a 802.x frame, this object normally contains a MAC address. For interfaces which do not have such an address (e.g., a serial line), this object should contain an octet string of zero length."
+  },
+  "panaNewPacNotification": {
+    "name": "panaNewPacNotification",
+    "oid": "1.3.6.1.2.1.153.1.2.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdActionExecuted"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPEndpointAddType"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPEndpointAddress"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPSourceType"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPSourceAddress"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPDestinationType"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPDestinationAddress"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaEpIfIndex"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2SourceAddress"
+      }
+    ],
+    "status": "current",
+    "description": "Notification that EP detected traffic coming from an unauthorized source. When source and destination IP addresses of the traffic is unknown, spdIPSourceType and spdIPDestinationType must be zero. When source L2 address of the traffic is unknown, panaL2SourceAddress must be zero.Notification that EP detected traffic coming from an unauthorized source."
+  },
+  "panaGroups": {
+    "name": "panaGroups",
+    "oid": "1.3.6.1.2.1.153.1.3.1",
+    "class": "objectidentity"
+  },
+  "panaCompliances": {
+    "name": "panaCompliances",
+    "oid": "1.3.6.1.2.1.153.1.3.2",
+    "class": "objectidentity"
+  },
+  "panaL2FilterGroup": {
+    "name": "panaL2FilterGroup",
+    "oid": "1.3.6.1.2.1.153.1.3.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltEpIfIndex"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltAddr"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltPmk"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltPmkName"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltPmkLifetime"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltLastChanged"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltStorageType"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2FiltRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "The Link-layer Filter Group."
+  },
+  "panaNewPacNotificationObjectsGroup": {
+    "name": "panaNewPacNotificationObjectsGroup",
+    "oid": "1.3.6.1.2.1.153.1.3.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaEpIfIndex"
+      },
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaL2SourceAddress"
+      }
+    ],
+    "status": "current",
+    "description": "PaC Presence Notification Objects Group."
+  },
+  "panaNewPacNotificationGroup": {
+    "name": "panaNewPacNotificationGroup",
+    "oid": "1.3.6.1.2.1.153.1.3.1.3",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "PANA-EP-MIB",
+        "object": "panaNewPacNotification"
+      }
+    ],
+    "status": "current",
+    "description": "PaC Presence Notification Group."
+  },
+  "panaFilterCompliance": {
+    "name": "panaFilterCompliance",
+    "oid": "1.3.6.1.2.1.153.1.3.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "panaL2FilterGroup",
+        "module": "PANA-EP-MIB"
+      },
+      {
+        "object": "spdEndpointGroup",
+        "module": "IPSEC-SPD-MIB"
+      },
+      {
+        "object": "spdGroupContentsGroup",
+        "module": "IPSEC-SPD-MIB"
+      },
+      {
+        "object": "spdRuleDefinitionGroup",
+        "module": "IPSEC-SPD-MIB"
+      },
+      {
+        "object": "spdStaticFilterGroup",
+        "module": "IPSEC-SPD-MIB"
+      },
+      {
+        "object": "spdStaticActionGroup",
+        "module": "IPSEC-SPD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities that support PANA DI-based filtering."
+  },
+  "panaNewPacNotificationCompliance": {
+    "name": "panaNewPacNotificationCompliance",
+    "oid": "1.3.6.1.2.1.153.1.3.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "panaNewPacNotificationObjectsGroup",
+        "module": "PANA-EP-MIB"
+      },
+      {
+        "object": "panaNewPacNotificationGroup",
+        "module": "PANA-EP-MIB"
+      },
+      {
+        "object": "spdActionLoggingObjectGroup",
+        "module": "IPSEC-SPD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities that support new PaC presence Notification."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PANA-EP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:28:42 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PANA-EP-MIB"
+  }
+}

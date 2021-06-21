@@ -1,0 +1,4489 @@
+ISHELF-DATA-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY,
+    IpAddress,
+    Integer32
+        FROM SNMPv2-SMI
+
+    RowStatus,
+    TruthValue,
+    MacAddress
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfData,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfAdminState,
+    IShelfLabel,
+    IShelfOltBandwidthIndex,
+    IShelfOltPonBandwidthRate,
+    IShelfOltPonBandwidthProfileRate,
+    IShelfOltQosFilterIndex,
+    IShelfOltQosIndex,
+    IShelfOltQosPointer,
+    IShelfOltQosPriority,
+    IShelfOltQosStatus,
+    IShelfOltTrafficShaperIndex,
+    IShelfOperState,
+    IShelfVlanListIndex,
+    IShelfVlanProfileIndex,
+    IShelfVlanTag,
+    IShelfOltTrafficShaperPointer,
+    IShelfFilterProfilePointer,
+    IShelfDhcpProfileIndex,
+    IShelfDhcpProfilePointer,
+    IShelfOntLogicalId,
+    IShelfOntSubscriberLineCardIndex,
+    IShelfVlanListPointer,
+    IShelfLocationType,
+    IShelfLocation,
+    IShelfSppIndex,
+    IShelfSppPointer,
+    IShelfOntEthernetServiceType,
+    IShelfVciRelayProfileIndex,
+    IShelfVciRelayProfilePointer,
+    IShelfDateTime,
+    IShelfSLAIndex,
+    IShelfSLAType,
+    IShelfSLACir,
+    IShelfSLACbs,
+    IShelfSLAEir,
+    IShelfSLAEbs,
+    IShelfVcpContentType,
+    IShelfEvcType,
+    IShelfBroadbandLabel,
+    IShelfFilterProfileIndex,
+    IShelfVlanXgressTag,
+    IShelfVlanPortProfilePointer,
+    IShelfBer
+        FROM ISHELF-TC
+    ;
+
+iShelfDataMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION
+        "The MIB module for managing the Data Services provisioning."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 7 }
+
+-- //CLICMDPREFIX data
+--iShelfData OBJECT IDENTIFIER ::= { osiIShelf 6 }
+
+-- %CLICMDPREFIX data
+-- %CLICMDABBR group
+iShelfDataGroup OBJECT IDENTIFIER ::= { iShelfData 1 }
+
+-- %CLICMDPREFIX data:olt
+-- %CLICMDABBR group
+iShelfDataOlt OBJECT IDENTIFIER ::= { iShelfData 2 }
+
+-- %PRIVATEHEADER
+-- %CLICMDPREFIX data
+-- %CLICMDABBR ont
+iShelfDataOnt OBJECT IDENTIFIER ::= { iShelfData 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfTlsGroup - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDABBR carrierisptag
+-- %CLICOLLABEL carrierisptag
+iShelfTlsCarrierIspVlanTag OBJECT-TYPE
+    SYNTAX      INTEGER (0..4094)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the Carrier VLAN tag value to be
+         associated with ISP Layer-3 and PPPoE services in the system.
+         A value of zero indicates that no VLAN tag is associated with
+         ISP Layer-3/PPPoE traffic."
+    DEFVAL      { 0 }
+    ::= { iShelfDataOlt 1 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltBandwidthProfileTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:olt
+-- %CLICMDABBR bw
+-- %CLISHOWGROUP bw
+iShelfOltBandwidthProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltBandwidthProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "The system supports a maximum of 64 bandwidth profile entries."
+    ::= { iShelfDataOlt 2 }
+
+iShelfOltBandwidthProfileEntry OBJECT-TYPE
+    SYNTAX      IShelfOltBandwidthProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltBandwidthProfileIndex }
+    ::= { iShelfOltBandwidthProfileTable 1 }
+
+IShelfOltBandwidthProfileEntry ::=
+    SEQUENCE {
+        iShelfOltBandwidthProfileIndex
+            IShelfOltBandwidthIndex,
+        iShelfOltBandwidthProfileLabel
+            IShelfLabel,
+        iShelfOltBandwidthProfileUsRate
+            IShelfOltPonBandwidthProfileRate,
+        iShelfOltBandwidthProfileDsMinimumRate
+            IShelfOltPonBandwidthProfileRate,
+        iShelfOltBandwidthProfileDsMaximumRate
+            IShelfOltPonBandwidthProfileRate,
+        iShelfOltBandwidthProfileRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP bw.1
+-- %CLISHOWGROUP bw.2
+iShelfOltBandwidthProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfOltBandwidthIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the index into this table.
+         The management application is responsible for managing
+         the indices of this table."
+    ::= { iShelfOltBandwidthProfileEntry 1 }
+
+-- %CLISHOWGROUP bw.1
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOltBandwidthProfileLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the user description of the
+         bandwidth profile.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOltBandwidthProfileEntry 2 }
+
+-- %CLISHOWGROUP bw.1
+-- %SETINACTIVE
+-- %CLICOLLABEL UsRate
+-- %CLIOPTION
+iShelfOltBandwidthProfileUsRate OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the upstream bandwidth in
+         Kbps.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 384 }
+    ::= { iShelfOltBandwidthProfileEntry 3 }
+
+-- %CLICOLLABEL DsMinRate
+-- %CLISHOWGROUP bw.1
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOltBandwidthProfileDsMinimumRate OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the minimum downstream
+         bandwidth.  This value represents the guaranteed minimum
+         downstream bandwidth.  The value is in Kbps.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 768 }
+    ::= { iShelfOltBandwidthProfileEntry 4 }
+
+-- %CLICOLLABEL DsMaxRate
+-- %CLISHOWGROUP bw.1
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOltBandwidthProfileDsMaximumRate OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the maximum downstream
+         bandwidth.  This value represents the best effort maximum
+         downstream bandwidth.  The subscriber can use data bandwidth up to the
+         limit of their maximum bandwidth.
+         If the sum of maximum bandwidth on a PON
+         (for all ONTs) exceeds the total AAL5 bandwidth, the maximum
+         bandwidth is shared amongst over-subscribers.  The value is in
+         Kbps.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 768 }
+    ::= { iShelfOltBandwidthProfileEntry 5 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP bw.2
+iShelfOltBandwidthProfileRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltBandwidthProfileEntry 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltTrafficShaperTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:olt
+-- %CLICMDABBR shaper
+-- %CLISHOWGROUP shaper
+iShelfOltTrafficShaperTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltTrafficShaperEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataOlt 3 }
+
+iShelfOltTrafficShaperEntry OBJECT-TYPE
+    SYNTAX      IShelfOltTrafficShaperEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltTrafficShaperIndex }
+    ::= { iShelfOltTrafficShaperTable 1 }
+
+IShelfOltTrafficShaperEntry ::=
+    SEQUENCE {
+        iShelfOltTrafficShaperIndex
+            IShelfOltTrafficShaperIndex,
+        iShelfOltTrafficShaperLabel
+            IShelfLabel,
+        iShelfOltTrafficShaperMinimumRate
+            IShelfOltPonBandwidthRate,
+        iShelfOltTrafficShaperMaximumRate
+            IShelfOltPonBandwidthRate,
+        iShelfOltTrafficShaperActualMinimumRate
+            IShelfOltPonBandwidthRate,
+        iShelfOltTrafficShaperActualMaximumRate
+            IShelfOltPonBandwidthRate,
+        iShelfOltTrafficShaperRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP shaper.1
+-- %CLISHOWGROUP shaper.2
+iShelfOltTrafficShaperIndex OBJECT-TYPE
+    SYNTAX      IShelfOltTrafficShaperIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOltTrafficShaperEntry 1 }
+
+-- %CLISHOWGROUP shaper.1
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOltTrafficShaperLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOltTrafficShaperEntry 2 }
+
+-- %CLISHOWGROUP shaper.1
+-- %SETINACTIVE
+-- %CLICOLLABEL MinRate
+-- %CLIOPTION
+iShelfOltTrafficShaperMinimumRate OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The provisioned subscribed rate of the traffic shaper.
+         The minimum subscribed rate allowed is 768 kbps.
+         The maximum rate allowed is 40 Mbps.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 768 }
+    ::= { iShelfOltTrafficShaperEntry 3 }
+
+-- %CLISHOWGROUP shaper.1
+-- %SETINACTIVE
+-- %CLICOLLABEL MaxRate
+-- %CLIOPTION
+iShelfOltTrafficShaperMaximumRate OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The provisioned oversubscribed rate of the traffic shaper.
+         Any bandwidth above the minimum is considered best effort.
+         The maximum total rate allowed is 40 Mbps.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfOltTrafficShaperEntry 4 }
+
+-- %CLICOLLABEL ActMinRate
+-- %CLISHOWGROUP shaper.2
+iShelfOltTrafficShaperActualMinimumRate OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The actual subscribed rate of the traffic shaper.
+         This may differ from the provisioned rate due to rounding up to the nearest
+         unit of PON rate granularity."
+    ::= { iShelfOltTrafficShaperEntry 5 }
+
+-- %CLICOLLABEL ActMaxRate
+-- %CLISHOWGROUP shaper.2
+iShelfOltTrafficShaperActualMaximumRate OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The actual oversubscribed rate of the traffic shaper.
+         This may differ from the provisioned rate due to rounding up to the nearest
+         unit of PON rate granularity."
+    ::= { iShelfOltTrafficShaperEntry 6 }
+
+-- %CLISHOWGROUP shaper.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOltTrafficShaperRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltTrafficShaperEntry 7 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltQosProfileTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:olt
+-- %CLICMDABBR qosprofile
+iShelfOltQosProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltQosProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataOlt 4 }
+
+iShelfOltQosProfileEntry OBJECT-TYPE
+    SYNTAX      IShelfOltQosProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltQosProfileIndex }
+    ::= { iShelfOltQosProfileTable 1 }
+
+IShelfOltQosProfileEntry ::=
+    SEQUENCE {
+        iShelfOltQosProfileIndex
+            IShelfOltQosIndex,
+        iShelfOltQosProfileLabel
+            IShelfLabel,
+        iShelfOltQosProfileAdminState
+            IShelfAdminState,
+        iShelfOltQosProfileRowStatus
+            RowStatus
+    }
+
+iShelfOltQosProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfOltQosIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the OLT QOS profile number."
+    ::= { iShelfOltQosProfileEntry 1 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOltQosProfileLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOltQosProfileEntry 2 }
+    
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOltQosProfileAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to allow modification of the associated
+         profile.  Modification of the iShelfOltQosFilterTable is only allowed
+         when the associated entry in the iShelfOltQosProfileTable is locked.
+         Once the iShelfOltQosProfileTable row is unlocked the associated
+         changes for the iShelfOltQosFilterTable will be applied.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { unlock }
+    ::= { iShelfOltQosProfileEntry 3 }
+    
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOltQosProfileRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltQosProfileEntry 4 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltQosFilterTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:olt
+-- %CLICMDABBR qosfilter
+-- %CLISHOWGROUP qosfilter
+iShelfOltQosFilterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltQosFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataOlt 5 }
+
+iShelfOltQosFilterEntry OBJECT-TYPE
+    SYNTAX      IShelfOltQosFilterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltQosFilterProfilePointer, iShelfOltQosFilterIndex }
+    ::= { iShelfOltQosFilterTable 1 }
+
+IShelfOltQosFilterEntry ::=
+    SEQUENCE {
+        iShelfOltQosFilterProfilePointer
+            IShelfOltQosIndex,
+        iShelfOltQosFilterIndex
+            IShelfOltQosFilterIndex,
+        iShelfOltQosFilterSourceIpAddress
+            IpAddress,
+        iShelfOltQosFilterSourceIpMask
+            IpAddress,
+        iShelfOltQosFilterDestinationIpAddress
+            IpAddress,
+        iShelfOltQosFilterDestinationIpMask
+            IpAddress,
+        iShelfOltQosFilterSourcePort
+            INTEGER,
+        iShelfOltQosFilterDestinationPort
+            INTEGER,
+        iShelfOltQosFilterProtocol
+            INTEGER,
+        iShelfOltQosFilterPriority
+            IShelfOltQosPriority,
+        iShelfOltQosFilterStatus
+            IShelfOltQosStatus,
+        iShelfOltQosFilterRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP qosfilter.1
+-- %CLISHOWGROUP qosfilter.2
+iShelfOltQosFilterProfilePointer OBJECT-TYPE
+    SYNTAX      IShelfOltQosIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the QOS profile to which the entry
+         is associated."
+    ::= { iShelfOltQosFilterEntry 1 }
+
+-- %CLISHOWGROUP qosfilter.1
+-- %CLISHOWGROUP qosfilter.2
+iShelfOltQosFilterIndex OBJECT-TYPE
+    SYNTAX      IShelfOltQosFilterIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the specific row in the QOS
+         profile."
+    ::= { iShelfOltQosFilterEntry 2 }
+
+-- %CLICOLLABEL SrcIp
+-- %CLISHOWGROUP qosfilter.1
+-- %SETINACTIVE
+iShelfOltQosFilterSourceIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Source Ip Address for filtering
+         it is ignored if either this object is 0.0.0.0 or the SourceIpMask is
+         0.0.0.0.  Additionally, the address must be a unicast address."
+    DEFVAL { 0 }
+    ::= { iShelfOltQosFilterEntry 3 }
+
+-- %CLICOLLABEL SrcIpMask
+-- %CLISHOWGROUP qosfilter.1
+-- %SETINACTIVE
+iShelfOltQosFilterSourceIpMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The indicates the Source IP Address mask for filtering.
+         See SourceIpAddress for further details."
+    DEFVAL { 0 }
+    ::= { iShelfOltQosFilterEntry 4 }
+
+-- %CLICOLLABEL DestIp
+-- %CLISHOWGROUP qosfilter.1
+-- %SETINACTIVE
+iShelfOltQosFilterDestinationIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Destination Ip Address for
+         filtering it is ignored if either this object is 0.0.0.0 or the
+         DestinationIpMask is 0.0.0.0.  Additionally, the address must be
+         a unicast address."
+    DEFVAL { 0 }
+    ::= { iShelfOltQosFilterEntry 5 }
+
+-- %CLICOLLABEL DestIpMask
+-- %CLISHOWGROUP qosfilter.1
+-- %SETINACTIVE
+iShelfOltQosFilterDestinationIpMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The indicates the Destination IP Address mask for filtering.
+         See DestinationIpAddress for further details."
+    DEFVAL { 0 }
+    ::= { iShelfOltQosFilterEntry 6 }
+
+-- %CLICOLLABEL SrcPort
+-- %CLISHOWGROUP qosfilter.2
+-- %SETINACTIVE
+iShelfOltQosFilterSourcePort OBJECT-TYPE
+    SYNTAX      INTEGER (0..65535)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the source UDP/TCP port for filtering.
+         The object is ignored if 0."
+    DEFVAL { 0 }
+    ::= { iShelfOltQosFilterEntry 7 }
+
+-- %CLICOLLABEL DestPort
+-- %CLISHOWGROUP qosfilter.2
+-- %SETINACTIVE
+iShelfOltQosFilterDestinationPort OBJECT-TYPE
+    SYNTAX      INTEGER (0..65535)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the destination UDP/TCP port for
+         filtering.  The object is ignored if 0."
+    DEFVAL { 0 }
+    ::= { iShelfOltQosFilterEntry 8 }
+
+-- %CLICOLLABEL Protocol
+-- %CLISHOWGROUP qosfilter.2
+-- %SETINACTIVE
+iShelfOltQosFilterProtocol OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the destination IP protocol for
+         filtering.  The object is ignored if 0."
+    DEFVAL { 0 }
+    ::= { iShelfOltQosFilterEntry 9 }
+
+-- %CLICOLLABEL Priority
+-- %CLISHOWGROUP qosfilter.2
+-- %SETINACTIVE
+iShelfOltQosFilterPriority OBJECT-TYPE
+    SYNTAX      IShelfOltQosPriority
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the priority associated with the
+         filter."
+    DEFVAL { low }
+    ::= { iShelfOltQosFilterEntry 10 }
+
+-- %CLICOLLABEL Status
+-- %CLISHOWGROUP qosfilter.2
+-- %SETINACTIVE
+iShelfOltQosFilterStatus OBJECT-TYPE
+    SYNTAX      IShelfOltQosStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This object identifies the handling of a given filter."
+    DEFVAL { forward }
+    ::= { iShelfOltQosFilterEntry 11 }
+
+-- %CLISHOWGROUP qosfilter.2
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOltQosFilterRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfOltQosFilterEntry 12 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfDhcpProfileTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data
+-- %CLICMDABBR dhcpprofile
+-- %CLISHOWGROUP dhcpprofile
+iShelfDhcpProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfDhcpProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataGroup 1 }
+
+iShelfDhcpProfileEntry OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfDhcpProfileIndex }
+    ::= { iShelfDhcpProfileTable 1 }
+
+IShelfDhcpProfileEntry ::=
+    SEQUENCE {
+        iShelfDhcpProfileIndex
+            IShelfDhcpProfileIndex,
+        iShelfDhcpProfileLabel
+            IShelfLabel,
+        iShelfDhcpProfileMode
+            INTEGER,
+        iShelfDhcpProfileServer1
+            IpAddress,
+        iShelfDhcpProfileServer2
+            IpAddress,
+        iShelfDhcpProfileServer3
+            IpAddress,
+        iShelfDhcpProfileServer4
+            IpAddress,
+        iShelfDhcpProfileRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Index
+-- %CLISHOWGROUP dhcpprofile.1
+-- %CLISHOWGROUP dhcpprofile.2
+iShelfDhcpProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfileIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDhcpProfileEntry 1 }
+
+-- %CLIOPTION
+-- %CLICOLLABEL Label
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpprofile.1
+iShelfDhcpProfileLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfDhcpProfileEntry 2 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Mode
+-- %CLIOPTION
+-- %CLISHOWGROUP dhcpprofile.1
+iShelfDhcpProfileMode OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    redundant(1),
+                    loadBalance(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of server configuration.
+         The following handling is provided based on the mode:
+         redundant:
+             DHCP requests are transmitted to all configured servers.
+             The first response from any of the servers will be acted on
+             and the remaining responses will be ignored.
+         loadBalance:
+             DHCP requests are transmitted to one of the configured
+             servers in a round-robin fashion.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { redundant }
+    ::= { iShelfDhcpProfileEntry 3 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Server1
+-- %CLISHOWGROUP dhcpprofile.2
+iShelfDhcpProfileServer1 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Primary DHCP server address. This address must be specified (non-zero)
+         when the profile is created.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfDhcpProfileEntry 4 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLICOLLABEL Server2
+-- %CLISHOWGROUP dhcpprofile.2
+iShelfDhcpProfileServer2 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Secondary DHCP server address
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProfileEntry 5 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLICOLLABEL Server3
+-- %CLISHOWGROUP dhcpprofile.2
+iShelfDhcpProfileServer3 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Third DHCP server address
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProfileEntry 6 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLICOLLABEL Server4
+-- %CLISHOWGROUP dhcpprofile.2
+iShelfDhcpProfileServer4 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Fourth DHCP server address
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProfileEntry 7 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP dhcpprofile.1
+iShelfDhcpProfileRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfDhcpProfileEntry 8 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfDhcpProxyTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data
+-- %CLICMDABBR dhcpproxy
+-- %CLISHOWGROUP dhcpproxy
+iShelfDhcpProxyTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfDhcpProxyEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The DHCP proxy table defines the proxy (GiAddr) addresses
+         to be used to communicate from a given Layer3 termination point
+         (Location) via an uplink (SPP) to a set of servers found in a
+         DHCP profile."
+    ::= { iShelfDataGroup 2 }
+
+iShelfDhcpProxyEntry OBJECT-TYPE
+    SYNTAX      IShelfDhcpProxyEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each row identifies the proxy (GiAddr) addresses for the
+         Layer3 termination points for a given uplink (SPP) and DHCP profile
+         pair"
+    INDEX       { iShelfDhcpProxyProfileIndex,
+                  iShelfDhcpProxyLocation }
+    ::= { iShelfDhcpProxyTable 1 }
+
+IShelfDhcpProxyEntry ::=
+    SEQUENCE {
+        iShelfDhcpProxyProfileIndex
+            IShelfDhcpProfileIndex,
+        iShelfDhcpProxyLocation
+            IShelfLocation,
+        iShelfDhcpProxyGiAddr1
+            IpAddress,
+        iShelfDhcpProxySpp1
+            IShelfSppPointer,
+        iShelfDhcpProxyGiAddr2
+            IpAddress,
+        iShelfDhcpProxySpp2
+            IShelfSppPointer,
+        iShelfDhcpProxyGiAddr3
+            IpAddress,
+        iShelfDhcpProxySpp3
+            IShelfSppPointer,
+        iShelfDhcpProxyGiAddr4
+            IpAddress,
+        iShelfDhcpProxySpp4
+            IShelfSppPointer,
+        iShelfDhcpProxyVlanId
+            INTEGER,
+        iShelfDhcpProxyRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Index
+-- %CLISHOWGROUP dhcpproxy.1
+-- %CLISHOWGROUP dhcpproxy.2
+iShelfDhcpProxyProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfileIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the DHCP profile associated with
+         the set of GiAddrs"
+    ::= { iShelfDhcpProxyEntry 1 }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP dhcpproxy.1
+iShelfDhcpProxyLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Node/Shelf/Slot location of
+         the Layer3 termination identified by the GiAddrs."
+    ::= { iShelfDhcpProxyEntry 2 }
+
+-- %CLICOLLABEL GiAddr1
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.1
+iShelfDhcpProxyGiAddr1 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the proxy address to be used
+         to route to server1 of the DHCP profile via the SPP1.
+         This address must be specified (non-zero) when creating
+         the proxy."
+    ::= { iShelfDhcpProxyEntry 3 }
+
+-- %CLICOLLABEL Spp1
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.1
+iShelfDhcpProxySpp1 OBJECT-TYPE
+    SYNTAX      IShelfSppPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the SPP uplink to use with
+         GiAddr1 to reach DHCP server 1.
+         This SPP must be specified when creating the proxy."
+    ::= { iShelfDhcpProxyEntry 4 }
+
+-- %CLICOLLABEL GiAddr2
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.1
+iShelfDhcpProxyGiAddr2 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the proxy address to be used
+         to route to server2 of the DHCP profile via the SPP."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProxyEntry 5 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.1
+-- %CLICOLLABEL Spp2
+iShelfDhcpProxySpp2 OBJECT-TYPE
+    SYNTAX      IShelfSppPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the SPP uplink to use with
+         GiAddr2 to reach DHCP server 2."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProxyEntry 6 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.2
+-- %CLICOLLABEL GiAddr3
+iShelfDhcpProxyGiAddr3 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the proxy address to be used
+         to route to server3 of the DHCP profile via the SPP."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProxyEntry 7 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.2
+-- %CLICOLLABEL Spp3
+iShelfDhcpProxySpp3 OBJECT-TYPE
+    SYNTAX      IShelfSppPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the SPP uplink to use with
+         GiAddr3 to reach DHCP server 3."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProxyEntry 8 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.2
+-- %CLICOLLABEL GiAddr4
+iShelfDhcpProxyGiAddr4 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the proxy address to be used
+         to route to server4 of the DHCP profile via the SPP."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProxyEntry 9 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+-- %CLISHOWGROUP dhcpproxy.2
+-- %CLICOLLABEL Spp4
+iShelfDhcpProxySpp4 OBJECT-TYPE
+    SYNTAX      IShelfSppPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the SPP uplink to use with
+         GiAddr4 to reach DHCP server 4."
+    DEFVAL      { 0 }
+    ::= { iShelfDhcpProxyEntry 10 }
+
+-- %CLICOLLABEL VlanId
+-- %CLISHOWGROUP dhcpproxy.2
+iShelfDhcpProxyVlanId OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The VLAN ID of the ONT where this DHCP Lease Port address
+                 resides."
+    ::= { iShelfDhcpProxyEntry 11 }
+
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP dhcpproxy.2
+iShelfDhcpProxyRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfDhcpProxyEntry 12 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfVciRelayProfileTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data
+-- %CLICMDABBR vcirelay
+-- %CLISHOWGROUP vcirelay
+iShelfVciRelayProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfVciRelayProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataGroup 3 }
+
+iShelfVciRelayProfileEntry OBJECT-TYPE
+    SYNTAX      IShelfVciRelayProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfVciRelayProfileIndex }
+    ::= { iShelfVciRelayProfileTable 1 }
+
+IShelfVciRelayProfileEntry ::=
+    SEQUENCE {
+        iShelfVciRelayProfileIndex
+            IShelfVciRelayProfileIndex,
+        iShelfVciRelayProfileLabel
+            IShelfLabel,
+        iShelfVciRelayProfileVciString1
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer1
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileVciString2
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer2
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileVciString3
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer3
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileVciString4
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer4
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileVciString5
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer5
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileVciString6
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer6
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileVciString7
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer7
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileVciString8
+            IShelfLabel,
+        iShelfVciRelayProfileDhcpPointer8
+            IShelfDhcpProfilePointer,
+        iShelfVciRelayProfileRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Idx
+-- %CLIWIDTH 3
+-- %CLISHOWGROUP vcirelay.1
+-- %CLISHOWGROUP vcirelay.2
+-- %CLISHOWGROUP vcirelay.3
+-- %CLISHOWGROUP vcirelay.4
+-- %CLISHOWGROUP vcirelay.5
+iShelfVciRelayProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfVciRelayProfileIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfVciRelayProfileEntry 1 }
+
+-- %CLICOLLABEL Label
+-- %SETINACTIVE
+-- %CLISHOWGROUP vcirelay.1
+-- %CLIOPTION
+iShelfVciRelayProfileLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 2 }
+
+-- %CLICOLLABEL VciStr1
+-- %SETINACTIVE
+-- %CLISHOWGROUP vcirelay.2
+-- %CLIOPTION
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString1 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 3 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr1
+-- %SETINACTIVE
+-- %CLISHOWGROUP vcirelay.2
+-- %CLIOPTION
+iShelfVciRelayProfileDhcpPointer1 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 4 }
+
+-- %CLICOLLABEL VciStr2
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP vcirelay.2
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString2 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 5 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr2
+-- %SETINACTIVE
+-- %CLISHOWGROUP vcirelay.2
+-- %CLIOPTION
+iShelfVciRelayProfileDhcpPointer2 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 6 }
+
+-- %CLICOLLABEL VciStr3
+-- %SETINACTIVE
+-- %CLISHOWGROUP vcirelay.3
+-- %CLIOPTION
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString3 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 7 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr3
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP vcirelay.3
+iShelfVciRelayProfileDhcpPointer3 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 8 }
+
+-- %CLICOLLABEL VciStr4
+-- %SETINACTIVE
+-- %CLISHOWGROUP vcirelay.3
+-- %CLIOPTION
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString4 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 9 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr4
+-- %SETINACTIVE
+-- %CLISHOWGROUP vcirelay.3
+-- %CLIOPTION
+iShelfVciRelayProfileDhcpPointer4 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 10 }
+
+-- %CLICOLLABEL VciStr5
+-- %CLISHOWGROUP vcirelay.4
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString5 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 11 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr5
+-- %CLISHOWGROUP vcirelay.4
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfVciRelayProfileDhcpPointer5 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 12 }
+
+-- %CLICOLLABEL VciStr6
+-- %CLISHOWGROUP vcirelay.4
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString6 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 13 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr6
+-- %CLISHOWGROUP vcirelay.4
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfVciRelayProfileDhcpPointer6 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 14 }
+
+-- %CLICOLLABEL VciStr7
+-- %CLISHOWGROUP vcirelay.5
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString7 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 15 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr7
+-- %CLISHOWGROUP vcirelay.5
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfVciRelayProfileDhcpPointer7 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 16 }
+
+-- %CLICOLLABEL VciStr8
+-- %CLISHOWGROUP vcirelay.5
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLIWIDTH 32
+iShelfVciRelayProfileVciString8 OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the Vendor Class Identifier (Option 60) String
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfVciRelayProfileEntry 17 }
+
+-- %CLIWIDTH 4
+-- %CLICOLLABEL Ptr8
+-- %CLISHOWGROUP vcirelay.5
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfVciRelayProfileDhcpPointer8 OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the DHCP Profile associated with
+         the specific Vendor Class Identifier (Option 60) String.  This value
+         must be non-zero if the associated VCI String is present.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfVciRelayProfileEntry 18 }
+
+-- %CLISHOWGROUP vcirelay.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfVciRelayProfileRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfVciRelayProfileEntry 19 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSLATable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data
+-- %CLICMDABBR sla
+-- %CLISHOWGROUP sla
+iShelfSLATable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSLAEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataGroup 4 }   
+    
+iShelfSLAEntry OBJECT-TYPE
+    SYNTAX      IShelfSLAEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfSLAIndex }
+    ::= { iShelfSLATable 1 }
+    
+IShelfSLAEntry ::=
+    SEQUENCE {
+        iShelfSLAIndex
+            IShelfSLAIndex,
+        iShelfSLAType
+            IShelfSLAType,
+        iShelfSLACir
+            IShelfSLACir,
+        iShelfSLACbs
+            IShelfSLACbs,
+        iShelfSLAEir
+            IShelfSLAEir,
+        iShelfSLAEbs
+            IShelfSLAEbs,
+        iShelfSLARowStatus
+            RowStatus
+    }
+    
+-- %CLICOLLABEL Idx
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP sla.1
+iShelfSLAIndex OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Index for this entry."
+    ::= { iShelfSLAEntry 1 }
+
+-- %CLICOLLABEL type
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP sla.1
+iShelfSLAType OBJECT-TYPE
+    SYNTAX      IShelfSLAType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "bestEffort(0) or committed(1)."
+    DEFVAL      { bestEffort }
+    ::= { iShelfSLAEntry 2 }
+
+-- %CLICOLLABEL CIR
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP sla.1
+iShelfSLACir OBJECT-TYPE
+    SYNTAX      IShelfSLACir
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Committed Information Rate in Mbps."
+    DEFVAL      { 10 }
+    ::= { iShelfSLAEntry 3 }
+
+-- %CLICOLLABEL CBS
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP sla.1
+iShelfSLACbs OBJECT-TYPE
+    SYNTAX      IShelfSLACbs
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Committed Burst Size in Kbytes."
+    DEFVAL      { 4 }
+    ::= { iShelfSLAEntry 4 }
+
+-- %CLICOLLABEL EIR
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP sla.1
+iShelfSLAEir OBJECT-TYPE
+    SYNTAX      IShelfSLAEir
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Excess Information Rate in Mbps."
+    DEFVAL      { 10 }
+    ::= { iShelfSLAEntry 5 }
+
+-- %CLICOLLABEL EBS
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP sla.1
+iShelfSLAEbs OBJECT-TYPE
+    SYNTAX      IShelfSLAEbs
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Excess Burst Size in Kbytes."
+    DEFVAL      { 1 }
+    ::= { iShelfSLAEntry 6 }
+    
+-- %CLISHOWGROUP sla.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfSLARowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfSLAEntry 7 }
+    
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfVlanConfigProfileTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data
+-- %CLICMDABBR vcp
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfVlanConfigProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "VLAN Configuration Profile Table."
+    ::= { iShelfDataGroup 5 }
+
+iShelfVlanConfigProfileEntry OBJECT-TYPE
+    SYNTAX      IShelfVlanConfigProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfVlanConfigProfileIndex }
+    ::= { iShelfVlanConfigProfileTable 1 }
+    
+IShelfVlanConfigProfileEntry ::=
+    SEQUENCE {
+        iShelfVlanConfigProfileIndex
+            IShelfVlanProfileIndex,
+        iShelfVlanConfigProfileVlanTag
+            IShelfVlanTag,
+        iShelfVlanConfigProfileLabel
+            IShelfBroadbandLabel,
+        iShelfVlanConfigProfileGatewayIp
+            IpAddress,
+        iShelfVlanConfigProfileSubnetMask
+            IpAddress,
+        iShelfVlanConfigProfileContentType
+            IShelfVcpContentType,
+        iShelfVlanConfigProfileEvcType
+            IShelfEvcType,
+        iShelfVlanConfigProfileEvcStdFrameDelay
+            INTEGER,
+        iShelfVlanConfigProfileEvcStdJitter
+            INTEGER,
+        iShelfVlanConfigProfileEvcStdFrameLoss
+            IShelfBer,
+        iShelfVlanConfigProfileEvcStdTopology
+            INTEGER,
+        iShelfVlanConfigProfileEvcStdServiceType
+            INTEGER,
+        iShelfVlanConfigProfileEvcStdUcastFrameDelivery
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdBcastFrameDelivery
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdMcastFrameDelivery
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdL2CPMacCtrl
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdL2CPLacp
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdL2CPPortAuth
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdL2CPGarp
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdL2CPStp
+            TruthValue,
+        iShelfVlanConfigProfileEvcStdL2CPMulticast
+            TruthValue,
+        iShelfVlanConfigProfileEvcBundledIntVcpId
+            IShelfVlanPortProfilePointer,
+        iShelfVlanConfigProfileEvcBundledCosPres
+            TruthValue,
+        iShelfVlanConfigProfileVideoQuerierIp
+            IpAddress,
+        iShelfVlanConfigProfileOltTrafficShaperProf
+            IShelfOltTrafficShaperIndex,
+        iShelfVlanConfigProfileOltPortSwitching
+            INTEGER,
+        iShelfVlanConfigProfileRowStatus
+            RowStatus
+    }
+        
+-- %CLICOLLABEL Idx
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfVlanProfileIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Simple index managed by user."
+    ::= { iShelfVlanConfigProfileEntry 1 }
+
+-- %CLICOLLABEL tag
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileVlanTag OBJECT-TYPE
+    SYNTAX      IShelfVlanTag
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "802.1q VLAN ID. 0-4095. 0 indicated not used."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanConfigProfileEntry 2 }
+
+-- %CLICOLLABEL label
+-- %CLIWIDTH 20
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Name assigned to this profile."
+    ::= { iShelfVlanConfigProfileEntry 3 }
+
+-- %CLICOLLABEL GWaddr
+-- %CLIWIDTH 15
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileGatewayIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "IP address of the gateway router on the network."
+    ::= { iShelfVlanConfigProfileEntry 4 }
+
+-- %CLICOLLABEL GWmask
+-- %CLIWIDTH 15
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileSubnetMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Subnet mask for the gateway IP address."
+    ::= { iShelfVlanConfigProfileEntry 5 }
+
+-- %CLICOLLABEL type
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileContentType OBJECT-TYPE
+    SYNTAX      IShelfVcpContentType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Content Type: Data(0), Video(1), EVC(2) or OLT(3)."
+    DEFVAL      { data }
+    ::= { iShelfVlanConfigProfileEntry 6 }
+
+-- %CLICOLLABEL EVC
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcType OBJECT-TYPE
+    SYNTAX      IShelfEvcType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Ethernet Virtual Circuit type: std(0), bundled(1). 
+                 std is basic EVC. bundled implies tunneling of one or more
+                 VLANs inside one EVC."
+    DEFVAL      { std }
+    ::= { iShelfVlanConfigProfileEntry 7 }
+
+-- %CLICOLLABEL frmDly
+-- %CLIWIDTH 6
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdFrameDelay OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Identifies allowable frame delay from UNI to UNI 
+                 across the EVC in ms."
+    DEFVAL      { 1 }
+    ::= { iShelfVlanConfigProfileEntry 8 }
+
+-- %CLICOLLABEL jttr
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdJitter OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Identifies allowable variation in transfer delay from 
+                 UNI to UNI across the EVC in ms."
+    DEFVAL      { 1 }
+    ::= { iShelfVlanConfigProfileEntry 9 }
+
+-- %CLICOLLABEL frmLoss
+-- %CLIWIDTH 7
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdFrameLoss OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Identifies allowable frame loss rate for UNI to UNI packets
+                 across the EVC. "
+    DEFVAL      { ber10neg6 }
+    ::= { iShelfVlanConfigProfileEntry 10 }
+
+-- %CLICOLLABEL topo
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdTopology OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    mesh(0),
+                    tree(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Identified internal topology. mesh(0) or tree(1). 
+                 Specifies how the UNIs are interconnected in this EVC."
+    DEFVAL      { mesh }
+    ::= { iShelfVlanConfigProfileEntry 11 }
+
+-- %CLICOLLABEL svcType
+-- %CLIWIDTH 7
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdServiceType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    mtm(0),
+                    ptp(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Identifies EVC service type. multipoint-to-multipoint(0),
+                 or point-to-point(1)."
+    DEFVAL      { mtm }
+    ::= { iShelfVlanConfigProfileEntry 12 }
+
+-- %CLICOLLABEL ucast
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdUcastFrameDelivery OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Specifies if unicast frames should be transported.
+                 true means delivered unconditionally, false means discarded."
+    DEFVAL      { true }
+    ::= { iShelfVlanConfigProfileEntry 13 }
+
+-- %CLICOLLABEL bcast
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdBcastFrameDelivery OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Specifies if broadcast frames should be transported.
+                 true means delivered unconditionally, false means discarded."
+    DEFVAL      { true }
+    ::= { iShelfVlanConfigProfileEntry 14 }
+
+-- %CLICOLLABEL mcast
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdMcastFrameDelivery OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Specifies if multicast frames should be transported.
+                 true means delivered unconditionally, false means discarded."
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 15 }
+
+-- %CLICOLLABEL L2Mac
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdL2CPMacCtrl OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "true enables layer 2 control protocol."
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 16 }
+
+-- %CLICOLLABEL lacp
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdL2CPLacp OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "true enables link aggregation control protocol."
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 17 }
+
+-- %CLICOLLABEL auth
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdL2CPPortAuth OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "true enables port authorization."
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 18 }
+
+-- %CLICOLLABEL garp
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdL2CPGarp OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "true enables ??"
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 19 }
+
+-- %CLICOLLABEL stp
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdL2CPStp OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "true enables spanning tree protocol."
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 20 }
+
+-- %CLICOLLABEL mcastToLan
+-- %CLIWIDTH 10
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcStdL2CPMulticast OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "true enables multicast."
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 21 }
+
+-- %CLICOLLABEL intVcp
+-- %CLIWIDTH 6
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcBundledIntVcpId OBJECT-TYPE
+    SYNTAX      IShelfVlanPortProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "References another std EVC VLAN Configuration profile.
+                 Used to provide tunneling for the referenced VCP."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanConfigProfileEntry 22 }
+
+-- %CLICOLLABEL cos
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileEvcBundledCosPres OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Class of Service Preservation. true means that the CoS of the
+                 tunneled frames will be copied to the outer header."
+    DEFVAL      { false }
+    ::= { iShelfVlanConfigProfileEntry 23 }
+
+-- %CLICOLLABEL QIp
+-- %CLIWIDTH 15
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileVideoQuerierIp OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "IP address of the network node responsible 
+                 for IGMP Query messages. 0.0.0.0 is valid. Use 255.25.255.255 to disable"
+    ::= { iShelfVlanConfigProfileEntry 24 }
+
+-- %CLICOLLABEL trafShpr
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileOltTrafficShaperProf OBJECT-TYPE
+    SYNTAX      IShelfOltTrafficShaperPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfVlanConfigProfileEntry 25 }
+
+-- %CLICOLLABEL portSw
+-- %CLIWIDTH 6
+-- %CLISHOWGROUP vcp
+iShelfVlanConfigProfileOltPortSwitching OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    oltNone(0),
+                    olt8021Q(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Identifies OLT local port switching. none(0), 8021Q(1)."
+    ::= { iShelfVlanConfigProfileEntry 26 }
+
+-- %CLISHOWGROUP vcp
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfVlanConfigProfileRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfVlanConfigProfileEntry 27 }
+ 
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfVlanPortProfileTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data
+-- %CLICMDABBR vpp
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfVlanPortProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataGroup 6 }
+
+iShelfVlanPortProfileEntry OBJECT-TYPE
+    SYNTAX      IShelfVlanPortProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfVlanPortProfileIndex }
+    ::= { iShelfVlanPortProfileTable 1 }
+    
+IShelfVlanPortProfileEntry ::=
+    SEQUENCE {
+        iShelfVlanPortProfileIndex
+            IShelfVlanProfileIndex,
+        iShelfVlanPortProfileIngressTag
+            IShelfVlanXgressTag,
+        iShelfVlanPortProfileEgressTag
+            IShelfVlanXgressTag,
+        iShelfVlanPortProfileNumProfiles
+            INTEGER,
+        iShelfVlanPortProfileVcp1
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla1
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp2
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla2
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp3
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla3
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp4
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla4
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp5
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla5
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp6
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla6
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp7
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla7
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp8
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla8
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp9
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla9
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp10
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla10
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp11
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla11
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp12
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla12
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp13
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla13
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp14
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla14
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp15
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla15
+            IShelfSLAIndex,
+        iShelfVlanPortProfileVcp16
+            IShelfVlanListIndex,
+        iShelfVlanPortProfileSla16
+            IShelfSLAIndex,
+        iShelfVlanPortProfileFilterProfId
+            IShelfFilterProfileIndex,
+        iShelfVlanPortProfileRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Idx
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfVlanProfileIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A simple index for this entry. Managed by the user."
+    ::= { iShelfVlanPortProfileEntry 1 }
+
+-- %CLICOLLABEL ingress
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileIngressTag OBJECT-TYPE
+    SYNTAX      IShelfVlanXgressTag
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "untagged(0), tagged(1), both(2). Acceptance criteria
+                 for VLAN frames received by the VLAN port."
+    DEFVAL      { untagged }
+    ::= { iShelfVlanPortProfileEntry 2 }
+
+-- %CLICOLLABEL egress
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileEgressTag OBJECT-TYPE
+    SYNTAX      IShelfVlanXgressTag
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "untagged(0), tagged(1). Acceptance criteria
+                 for VLAN frames transmitted by the VLAN port."
+    DEFVAL      { untagged }
+    ::= { iShelfVlanPortProfileEntry 3 }
+
+-- %CLICOLLABEL numProfs
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileNumProfiles OBJECT-TYPE
+    SYNTAX      INTEGER (1..16)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Number of VLAN Config Profiles associated with this Port profile."
+    DEFVAL      { 1 }
+    ::= { iShelfVlanPortProfileEntry 4 }
+
+-- %CLICOLLABEL vcp1
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp1 OBJECT-TYPE
+    SYNTAX      IShelfVlanProfileIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 5 }
+
+-- %CLICOLLABEL sla1
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla1 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 6 }
+
+-- %CLICOLLABEL vcp2
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp2 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 7 }
+
+-- %CLICOLLABEL sla2
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla2 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 8 }
+
+-- %CLICOLLABEL vcp3
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp3 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 9 }
+
+-- %CLICOLLABEL sla3
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla3 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 10 }
+
+-- %CLICOLLABEL vcp4
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp4 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 11 }
+
+-- %CLICOLLABEL sla4
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla4 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 12 }
+
+-- %CLICOLLABEL vcp5
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp5 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 13 }
+
+-- %CLICOLLABEL sla5
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla5 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 14 }
+
+-- %CLICOLLABEL vcp6
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp6 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 15 }
+
+-- %CLICOLLABEL sla6
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla6 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 16 }
+
+-- %CLICOLLABEL vcp7
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp7 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 17 }
+
+-- %CLICOLLABEL sla7
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla7 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 18 }
+
+-- %CLICOLLABEL vcp8
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp8 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 19 }
+
+-- %CLICOLLABEL sla8
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla8 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 20 }
+
+-- %CLICOLLABEL vcp9
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp9 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 21 }
+
+-- %CLICOLLABEL sla9
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla9 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 22 }
+
+-- %CLICOLLABEL vcp10
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp10 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 23 }
+
+-- %CLICOLLABEL sla10
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla10 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 24 }
+
+-- %CLICOLLABEL vcp11
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp11 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 25 }
+
+-- %CLICOLLABEL sla11
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla11 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 26 }
+
+-- %CLICOLLABEL vcp12
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp12 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 27 }
+
+-- %CLICOLLABEL sla12
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla12 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 28 }
+
+-- %CLICOLLABEL vcp13
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp13 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 29 }
+
+-- %CLICOLLABEL sla13
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla13 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 30 }
+
+-- %CLICOLLABEL vcp14
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp14 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 31 }
+
+-- %CLICOLLABEL sla14
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla14 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 32 }
+
+-- %CLICOLLABEL vcp15
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp15 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 33 }
+
+-- %CLICOLLABEL sla15
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla15 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 34 }
+
+-- %CLICOLLABEL vcp16
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileVcp16 OBJECT-TYPE
+    SYNTAX      IShelfVlanListIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "VLAN Config Profile index."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 35 }
+
+-- %CLICOLLABEL sla16
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileSla16 OBJECT-TYPE
+    SYNTAX      IShelfSLAIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "SLA Index. Only necessary and valid if the accociated 
+                 VCP is an EVC type."
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 36 }
+
+-- %CLICOLLABEL filterId
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP vpp
+iShelfVlanPortProfileFilterProfId OBJECT-TYPE
+    SYNTAX      IShelfFilterProfileIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "TDB"
+    DEFVAL      { 0 }
+    ::= { iShelfVlanPortProfileEntry 37 }
+
+-- %CLISHOWGROUP vpp
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfVlanPortProfileRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfVlanPortProfileEntry 38 }
+ 
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetVlanServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR vlanservice
+iShelfOntEthernetVlanServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetVlanServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataOnt 1 }
+
+iShelfOntEthernetVlanServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetVlanServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntEthernetVlanServiceLogicalId,
+                  iShelfOntEthernetVlanServiceSLCIndex,
+                  iShelfOntEthernetVlanServicePort }
+    ::= { iShelfOntEthernetVlanServiceTable 1 }
+
+IShelfOntEthernetVlanServiceEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetVlanServiceLogicalId
+            IShelfOntLogicalId,
+        iShelfOntEthernetVlanServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetVlanServicePort
+            INTEGER,
+        iShelfOntEthernetVlanServiceList
+            IShelfVlanListPointer,
+        iShelfOntEthernetVlanServiceSubscriberIspVlanTag
+            IShelfVlanTag,
+        iShelfOntEthernetVlanServiceAdminState
+            IShelfAdminState,
+        iShelfOntEthernetVlanServiceRowStatus
+            RowStatus
+    }
+
+iShelfOntEthernetVlanServiceLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetVlanServiceEntry 1 }
+
+iShelfOntEthernetVlanServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetVlanServiceEntry 2 }
+
+-- %CLICOLLABEL Port
+iShelfOntEthernetVlanServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetVlanServiceEntry 3 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOntEthernetVlanServiceList OBJECT-TYPE
+    SYNTAX      IShelfVlanListPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Indicates the set of layer-2 VLANs supported on the
+         associated ethernet port.  NOTE:  The current release only supports
+         a single VLAN profile per ONT ethernet port.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfOntEthernetVlanServiceEntry 4 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOntEthernetVlanServiceSubscriberIspVlanTag OBJECT-TYPE
+    SYNTAX      IShelfVlanTag
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The subscriber scope numeric VLAN tag used to distinguish
+         ISP (Layer-3/PPPoE) traffic from Layer-2 traffic on the port.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfOntEthernetVlanServiceEntry 5 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOntEthernetVlanServiceAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { unlock }
+    ::= { iShelfOntEthernetVlanServiceEntry 6 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntEthernetVlanServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetVlanServiceEntry 7 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetOption82Table - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR option82
+iShelfOntEthernetOption82Table OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetOption82Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The ONT Ethernet Option82 table is used to
+         contain the Option82 Agent Remote id sub-option strings
+         associated with a given ONT Ethernet port."
+    ::= { iShelfDataOnt 2 }
+
+iShelfOntEthernetOption82Entry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetOption82Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each row identifies an Option82 Agent Remote id
+         string."
+    INDEX       { iShelfOntEthernetOption82LocationType,
+                  iShelfOntEthernetOption82Location,
+                  iShelfOntEthernetOption82SLCIndex,
+                  iShelfOntEthernetOption82Port,
+                  iShelfOntEthernetOption82ServiceType }
+    ::= { iShelfOntEthernetOption82Table 1 }
+
+IShelfOntEthernetOption82Entry ::=
+    SEQUENCE {
+        iShelfOntEthernetOption82LocationType
+            IShelfLocationType,
+        iShelfOntEthernetOption82Location
+            IShelfLocation,
+        iShelfOntEthernetOption82SLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetOption82Port
+            INTEGER,
+        iShelfOntEthernetOption82ServiceType
+            IShelfOntEthernetServiceType,
+        iShelfOntEthernetOption82AgentRemoteId
+            IShelfLabel,
+        iShelfOntEthernetOption82RowStatus
+            RowStatus
+    }
+
+iShelfOntEthernetOption82LocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the location type of the provisioning."
+    ::= { iShelfOntEthernetOption82Entry 1 }
+
+iShelfOntEthernetOption82Location OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the logical ONT for the provisioning
+                 if the location type is logical."
+    ::= { iShelfOntEthernetOption82Entry 2 }
+
+iShelfOntEthernetOption82SLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the applicable subscriber line card
+         index."
+    ::= { iShelfOntEthernetOption82Entry 3 }
+
+-- %CLIWIDTH 5
+-- %CLICOLLABEL Port
+iShelfOntEthernetOption82Port OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the applicable port on the
+         subscriber line card"
+    ::= { iShelfOntEthernetOption82Entry 4 }
+
+iShelfOntEthernetOption82ServiceType OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetServiceType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indexes the string table by service type for
+         each port"
+    ::= { iShelfOntEthernetOption82Entry 5 }
+
+iShelfOntEthernetOption82AgentRemoteId OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the Option82 Agent Remote Id
+         sub option string."
+    ::= { iShelfOntEthernetOption82Entry 6 }
+
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %ROWSTATUSTYPE RFC
+iShelfOntEthernetOption82RowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetOption82Entry 7 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetDynamicHostServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR dynamichost
+iShelfOntEthernetDynamicHostServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetDynamicHostServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataOnt 3 }
+
+iShelfOntEthernetDynamicHostServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetDynamicHostServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntEthernetDynamicHostServiceLocationType,
+                  iShelfOntEthernetDynamicHostServiceLocation,
+                  iShelfOntEthernetDynamicHostServiceSLCIndex,
+                  iShelfOntEthernetDynamicHostServicePort,
+                  iShelfOntEthernetDynamicHostServiceType }
+    ::= { iShelfOntEthernetDynamicHostServiceTable 1 }
+
+IShelfOntEthernetDynamicHostServiceEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetDynamicHostServiceLocationType
+            IShelfLocationType,
+        iShelfOntEthernetDynamicHostServiceLocation
+            IShelfLocation,
+        iShelfOntEthernetDynamicHostServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetDynamicHostServicePort
+            INTEGER,
+        iShelfOntEthernetDynamicHostServiceType
+            IShelfOntEthernetServiceType,
+        iShelfOntEthernetDynamicHostServiceDhcpProfile
+            IShelfDhcpProfilePointer,
+        iShelfOntEthernetDynamicHostServiceVciRelayProfile
+            IShelfVciRelayProfilePointer,
+        iShelfOntEthernetDynamicHostServiceMaxLeases
+            INTEGER,
+        iShelfOntEthernetDynamicHostServiceRowStatus
+            RowStatus
+    }
+
+iShelfOntEthernetDynamicHostServiceLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 1 }
+
+iShelfOntEthernetDynamicHostServiceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 2 }
+
+iShelfOntEthernetDynamicHostServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 3 }
+
+-- %CLIWIDTH 5
+-- %CLICOLLABEL Port
+iShelfOntEthernetDynamicHostServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 4 }
+
+iShelfOntEthernetDynamicHostServiceType OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetServiceType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 5 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOntEthernetDynamicHostServiceDhcpProfile OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object can be populated with the default DHCP Profile for
+         the case where the service type is data.  In this case that no
+         VCI/Option60 String matching is possible for the request this
+         entry if present will be used to provide the DHCP request to the
+         associated server(s).
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 6 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOntEthernetDynamicHostServiceVciRelayProfile OBJECT-TYPE
+    SYNTAX      IShelfVciRelayProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 7 }
+
+-- %CLIOPTION
+-- %CLICOLLABEL MaxLease
+-- %SETINACTIVE
+iShelfOntEthernetDynamicHostServiceMaxLeases OBJECT-TYPE
+    SYNTAX      INTEGER (1..128)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 1 }
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 8 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntEthernetDynamicHostServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetDynamicHostServiceEntry 9 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetMacRelayServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR macrelay
+iShelfOntEthernetMacRelayServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetMacRelayServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The MAC Relay table provides the ability to configure a DHCP relay
+         agent for a specified MAC address."
+    ::= { iShelfDataOnt 4 }
+
+iShelfOntEthernetMacRelayServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetMacRelayServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row configures a separate relay agent for a MAC address."
+    INDEX       { iShelfOntEthernetMacRelayServiceLogicalId,
+                  iShelfOntEthernetMacRelayServiceSLCIndex,
+                  iShelfOntEthernetMacRelayServicePort,
+                  iShelfOntEthernetMacRelayServiceIndex }
+    ::= { iShelfOntEthernetMacRelayServiceTable 1 }
+
+IShelfOntEthernetMacRelayServiceEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetMacRelayServiceLogicalId
+            IShelfOntLogicalId,
+        iShelfOntEthernetMacRelayServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetMacRelayServicePort
+            INTEGER,
+        iShelfOntEthernetMacRelayServiceIndex
+            INTEGER,
+        iShelfOntEthernetMacRelayServiceAddress
+            MacAddress,
+        iShelfOntEthernetMacRelayServiceType
+            IShelfOntEthernetServiceType,
+        iShelfOntEthernetMacRelayServiceDhcpProfile
+            IShelfDhcpProfileIndex,
+        iShelfOntEthernetMacRelayServiceRowStatus
+            RowStatus
+    }
+
+iShelfOntEthernetMacRelayServiceLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT."
+    ::= { iShelfOntEthernetMacRelayServiceEntry 1 }
+
+iShelfOntEthernetMacRelayServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT."
+    ::= { iShelfOntEthernetMacRelayServiceEntry 2 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 5
+iShelfOntEthernetMacRelayServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT."
+    ::= { iShelfOntEthernetMacRelayServiceEntry 3 }
+
+-- %CLICOLLABEL Index
+-- %CLIWIDTH 5
+iShelfOntEthernetMacRelayServiceIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Each Ethernet port supports up to 8 MAC relays."
+    ::= { iShelfOntEthernetMacRelayServiceEntry 4 }
+
+-- %CLICOLLABEL Mac
+iShelfOntEthernetMacRelayServiceAddress OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The DHCP relay agent will be configured for this specific MAC address."
+    ::= { iShelfOntEthernetMacRelayServiceEntry 5 }
+
+-- %CLICOLLABEL SvcType
+iShelfOntEthernetMacRelayServiceType OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetServiceType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The type of service defined for this relay.
+         Note that only SDV service type is supported initially."
+    ::= { iShelfOntEthernetMacRelayServiceEntry 6 }
+
+-- %CLICOLLABEL DHCPProf
+iShelfOntEthernetMacRelayServiceDhcpProfile OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfileIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The DHCP profile to utilize for this relay."
+    ::= { iShelfOntEthernetMacRelayServiceEntry 7 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntEthernetMacRelayServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetMacRelayServiceEntry 8 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetStaticHostServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR statichost
+-- %CLISHOWGROUP statichost
+iShelfOntEthernetStaticHostServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetStaticHostServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "This table defines static host IP addresses for CPE equipment."
+    ::= { iShelfDataOnt 5 }
+
+iShelfOntEthernetStaticHostServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetStaticHostServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each row is a separate static host IP address.
+         Note that static host IP addresses must be unique within the system."
+    INDEX       { iShelfOntEthernetStaticHostServiceLocationType,
+                  iShelfOntEthernetStaticHostServiceLocation,
+                  iShelfOntEthernetStaticHostServiceSLCIndex,
+                  iShelfOntEthernetStaticHostServicePort,
+                  iShelfOntEthernetStaticHostServiceIndex }
+    ::= { iShelfOntEthernetStaticHostServiceTable 1 }
+
+IShelfOntEthernetStaticHostServiceEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetStaticHostServiceLocationType
+            IShelfLocationType,
+        iShelfOntEthernetStaticHostServiceLocation
+            IShelfLocation,
+        iShelfOntEthernetStaticHostServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetStaticHostServicePort
+            INTEGER,
+        iShelfOntEthernetStaticHostServiceIndex
+            INTEGER,
+        iShelfOntEthernetStaticHostServiceIpAddress
+            IpAddress,
+        iShelfOntEthernetStaticHostServiceIpMask
+            IpAddress,
+        iShelfOntEthernetStaticHostServiceType
+            IShelfOntEthernetServiceType,
+        iShelfOntEthernetStaticHostServiceSpp
+            IShelfSppIndex,
+        iShelfOntEthernetStaticHostServiceRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP statichost.1
+iShelfOntEthernetStaticHostServiceLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type for this service entry for the ONT."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 1 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLISHOWGROUP statichost.2
+iShelfOntEthernetStaticHostServiceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT if the location type is logical."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 2 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLISHOWGROUP statichost.2
+iShelfOntEthernetStaticHostServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 3 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLISHOWGROUP statichost.2
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 5
+iShelfOntEthernetStaticHostServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 4 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLISHOWGROUP statichost.2
+-- %CLICOLLABEL Index
+-- %CLIWIDTH 5
+iShelfOntEthernetStaticHostServiceIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..16)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Each Ethernet port can have up to 16 static IP addresses assigned.
+         Static IP addresses can be provisioned for both data and SDV service.
+         Note that data and SDV service each support 8 static host addresses."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 5 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLICOLLABEL IpAddress
+iShelfOntEthernetStaticHostServiceIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The static host IP address that will be utilized by the CPE."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 6 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLICOLLABEL IpMask
+iShelfOntEthernetStaticHostServiceIpMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The subnet mask for the subscriber network."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 7 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLICOLLABEL SvcType
+iShelfOntEthernetStaticHostServiceType OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetServiceType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The type of service utilizing this static host address.
+         Both data and SDV service types are supported."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 8 }
+
+-- %CLISHOWGROUP statichost.1
+-- %CLICOLLABEL SPP
+iShelfOntEthernetStaticHostServiceSpp OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the service provider profile
+         associated with the uplink."
+    ::= { iShelfOntEthernetStaticHostServiceEntry 9 }
+
+-- %CLISHOWGROUP statichost.2
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntEthernetStaticHostServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetStaticHostServiceEntry 10 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetStaticSubnetServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR staticsubnet
+-- %CLISHOWGROUP staticsubnet
+iShelfOntEthernetStaticSubnetServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetStaticSubnetServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "This table defines static subnets for subscriber networks."
+    ::= { iShelfDataOnt 6 }
+
+iShelfOntEthernetStaticSubnetServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetStaticSubnetServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each row defines a separate subscriber subnet.
+         Note that subnets must be unique within the system and
+         also must not overlap."
+    INDEX       { iShelfOntEthernetStaticSubnetServiceLocationType,
+                  iShelfOntEthernetStaticSubnetServiceLocation,
+                  iShelfOntEthernetStaticSubnetServiceSLCIndex,
+                  iShelfOntEthernetStaticSubnetServicePort,
+                  iShelfOntEthernetStaticSubnetServiceIndex }
+    ::= { iShelfOntEthernetStaticSubnetServiceTable 1 }
+
+IShelfOntEthernetStaticSubnetServiceEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetStaticSubnetServiceLocationType
+            IShelfLocationType,
+        iShelfOntEthernetStaticSubnetServiceLocation
+            IShelfLocation,
+        iShelfOntEthernetStaticSubnetServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetStaticSubnetServicePort
+            INTEGER,
+        iShelfOntEthernetStaticSubnetServiceIndex
+            INTEGER,
+        iShelfOntEthernetStaticSubnetServiceSubnetAddress
+            IpAddress,
+        iShelfOntEthernetStaticSubnetServiceSubnetMask
+            IpAddress,
+        iShelfOntEthernetStaticSubnetServiceNexthop
+            IpAddress,
+        iShelfOntEthernetStaticSubnetServiceUpstreamNexthop
+            IpAddress,
+        iShelfOntEthernetStaticSubnetServiceType
+            IShelfOntEthernetServiceType,
+        iShelfOntEthernetStaticSubnetServiceSpp
+            IShelfSppIndex,
+        iShelfOntEthernetStaticSubnetServiceRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP staticsubnet.1
+iShelfOntEthernetStaticSubnetServiceLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type of the ONT."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 1 }
+
+-- %CLISHOWGROUP staticsubnet.1
+-- %CLISHOWGROUP staticsubnet.2
+iShelfOntEthernetStaticSubnetServiceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT if the location type is logical."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 2 }
+
+-- %CLISHOWGROUP staticsubnet.1
+-- %CLISHOWGROUP staticsubnet.2
+iShelfOntEthernetStaticSubnetServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 3 }
+
+-- %CLISHOWGROUP staticsubnet.1
+-- %CLISHOWGROUP staticsubnet.2
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+iShelfOntEthernetStaticSubnetServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 4 }
+
+-- %CLISHOWGROUP staticsubnet.1
+-- %CLISHOWGROUP staticsubnet.2
+-- %CLICOLLABEL Index
+-- %CLIWIDTH 5
+iShelfOntEthernetStaticSubnetServiceIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Each Ethernet port supports up to 8 subnets."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 5 }
+
+-- %CLISHOWGROUP staticsubnet.1
+-- %CLICOLLABEL Address
+iShelfOntEthernetStaticSubnetServiceSubnetAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The definition of the subscriber subnet.
+         Note that the /32 address defines the default gateway (i.e. ONT)
+         for the subnet. The subnet mask defines the subnet address space."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 6 }
+
+-- %CLISHOWGROUP staticsubnet.1
+-- %CLICOLLABEL Mask
+iShelfOntEthernetStaticSubnetServiceSubnetMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "Defines the class of the subscriber subnet."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 7 }
+
+-- %CLISHOWGROUP staticsubnet.1
+-- %CLICOLLABEL DsNextHop
+-- %CLIOPTION
+iShelfOntEthernetStaticSubnetServiceNexthop OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The IP address of the next hop in the downstream direction (toward
+         the subscriber). For example, the address of the router on the
+         subscriber network."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 8 }
+
+-- %CLISHOWGROUP staticsubnet.2
+-- %CLICOLLABEL UsNextHop
+-- %CLIOPTION
+iShelfOntEthernetStaticSubnetServiceUpstreamNexthop OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The IP address of the next hop in the upstream direction (toward
+         the provider network). For example, the address of the router on
+         the service provider network."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 9 }
+
+-- %CLISHOWGROUP staticsubnet.2
+-- %CLICOLLABEL SvcType
+iShelfOntEthernetStaticSubnetServiceType OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetServiceType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The type of service utilizing this subnet.
+         Note that only the data type of service is supported initially."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 10 }
+
+-- %CLISHOWGROUP staticsubnet.2
+-- %CLICOLLABEL SPP
+iShelfOntEthernetStaticSubnetServiceSpp OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the service provider profile
+         associated with the uplink."
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 11 }
+
+-- %CLISHOWGROUP staticsubnet.2
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntEthernetStaticSubnetServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetStaticSubnetServiceEntry 12 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetPPPoEServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltOntPPPoEServiceTable 10000 ROW
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR pppoe
+iShelfOntEthernetPPPoEServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetPPPoEServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfDataOnt 7 }
+
+iShelfOntEthernetPPPoEServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetPPPoEServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntEthernetPPPoEServiceLocationType,
+                  iShelfOntEthernetPPPoEServiceLocation,
+                  iShelfOntEthernetPPPoEServiceSLCIndex,
+                  iShelfOntEthernetPPPoEServicePort }
+    ::= { iShelfOntEthernetPPPoEServiceTable 1 }
+
+IShelfOntEthernetPPPoEServiceEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetPPPoEServiceLocationType
+            IShelfLocationType,
+        iShelfOntEthernetPPPoEServiceLocation
+            IShelfLocation,
+        iShelfOntEthernetPPPoEServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetPPPoEServicePort
+            INTEGER,
+        iShelfOntEthernetPPPoEServiceAdminState
+            IShelfAdminState,
+        iShelfOntEthernetPPPoEServiceOperState
+            IShelfOperState,
+        iShelfOntEthernetPPPoEServiceMaxDialogs
+            INTEGER,
+        iShelfOntEthernetPPPoEServiceInactivityTimeout
+            INTEGER,
+        iShelfOntEthernetPPPoEServiceSpp
+            IShelfSppIndex,
+        iShelfOntEthernetPPPoEServiceRowStatus
+            RowStatus
+    }
+
+iShelfOntEthernetPPPoEServiceLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetPPPoEServiceEntry 1 }
+
+iShelfOntEthernetPPPoEServiceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetPPPoEServiceEntry 2 }
+
+iShelfOntEthernetPPPoEServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetPPPoEServiceEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+iShelfOntEthernetPPPoEServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetPPPoEServiceEntry 4 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfOntEthernetPPPoEServiceAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { unlock }
+    ::= { iShelfOntEthernetPPPoEServiceEntry 5 }
+
+-- %DEEPOBJ osiOltOntPPPoEServiceOperState
+iShelfOntEthernetPPPoEServiceOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetPPPoEServiceEntry 6 }
+
+-- %CLICOLLABEL MaxDialogs
+-- %CLIWIDTH 10
+-- %SETINACTIVE
+iShelfOntEthernetPPPoEServiceMaxDialogs OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntEthernetPPPoEServiceEntry 7 }
+
+-- %CLICOLLABEL Timeout
+-- %CLIWIDTH 7
+-- %SETINACTIVE
+iShelfOntEthernetPPPoEServiceInactivityTimeout OBJECT-TYPE
+    SYNTAX      INTEGER (1..3600)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Timeout in seconds
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntEthernetPPPoEServiceEntry 8 }
+
+-- %SETINACTIVE
+iShelfOntEthernetPPPoEServiceSpp OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the service provider profile
+         associated with the uplink supporting the PPPoE service.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntEthernetPPPoEServiceEntry 9 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntEthernetPPPoEServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetPPPoEServiceEntry 10 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfGetDhcpLeasesTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %ROWSTRUCT USER
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR dhcpget
+-- %CLISHOWGROUP dhcpget
+iShelfGetDhcpLeasesTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfGetDhcpLeasesEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table is used to initiate a query of the current DHCP IP address
+         leases for a specified ONT Ethernet port.
+         
+         Creation of a row in this table initiates the query. If a subsequent
+         query for the same index is desired, that row must first be destroyed
+         and then recreated. When a row in this table is destroyed, associated
+         rows in the Dhcp Lease Table (contains the results of the query) will
+         also be destroyed. Hence a row must not be destroyed unless a 
+         subsequent query for the same index is desired.
+
+         This table supports 10 row instances. It is possible to initiate queries
+         for 10 ONT Ethernet ports at one time. The agent will delete the oldest
+         row from the table if the max. # of entries is reached, and a new entry 
+         is requested."
+    ::= { iShelfDataOnt 8 }
+
+iShelfGetDhcpLeasesEntry OBJECT-TYPE
+    SYNTAX      IShelfGetDhcpLeasesEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Creation of a row gets the DHCP lease information for the specified port."
+    INDEX       { iShelfGetDhcpLeasesLocationType,
+                  iShelfGetDhcpLeasesLocation,
+                  iShelfGetDhcpLeasesSLCIndex,
+                  iShelfGetDhcpLeasesPort }
+    ::= { iShelfGetDhcpLeasesTable 1 }
+
+IShelfGetDhcpLeasesEntry ::=
+    SEQUENCE {
+        iShelfGetDhcpLeasesLocationType
+            IShelfLocationType,
+        iShelfGetDhcpLeasesLocation
+            IShelfLocation,
+        iShelfGetDhcpLeasesSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfGetDhcpLeasesPort
+            INTEGER,
+        iShelfGetDhcpLeasesStatus
+            INTEGER,
+        iShelfGetDhcpLeasesRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP dhcpget
+iShelfGetDhcpLeasesLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type of the DHCP lease that is to be queried."
+    ::= { iShelfGetDhcpLeasesEntry 1 }
+
+-- %CLISHOWGROUP dhcpget
+iShelfGetDhcpLeasesLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT that is to be queried
+                 if the location type is logical."
+    ::= { iShelfGetDhcpLeasesEntry 2 }
+
+-- %CLISHOWGROUP dhcpget
+iShelfGetDhcpLeasesSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT that is to be queried."
+    ::= { iShelfGetDhcpLeasesEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP dhcpget
+iShelfGetDhcpLeasesPort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT that is to be queried."
+    ::= { iShelfGetDhcpLeasesEntry 4 }
+
+-- %CLICOLLABEL Status
+-- %CLISHOWGROUP dhcpget
+iShelfGetDhcpLeasesStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    inProgress(1),
+                    complete(2),
+                    timeout(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The status of this query operation."
+    DEFVAL      { unknown }
+    ::= { iShelfGetDhcpLeasesEntry 5 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP dhcpget
+iShelfGetDhcpLeasesRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfGetDhcpLeasesEntry 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfDhcpLeaseTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR dhcpinfo
+-- %CLISHOWGROUP dhcpinfo
+iShelfDhcpLeaseTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfDhcpLeaseEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table holds all the current DHCP lease information for a given
+         ONT Ethernet port for which a lease information retrieval request
+         has been added in the iShelfGetDhcpLeasesTable. The information in
+         this table is as current as the request entry in the 
+         iShelfGetDhcpLeasesTable. Rows in this table are deleted when the
+         corresponding row in the iShelfGetDhcpLeasesTable is deleted."
+    ::= { iShelfDataOnt 9 }
+
+iShelfDhcpLeaseEntry OBJECT-TYPE
+    SYNTAX      IShelfDhcpLeaseEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row is a separate DHCP IP address."
+    INDEX       { iShelfDhcpLeaseLocationType,
+                  iShelfDhcpLeaseLocation,
+                  iShelfDhcpLeaseSLCIndex,
+                  iShelfDhcpLeasePort,
+                  iShelfDhcpLeaseIpAddress }
+    ::= { iShelfDhcpLeaseTable 1 }
+
+IShelfDhcpLeaseEntry ::=
+    SEQUENCE {
+        iShelfDhcpLeaseLocationType
+            IShelfLocationType,
+        iShelfDhcpLeaseLocation
+            IShelfLocation,
+        iShelfDhcpLeaseSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfDhcpLeasePort
+            INTEGER,
+        iShelfDhcpLeaseIpAddress
+            IpAddress,
+        iShelfDhcpLeaseMacAddress
+            MacAddress,
+        iShelfDhcpLeaseOriginalLeaseTime
+            Integer32,
+        iShelfDhcpLeaseRemainingLeaseTime
+            Integer32,
+        iShelfDhcpLeaseInfoGetTime
+            IShelfDateTime,
+        iShelfDhcpLeaseRelayType
+            INTEGER,
+        iShelfDhcpLeaseServiceType
+            IShelfOntEthernetServiceType,
+        iShelfDhcpLeaseOption82
+            INTEGER,
+        iShelfDhcpLeaseDhcpServerProfile
+            IShelfDhcpProfileIndex,
+        iShelfDhcpLeasePortLocationType
+            IShelfLocationType,
+        iShelfDhcpLeasePortLocation
+            IShelfLocation,
+        iShelfDhcpLeaseSppId
+            IShelfSppIndex,
+        iShelfDhcpLeasePortVlanId
+            INTEGER,
+        iShelfDhcpLeaseClear
+            TruthValue
+    }
+
+-- %CLISHOWGROUP dhcpinfo.1
+iShelfDhcpLeaseLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type where this DHCP address resides."
+    ::= { iShelfDhcpLeaseEntry 1 }
+
+-- %CLISHOWGROUP dhcpinfo.1
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT where this DHCP address resides
+                 if the location type is logical."
+    ::= { iShelfDhcpLeaseEntry 2 }
+
+-- %CLISHOWGROUP dhcpinfo.1
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT where this DHCP address resides."
+    ::= { iShelfDhcpLeaseEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP dhcpinfo.1
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeasePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT where this DHCP address resides."
+    ::= { iShelfDhcpLeaseEntry 4 }
+
+-- %CLICOLLABEL IpAddress
+-- %CLISHOWGROUP dhcpinfo.1
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The DHCP IP address that has an active lease on the ONT Ethernet port."
+    ::= { iShelfDhcpLeaseEntry 5 }
+
+-- %CLICOLLABEL MacAddress
+-- %CLISHOWGROUP dhcpinfo.1
+iShelfDhcpLeaseMacAddress OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The MAC address of the CPE that has been assigned this DHCP IP address."
+    ::= { iShelfDhcpLeaseEntry 6 }
+
+-- %CLICOLLABEL Granted
+-- %CLISHOWGROUP dhcpinfo.1
+iShelfDhcpLeaseOriginalLeaseTime OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The maximum time this lease can be held."
+    ::= { iShelfDhcpLeaseEntry 7 }
+
+-- %CLICOLLABEL Remains
+-- %CLISHOWGROUP dhcpinfo.1
+iShelfDhcpLeaseRemainingLeaseTime OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The time remaining before this lease will expire."
+    ::= { iShelfDhcpLeaseEntry 8 }
+
+-- %CLICOLLABEL GetTime
+-- %CLIWIDTH 14
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseInfoGetTime OBJECT-TYPE
+    SYNTAX      IShelfDateTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The date and time that this information was retrieved. So the
+         user can determine if this information is stale and should be
+         retrieved again."
+    ::= { iShelfDhcpLeaseEntry 9 }
+
+-- %CLICOLLABEL Type
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseRelayType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    data(1),    -- data service relay
+                    vci(2),     -- vendor class identifier relay (option 60)
+                    mac(3)      -- mac address relay
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The type of DHCP relay for this DHCP IP address."
+    ::= { iShelfDhcpLeaseEntry 10 }
+
+-- %CLICOLLABEL Serv
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseServiceType OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetServiceType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The type of service this DHCP IP address is used for."
+    ::= { iShelfDhcpLeaseEntry 11 }
+
+-- %CLICOLLABEL Opt82
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseOption82 OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    off(0),
+                    on(1),
+                    rfonly(2),
+                    onandrf(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "???"
+    ::= { iShelfDhcpLeaseEntry 12 }
+
+-- %CLICOLLABEL DhcpServProf
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseDhcpServerProfile OBJECT-TYPE
+    SYNTAX      IShelfDhcpProfileIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "???"
+    ::= { iShelfDhcpLeaseEntry 13 }
+
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeasePortLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type for this DHCP Lease Port address."
+    ::= { iShelfDhcpLeaseEntry 14 }
+
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeasePortLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT where this DHCP Lease Port address
+                 resides if the location type is logical, or the Node/Shelf/Slot
+                 of the DHCP Lease Port if the location type is physical."
+    ::= { iShelfDhcpLeaseEntry 15 }
+
+-- %CLICOLLABEL SppId
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseSppId OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "???"
+    ::= { iShelfDhcpLeaseEntry 16 }
+
+-- %CLICOLLABEL VlanId
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeasePortVlanId OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The VLAN ID of the ONT where this DHCP Lease Port address
+                 resides."
+    ::= { iShelfDhcpLeaseEntry 17 }
+
+-- %CLICOLLABEL Clear
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP dhcpinfo.2
+iShelfDhcpLeaseClear OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Setting this to true will force the lease for this DHCP IP
+         address to be cleared and deleted from the system."
+    ::= { iShelfDhcpLeaseEntry 18 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfL3DataServiceTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltOntLayer3DataServiceTable 10000 ROW
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR l3service
+-- %CLISHOWGROUP l3service
+iShelfL3DataServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfL3DataServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table is used for enabling/disabling all Layer 3 Data Services
+         on an ONT Ethernet port. Layer 3 data services can be provisioned via
+         the Dynamic Host table, Static Host table, and Static Subnet table."
+    ::= { iShelfDataOnt 10 }
+
+iShelfL3DataServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfL3DataServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each row defines if the Layer 3 data service is enabled/disabled
+         for the specified Ethernet port."
+    INDEX       { iShelfL3DataServiceLocationType,
+                  iShelfL3DataServiceLocation,
+                  iShelfL3DataServiceSLCIndex,
+                  iShelfL3DataServicePort }
+    ::= { iShelfL3DataServiceTable 1 }
+
+IShelfL3DataServiceEntry ::=
+    SEQUENCE {
+        iShelfL3DataServiceLocationType
+            IShelfLocationType,
+        iShelfL3DataServiceLocation
+            IShelfLocation,
+        iShelfL3DataServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfL3DataServicePort
+            INTEGER,
+        iShelfL3DataServiceAdminState
+            IShelfAdminState,
+        iShelfL3DataServiceOperState
+            IShelfOperState,
+        iShelfL3DataServiceRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP l3service
+iShelfL3DataServiceLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type of the L3 Data Service Entry."
+    ::= { iShelfL3DataServiceEntry 1 }
+
+-- %CLISHOWGROUP l3service
+iShelfL3DataServiceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT if the location type is logical."
+    ::= { iShelfL3DataServiceEntry 2 }
+
+-- %CLISHOWGROUP l3service
+iShelfL3DataServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT."
+    ::= { iShelfL3DataServiceEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP l3service
+iShelfL3DataServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT."
+    ::= { iShelfL3DataServiceEntry 4 }
+
+-- %CLICOLLABEL AdminSt
+-- %CLISHOWGROUP l3service
+-- %CLIOPTION
+iShelfL3DataServiceAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The administrative state of the Layer 3 data service."
+    DEFVAL      { unlock }
+    ::= { iShelfL3DataServiceEntry 5 }
+
+-- %DEEPOBJ osiOltOntLayer3DataServiceOperState
+-- %CLICOLLABEL OperSt
+-- %CLISHOWGROUP l3service
+iShelfL3DataServiceOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The operational state of the Layer 3 data service."
+    ::= { iShelfL3DataServiceEntry 6 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP l3service
+iShelfL3DataServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfL3DataServiceEntry 7 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfGetArpBindingsTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %ROWSTRUCT USER
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR arpbindingget
+-- %CLISHOWGROUP arpbindingget
+iShelfGetArpBindingsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfGetArpBindingsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table is used to initiate a query of the current ARP Binding IP address
+         arp bindings for a specified ONT Ethernet port.
+         
+         Creation of a row in this table initiates the query. If a subsequent
+         query for the same index is desired, that row must first be destroyed
+         and then recreated. When a row in this table is destroyed, associated
+         rows in the Arp Binding Table (contains the results of the query) will
+         also be destroyed. Hence a row must not be destroyed unless a 
+         subsequent query for the same index is desired.
+
+         This table supports 10 row instances. It is possible to initiate queries
+         for 10 ONT Ethernet ports at one time. The agent will delete the oldest
+         row from the table if the max. # of entries is reached, and a new entry 
+         is requested."
+    ::= { iShelfDataOnt 11 }
+
+iShelfGetArpBindingsEntry OBJECT-TYPE
+    SYNTAX      IShelfGetArpBindingsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Creation of a row gets the ARP Binding information for the specified port."
+    INDEX       { iShelfGetArpBindingsLocationType,
+                  iShelfGetArpBindingsLocation,
+                  iShelfGetArpBindingsSLCIndex,
+                  iShelfGetArpBindingsPort }
+    ::= { iShelfGetArpBindingsTable 1 }
+
+IShelfGetArpBindingsEntry ::=
+    SEQUENCE {
+        iShelfGetArpBindingsLocationType
+            IShelfLocationType,
+        iShelfGetArpBindingsLocation
+            IShelfLocation,
+        iShelfGetArpBindingsSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfGetArpBindingsPort
+            INTEGER,
+        iShelfGetArpBindingsStatus
+            INTEGER,
+        iShelfGetArpBindingsRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP arpbindingget
+iShelfGetArpBindingsLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type of the ARP Binding that is to be queried."
+    ::= { iShelfGetArpBindingsEntry 1 }
+
+-- %CLISHOWGROUP arpbindingget
+iShelfGetArpBindingsLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT that is to be queried
+                 if the location type is logical."
+    ::= { iShelfGetArpBindingsEntry 2 }
+
+-- %CLISHOWGROUP arpbindingget
+iShelfGetArpBindingsSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT that is to be queried."
+    ::= { iShelfGetArpBindingsEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP arpbindingget
+iShelfGetArpBindingsPort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT that is to be queried."
+    ::= { iShelfGetArpBindingsEntry 4 }
+
+-- %CLICOLLABEL Status
+-- %CLISHOWGROUP arpbindingget
+iShelfGetArpBindingsStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    inProgress(1),
+                    complete(2),
+                    timeout(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The status of this query operation."
+    DEFVAL      { unknown }
+    ::= { iShelfGetArpBindingsEntry 5 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP arpbindingget
+iShelfGetArpBindingsRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfGetArpBindingsEntry 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfArpBindingTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX data:ont
+-- %CLICMDABBR arpbindinginfo
+-- %CLISHOWGROUP arpbindinginfo
+iShelfArpBindingTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfArpBindingEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table holds all the current ARP Binding information for a given
+         ONT Ethernet port for which a arp binding information retrieval request
+         has been added in the iShelfGetArpBindingsTable. The information in
+         this table is as current as the request entry in the 
+         iShelfGetArpBindingsTable. Rows in this table are deleted when the
+         corresponding row in the iShelfGetArpBindingsTable is deleted."
+    ::= { iShelfDataOnt 12 }
+
+iShelfArpBindingEntry OBJECT-TYPE
+    SYNTAX      IShelfArpBindingEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row is a separate Arp Binding IP address."
+    INDEX       { iShelfArpBindingLocationType,
+                  iShelfArpBindingLocation,
+                  iShelfArpBindingSLCIndex,
+                  iShelfArpBindingPort,
+                  iShelfArpBindingIpAddress }
+    ::= { iShelfArpBindingTable 1 }
+
+IShelfArpBindingEntry ::=
+    SEQUENCE {
+        iShelfArpBindingLocationType
+            IShelfLocationType,
+        iShelfArpBindingLocation
+            IShelfLocation,
+        iShelfArpBindingSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfArpBindingPort
+            INTEGER,
+        iShelfArpBindingIpAddress
+            IpAddress,
+        iShelfArpBindingMacAddress
+            MacAddress,
+        iShelfArpBindingRelayType
+            INTEGER,
+        iShelfArpBindingServiceType
+            IShelfOntEthernetServiceType,
+        iShelfArpBindingTTL
+            INTEGER,
+        iShelfArpBindingEntryNumber
+            INTEGER,
+        iShelfArpBindingPortVlanId
+            INTEGER,
+        iShelfArpBindingClear
+            TruthValue
+    }
+
+-- %CLISHOWGROUP arpbindinginfo.1
+iShelfArpBindingLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type where this ARP address resides."
+    ::= { iShelfArpBindingEntry 1 }
+
+-- %CLISHOWGROUP arpbindinginfo.1
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT where this ARP address resides
+                 if the location type is logical."
+    ::= { iShelfArpBindingEntry 2 }
+
+-- %CLISHOWGROUP arpbindinginfo.1
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The subscriber line card on the ONT where this ARP address resides."
+    ::= { iShelfArpBindingEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP arpbindinginfo.1
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingPort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Ethernet port on the ONT where this ARP address resides."
+    ::= { iShelfArpBindingEntry 4 }
+
+-- %CLICOLLABEL IpAddress
+-- %CLISHOWGROUP arpbindinginfo.1
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The ARP IP address that has an active lease on the ONT Ethernet port."
+    ::= { iShelfArpBindingEntry 5 }
+
+-- %CLICOLLABEL MacAddress
+-- %CLISHOWGROUP arpbindinginfo.1
+iShelfArpBindingMacAddress OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The MAC address of the CPE that has been assigned this ARP IP address."
+    ::= { iShelfArpBindingEntry 6 }
+
+-- %CLICOLLABEL Type
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingRelayType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    data(1),    -- data service relay
+                    vci(2),     -- vendor class identifier relay (option 60)
+                    mac(3)      -- mac address relay
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The type of ARP relay for this ARP IP address."
+    ::= { iShelfArpBindingEntry 7 }
+
+-- %CLICOLLABEL Serv
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingServiceType OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetServiceType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The type of service this ARP IP address is used for."
+    ::= { iShelfArpBindingEntry 8 }
+
+-- %CLICOLLABEL TTL
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingTTL OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "???"
+    ::= { iShelfArpBindingEntry 9 }
+
+-- %CLICOLLABEL Entry
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingEntryNumber OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "???"
+    ::= { iShelfArpBindingEntry 10 }
+
+-- %CLICOLLABEL VlanId
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingPortVlanId OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The VLAN ID of the ONT where this ARP Binding Port address
+                 resides."
+    ::= { iShelfArpBindingEntry 11 }
+
+-- %CLICOLLABEL Clear
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP arpbindinginfo.2
+iShelfArpBindingClear OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Setting this to true will force the lease for this ARP IP
+         address to be cleared and deleted from the system."
+    ::= { iShelfArpBindingEntry 12 }
+
+END

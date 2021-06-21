@@ -1,0 +1,1323 @@
+-- Ericsson Television Limited Standard MIB disclaimer
+-- ###################################################
+-- SNMP MIBs for Ericsson Television Limited products are developed 
+-- primarily for use by Ericsson Television Limited control solutions.
+-- Where MIBs are provided to a third party or other non-Ericsson 
+-- Television Limited person, for the purposes of their development 
+-- of a non-Ericsson Television Limited control or monitoring solution, 
+-- they are provided free of charge, and without obligation on the
+-- part of Ericsson Television Limited to offer priority support, or
+-- changes to suit the third party.
+--
+-- $Date: 2010-02-19 10:55:07 +0000 (Fri, 19 Feb 2010) $
+-- $Revision: 194 $
+
+ETV-Configuration-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+   IpAddress, OBJECT-TYPE, NOTIFICATION-TYPE, Integer32, MODULE-IDENTITY
+     FROM SNMPv2-SMI     
+   DisplayString
+     FROM SNMPv2-TC
+   PhysAddress
+     FROM RFC1213-MIB
+   general, mibEricssonTelevision
+     FROM ETV-Base-MIB
+   SlotNumber, RowStatus, Uint32, ModuleType
+     FROM ETV-Types-TC;
+     
+----------------------------------------------------------------------
+--
+-- configurationMIB contains information about the configuration of 
+-- the device.
+--
+----------------------------------------------------------------------
+
+configurationMIB MODULE-IDENTITY
+   LAST-UPDATED "1002191052Z"
+   ORGANIZATION "Ericsson Television Limited"
+   CONTACT-INFO "Customer Services
+                 Tel:   +44 (0) 23 8048 4455
+                 Fax:   +44 (0) 23 8048 4467
+                 Email: tvsupportemea@ericsson.com
+                 Web:   http://www.ericsson.com/television"
+   DESCRIPTION  "Common configuration MIB for Ericsson Television Limited devices."
+   
+   REVISION "1002191052Z"
+   DESCRIPTION "Updated Imported OID names and module definition name"
+
+   REVISION "1002021211Z"
+   DESCRIPTION "Updated contact information"
+
+   REVISION "0909240825Z"
+   DESCRIPTION "Updated for better complicance to SNMP V2 specs"
+   
+::= { general 1 }
+                 
+cfgIPAddress OBJECT-TYPE
+   SYNTAX      IpAddress
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the IP address of the control port on the device."
+   ::= { configurationMIB 1 }
+
+cfgSubnetMask OBJECT-TYPE
+   SYNTAX      IpAddress
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the subnet mask of the control port on the device."
+   ::= { configurationMIB 2 }
+
+cfgDefaultGateway OBJECT-TYPE
+   SYNTAX      IpAddress
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the default gateway used by the control port on the device."
+   ::= { configurationMIB 3 }
+
+cfgHWAddress OBJECT-TYPE
+   SYNTAX      PhysAddress
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the hardware (ethernet MAC ) of the primary control 
+       port on the device."
+   ::= { configurationMIB 4 }
+
+cfgBootP OBJECT-TYPE
+   SYNTAX      INTEGER {
+            noBootP (1),
+            useBootp(2)
+            }
+   MAX-ACCESS  read-write
+   STATUS      obsolete
+   DESCRIPTION
+       "This parameter is used to specify whether the IP address
+       of the device is retrieved from flash (1),
+       or from a BootP server (2)."
+   ::= { configurationMIB 5 }
+
+cfgMIBVersion OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the version number of the MIB."
+   ::= { configurationMIB 6 }
+
+cfgProductName OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the product name of the box."
+   ::= { configurationMIB 7 }
+
+cfgResetDevice OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-write
+   STATUS      current
+   DESCRIPTION
+       "Writing a value to this parameter will reset the device.
+       Parameter will always read 0."
+   ::= { configurationMIB 8 }
+
+cfgConfigStatus    OBJECT-TYPE
+   SYNTAX      INTEGER {
+            updateInProgress(1), -- supported for setting
+            updateComplete  (2), -- supported for setting
+            updateCanceled  (3), -- supported for setting
+            active          (4), -- set by device
+            readOnly        (5), -- set by device in order to lock mib during processing
+            updateFailed    (6)} -- set by device
+   MAX-ACCESS  read-write
+   STATUS      current
+   DESCRIPTION
+      "Set to updateInProgress(1) before update.
+      When all values have been changed set to updateComplete(2)
+      updateComplete should trigger the device to activate the configuration
+      change and the device should go to active(4) mode.
+      If the device doesn't accept the new configuration, all parameters are restored
+      to values used before updateInProgress and device goes to updateFailed(6) mode.
+      If configuration through other interfaces (keypad or web) are allowed
+      while the device is SNMP controlled the device should make sure
+      that any settings made after updateInProgress was called is overridden
+      by the SNMP agent.
+
+      If the management system need to cancel a update that has not yet
+      been commited (updateComplete) it should set  updateCanceled(3).
+      This should trigger the device to restore all values to the state before
+      updateInProgress was set. The device should go to active(4) mode"
+   ::= { configurationMIB 9 }
+
+unitAlarmStatus OBJECT-TYPE
+   SYNTAX      INTEGER {
+            cleared      (1),
+            indeterminate(2),
+            warning      (3),
+            minor        (4),
+            major        (5),
+            critical     (6)}
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "Currently most severe alarm level present on the mangaged device"
+   ::= {configurationMIB 10}
+
+cfgXPOCapable OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "Returns 0 if the device does not support XPO."
+   ::= { configurationMIB 11 }
+
+cfgAlarmLookupKey OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "When an alarm is raised on a device, this key is used to search
+         the alarm database (AlarmDataBase.mdb) for additional information.
+         If a matching alarm is found, and a custom level has been set by
+         the customer (or by field engineers when installing the system),
+         the custom level overrides the level supplied by the device. If
+         the alarm isn't found, it is added to the database using this key."
+   ::= { configurationMIB 12 }
+
+cfgActiveStatus    OBJECT-TYPE
+   SYNTAX      INTEGER {
+            offline(1), -- sets the device offline
+            online(2)} -- sets the device online
+   MAX-ACCESS  read-write
+   STATUS      current
+   DESCRIPTION
+      "This controls the device active status to on/off line. When set to off line,
+      the unit may decide to switch off certain modules or outputs and equally when
+      on line, the unit may switch on modules or outputs. This is device dependent.
+      
+      If the device supports MGP, and MGP is enabled, the following is the expected behaviour:
+      
+      Setting offline will force the unit to enter the R0 - Not In Service state.  
+      Setting online will force the unit to transition to the R1 - Normal Running state."
+   ::= { configurationMIB 13 }
+
+cfgMGPSupported    OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+      "Returns the supported version of MGP.
+       
+       The expected return values as of 18 May 2009 are:
+       0 - Not supported
+       1 - MGP revision 1 supported."
+   ::= { configurationMIB 14 }
+
+cfgCurrentMGPState    OBJECT-TYPE
+   SYNTAX      INTEGER {
+            r0(1), -- Not In Service
+            r1(2), -- Normal Running
+            s0(3), -- Spare Ready
+            s1(4)} -- Spare Idle
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+      "Returns the current MGP status of the unit."
+   ::= { configurationMIB 15 }
+
+cfgUnitPackageReleaseVersion    OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+      "cfgUnitPackageReleaseVersion is a string. Formatted as: <major>.<minor>[.<revision>[.<build>]] [<optional unparsed text>]
+       Where <major>, <minor>, <build> are just numbers.
+       <revision> is a number with optional trailing letters (No space).
+       The first space (Is skipped) and indicates the start of the <optional unparsed text>.
+       <revision>, <build> and the <optional unparsed text> are optional. Though if <revision> is not present, <build> cannot be either.
+       This allows for all the version info that are currently in use to be covered e.g.
+       6.3.0
+       6.3.1.1234
+       4.2.3 beta2
+       3.2.2a for test only
+       3000.22.2a.1456 DVT"
+   ::= { configurationMIB 16 }
+   
+cfgAlarmStatus OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      obsolete
+   DESCRIPTION
+       "The alarm information of the Man Machine Interface and configuration.
+       Bit No.  Alarm
+       0      (Not used)
+       1      Configuration changed
+       2      Illegal configuration
+       3      Display unlocked      - It is not recommended to access the device
+                                    - while this alarm is set.
+       4      No input board"
+   ::= { configurationMIB 998 }
+
+----------------------------------------------------------------------
+--
+-- cfgTrapServerTable contains a list of IP addresses to send traps to.
+--
+----------------------------------------------------------------------
+
+cfgTrapServerTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF CfgTrapServerEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+       "This table holds the list of servers supporting the device."
+   ::= { general 2 }
+
+cfgTrapServerEntry OBJECT-TYPE
+   SYNTAX      CfgTrapServerEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+       "An entry in the cfgTrapServerTable."
+   INDEX    { cfgTrapServerIndex }
+   ::= { cfgTrapServerTable 1 }
+
+CfgTrapServerEntry ::= SEQUENCE {
+            cfgTrapServerIndex          Uint32,
+            cfgTrapDestination          IpAddress,
+            cfgTrapServerTableRowStatus RowStatus
+            }
+
+cfgTrapServerIndex OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "Index in the cfgServerTable"
+   ::= { cfgTrapServerEntry 1 }
+
+cfgTrapDestination OBJECT-TYPE
+   SYNTAX      IpAddress
+   MAX-ACCESS  read-create
+   STATUS      current
+   DESCRIPTION
+       "This is the IP address of which the TRAP messages are sent to."
+   DEFVAL      { 'ffffffff'h }
+   ::= { cfgTrapServerEntry 2 }
+
+cfgTrapServerTableRowStatus  OBJECT-TYPE
+   SYNTAX      RowStatus
+   MAX-ACCESS  read-create
+   STATUS      current
+   DESCRIPTION
+       "Using SNMPv2 RowStatus for creating and deleting conceptual rows."
+   ::= { cfgTrapServerEntry 999 }
+
+----------------------------------------------------------------------
+--
+-- cfgBoardListTable is a list of boards fitted in the device.
+--
+----------------------------------------------------------------------
+
+cfgBoardListTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF CfgBoardListEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+       "This table holds the board list for the device."
+   ::= { general 3 }
+
+cfgBoardListEntry OBJECT-TYPE
+   SYNTAX      CfgBoardListEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+       "An entry in the cfgBoardListTable."
+   INDEX    { cfgBoardListSlotNumber, cfgDaughterSlotNumber }
+   ::= { cfgBoardListTable 1 }
+
+CfgBoardListEntry ::= SEQUENCE {
+   cfgBoardListSlotNumber   SlotNumber,
+   cfgBoardType             INTEGER,
+   cfgChannelNumber         INTEGER,
+   cfgSoftwareVersion       DisplayString,
+   cfgHardwareVersion       DisplayString,
+   cfgPLDFirmwareVersion    DisplayString,
+   cfgXilinxFirmwareVersion DisplayString,
+   cfgBoardSerialNumber     DisplayString,
+   cfgBoardDescription      DisplayString,
+   cfgDaughterSlotNumber    SlotNumber
+}
+
+cfgBoardListSlotNumber OBJECT-TYPE
+   SYNTAX      SlotNumber
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+      "The number of the slot where the board is placed."
+   ::= { cfgBoardListEntry 1 }
+
+cfgBoardType OBJECT-TYPE
+   SYNTAX      INTEGER {
+            mmiBoard                                       (1),
+            tunerBoard                                     (2),
+            loopBoard                                      (3),
+            smartcardBoard                                 (4),
+            tsdBoard                                       (5),
+            ndsBoard                                       (6),
+            tspBoard                                       (7),
+            dumbIOBoard                                    (8),
+            f001Module                                     (10),
+            f005Module                                     (11),
+            board2090                                      (20),
+            board2091                                      (21),
+            board2092                                      (22),
+            board6900                                      (32),
+            board5030                                      (33),
+            board6110                                      (34),
+            board6910                                      (35),
+            board5900                                      (37),
+            board6120                                      (39),
+            board7080                                      (42),
+            board7110                                      (43),
+            board7050                                      (44),
+            board7031                                      (45),
+            aal134RxBoard                                  (48),
+            aal134TxBoard                                  (49),
+            aal145RxBoard                                  (50),
+            aal145TxBoard                                  (51),
+            aal5155RxBoard                                 (52),
+            aal5155TxBoard                                 (53),
+            qamBoard5800                                   (55),
+            upcBoard5810                                   (56),
+            upcBoard5811                                   (57),
+            upcBoard5812                                   (58),
+            upcBoard5813                                   (59),
+            upcBoard5814                                   (60),
+            upcBoard5815                                   (61),
+            upcBoard5816                                   (62),
+            smpte310Board                                  (63),
+            atmAAL1155RX                                   (64),
+            atmALL1155TX                                   (65),
+            upcBoard5840                                   (66),
+            upcBoard5844                                   (67),
+            upcBoard5845                                   (68),
+            upcBoard5846                                   (69),
+                                                                 -- 5910, 5930, 5940 and 5960 are almost the same card (different
+                                                                 -- contacts/ports and minor physical differences eg voltage supply).
+            upcBoard5910                                   (70), -- used in TT6010/TT6020
+            upcBoard5930                                   (71), -- used in TT6010/TT6020
+            upcBoard5940                                   (72), -- used in TT6210/TT6220
+            upcBoard5960                                   (73), -- used in TT6210/TT6220
+            upcBoard5980                                   (74),
+            demux422Board                                  (80),
+            videoDecoderBoard                              (81),
+            hqVideoOutputBoard                             (82),
+            audioDecoderAndOutputBoard                     (83),
+            helperChannelBoard                             (84),
+            demux420Board                                  (85),
+            audioVideoCombBoard                            (86),
+            camIfBoard                                     (87),
+            hqOutputBoard                                  (88),
+            radioDecoderBoard                              (89),
+            ciDemux422Board                                (90),
+            m2sBoard                                       (100),
+            dvbSpiBoard                                    (101),
+            m2pUBoard                                      (102),
+            m2pDboard                                      (103),
+            smo135Board                                    (104),
+            mm270Board                                     (105),
+            sm270Board                                     (106),
+            g70334Board                                    (107),
+            g70345Board                                    (108),
+            g7038Board                                     (109),
+            g7036Board                                     (110),
+            g7032Board                                     (111),
+            duaal134Board                                  (113),
+            duaal145Board                                  (114),
+            duSMPTE310Board                                (115),
+            duaal155Board                                  (117),
+            wegnerBoard                                    (118),
+            qamDemodulator                                 (119),
+            board3761                                      (120),
+            qpskDemodulator                                (121), -- g040.  As used on TT6120 marketing code TT6120/HWO/IM3.
+            ofdmDemodulator-8900                           (122),
+            ofdmDemodulator-8950                           (123),
+            ethernet100MbitOutput-G020                     (124),
+            atmAAL5TxMultiChannelOpticalMultimode-G026     (125),
+            posnic-g016                                    (126),
+            mpeg2IP-xxxx                                   (127),
+            dhei-xxxx                                      (128),
+            transportStreamSplitter-j027                   (129),
+            mmi-j026                                       (130),
+            atmAAL5TxMultiChannelOpticalSinglemode-G030    (131),
+            atmAAL5TxMultiChannelElectrical-G031           (132),
+            asiOutput-J029                                 (133),
+            contentExtractor-G039                          (134),
+            bitRateChanger-G032                            (135),
+            ipInputBoard-G037                              (136),
+            ipOutputBoard-G036                             (137),
+            g703Mk2RxBoard                                 (138),
+            g703Mk2TxBoard                                 (139),
+            j034-MMIAndDualASIOut                          (140),
+            j035-4ASIIn                                    (141),
+            j036-2plus2ASIIn                               (142),
+            ipedInputBoard-G048                            (143),
+            ipedOutputBoard-G048                           (144),
+            asiToIpTspBoard-G0xx                           (145),
+            ipToAsiTspBoard-G0xx                           (146),
+            mmi-j038                                       (147),
+            tspBoard7106                                   (150),
+            dualAsiOutBoard                                (151),
+            dualM2SOutBoard                                (152),
+            g703board3750                                  (153),
+            j041-4ASIIn                                    (154), -- Marketing codes TT7115/HWO/4ASI-IN, TT7116/HWO/4ASI-IN.
+            j042-ConaxDescrambler                          (155),
+            j043-MediaguardDescrambler                     (156),
+            j044-CryptoworksDescrambler                    (157),
+            g056-DualQAMOutputBoard                        (158), -- ARM/SPARP-3.
+            g060-QPSKInputBoard                            (159), -- ARM/SPARP-3.
+            g062-8VSBInputASIOutputBoard                   (160), -- ARM/SPARP-3.
+            j045-MMIBoard                                  (161), -- TT6330. TSP2000/SPARP-3.
+            j040-Scrambler                                 (162), -- TT7116. TSP2000/SPARP-3.
+            g065ipOutput                                   (163), -- TT7116. 100 Mbit/s multichannel IP output card with CBR support.  
+            s12735-E5Encoder                               (164), -- TT7116. E5 Encoder.  Marketing code TT7116/HWO/ENC. Configured with XPO interface.
+            e032-EuroReceiver                              (165), -- TT7116. Euroboard MPEG2 decoder module. Configured with XPO interface.
+            eQ6800TSP                                      (166), -- EQ6800 using TSP3000 S13305.  Part of the base assembly with marketing code EQ6800/BAS.
+                                                                  -- The TSP3000 provides a variety of input configurations and is a generic platform for
+                                                                  -- SPARP 3.1 based applications. The board can act as a control master of other slave
+                                                                  -- SPARP 3.x boards as well as an input/output stream router and general stream processor.
+                                                                  -- Documentation: Engineering requirements: TSP3000-RS-0001-CUR.doc, E10143 User Guide,
+                                                                  -- E10143 Reference Guide. This board number is used when the TSP3000 is running the
+                                                                  -- EQ6800 application and supporting the EQ6800.MIB 'EQ6800-MIB'.
+            s13164-qamBoard                                (167), -- Modulator S13164.  Used on Edge QAM product, EQ6800. This board is fitted with either 
+                                                                  -- two or three up-converter boards (S13165), depending on customer requirements.  The
+                                                                  -- assembly with two up-converters fitted (S13297) gives 8QAM outputs and has marketing
+                                                                  -- code EQ8600/HWO/8QAM.  The assembly with three up-converters fitted (S13215) gives
+                                                                  -- 12QAM outputs and has marketing code EQ8600/HWO/12QAM. Documentation: Engineering
+                                                                  -- requirements: MQAM-PH2-RS-0011-CUR.doc, E10143 User Guide, E10143 Reference Guide.
+            qamUpcBoard                                    (168), -- QAM Modulator with upconverter.  Intended for cable modulation.  Used on TT6120 and
+                                                                  -- MX5210. Based on Broadband Innovations 6210A QAM Modulator module. Marketing code
+                                                                  -- for TT6120: TT6120/HWO/OM33. Internal information on: \\blaze\shared\QAM Modulator
+                                                                  -- Uses MIB 'qamupc.mib'.
+            gigaBitIPOutput                                (169), -- Gigabit output board based on the TSP3000 SPARP3 board (S12642).
+                                                                  -- Similar to the g065ipOutput (board type 163), but with gigabit rather than 100Mbps.
+                                                                  -- The board is supported by XPO and there is no additional associated MIB.
+                                                                  -- Initially targeted for TT7116.
+            j046ScramblerNDSCA                             (170), -- Scrambler board supporting NDS Conditional Access system. The board contains the
+                                                                  -- Simulcrypt Synchronizer, control word generator and AES scrambler. It takes the
+                                                                  -- SPTS from the global SPARP3 bus, scrambles selected SPTS (containing services)
+                                                                  -- and feeds the IPOUT board with scrambled SPTS.
+                                                                  -- Assembly 0002.30.7119.E
+                                                                  -- Document reference: 0204-IpStreamer\j040-scs\doc\IPStreamer Scrambler Design Specification.doc
+                                                                  -- The board is supported by XPO and there is no additional associated MIB.
+                                                                  -- Initially targeted as option for TT7116.
+            bQ6800TSP                                      (171), -- BQ6800 using TSP3000 S13305.  Part of the base assembly with marketing code BQ6800/BAS.
+                                                                  -- The TSP3000 provides a variety of input configurations and is a generic platform for 
+                                                                  -- SPARP 3.1 based applications. The board can act as a control master of other slave 
+                                                                  -- SPARP 3.x boards as well as an input/output stream router and general stream processor.
+                                                                  -- Documentation: Engineering requirements: TSP3000-RS-0001-CUR.doc, E10143 User Guide, 
+                                                                  -- E10143 Reference Guide.  This board number is used when the TSP3000 is running the 
+                                                                  -- BQ6800 application and supporting the BQ6800.MIB 'BQ6800-MIB'.
+            s13896-E5Encoder                               (172), -- TT7116, TT7140, EN5240. E5 Encoder.  Marketing code EN5240/HWO/E5A.
+                                                                  -- The board is supported by XPO and there is no additional associated MIB.
+            mQ6800TSP                                      (173), -- MQ6800 using TSP6K S14151.  Part of the base assembly with marketing code MQ6800/BAS.
+                                                                  -- The TSP6K provides a variety of input configurations and is a generic platform for
+                                                                  -- SPARP 3.1 based applications. The board can act as a control master of other slave
+                                                                  -- SPARP 3.x boards as well as an input/output stream router and general stream processor.
+                                                                  -- Documentation: Engineering requirements: TSP3000-RS-0001-CUR.doc, E10209 User Guide,
+                                                                  -- E10209 Reference Guide. This board number is used when the TSP6K is running the
+                                                                  -- MQ6800 application and supporting the MQ6800.MIB 'MQ6800-MIB'.
+
+            s8083-dualIfBasebandOutput6MHz                 (1000), --Dual IF & Baseband output boards
+            s8083-dualIfBasebandOutput7and8MHz             (1001),
+            s8082-dualASIandSPIInput                       (1010), --Dual ASI & SPI input boards
+            s8081-ofdmProcessing                           (1020), --OFDM Processing board
+            s11092-MA5300MasterCard                        (1030), --MA5300 MPEG Adaptator MasterCard
+            s11103-MA5300QuadASIInputCard                  (1031), --MA5300 MPEG Adaptator Quad ASI InputCard
+            s11100-MA5300QuadASIOutputCard                 (1032), --MA5300 MPEG Adaptator Quad ASI OutputCard
+            s11698-RFOutput                                (1040), --OFDM Modulator, MT5600
+
+         -- SM5600 and SM66xx Satellite Modulators.
+                                                                   -- The SM5600 and SM66xx Satellite Modulators consist of a number of separate cards contained 
+                                                                   -- in one unit. Some cards are option cards that may or may not be fitted in a particular unit.
+            s11340-HostController                          (1050), -- Provides the main control of a satellite modulator.
+            satelliteModulatorBasbandCard                  (1051), -- The satellite modulator baseband card performs modulation and signal processing.
+                                                                   -- SM5600 - Uses an S10309 baseband card.
+                                                                   -- SM66xx - Uses an S13129 baseband card or an S13133 (dynamic pre-correction 
+                                                                   -- variant) baseband card. Both these cards have two ASI inputs on board.
+            s11341-DVBTSIInterface                         (1052), -- The DVB TS Interface card provides two ASI inputs and one SPI input.
+                                                                   -- SM5600 - Always has an input interface card fitted.
+                                                                   -- SM66xx - The input interface card is an option card that may or may not be fitted.
+            s10310-70-140MHzIFCard                         (1053), -- An RF output card (50 Mhz to 180 MHz) of a satellite modulator.
+                                                                   -- The SM5600 - Either the IF output card or the L-Band output card is fitted.
+                                                                   -- The SM66xx - Either the IF output card or the L-Band output card is fitted.
+            s8238-PreCorrectorCard                         (1054), -- A dynamic pre-correction card of a satellite modulator equipment.
+                                                                   -- SM5600 - The pre-corrector card is an option card that may or not be fitted.
+                                                                   -- SM66xx - Never has the pre-correction card fitted.
+            s11291-L-BandCard                              (1055), -- An RF output card (950 MHz to 1750 MHz) of a satellite modulator equipment.
+                                                                   -- The SM5600 - Either the IF output card or the L-Band output card is fitted.
+                                                                   -- The SM66xx - Either the IF output card or the L-Band output card is fitted.
+         -- ATMNIC
+            s8062-ATMNIC                                   (1060),
+            s11906-ATMNIC                                  (1061),
+
+         -- TT1260 and TT1280 IRD.
+         -- The core of these decoders use the same MIB (TT1260-MIB.mib).
+            tt1260-decoder                                 (1070), -- TT1260 Motherboard.
+            tt1260-ca-module                               (1071), -- Used by TT1260 and TT1280.
+            tt1260-asi-input                               (1072),
+            tt1260-qpsk-input                              (1073),
+            tt1260-ofdm-input                              (1074),
+            tt1260-mcd-input                               (1075),
+            tt1260-16qam8qpsk-input                        (1076), -- Newtec supplied.
+            tt1260-qpsk-asi-input                          (1077), -- Combined two input ASI and two input QPSK
+                                                                   -- Status and configuration in MIB tree 1773.1.3.200.4.3.3, as board 1073..
+                                                                   -- Marketing code TT1260/HWO/QPSK/ASI.
+            tt1280-decoder                                 (1080), -- TT1280 Motherboard.
+            tt1280-asi-input                               (1081), -- Part of the TT1280 motherboard.
+            tt1280-ssi-input                               (1082), -- Part of the TT1280 motherboard.
+            tt1280-sdi-input                               (1083), -- Optional part of the TT1280 motherboard.
+            tt1280-quadDemod-input                         (1084), -- QPSK, QAM etc input.  See MIB tree 1773.1.3.200.4.3.3, as board 1076.
+                                                                   -- Marketing code TT1280/HWO/HOM. May be used in TT1260 and TT1280.
+            tt1280-s2-quadinput                            (1085), -- DVB-S2 input card 4 input
+            tt1280-s2-tripleinput                          (1086), -- DVB-S2 input card 3 input with IF & const output
+        
+            rx-Dual-GigE                                   (1087), -- Dual GigE card for receivers
+
+         -- TT1230 Multichannel IRD.
+            tt1230-baseboard                               (1090), -- TT1230 motherboard (provides ASI input and output)
+            tt1230-decoder                                 (1091), -- 4:2:0 SD decoder
+            tt1230-ip-input                                (1092), -- 2 channel gigabit IP input card
+                                                                   
+         -- RX1290 Multiformat IRD.
+            tt1290-baseboard                               (1095), -- RX1290 motherboard (provides ASI input and output)
+                                                                   -- Many of the above option cards can be fitted in to the RX1290
+
+         -- E57xx Encoder.
+         -- Range 1100 to 1399 reserved for Encoder.
+            s11171-motherboard                             (1100),
+            videoE4                                        (1102),
+            videoHybrid                                    (1103),
+            videoHD                                        (1104),
+
+            sd-ICE-Encoder                                 (1105), -- Windows Media 9/SD MPEG-4/AVC Encoder card.  For Encoder model EN5920/EN5930.
+            video-Pre-Processor                            (1106), -- Multipass encoding.  For Encoder model E5770.
+            hd-ICE-Encoder                                 (1107), -- Windows Media 9/SD MPEG-4/AVC Encoder card.  For Encoder model EN5920/EN5930.
+            ice-3-Encoder                                  (1108), -- ICE-3 H.264 AVC Encoder.  For Encoder model EN80xx.
+            audioModule                                    (1116),
+            audio24dBModuleModule                          (1126),
+            videoInput                                     (1132),
+            dataModule                                     (1134),
+            vbiModule                                      (1135),
+            internalQPSKModulator                          (1137),
+            iRD                                            (1139),
+            bISS                                           (1141),
+            oFDM-Modulator-Voyager                         (1142),
+            aTM                                            (1143),
+            remux                                          (1144),
+            sSIandASIOutput                                (1145),
+            dataPreEncodedRS422                            (1147),
+            satMod3                                        (1148),
+            oFDM-IFCard-DENG                               (1149),
+            oFDM-Modulator-DENG                            (1150),
+            audioXLR                                       (1151),
+            satMod3-IFCard                                 (1152),
+            oFDM-UpConverter                               (1153),
+            dataRS422                                      (1154),
+            dataRS232                                      (1155),
+            ipStreamer                                     (1156),
+            decoder-Demodulator                            (1157),
+            demodulator                                    (1158),
+            ofdm-if-combination                            (1159),
+            g703                                           (1160),
+            vocality                                       (1161),
+            generalPurposeInterface                        (1162), -- General purpose interface (GPI).  Relay inputs and outputs.
+            opticalASI                                     (1163),
+            triax-camera-control                           (1164),
+            qpsk-Demod-ASI-input                           (1165),
+            avcAudioModule                                 (1166),
+            dual-IPNIC                                     (1167),
+            virtual-ice-3-audio                            (1169),
+         -- Range 1100 to 1199 reserved for Encoder.
+
+         -- Range 1200 to 1399 reserved for EN8100 Encoders.
+            en8100-host-controller                          (1200), -- EN8100 Host Controller Card
+            en8100-video-mpeg2-SD                           (1210), -- EN8100 MPEG2 SD VCM
+            en8100-ext-sync-card                            (1211), -- EN8100 External Sync Card
+            en8100-video-ice-4-base                         (1212), -- EN8100 H.264 (ICE-4) VCM Base Card
+            en8100-video-ice-4-acc                          (1213), -- EN8100 ICE-4 VCM Accelerator Card
+            en7100-video-mpeg2-sd                           (1214), -- EN7100 MPEG2 SD VCM
+            asi-8vsb-input                                  (1215), -- 8VSB and ASI Input Card
+            en8190-rx8-transcoder-card                      (1216), -- EN8190 Transcoder using RX8 Decoder
+
+         -- Range 1200 to 1399 reserved for EN8100 Encoders.
+
+         -- TT1222 IRD.
+         -- Range 1400 to 1449 reserved for TT122
+            tt1222-decoder                                 (1400), -- TT1222 motherboard
+            tt1222-ca-module                               (1401),
+            tt1222-qpsk-input                              (1402), -- Sourced from PBI
+            tt1222-asi-input                               (1403), 
+            tt1222-asi-output                              (1404), -- Ouput card with single BNC fitted
+            tt1222-asi-sdi-output                          (1405), -- Ouput card with dual BNC fitted
+            tt1222-russian-seccam                          (1406), 
+            tt1222-gps                                     (1407), -- Inherited from TT1221.
+            tt1222-ip-asi-output                           (1408), -- ASI output card
+
+         -- MX8400 Multiplexer
+         -- Range 1450 to 1699 reserved for Multiplexer
+            s13512-MultiplexerMainCard                     (1450), -- Provides the main control of the multiplexer. 
+            s14279-ProMPEGFECOptionCard                    (1451), -- Pro-MPEG FEC option card (RJ45 or SFP connectors).
+                                                                   -- S14279 has RJ45 connectors.
+                                                                   -- S14520 has SFP connectors.
+            s14517-ASI-4PortOptionCard                     (1452), -- 4 port ASI option card.
+            s14280-ASI-8PortOptionCard                     (1453), -- 8 port ASI option card.
+            s14835-GPS-Interface-Card                      (1454), -- GPS interface card.
+
+         -- Range 1450 to 1699 reserved for Multiplexer
+         
+         -- Range 1700 to 1799 reserved for MediaPlex and iPlex
+            plex-asiIn                                     (1701),
+            plex-encoder                                   (1702),
+            plex-asiOut                                    (1703),
+            plex-atm                                       (1705),
+            plex-6Pac                                      (1706),
+            plex-4Pac                                      (1707),
+            plex-atmDs3E3                                  (1708),
+            plex-advEncoder                                (1709),
+            plex-asiPlus                                   (1710),
+            plex-ethernet                                  (1711),
+         -- Range 1700 to 1799 reserved for MediaPlex and iPlex
+
+         -- Range 1800 to 1899 reserved for EQ8096
+
+            eq8096-input                                   (1800), -- EQ8096 Input board.  Part of the base assembly with marketing codes EQ8096/BAS 
+                                                                   -- and EQ8096/BAS/SFP.  The board forms 
+                                                                   -- the Ethernet and MPEG front end processing prior to modulation within the EQ8096 
+                                                                   -- Output board.  This board also supports M-CMTS capability when fitted with 
+                                                                   -- marketing code EQ8096/HWO/DTI.
+                                                                   -- ST.RE.E10243 Reference Guide, ST.US.E10243 User Guide.  
+
+			eq8096-qam-output                              (1801), -- EQ8096 Output board.  Marketing code EQ8096/HWO/12QAM describes a single 12 QAM 
+                                                                   -- Option card.  This board is capable of a maximum 12 QAM, DOCSIS 3.0 
+                                                                   -- DRFI compliant. 
+                                                                   -- ST.RE.E10243 Reference Guide, ST.US.E10243 User Guide.
+
+
+         -- Range 1800 to 1899 reserved for EQ8096
+
+         -- Range 1900 to 1999 reserved for RX8000 receivers
+         rx8200-50                                         (1900), -- [S14595] E10287 RX8200/BAS & RX8250/BAS Mamba Motherboard 
+         rx8300-10                                         (1901), -- [S14612] E10261 E10262 RX8310/BAS RX8320/BAS Cobra 8300/8310   
+         rx8315-30                                         (1902), -- [S14612] E10294 E10295 RX8315/BAS RX8330/BAS Cobra 8315/8330  
+           -- Range 1903 to 1909 reserved for new rx8xxx variants 
+
+         rx8200-cic                                        (1910), -- [S14892] Control Interface Card, Always present on Mamba 
+         rx8xxx-dvbs2                                      (1911), -- [S14729] DVBS2 card - 4 channel input 
+         rx8xxx-dvbs2-2                                    (1912), -- [S14998] DVBS2 card with ACM 
+         rx8xxx-8vsb                                       (1913), -- [S14767] 8VSB  card - 4 channel input 
+         rx8xxx-ipInput                                    (1914),
+         rx8xxx-videoOutput                                (1915), -- [S14993] HD Video output card 
+         rx8xxx-audioOutput                                (1916), -- [S14987] 2 port Audio output card 
+         rx8xxx-transcoder                                 (1917), -- [S14992] MPEG4/MPEG2 transcoder card
+         rx8200-ipOutput                                   (1918), -- [S14847] 2 port IP output card for Mamba
+         rx8300-ipOutput                                   (1919), -- [S14782] 2 port IP output card for Cobra
+         rx8xxx-mp2-422                                    (1920), -- [S14997] 4:2:2 MPEG2 decoder card   
+         rx8xxx-mp4-422                                    (1921),
+         rx8xxx-descrambler                                (1922), -- [S14894] Descrambler card 
+         rx8xxx-BSkyB-descrambler                          (1923), -- [S14596] Descrambler card for BSkyB
+
+         -- Range 2000 to 2099 reserved for CTM cards
+
+            ctm-sat-input                                  (2000), -- CTM Input Card. This board provides the Satellite inputs (RF connectors) and all 
+                                                                   -- input processing prior to modulation within the output card. This card also supports 
+                                                                   -- Ethernet and RS-232 control.
+
+         -- Next free allocation range starting 2100.
+
+                                                 
+         -- Software "modules" numbered from 5000       
+         -- Typically, these will never appear in the "board list", but
+         -- their OIDs are used under the modules OID.
+            xport                                          (5000)  
+            
+            }
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "The current board type in this slot"
+   ::= { cfgBoardListEntry 2 }
+
+cfgChannelNumber OBJECT-TYPE
+   SYNTAX      INTEGER
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "The boards are organised in channels, this is the number of the
+       channel which the board belongs to."
+   ::= { cfgBoardListEntry 3 }
+
+cfgSoftwareVersion OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the version number of the software running on this board.
+       This might be empty for some boards."
+   ::= { cfgBoardListEntry 4 }
+
+cfgHardwareVersion OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the version number of the hardware of the board.
+       This might be empty for some boards. The version number identifies the
+       revision number of the hardware"
+   ::= { cfgBoardListEntry 5 }
+
+cfgPLDFirmwareVersion OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the version number of the PLD firmware on the board.
+       This might be empty for some boards. "
+   ::= { cfgBoardListEntry 6 }
+
+cfgXilinxFirmwareVersion OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the version number of the Xilinx firmware on the board.
+       This might be empty for some boards. "
+   ::= { cfgBoardListEntry 7 }
+
+cfgBoardSerialNumber OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "Serial number uniquely identifying the board."
+   ::= { cfgBoardListEntry 8 }
+
+cfgBoardDescription OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "Textual description of the board. Should provide information on the main function
+       and purpose of the board"
+   ::= { cfgBoardListEntry 9 }
+
+cfgDaughterSlotNumber OBJECT-TYPE
+   SYNTAX      SlotNumber
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+      "This is the slot number of a daughter card."
+   ::= { cfgBoardListEntry 10 }
+
+----------------------------------------------------------------------
+--
+-- The port table contains a list of physical ports on the device.
+--
+----------------------------------------------------------------------
+
+portTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF PortEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+       "This table holds the port information for each board."
+   ::= { general 6 }
+
+portEntry OBJECT-TYPE
+   SYNTAX      PortEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+       "An entry in the port table."
+   INDEX    { portSlotNumber, portNumber }
+   ::= { portTable 1 }
+
+PortEntry ::= SEQUENCE {
+   portSlotNumber    SlotNumber,
+   portNumber        Uint32,
+   portType          ModuleType,
+   portDirection     INTEGER,
+   portEnable        INTEGER,
+   portUnitNumber    SlotNumber
+}
+
+portSlotNumber OBJECT-TYPE
+   SYNTAX      SlotNumber
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "The number of the slot where the board is placed."
+   ::= { portEntry 1 }
+
+portNumber OBJECT-TYPE
+   SYNTAX      Uint32 (1..4294967295)
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the port number of the board."
+   ::= { portEntry 2 }
+
+portType OBJECT-TYPE
+   SYNTAX      ModuleType
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the type of port."
+   ::= { portEntry 3 }
+
+portDirection OBJECT-TYPE
+   SYNTAX      INTEGER{
+            input (1),
+            output(2),
+            bidirectional(3)
+            }
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "This is the direction of the port."
+   ::= { portEntry 4 }
+
+portEnable       OBJECT-TYPE
+   SYNTAX           INTEGER {
+            disable(1),
+            enable (2)}
+   MAX-ACCESS       read-write
+   STATUS           current
+   DESCRIPTION
+       "Disables or enables a port"
+   ::= { portEntry 5 }
+
+portUnitNumber OBJECT-TYPE
+   SYNTAX      SlotNumber
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "The number of the unit where the board is placed."
+   ::= { portEntry 6 }
+
+----------------------------------------------------------------------
+--
+-- Contains a list of TFTP servers that support this device.
+-- Now obsolete, and should not be used.
+--
+----------------------------------------------------------------------
+
+cfgTFTPServerTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF CfgTFTPServerEntry
+   MAX-ACCESS  not-accessible
+   STATUS      obsolete
+   DESCRIPTION
+       "This table holds the list of servers supporting the device."
+   ::= { general 7 }
+
+cfgTFTPServerEntry OBJECT-TYPE
+   SYNTAX      CfgTFTPServerEntry
+   MAX-ACCESS  not-accessible
+   STATUS      obsolete
+   DESCRIPTION
+       "An entry in the cfgTFTPServerTable."
+   INDEX    { cfgTFTPServerIndex }
+   ::= { cfgTFTPServerTable 1 }
+
+CfgTFTPServerEntry ::= SEQUENCE {
+            cfgTFTPServerIndex          Uint32,
+            cfgTFTPDestination          IpAddress,
+            cfgTFTPServerTableRowStatus RowStatus
+            }
+
+cfgTFTPServerIndex OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      obsolete
+   DESCRIPTION
+       "Index in the cfgServerTable"
+   ::= { cfgTFTPServerEntry 1 }
+
+cfgTFTPDestination OBJECT-TYPE
+   SYNTAX      IpAddress
+   MAX-ACCESS  read-create
+   STATUS      obsolete
+   DESCRIPTION
+       "This is the IP address of the TFTP servers where the files are stored."
+   DEFVAL      { 'ffffffff'h }
+   ::= { cfgTFTPServerEntry 2 }
+
+cfgTFTPServerTableRowStatus  OBJECT-TYPE
+   SYNTAX      RowStatus
+   MAX-ACCESS  read-create
+   STATUS      obsolete
+   DESCRIPTION
+       "Using SNMPv2 RowStatus for creating and deleting conceptual rows."
+   ::= { cfgTFTPServerEntry 999 }
+
+----------------------------------------------------------------------
+--
+-- MIB module for codedownload of the Ericsson Television devices.
+-- This is obsolete and should not be used.
+--
+----------------------------------------------------------------------
+
+codeDownloadTable  OBJECT-TYPE
+   SYNTAX           SEQUENCE OF CodeDownloadEntry
+   MAX-ACCESS       not-accessible
+   STATUS           obsolete
+   DESCRIPTION
+       "This table contains codedownload parameters"
+   ::= { general 8 }
+
+codeDownloadEntry OBJECT-TYPE
+   SYNTAX         CodeDownloadEntry
+   MAX-ACCESS     not-accessible
+   STATUS         obsolete
+   DESCRIPTION
+       "An entry in the codeDownloadTable."
+   INDEX    { codeDownloadIndex}
+   ::= { codeDownloadTable 1 }
+
+CodeDownloadEntry ::= SEQUENCE {
+   codeDownloadIndex         Uint32,
+   codeDownloadFileName      DisplayString,
+   codeDownloadRowStatus     RowStatus,
+   codeDownloadFileSize      INTEGER,
+   codeDownloadServerAddress IpAddress,
+   codeDownloadFilePath      DisplayString,
+   codeDownloadStatus        INTEGER,
+   codeDownloadAlarmStatus   Uint32
+}
+
+codeDownloadIndex OBJECT-TYPE
+   SYNTAX           Uint32
+   MAX-ACCESS       read-only
+   STATUS           obsolete
+   DESCRIPTION
+       "This parameter is the index in the download table"
+   ::= { codeDownloadEntry 1 }
+
+
+codeDownloadFileName OBJECT-TYPE
+   SYNTAX          DisplayString
+   MAX-ACCESS      read-create
+   STATUS          obsolete
+   DESCRIPTION
+       "Name of the file containing the code to be downloaded"
+   ::= { codeDownloadEntry 2 }
+
+codeDownloadRowStatus       OBJECT-TYPE
+   SYNTAX           RowStatus
+   MAX-ACCESS       read-create
+   STATUS           obsolete
+   DESCRIPTION
+       "Status column used for creating, modifying, and deleting rows in
+        the table."
+   ::= { codeDownloadEntry 3 }
+
+codeDownloadFileSize OBJECT-TYPE
+   SYNTAX           INTEGER
+   MAX-ACCESS       read-only
+   STATUS           obsolete
+   DESCRIPTION
+       "This parameter tells the size of the file to be downloaded"
+   ::= { codeDownloadEntry 5 }
+
+codeDownloadServerAddress OBJECT-TYPE
+   SYNTAX      IpAddress
+   MAX-ACCESS  read-create
+   STATUS      obsolete
+   DESCRIPTION
+       "This is the hardware (ethernet) address of the TFTP server."
+   ::= { codeDownloadEntry 6 }
+
+codeDownloadFilePath OBJECT-TYPE
+   SYNTAX          DisplayString
+   MAX-ACCESS      read-create
+   STATUS          obsolete
+   DESCRIPTION
+       "Path of the directory containing the code to be downloaded"
+   ::= { codeDownloadEntry 7 }
+
+codeDownloadStatus OBJECT-TYPE
+   SYNTAX INTEGER {
+            notDownloaded (1),
+            beingLoaded   (2),
+            available     (3)
+            }
+   MAX-ACCESS       read-only
+   STATUS           obsolete
+   DESCRIPTION
+       "This parameter tells the current downloding state"
+   ::= { codeDownloadEntry 999 }
+
+codeDownloadAlarmStatus OBJECT-TYPE
+   SYNTAX           Uint32
+   MAX-ACCESS       read-only
+   STATUS           obsolete
+   DESCRIPTION
+       "The alarm information of the downloading prosess.
+       Bit No.       Alarm
+       0 (0x000001)  Cannot open target file on TFTP server (See codeDownloadFileName)
+       1 (0x000002)  Could not read target file data from TFTP server (See codeDownloadFileName)
+       2 (0x000004)  Unexpected response from TFTP server (See codeDownloadFileName)
+       3 (0x000008)  Connection with the TFTP server was lost (See codeDownloadFileName)
+       6 (0x000040)  Could not send data to target device (See codeDownloadFileName)
+       9 (0x000200)  Target file has bad CRC (See codeDownloadFileName)
+       10 (0x000400) Upgrade software on target is too old to handle upgrade
+       11 (0x000800) No program version ID found in upgrade-fileset header-file
+       12 (0x001000) Versions header-file is too short
+       13 (0x002000) No CRC present in versions header-file
+       15 (0x008000) Expected hexidecimal digit in header-file, but none found
+       16 (0x010000) Too few hexidecimal digits given in number in header-file
+       17 (0x020000) Parse error in versions header-file
+       18 (0x040000) Bad hexadecimal string found in header-file - illegal header
+       19 (0x080000) Number of boards discovered varies on each board scan
+       20 (0x100000) Upgrading procedure aborted - maximum retries exceeded
+       21 (0x200000) Target encountered memory allocation problems during upgrade
+       22 (0x400000) Failure encountered, but cause could not be determined
+       31            Upgrade of target device is in progress - please wait"
+   ::= { codeDownloadEntry 998 }
+
+----------------------------------------------------------------------
+--
+-- MIB module for configuring alarm status.
+--
+----------------------------------------------------------------------
+
+alarmCfgTable OBJECT-TYPE
+   SYNTAX           SEQUENCE OF AlarmCfgEntry
+   MAX-ACCESS       not-accessible
+   STATUS           current
+   DESCRIPTION
+       "This table contains alarm configuration parameters."
+   ::= { general 12 }
+
+alarmCfgEntry OBJECT-TYPE
+   SYNTAX           AlarmCfgEntry
+   MAX-ACCESS       not-accessible
+   STATUS           current
+   DESCRIPTION
+       "An entry in the alarmCfgTable."
+   INDEX    { alarmCfgPosition, alarmCfgAlarmID }
+   ::= { alarmCfgTable 1 }
+
+AlarmCfgEntry ::= SEQUENCE {
+   alarmCfgPosition         SlotNumber,
+   alarmCfgAlarmID          Uint32,
+   alarmCfgSourceText       DisplayString,
+   alarmCfgSeverityLevel    INTEGER,
+   alarmCfgOnHysteresis     INTEGER,
+   alarmCfgOffHysteresis    INTEGER,
+   alarmCfgAlarmType        INTEGER
+}
+
+alarmCfgPosition OBJECT-TYPE
+   SYNTAX           SlotNumber
+   MAX-ACCESS       read-only
+   STATUS           current
+   DESCRIPTION
+       "This parameter is the index of the alarmInfoTable and also
+       indicates slot position."
+   ::= { alarmCfgEntry 1 }
+
+alarmCfgAlarmID OBJECT-TYPE
+   SYNTAX           Uint32
+   MAX-ACCESS       read-only
+   STATUS           current
+   DESCRIPTION
+       "Code which indicates an error or event in a module, as defined
+       in the individual modules."
+   ::= { alarmCfgEntry 2 }
+
+alarmCfgSourceText OBJECT-TYPE
+   SYNTAX           DisplayString
+   MAX-ACCESS       read-only
+   STATUS           current
+   DESCRIPTION
+       "The default source text. This will be used to describe the source causing the alarm if the receiving application is not configured to override the default text. Understanding the semantics of this field is not required for interpretation of the notification."
+   ::= { alarmCfgEntry 3 }
+
+alarmCfgSeverityLevel OBJECT-TYPE
+   SYNTAX           INTEGER {
+            cleared       (1),
+            indeterminate (2),
+            warning       (3),
+            minor         (4),
+            major         (5),
+            critical      (6)}
+   MAX-ACCESS       read-write
+   STATUS           current
+   DESCRIPTION
+       "From X.733: This parameter defines six severity
+        levels, which provide an indication of how it is perceived that the
+        capability of the managed object has been affected.
+        Those severity levels which represent service affecting
+        conditions ordered from most severe to least severe are
+        Critical, Major, Minor and Warning.
+
+        The levels defined for use with this current parameter are
+        -cleared: The Cleared severity level indicates the
+        clearing of one or more previously reported alarms. This
+        alarm clears all alarms for this managed object that have the
+        same Alarm type, Probable cause and Specific problems (if
+        given).
+
+        -indeterminate: The Indeterminate severity level
+        indicates that the severity level cannot be determined.
+
+        -critical: The Critical severity level indicates that a
+        service affecting condition has occurred and an immediate
+        corrective action is required.  Such a severity can be
+        reported, for example, when a managed object becomes totally
+        out of service and its capability must be restored.
+
+        -major: The Major severity level indicates that a
+        service affecting condition has developed and an urgent
+        corrective action is required.  Such a severity can be
+        reported, for example, when there is a severe degradation in
+        the capability of the managed object and its full capability
+        must be restored.
+
+        -minor: The Minor severity level indicates the existence
+        of a non-service affecting fault condition and that
+        corrective action should be taken in order to prevent a more
+        serious (for example, service affecting) fault. Such a
+        severity can be reported, for example, when the detected
+        alarm condition is not currently degrading the capacity of
+        the managed object.
+
+        -warning: The Warning severity level indicates the
+        detection of a potential or impending service affecting
+        fault, before any significant effects have been felt. Action
+        should be taken to further diagnose (if necessary) and
+        correct the problem in order to prevent it from becoming a
+        more serious service affecting fault."
+   ::= { alarmCfgEntry 4 }
+
+alarmCfgOnHysteresis OBJECT-TYPE
+   SYNTAX           INTEGER (2..99)
+   MAX-ACCESS       read-write
+   STATUS           current
+   DESCRIPTION
+       "Specifies the on-hysteresis time for an alarm."
+   ::= { alarmCfgEntry 5 }
+
+alarmCfgOffHysteresis OBJECT-TYPE
+   SYNTAX           INTEGER (2..99)
+   MAX-ACCESS       read-write
+   STATUS           current
+   DESCRIPTION
+       "Specifies the off-hysteresis time for an alarm."
+   ::= { alarmCfgEntry 6 }
+
+alarmCfgAlarmType OBJECT-TYPE
+   SYNTAX           INTEGER {
+            internal(1),
+            input   (2),
+            output  (3)}
+   MAX-ACCESS       read-only
+   STATUS           current
+   DESCRIPTION
+       "This indicates the type of alarm/event. Input type indicates
+       an alarm/event that could be caused by a faulty input signal.
+       Internal alarms are most likely a problem in the reporting device."
+   ::= { alarmCfgEntry 7 }
+
+----------------------------------------------------------------------
+--
+-- MIB module for device licence information.
+--
+----------------------------------------------------------------------
+
+licenceTable  OBJECT-TYPE
+  SYNTAX      SEQUENCE OF LicenceEntry
+  MAX-ACCESS  not-accessible
+  STATUS      current
+  DESCRIPTION "    "
+  ::= { general 13 }
+
+licenceEntry  OBJECT-TYPE
+  SYNTAX      LicenceEntry
+  MAX-ACCESS  not-accessible
+  STATUS      current
+  DESCRIPTION "    "
+  INDEX   { licenceIndex }
+  ::= { licenceTable 1 }
+
+LicenceEntry ::= SEQUENCE {
+   licenceIndex         INTEGER,
+   licenceDescription   DisplayString,
+   licenceStatus        INTEGER,
+   licenceValue         INTEGER,
+   licenceRemainingTime INTEGER
+}
+
+licenceIndex        OBJECT-TYPE
+  SYNTAX            INTEGER(1..32)
+  MAX-ACCESS        read-only
+  STATUS            current
+  DESCRIPTION "Value identifying a bit position in the feature mask (bit0 = 1)."
+  ::= { licenceEntry 1 }
+
+licenceDescription  OBJECT-TYPE
+  SYNTAX            DisplayString
+  MAX-ACCESS        read-only
+  STATUS            current
+  DESCRIPTION "The text string name of licence feature."
+  ::= { licenceEntry 2 }
+
+licenceStatus OBJECT-TYPE
+   SYNTAX      INTEGER {
+                  disabled(1),
+                  enabled(2),
+                  timeLimited(3)
+               }
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "The status of licence feature. It specifies if the licence feature is activated or not, or 
+        time limited."
+   ::= { licenceEntry 3 }
+
+licenceValue OBJECT-TYPE
+   SYNTAX      INTEGER
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "The value of the licence.  Not all licences have a value associated, as they are enabled
+        by their presence, and disabled by their absence (or by the use of licenceStatus).  If the 
+        licence has a limit associated with it, for example the number of transport streams 
+        supported, then the licenceValue indicates this limit."
+   ::= { licenceEntry 4 }
+
+licenceRemainingTime OBJECT-TYPE
+   SYNTAX      INTEGER
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+       "The number of minutes (or part of) remaining for a short term licence.  This value only has meaning if
+        the licenceStatus is set to timeLimited."
+   ::= { licenceEntry 5 }
+
+licenceFeatureMask OBJECT-TYPE
+   SYNTAX          Uint32
+   MAX-ACCESS      read-only
+   STATUS          current
+   DESCRIPTION
+       "Bitmask identifying active licences. This mask is unique for each device (bit0..30). 
+        Most significant bit 31 is reserved."
+   ::= { general 14 }
+
+
+END

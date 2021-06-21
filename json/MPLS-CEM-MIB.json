@@ -1,0 +1,1541 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndex",
+      "InterfaceIndexOrZero"
+    ],
+    "MPLS-LSR-MIB": [
+      "MplsLabel",
+      "MplsLSPID"
+    ],
+    "MPLS-TE-MIB": [
+      "MplsTunnelInstanceIndex",
+      "MplsTunnelIndex",
+      "MplsLsrId"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Bits",
+      "OBJECT-TYPE",
+      "Integer32",
+      "experimental",
+      "Unsigned32",
+      "Counter64",
+      "Gauge32",
+      "NOTIFICATION-TYPE",
+      "MODULE-IDENTITY",
+      "iso",
+      "OBJECT-IDENTITY",
+      "Counter32",
+      "MibIdentifier",
+      "TimeTicks",
+      "IpAddress"
+    ],
+    "SNMPv2-TC": [
+      "TimeStamp",
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "StorageType",
+      "DisplayString",
+      "RowStatus"
+    ]
+  },
+  "mplsCemMIB": {
+    "name": "mplsCemMIB",
+    "oid": "1.3.6.1.3.9999",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "1970-01-01 00:00",
+        "description": "Initial version for closed review."
+      },
+      {
+        "revision": "1970-01-01 00:00",
+        "description": "Updates, cleanup, and clarifications after review amongst authors."
+      }
+    ],
+    "lastupdated": "200102211200Z",
+    "organization": "Multiprotocol Label Switching (MPLS) Working Group",
+    "contactinfo": " Dave Danenberg Postal: Litchfield Communications, Inc. 76 Westbury Park Rd Princeton Building East Watertown, CT 06795 Tel: +1-860-945-1573 x3180 Danenberg et al Expires August 2001 12 Internet Draft MPLS CEM MIB February 2001 Email: dave_danenberg@litchfieldcomm.com Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Tel: +1-978-244-3051 Email: tnadeau@cisco.com Andrew G. Malis Postal: Vivace Networks, Inc. 2730 Orchard Parkway San Jose, CA 95134 Email: Andy.Malis@vivacenetworks.com Scott Park Postal: Litchfield Communications, Inc. 76 Westbury Park Rd Princeton Building East Watertown, CT 06795 Tel: +1-860-945-1573 x3185 Email: scott_park@litchfieldcomm.com The MPLS Working Group (email distribution mpls@uu.net)",
+    "description": "This MIB contains managed object definitions for Circuit Emulation over MPLS as in: Malis, A., Vogelsang, S., and Martini, L. 'SONET/SDH Circuit Emulation Service Over MPLS (CEM) encapsulation', Internet Draft <draft-malis-sonet- ces-mpls-02.txt>, February 2001. This MIB is dependant on the MIBs as defined by T. Nadeau, C. Srinivasan, and A. Viswanathan <draft-ietf-mpls-lsr-mib-07.txt> and <draft-ietf-mpls-te-mib-05.txt>"
+  },
+  "mplsCemNotifications": {
+    "name": "mplsCemNotifications",
+    "oid": "1.3.6.1.3.9999.0",
+    "class": "objectidentity"
+  },
+  "mplsCemNotifyPrefix": {
+    "name": "mplsCemNotifyPrefix",
+    "oid": "1.3.6.1.3.9999.0.0",
+    "class": "objectidentity"
+  },
+  "mplsCemObjects": {
+    "name": "mplsCemObjects",
+    "oid": "1.3.6.1.3.9999.1",
+    "class": "objectidentity"
+  },
+  "mplsCemVcIndexNext": {
+    "name": "mplsCemVcIndexNext",
+    "oid": "1.3.6.1.3.9999.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object contains an appropriate value to be used for mplsCemVcIndex when creating entries in the mplsCemVcTable. The value 0 indicates that no unassigned entries are available. To obtain the value of mplsCemVcIndex for a new entry in the mplsCemVcTable, the manager issues a management protocol retrieval operation to obtain the current value of mplsCemVcIndex. After each retrieval operation, the agent should modify the value to reflect the next unassigned index. After a manager retrieves a value the agent will determine through its local policy when this index value will be made available for reuse."
+  },
+  "mplsCemVcTable": {
+    "name": "mplsCemVcTable",
+    "oid": "1.3.6.1.3.9999.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies information for connecting SONET paths and MPLS Tunnels."
+  },
+  "mplsCemVcEntry": {
+    "name": "mplsCemVcEntry",
+    "oid": "1.3.6.1.3.9999.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcIndex",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents a connection for CEM. It is indexed by : - The mplsCemVcIndex. Uniquely identifying a singular CEM connection or a group. If a group, individual CEM connections are identified by the Instance. - The mplsCemVcInstance."
+  },
+  "mplsCemVcIndex": {
+    "name": "mplsCemVcIndex",
+    "oid": "1.3.6.1.3.9999.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Primary index for the conceptual row identifying a group of CEM VCs."
+  },
+  "mplsCemVcInstance": {
+    "name": "mplsCemVcInstance",
+    "oid": "1.3.6.1.3.9999.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Uniquely identifies an instance of a CEM VC. It is useful to identify multiple instances for the purpose of backup VCs."
+  },
+  "mplsCemVcSonetPathIfIndex": {
+    "name": "mplsCemVcSonetPathIfIndex",
+    "oid": "1.3.6.1.3.9999.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This is a unique index within the ifTable. It represents the interface index for the SONET path. A value of zero indicates an ifIndex that has yet to be configured or has since disappeared."
+  },
+  "mplsCemVcLabel": {
+    "name": "mplsCemVcLabel",
+    "oid": "1.3.6.1.3.9999.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLabel",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The incoming and outgoing label for this VC. This value is placed in the Label field of the outgoing MPLS shim header."
+  },
+  "mplsCemVcPriority": {
+    "name": "mplsCemVcPriority",
+    "oid": "1.3.6.1.3.9999.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used when resources on a tunnel or backup tunnel are overbooked. The agent (connection admission control) can sort CEM VC entries that share an overbooked tunnel. Lower mplsCemVcPriority values have higher priority. VCs dropped will be set 'dormant' (as indicated in mplsCemVcOperStatus)."
+  },
+  "mplsCemVcName": {
+    "name": "mplsCemVcName",
+    "oid": "1.3.6.1.3.9999.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The canonical name assigned to the CEM VC. This name can be used to refer to the CEM VC on the LSRs console port."
+  },
+  "mplsCemVcDescr": {
+    "name": "mplsCemVcDescr",
+    "oid": "1.3.6.1.3.9999.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A textual string containing information about the CEM VC. If there is no description this object contains a zero length string."
+  },
+  "mplsCemVcCreateTime": {
+    "name": "mplsCemVcCreateTime",
+    "oid": "1.3.6.1.3.9999.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "System time when theis CEM VC was created."
+  },
+  "mplsCemVcUpTime": {
+    "name": "mplsCemVcUpTime",
+    "oid": "1.3.6.1.3.9999.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of consecutive ticks this CEM VC has been 'up' as observed in mplsCemVcOperStatus."
+  },
+  "mplsCemVcInTunnelIndex": {
+    "name": "mplsCemVcInTunnelIndex",
+    "oid": "1.3.6.1.3.9999.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Srinivasan, C., Viswanathan, A., and T. Nadeau, MPLS Traffic Engineering Management Information Base Using SMIv2 <draft-ietf-mpls-te-mib-05.txt>, November 2000.",
+    "status": "current",
+    "description": "Part of set of indexes for inbound tunnel"
+  },
+  "mplsCemVcInTunnelInstance": {
+    "name": "mplsCemVcInTunnelInstance",
+    "oid": "1.3.6.1.3.9999.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelInstanceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Part of set of indexes for inbound tunnel"
+  },
+  "mplsCemVcInTunnelIngLSR": {
+    "name": "mplsCemVcInTunnelIngLSR",
+    "oid": "1.3.6.1.3.9999.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrId",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Part of set of indexes for inbound tunnel"
+  },
+  "mplsCemVcInTunnelLclLSR": {
+    "name": "mplsCemVcInTunnelLclLSR",
+    "oid": "1.3.6.1.3.9999.1.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrId",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Part of set of indexes for inbound tunnel"
+  },
+  "mplsCemVcOutTunnelIndex": {
+    "name": "mplsCemVcOutTunnelIndex",
+    "oid": "1.3.6.1.3.9999.1.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Part of set of indexes for outbound tunnel"
+  },
+  "mplsCemVcOutTunnelInstance": {
+    "name": "mplsCemVcOutTunnelInstance",
+    "oid": "1.3.6.1.3.9999.1.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelInstanceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Part of set of indexes for outbound tunnel"
+  },
+  "mplsCemVcOutTunnelLclLSR": {
+    "name": "mplsCemVcOutTunnelLclLSR",
+    "oid": "1.3.6.1.3.9999.1.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrId",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Part of set of indexes for outbound tunnel"
+  },
+  "mplsCemVcOutTunnelEgrLSR": {
+    "name": "mplsCemVcOutTunnelEgrLSR",
+    "oid": "1.3.6.1.3.9999.1.2.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrId",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Part of set of indexes for outbound tunnel"
+  },
+  "mplsCemVcPktLength": {
+    "name": "mplsCemVcPktLength",
+    "oid": "1.3.6.1.3.9999.1.2.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the packet or payload length for this CEM VC. It is fixed and applies to inbound and outbound packets carrying user payload. Note: DBA packets have their own length and are not effected by this."
+  },
+  "mplsCemVcExpBits": {
+    "name": "mplsCemVcExpBits",
+    "oid": "1.3.6.1.3.9999.1.2.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Faucher, F, et al, MPLS Support of Differentiated Services <draft-ietf-mpls-diff-ext-08.txt> Feb 2001.",
+    "status": "current",
+    "description": "This value is placed in the EXP bit field of the outbound MPLS shim header (with the VC Label). These EXP bits convey to the LSR the PHB to be applied to these packets."
+  },
+  "mplsCemVcPktResequence": {
+    "name": "mplsCemVcPktResequence",
+    "oid": "1.3.6.1.3.9999.1.2.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Reports if implementation provides packet re-sequencing. With this, as inbound packets are queued in the jitter buffer, out of order packets are re-sequenced. The maximum sequence number differential (order correction can occur within) is dependant on the depth of the jitter buffer. See mplsCemVcJtrBfrDepth."
+  },
+  "mplsCemVcEnableDBA": {
+    "name": "mplsCemVcEnableDBA",
+    "oid": "1.3.6.1.3.9999.1.2.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "allOnesOnAis": 0,
+        "allZerosOnUnequipped": 1
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Any bits set here MUST enable the DBA (dynamic bandwidth allocation) feature for the specified condition. Setting allOnesOnAis will cause CEM packet payload suppression when AIS is detected on the associated SONET path. Similarly, allZerosOnUnequipped will cause payload suppression when the SONET path is un-equipped. During these conditions, CEM packets will continue to be sent, but with indicators set in the CEM header instructing the remote to play all ones or zeros onto its SONET path. Note: some implementations may not support this feature."
+  },
+  "mplsCemVcJtrBfrDepth": {
+    "name": "mplsCemVcJtrBfrDepth",
+    "oid": "1.3.6.1.3.9999.1.2.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This setting configures the number of packet buffers reserved for this CEM VC. (This object would not apply in implementations that support CEM VC groups, but cannot process inbound packets on CEM VCs that are currently in standby.) This object essentially sets the maximum amount of time allowed between CEM packets before the jitter buffer empties. This variable should be set based on the SONET path width (speed) and the amount of delay variation expected to be introduced by the network. Like bandwidth, jitter buffers are likely to be a limited resource to be managed."
+  },
+  "mplsCemVcErrorAction": {
+    "name": "mplsCemVcErrorAction",
+    "oid": "1.3.6.1.3.9999.1.2.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "playAllOnes": 1,
+          "playAllZeros": 2,
+          "playPseudoRandom": 3
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "These are the actions to take when inbound packets are missing due to gap in sequence numbers (uncorrectable via available re-sequencing), jitter buffer underruns, or packets with bad CEM headers. These patterns are sent (played) on the SONET path. These settings are used for immediate errors and (unless the mplsCemVcDownAction is 'none') are not in effect once the CEM VC is 'down'."
+  },
+  "mplsCemVcDownAction": {
+    "name": "mplsCemVcDownAction",
+    "oid": "1.3.6.1.3.9999.1.2.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "errorAction": 1,
+          "playAllOnes": 2,
+          "playAllZeros": 3,
+          "playPseudoRandom": 4
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "These are the actions to take once the CEM VC has been declared 'down' (as observed in mplsCemVcOperStatus). These patterns are sent (played) on the SONET path. See Integration Timers for events causing CEM VC 'down'. If 'errorAction' is selected, then the mplsCemVcErrorAction settings stay in effect even after the CEM VC is 'down'."
+  },
+  "mplsCemVcIntegrateToDown1": {
+    "name": "mplsCemVcIntegrateToDown1",
+    "oid": "1.3.6.1.3.9999.1.2.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "See comment above - units are microseconds."
+  },
+  "mplsCemVcIntegrateToDown2": {
+    "name": "mplsCemVcIntegrateToDown2",
+    "oid": "1.3.6.1.3.9999.1.2.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "See comment above - units are microseconds."
+  },
+  "mplsCemVcIntegrateToUp1": {
+    "name": "mplsCemVcIntegrateToUp1",
+    "oid": "1.3.6.1.3.9999.1.2.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "See comment above - units are microseconds."
+  },
+  "mplsCemVcIntegrateToUp2": {
+    "name": "mplsCemVcIntegrateToUp2",
+    "oid": "1.3.6.1.3.9999.1.2.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "See comment above - units are microseconds."
+  },
+  "mplsCemVcApsEnable": {
+    "name": "mplsCemVcApsEnable",
+    "oid": "1.3.6.1.3.9999.1.2.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Enables this CEM VC (as part of a group) to be used for APS. A CEM VC group is created when a unique CEM VC index (in mplsCemVcTable) has multiple instances. Setting mplsCemVcApsEnable to 'false' may be useful when a CEM VC is suspect, being debugged, or not fully configured. Note: some implementations may not support APS."
+  },
+  "mplsCemVcApsCriteria": {
+    "name": "mplsCemVcApsCriteria",
+    "oid": "1.3.6.1.3.9999.1.2.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "cemError": 0,
+        "cemErrorStbyOK": 256,
+        "revertive": 512,
+        "hunt": 1024
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Bits set here represent defects and modes for switching the SONET path from the active CEM VC to another within this VC's group. Defects include: CEM errors (jitter buffer errors, missing packets, bad CEM headers). Separating these CEM defects into individually selectable bits, or adding other types of defect indications (e.g. OAM status) is for future study. Modes: The 'cemErrorStbyOK' mode setting is useful in APS network configurations where CEM traffic is not present on standby inbound VCs. Therefore they are expected to have CEM errors, but are still to be considered as viable switch- over candidates. cemErrorStbyOK essentially masks CEM errors when this CEM VC is in standby. 'revertive' mode is useful for non-preferred CEM VCs where you may want to switch back to a preferred VC that has no defects while the currently active VC also has no defects (see mplsCemVcApsRevertTimer). 'revertive' should NOT be used when standby VCs have no defect indications available. If 'revertive' is not set, then manual reversion is possible by simply setting the active CEM VC's admin status 'down', then 'up'. Preferred should NOT have 'revertive' set. 'hunt' mode is useful when standby VCs offer no defect indications (see mplsCemVcApsHoldOffTimer). 'hunt' should not be used when standby VCs have available defect indications. Hunting assumes standby VCs are good, if not the down timers will determine it's bad, and hunting continues. 'hunt' and 'revertive' are mutually exclusive."
+  },
+  "mplsCemVcDefects": {
+    "name": "mplsCemVcDefects",
+    "oid": "1.3.6.1.3.9999.1.2.1.31",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "cemError": 0
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of these CEM VC defects. The cemError indicator is a summary of any error associated with processing inbound CEM packets. Separately displaying CEM errors types (buffer errors, missing packets, and header errors) are for future study. Also other bits here may be defined here to show results of error trend analysis. These bits MUST be aligned with mplsCemVcApsCriteria bits so mplsCemVcApsCriteria can be used as a mask. Note: other defect indications (e.g. from OAM) are for future study."
+  },
+  "mplsCemVcApsHoldoffTimer": {
+    "name": "mplsCemVcApsHoldoffTimer",
+    "oid": "1.3.6.1.3.9999.1.2.1.32",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used to hold-off an APS switch after the CEM VC has been determined 'down'. The purpose is to allow potential recovery schemes within lower communications layers a chance to recover. Also useful in 'hunt' mode to hold off switching to the next CEM VC (slows oscillation when all VCs are down)."
+  },
+  "mplsCemVcApsRevertTimer": {
+    "name": "mplsCemVcApsRevertTimer",
+    "oid": "1.3.6.1.3.9999.1.2.1.33",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "If this CEM VC is active and 'up', then this timer is used in conjunction with 'revertive' (if set above). The reversion would be delayed for this time."
+  },
+  "mplsCemVcApsStatus": {
+    "name": "mplsCemVcApsStatus",
+    "oid": "1.3.6.1.3.9999.1.2.1.34",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active": 1,
+          "standby": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If part of a CEM VC group, this indicates if the CEM VC has been selected (via APS algorithm/protocol) to connect the associated Tunnel to the SONET path. If not part of a group, then always 'active'."
+  },
+  "mplsCemVcLdpVcIdLength": {
+    "name": "mplsCemVcLdpVcIdLength",
+    "oid": "1.3.6.1.3.9999.1.2.1.35",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For use by LDP signaling"
+  },
+  "mplsCemVcLdpGroupId": {
+    "name": "mplsCemVcLdpGroupId",
+    "oid": "1.3.6.1.3.9999.1.2.1.36",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For use by LDP signaling"
+  },
+  "mplsCemVcLdpOptParam1": {
+    "name": "mplsCemVcLdpOptParam1",
+    "oid": "1.3.6.1.3.9999.1.2.1.37",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For use by LDP signaling"
+  },
+  "mplsCemVcLdpOptParam2": {
+    "name": "mplsCemVcLdpOptParam2",
+    "oid": "1.3.6.1.3.9999.1.2.1.38",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For use by LDP signaling"
+  },
+  "mplsCemVcTrapEnable": {
+    "name": "mplsCemVcTrapEnable",
+    "oid": "1.3.6.1.3.9999.1.2.1.39",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If this object is true, generation of mplsCemVcUp and mplsCemVcDown traps aare enabled for this CEM VC, otherwise these traps are not emitted."
+  },
+  "mplsCemVcAdminStatus": {
+    "name": "mplsCemVcAdminStatus",
+    "oid": "1.3.6.1.3.9999.1.2.1.40",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2,
+          "testing": 3
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The desired operational status of this CEM VC."
+  },
+  "mplsCemVcOperStatus": {
+    "name": "mplsCemVcOperStatus",
+    "oid": "1.3.6.1.3.9999.1.2.1.41",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2,
+          "testing": 3,
+          "unknown": 4,
+          "dormant": 5,
+          "notPresent": 6,
+          "lowerLayerDown": 7
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the actual operational status of this CEM VC."
+  },
+  "mplsCemVcRowStatus": {
+    "name": "mplsCemVcRowStatus",
+    "oid": "1.3.6.1.3.9999.1.2.1.42",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For creating, modifying, and deleting this row."
+  },
+  "mplsCemVcStorageType": {
+    "name": "mplsCemVcStorageType",
+    "oid": "1.3.6.1.3.9999.1.2.1.43",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable indicates the storage type for this object."
+  },
+  "mplsCemVcPerfTable": {
+    "name": "mplsCemVcPerfTable",
+    "oid": "1.3.6.1.3.9999.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per CEM VC performance information. Note: outbound errors are not being considered. It is assumed (at this time) that CEM packets will be forwarded as they are generated. i.e., it is assumed that there are no local outbound packet congestion issues. HC (high capacity) counters are needed for packet counts due to the high speeds expected with CEM. A SONET path of width 48 can rollover a non-HC counter in a few minutes."
+  },
+  "mplsCemVcPerfEntry": {
+    "name": "mplsCemVcPerfEntry",
+    "oid": "1.3.6.1.3.9999.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "mplsCemVcPerfEntry",
+      "module": "MPLS-CEM-MIB",
+      "object": "mplsCemVcEntry"
+    },
+    "status": "current",
+    "description": "An entry in this table is created by the agent for every mplsCemVcEntry. It is an extension to mplsCemVcEntry."
+  },
+  "mplsCemVcPerfTotalInPacketsHC": {
+    "name": "mplsCemVcPerfTotalInPacketsHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of inbound packets received."
+  },
+  "mplsCemVcPerfTotalOutPacketsHC": {
+    "name": "mplsCemVcPerfTotalOutPacketsHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of outbound packets sent."
+  },
+  "mplsCemVcPerfDbaInPacketsHC": {
+    "name": "mplsCemVcPerfDbaInPacketsHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets received."
+  },
+  "mplsCemVcPerfDbaOutPacketsHC": {
+    "name": "mplsCemVcPerfDbaOutPacketsHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets sent."
+  },
+  "mplsCemVcPerfInNegPtrAdjustHC": {
+    "name": "mplsCemVcPerfInNegPtrAdjustHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments made on the SONET path based on CEM pointer adjustments received."
+  },
+  "mplsCemVcPerfInPosPtrAdjustHC": {
+    "name": "mplsCemVcPerfInPosPtrAdjustHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of postive pointer adjustments made on the SONET path based on CEM pointer adjustments received."
+  },
+  "mplsCemVcPerfOutNegPtrAdjustHC": {
+    "name": "mplsCemVcPerfOutNegPtrAdjustHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments seen on the SONET path and encoded onto sent CEM packets."
+  },
+  "mplsCemVcPerfOutPosPtrAdjustHC": {
+    "name": "mplsCemVcPerfOutPosPtrAdjustHC",
+    "oid": "1.3.6.1.3.9999.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of positive pointer adjustments seen on the SONET path and encoded onto sent CEM packets."
+  },
+  "mplsCemVcPerfCrctHdrErrors": {
+    "name": "mplsCemVcPerfCrctHdrErrors",
+    "oid": "1.3.6.1.3.9999.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of correctable CEM header errors detected on inbound CEM packets."
+  },
+  "mplsCemVcPerfUncrctHdrErrors": {
+    "name": "mplsCemVcPerfUncrctHdrErrors",
+    "oid": "1.3.6.1.3.9999.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of uncorrectable CEM header errors detected on inbound CEM packets."
+  },
+  "mplsCemVcPerfMissingPkts": {
+    "name": "mplsCemVcPerfMissingPkts",
+    "oid": "1.3.6.1.3.9999.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of missing packets (as detected via CEM header sequence number gaps)."
+  },
+  "mplsCemVcPerfPktsOoseq": {
+    "name": "mplsCemVcPerfPktsOoseq",
+    "oid": "1.3.6.1.3.9999.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets detected out of sequence (via CEM header sequence numbers), but were able to be re-sequenced. That is, the differential in sequence numbers was less than the jitter buffer depth. Note: some implementations may not support this feature (see mplsCemVcPktResequence). Any packets so far out of sequence that a re-sequencer can not correct for would be counted as missing packet."
+  },
+  "mplsCemVcPerfJtrBfrUnderruns": {
+    "name": "mplsCemVcPerfJtrBfrUnderruns",
+    "oid": "1.3.6.1.3.9999.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of times the jitter buffer transitioned to empty."
+  },
+  "mplsCemVcPerfJtrBfrOverruns": {
+    "name": "mplsCemVcPerfJtrBfrOverruns",
+    "oid": "1.3.6.1.3.9999.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets received while jitter buffer is full."
+  },
+  "mplsCemVcPerfDiscontinuityTime": {
+    "name": "mplsCemVcPerfDiscontinuityTime",
+    "oid": "1.3.6.1.3.9999.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion at which any one or more of this segment's Counter32 or Counter64 suffered a discontinuity. If no such discontinuities have occurred since the last re- initialization of the local management subsystem, then this object contains a zero value."
+  },
+  "mplsCemMappingTable": {
+    "name": "mplsCemMappingTable",
+    "oid": "1.3.6.1.3.9999.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maps an inbound Tunnel/VcLabel to a CEM VC."
+  },
+  "mplsCemMappingEntry": {
+    "name": "mplsCemMappingEntry",
+    "oid": "1.3.6.1.3.9999.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemMappingInTunnelIndex",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemMappingInTunnelInstance",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemMappingInTunnelIngressLSR",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemMappingInTunnelLocalLSR",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemMappingVcLabel",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents the inbound connection between a Tunnel/VcLabel and CEM VC/instance. It is indexed by the same 4 indexes that index the inbound Tunnel, then adds the VC Label as a 5th index. The Tunnel referenced here is in the mplsTunnelTable. - The mplsCemMappingInTunnelIndex uniquely identifies a singular Tunnel or a group. If a group, individual Tunnels are identified by the Instance. - The mplsCemMappingInTunnelInstance. - ID (normally an IP address) for the ingress LSR, mplsCemMappingInTunnelIngressLSR. - ID (normally an IP address) of the Local (egress) LSR, mplsCemMappingInTunnelLocalLSR, - and the VC Label, mplsCemMappingVcLabel."
+  },
+  "mplsCemMappingInTunnelIndex": {
+    "name": "mplsCemMappingInTunnelIndex",
+    "oid": "1.3.6.1.3.9999.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Primary index for the conceptual row identifying a group of Tunnel/VcLabel to CEM VC mappings."
+  },
+  "mplsCemMappingInTunnelInstance": {
+    "name": "mplsCemMappingInTunnelInstance",
+    "oid": "1.3.6.1.3.9999.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelInstanceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Uniquely identifies an instance of a mapping"
+  },
+  "mplsCemMappingInTunnelIngressLSR": {
+    "name": "mplsCemMappingInTunnelIngressLSR",
+    "oid": "1.3.6.1.3.9999.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrId",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Uniquely identifies an ingress LSR"
+  },
+  "mplsCemMappingInTunnelLocalLSR": {
+    "name": "mplsCemMappingInTunnelLocalLSR",
+    "oid": "1.3.6.1.3.9999.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrId",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Uniquely identifies the local LSR"
+  },
+  "mplsCemMappingVcLabel": {
+    "name": "mplsCemMappingVcLabel",
+    "oid": "1.3.6.1.3.9999.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLabel",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Identifies a unique label on this tunnel"
+  },
+  "mplsCemMappingVcIndex": {
+    "name": "mplsCemMappingVcIndex",
+    "oid": "1.3.6.1.3.9999.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Index for entry (or group of entries, in the case of backup VCs) in the mplsCemVcTable. This value can also be thought of as the Circuit ID."
+  },
+  "mplsCemMappingVcInstance": {
+    "name": "mplsCemMappingVcInstance",
+    "oid": "1.3.6.1.3.9999.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Identifies a unique member within a CEM VC group. (This could of course be a group of one.)"
+  },
+  "mplsCemMappingRowStatus": {
+    "name": "mplsCemMappingRowStatus",
+    "oid": "1.3.6.1.3.9999.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For creating, modifying, and deleting this row."
+  },
+  "mplsCemMappingStorageType": {
+    "name": "mplsCemMappingStorageType",
+    "oid": "1.3.6.1.3.9999.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable indicates the storage type for this object."
+  },
+  "mplsCemTunnelExtTable": {
+    "name": "mplsCemTunnelExtTable",
+    "oid": "1.3.6.1.3.9999.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table is an extension to the mplsTunnelTable. This table exists to configure parameters useful for CEM APS."
+  },
+  "mplsCemTunnelExtEntry": {
+    "name": "mplsCemTunnelExtEntry",
+    "oid": "1.3.6.1.3.9999.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemTunnelExtIndex",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemTunnelExtInstance",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemTunnelExtIngressLSR",
+        "implied": 0
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemTunnelExtLocalLSR",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents a Tunnel used for CEM VCs. The Tunnel referenced here is in the mplsTunnelTable. It is indexed by the same 4 indexes of the inbound Tunnel: - The mplsCemTunnelExtIndex uniquely identifies a singular Tunnel or a group. If a group, individual Tunnels are identified by the Instance. - The mplsCemTunnelExtInstance. - ID (normally an IP address) for the ingress LSR, mplsCemTunnelExtIngressLSR. - ID (normally an IP address) of the Local (egress) LSR, mplsCemTunnelExtLocalLSR. In the mplsTunnelTable, this index would be referred to as the Egress LSR ID. Since CEM is always at a tunnel termination, the egress LSR is always the local (edge) LSR. The local agent creates an entry here for every entry created in the mplsCemMappingTable."
+  },
+  "mplsCemTunnelExtApsEnable": {
+    "name": "mplsCemTunnelExtApsEnable",
+    "oid": "1.3.6.1.3.9999.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Enables this Tunnel (as part of a group) to be used for APS. Remember a Tunnel group is created when a unique Tunnel index (in mplsTunnelTable) has multiple instances. Tunnel disabling may be useful when a Tunnel is suspect, being debugged, or not fully configured. Note: some implementations may not support APS."
+  },
+  "mplsCemTunnelExtApsCriteria": {
+    "name": "mplsCemTunnelExtApsCriteria",
+    "oid": "1.3.6.1.3.9999.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "cemVcCriteria": 0,
+        "revertive": 512,
+        "hunt": 1024
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Bits set here represent defects and modes for switching all VCs within this Tunnel to another Tunnel that has no APS defects. Currently, only CEM defects are available. Separating and individually selecting CEM defects (buffer errors, header errors, etc.) is for future study. Also, for future study: determining a Tunnel's state of usefulness via other indications (such as OAM). If 'cemVcCriteria' is set, mplsCemTunnelExtApsViaCemVc is used to index the CEM VC for which defects are included. The purpose of this is in situations when CEM VCs can generate better defects than Tunnels (for example: buffer errors). Revertive and Hunt modes: 'revertive' is useful for non-primary Tunnels where you may want to switch back to a primary Tunnel that has no defects while the currently active also has no defects (see mplsCemTunnelExtApsRevertTimer). 'revertive' should NOT be used when standby Tunnels have no available defect indications. If 'revertive' is not set, then manual reversion is possible by simply setting the active Tunnel's admin status 'down', then 'up'. 'hunt' is useful when standby Tunnels offer no defect indications (see mplsCemTunnelExtApsHoldOffTimer). 'hunt' should not be used when standby Tunnels have available defect indications. Hunting assumes standby Tunnels are good, if not the down timers will determine it's bad, and hunting continues. 'hunt' and 'revertive' are mutually exclusive. Note: criteria defect bits here MUST align with mplsCemTunnelExtDefects so it can be used as a mask."
+  },
+  "mplsCemTunnelExtDefects": {
+    "name": "mplsCemTunnelExtDefects",
+    "oid": "1.3.6.1.3.9999.1.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "cemVcCriteria": 0
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of Tunnel defect indications. Other bits here may be defined here to show results of error trend analysis. Note: These bits MUST be aligned with mplsCemTunnelExtApsCriteria bits so mplsCemTunnelExtApsCriteria can be used as a mask. Note: other defect indications (e.g. from OAM) are for future study."
+  },
+  "mplsCemTunnelExtApsHoldoffTimer": {
+    "name": "mplsCemTunnelExtApsHoldoffTimer",
+    "oid": "1.3.6.1.3.9999.1.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Primarily used to hold-off an APS switch after the Tunnel has been determined 'down'. The purpose is to allow potential recovery schemes within lower communications layers a chance to recover. Also useful in 'hunt' mode to hold off switching to the next Tunnel (slows oscillation when all Tunnels are down)."
+  },
+  "mplsCemTunnelExtApsRevertTimer": {
+    "name": "mplsCemTunnelExtApsRevertTimer",
+    "oid": "1.3.6.1.3.9999.1.5.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "If this Tunnel is active and 'up', then this timer is used in conjunction with 'revertive' (if set above). The reversion would be delayed for this time."
+  },
+  "mplsCemTunnelExtApsViaCemVcIndex": {
+    "name": "mplsCemTunnelExtApsViaCemVcIndex",
+    "oid": "1.3.6.1.3.9999.1.5.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Index of the CEM VC from which APS defect criteria are included with this Tunnel's APS criteria."
+  },
+  "mplsCemTunnelExtApsViaCemVcInstance": {
+    "name": "mplsCemTunnelExtApsViaCemVcInstance",
+    "oid": "1.3.6.1.3.9999.1.5.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Instance of the CEM VC from which APS defect criteria are included with this Tunnel's APS criteria."
+  },
+  "mplsCemTunnelExtStorageType": {
+    "name": "mplsCemTunnelExtStorageType",
+    "oid": "1.3.6.1.3.9999.1.5.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable indicates the storage type for this object."
+  },
+  "mplsCemTunnelExtPerfTable": {
+    "name": "mplsCemTunnelExtPerfTable",
+    "oid": "1.3.6.1.3.9999.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table is an extension to the mplsTunnelTable. It provides per Tunnel performance information."
+  },
+  "mplsCemTunnelExtPerfEntry": {
+    "name": "mplsCemTunnelExtPerfEntry",
+    "oid": "1.3.6.1.3.9999.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "mplsCemTunnelExtPerfEntry",
+      "module": "MPLS-CEM-MIB",
+      "object": "mplsCemTunnelExtEntry"
+    },
+    "status": "current",
+    "description": "An entry in this table is created by the agent for every mplsCemTunnelExtEntry. It is an extension to mplsCemTunnelExtEntry."
+  },
+  "mplsCemTunnelExtPerfFailedLabelLookups": {
+    "name": "mplsCemTunnelExtPerfFailedLabelLookups",
+    "oid": "1.3.6.1.3.9999.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets with unexpected labels received. This count is based on inbound VC labels seen that are not configured for this Tunnel."
+  },
+  "mplsCemTunnelExtPerfLastFailedLookup": {
+    "name": "mplsCemTunnelExtPerfLastFailedLookup",
+    "oid": "1.3.6.1.3.9999.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLabel",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Contains label from the packet that last failed a label lookup on this Tunnel."
+  },
+  "mplsCemSonetPathExtTable": {
+    "name": "mplsCemSonetPathExtTable",
+    "oid": "1.3.6.1.3.9999.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table associates a SONET path with a CEM VC (or CEM VC group) and provides the starting time-slot of the SONET path. It as assumed that the transmit and receive sides of the SONET path have the same starting time-slots. It is also assumed that STSn paths have contiguous time-slots."
+  },
+  "mplsCemSonetPathExtEntry": {
+    "name": "mplsCemSonetPathExtEntry",
+    "oid": "1.3.6.1.3.9999.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemSonetPathExtSonetIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This table is indexed by the SONET path ifIndex. An entry to this table is created by the agent when an entry is created in the mplsCemVcTable."
+  },
+  "mplsCemSonetPathExtVcIndex": {
+    "name": "mplsCemSonetPathExtVcIndex",
+    "oid": "1.3.6.1.3.9999.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Index to entry in the mplsCemVcTable."
+  },
+  "mplsCemSonetPathExtTimeSlot": {
+    "name": "mplsCemSonetPathExtTimeSlot",
+    "oid": "1.3.6.1.3.9999.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 192
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Starting time-slot for this SONET path within the SONET line and section. For OC-48, this value could range from 1 to 48. The SONET path width must be taken into consideration here, for example, in an OC-48 an STS-3c could not start at time-slot 47."
+  },
+  "mplsCemSonetPathExtStorageType": {
+    "name": "mplsCemSonetPathExtStorageType",
+    "oid": "1.3.6.1.3.9999.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable indicates the storage type for this object."
+  },
+  "mplsCemTrapEnable": {
+    "name": "mplsCemTrapEnable",
+    "oid": "1.3.6.1.3.9999.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If this object is true, then it enables the generation of mplsCemVcUp and mplsCemVcDown traps, otherwise these traps are not emitted. These traps are also individually enabled for each CEM VC."
+  },
+  "mplsCemVcUp": {
+    "name": "mplsCemVcUp",
+    "oid": "1.3.6.1.3.9999.0.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcIndex"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcInstance"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcOperStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcAdminStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcSonetPathIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a mplsCemVcOperStatus object for one of the configured CEM VC entries is about to leave the down state and transition into some other state (but not into the notPresent state). This other state is indicated by the included value of mplsCemVcOperStatus."
+  },
+  "mplsCemVcDown": {
+    "name": "mplsCemVcDown",
+    "oid": "1.3.6.1.3.9999.0.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcIndex"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcInstance"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcOperStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcAdminStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcSonetPathIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a mplsCemVcOperStatus object for one of the configured CEM VC entries is about to enter the down state and transition into some other state (but not from the notPresent state). This other state is indicated by the included value of mplsCemVcOperStatus."
+  },
+  "mplsCemVcApsFrom": {
+    "name": "mplsCemVcApsFrom",
+    "oid": "1.3.6.1.3.9999.0.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcIndex"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcInstance"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcOperStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcAdminStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcSonetPathIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the CEM VC APS mechanism has initiated a switch from the specified Index/Instance to find a 'good' CEM VC within the same group. To reduce the number of Traps, it is recommended to only generate mplsCemVcApsFrom when first initiating attempt to find a good CEM VC instance. That is, do not generate Traps if the APS mechanism is continuing to switch looking for an CEM VC group member that is good."
+  },
+  "mplsCemVcApsTo": {
+    "name": "mplsCemVcApsTo",
+    "oid": "1.3.6.1.3.9999.0.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcIndex"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcInstance"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcOperStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcAdminStatus"
+      },
+      {
+        "module": "MPLS-CEM-MIB",
+        "object": "mplsCemVcSonetPathIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the CEM VC APS mechanism has switched to and settled on a CEM VC Index and Instance that is 'good' (whether from a bad VC or when reverting)."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/MPLS-CEM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 20:01:14 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "MPLS-CEM-MIB"
+  }
+}

@@ -1,0 +1,1078 @@
+FIAL-ENC-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    NOTIFICATION-TYPE,
+    OBJECT-TYPE,
+    IpAddress,
+    Unsigned32
+        FROM SNMPv2-SMI
+
+    DisplayString,
+    DateAndTime,
+    TEXTUAL-CONVENTION,
+ --   TimeStamp,
+    TruthValue,
+    TestAndIncr
+        FROM SNMPv2-TC
+
+    MODULE-COMPLIANCE,
+    NOTIFICATION-GROUP,
+    OBJECT-GROUP
+        FROM SNMPv2-CONF
+
+    fialMgmt,
+    fialModules
+        FROM FIAL-REGISTRY-MIB;
+
+fialEncMIB MODULE-IDENTITY
+    LAST-UPDATED "200605250000Z" -- may 25, 2006
+    ORGANIZATION "Fial Incorporated"
+    CONTACT-INFO
+        "Postal: Fial Incorporated
+                 710 Center St.
+                 Oregon City, OR 97045
+                 USA
+
+            Tel: +1 (503) 607-1940
+            Fax: +1 (503) 607-1945
+            Web: http://www.fial.com
+
+         E-mail: support@fial.com"
+
+    DESCRIPTION
+        "This SNMPv2 MIB module defines MIB objects and notifications
+        for monitoring alarms, analog values and controlling
+        relays in the Fial Model 2311 SNMP Encoder.  This MIB has
+        a simple design that allows field personnel to check alarms
+        and controls with a MIB Browser.
+
+        There are a number of management objects defined in this
+        MIB module with a MAX-ACCESS clause of read-write.  Such
+        objects may be considered sensitive or vulnerable in some
+        network environments.  The support for SET operations in 
+        a non-secure environment without proper protection can have
+        a negative effect on network operations.  These are the tables
+        and objects and their sensitivity/vulnerability:
+
+        1)  encControlPointTable and its encControlReqState object:
+            'Sets' to this object open and close relays that control
+            remote equipment.  Access is controlled by the write
+            community string.
+          
+        2)  encMgrNotifyTable and its encMgrEventNotify object
+            'Sets' to this object switch notifications on and off
+            for specific managers. Access is controlled by the
+            write community string and restricted to the IP address
+            of the manager.
+
+        The key words MUST, MUST NOT, REQUIRED, SHALL
+        SHALL NOT, sHOULD, SHOULD NOT, RECOMMENDED,  MAY,
+        and OPTIONAL in this document are to be interpreted as
+        described in [RFC2119].
+
+        Copyright 2002, 2004 Fial Incorporated All rights reserved
+        Reproduction of this document is authorized on the condition
+        that the foregoing copyright notice is included.
+
+        This SNMP MIB module (Specification) embodies proprietary
+        intellectual property of Fial Incorporated (hereafter referred
+        to as Fial). Fial retains all title and ownership in the
+        Specification, including any revisions.
+
+        Fial grants all interested parties a non-exclusive license to
+        use and distribute an unmodified copy of this Specification
+        in connection with management of Fial products, and without
+        fee, provided this copyright notice and license appear on
+        all copies.
+
+        This Specification is supplied 'AS IS,' and Fial makes no
+        warranty, either express or implied, as to the use, operation,
+        condition or performance of the Specification."
+
+    REVISION "200403010000Z" -- March 1,2004
+    DESCRIPTION
+        "Rev 1.1   1 Mar 2004
+         Release 1.1 MIB module FIAL-ENC-MIB"
+
+    REVISION "200605250000Z" -- may 25, 2006
+    DESCRIPTION
+        "Rev 1.2    25 May 2006
+         Updated Fial CONTACT INFO."
+
+    ::= { fialModules 3 }
+
+fialEnc OBJECT IDENTIFIER ::= { fialMgmt 3 }
+
+    encNotifications OBJECT IDENTIFIER ::= { fialEnc 0 }
+
+    encObjects OBJECT IDENTIFIER ::=  { fialEnc 1 }
+
+        encGlobals OBJECT IDENTIFIER ::= { encObjects 1 }
+
+    encConformance OBJECT IDENTIFIER ::= { fialEnc 2 }
+
+        encMIBGroups OBJECT IDENTIFIER ::= { encConformance 1 }
+
+        encMIBCompliances OBJECT IDENTIFIER ::= { encConformance 2 }
+
+
+-- ****************************************************************************
+--                         Encoder TEXTUAL-CONVENTIONS
+-- ****************************************************************************
+
+
+EncPointState ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION
+        "Datatype to indicate whether an alarm or control point is ON or OFF."
+    SYNTAX INTEGER {
+         on (1),
+        off (2)
+    }
+
+
+EncFloat ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION
+        "The ASCII representation of a floating point value in format
+
+            sD.DDDDDDEsDD
+
+        Where 's' is a plus or minus sign, 'D' is a digit, '.' is a
+        ASCII 'period' character and 'E' is the letter 'E'.
+
+        Examples:
+
+              VALUE        encFloat
+            ---------    -------------
+                -1234    -1.234000E+03
+                   -1    -1.000000E+00
+            -0.001234    -1.234000E-03
+                    0    +0.000000E+00
+             0.001234    +1.234000E-03
+                    1    +1.000000E+00
+                 1234    +1.234000E+03
+        "
+     SYNTAX OCTET STRING (SIZE (13))
+
+
+EncPointType ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION
+        "Datatype to represent the point type in the encPointTable. 
+         Additional point types may be added in future MIB revisions.
+
+            discretePoint (1)
+                A simple read-only point having ON/OFF state. Also called
+                an alarm point.
+
+            analogPoint (2)
+                A read-only point having ON/OFF state and four additional
+                attributes:  value, low threshold, high threshold, and units.
+                This point type is used to store a remotely monitored analog
+                value (e.g. a voltage) or count (e.g. bit-error rate). The
+                low and high thresholds define the range of normal values
+                for the point. If the value of an analogPoint is found to
+                be outside of the bounds defined by these thresholds then
+                the ON/OFF state of the point is automatically set to ON.
+                When the value returns within normal limits the state of
+                the point is automatically set to OFF. The 'units' attribute
+                is simply for reference and describes in simple text the
+                unit of measure which applies to the value and thresholds.
+                
+                Meaningful threshold and units attributes are assigned to
+                an analog point during SNMP Encoder hardware configuration.
+                using a web browser.
+              
+            controlPoint (3)
+                A simple control point having ON/OFF state which can be set
+                by the manager.
+
+            other (999)
+                The point is not one of the above described types.  The
+                Encoder does not return this point type in this MIB
+                revision.
+
+             unknown (1000)
+                The point type is unknown.   The Encoder  does not return
+                this point type as of this MIB revision."
+    SYNTAX INTEGER {
+        discretePoint (1),
+        analogPoint (2),
+        controlPoint (3),
+        other (999),
+        unknown (1000)
+    }
+
+
+
+
+-- ****************************************************************************
+--                               Encoder Globals   
+-- ****************************************************************************
+
+encSiteName OBJECT-TYPE
+    SYNTAX     DisplayString
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Site Name or designation for Encoder.  A name or location
+        code may be used.  For example: PikesPeak, RadiumSprings,
+        Spur17B35.  
+
+        Also see the sysDescr in the MIB-II system group for the
+        factory model number and software revision."
+--  sysLocation may also contain this information?
+    ::= { encGlobals 1 }
+
+
+
+encMIBModuleRev OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(13))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The revision of encMIB which is supported by the agent. This value
+        should match the most recent REVISION field of the fialEncMIB
+        MODULE-IDENTITY loaded at the management station (i.e. 200403010000Z)."
+    ::= { encGlobals 2 }
+
+
+
+encEventLogTableLastIndex OBJECT-TYPE
+    SYNTAX Unsigned32    (0..4294967295)
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The value of the encEventLogIndex column for the last row 
+        appended to the encEventLogTable. 
+
+        A management station can use this value to periodically check
+        whether new events have been entered in the event log without
+        having to walk the entire table. A manager can also use this
+        value to verify that it has not missed any notifications of
+        encEventLogTable new rows.
+
+        If the encEventLogTable contains no rows, this object will
+        return a value of 0."
+    ::= { encGlobals 3}
+
+encAnalogCard OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Indicates whether the Encoder contains an analog-input
+        card. The value is 1 for true, 2 for false.  If false, 
+        accesses to encAlarmLogTable will return a 
+        noSuchInstance exception."
+    ::= { encGlobals 4}
+
+
+
+-- ****************************************************************************
+--                          encEventLogTable   
+-- ****************************************************************************
+
+encEventLogTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF EncEventLogEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "A table of recent alarm, analog and control events indexed 
+        chronologically.  Rows in this table reflect alarm (on/off)
+        events,analog values transitioning accross upper or lower
+        threshold limits, or control point (on/off) changes.  This
+        table is a log of the changes taking place in the 
+        encAlarmPointTable, encControlPointTable and the
+        encAnalogPointTable.
+       
+        A notification can be sent to managers when a row is added to
+        this table.  The manager MUST be identified in a row of the
+        encMgrNotifyTable, and encMgrEventNotify in that row MUST be
+        true(1). 
+
+        When a row is added to encEventLogTable, The index value of
+        the row is included in the varbind list of a notification.
+        This provides a mechanism by which managers can verify that
+        no notifications have been missed (there would be a gap in
+        the sequence of indices received). 
+
+        The Encoder allows a maximum of 100 rows in this table.  When the
+        table has 100 rows, the oldest row is deleted before a new row is 
+        added.
+
+        A new epoch starts when the MIB-II object SysUptime is zero
+        or is less than the previous value of SysUptime. This happens
+        whenever the unit is restarted, or when SysUptime rolls over
+        to zero at 497 days after a restart.  At that time all data
+        in this MIB should be reloaded by the manager."
+    ::= { encObjects 2 }
+
+encEventLogEntry OBJECT-TYPE
+    SYNTAX     EncEventLogEntry
+    MAX-ACCESS not-accessible 
+    STATUS     current
+    DESCRIPTION
+        "A row in the Event log table. Rows cannot be created, deleted or
+        modified via SNMP operations."
+    INDEX { encEventLogIndex }
+    ::= { encEventLogTable 1 }
+
+EncEventLogEntry ::= SEQUENCE {
+    encEventLogIndex             Unsigned32,
+    encEventLogType              EncPointType,
+    encEventLogPointName         DisplayString,
+    encEventLogPointState        EncPointState,
+    encEventLogSeverity	         DisplayString,
+    encEventLogSA                TruthValue,
+    encEventLogDateAndTime       DateAndTime,
+    encEventLogPointTableIndex   Unsigned32
+}
+
+encEventLogIndex OBJECT-TYPE
+    SYNTAX     Unsigned32    (1..4294967295)
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The index for events in the Events log table. The index of
+        an existing entry is not affected when an entry is added or removed 
+        from the table. Index values are non-zero and assigned in a strictly
+        increasing fashion (beginning with 1 at system startup). Values are 
+        not re-used until the entire 32-bit range has been exhausted. Thus, 
+        the rows in the encEventLogTable are indexed chronologically. 
+
+        The value of encEventLogTableLastIndex is updated whenever
+        a new row is added to the table.  If there are 100,000 new
+        table entries per day, the table index will not overflow
+        for 109 years."
+    ::= { encEventLogEntry 1 }
+
+
+encEventLogType OBJECT-TYPE
+    SYNTAX     EncPointType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The configured type of the Event.  The Textual convention
+    For EncPointType defines discrete alarm point as 1, analog
+    alarm point as 2 and control point as 3."
+    ::= { encEventLogEntry 2 }
+
+
+encEventLogPointName OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(1..32))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The name of the point.  The name will match the
+        value seen in the encAlarmName, encControlName
+        or encAnalogName objects of the alarm, control
+        and analog tables escribed in this mib module.
+        See encEventLogType to determine which table."
+    ::= { encEventLogEntry 3 }
+
+
+encEventLogPointState OBJECT-TYPE
+    SYNTAX     EncPointState
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The ON/OFF state of the alarm, analog or control point
+    event being logged, encoded with the EncPointState textual 
+    convention."
+    ::= { encEventLogEntry 4 }
+
+encEventLogSeverity OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE (1..2))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "A short mnemonic representing the severity of the event.
+    The possible values are CR, MJ, MN, or ST.  For control 
+    points, this value is always ST (status).  If notifications
+    are enabled, a notification is always sent when a control
+    point changes state, even if 'Add ST Events to the Event Log'
+    is set to 'No' in the 2311's IP Settings web page.
+
+    This object is similar to SyslogSeverity TC in the 
+    SYSLOG-DEVICE-MIB, however the CR, MJ, MN, ST values used here
+    are more standard in the telecom industry."
+    ::= { encEventLogEntry 5 }
+
+encEventLogSA OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Indicates whether the point is one which can affect service.
+        This means dropping traffic in a telecommunications syatem.
+        The value is 1 for true, 2 for false.  This value is always
+        2 (false) for control points."
+    ::= { encEventLogEntry 6 }
+
+
+encEventLogDateAndTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The date and time on the local machine when the alarm
+        event occurred.  See SNMPv2-TC.
+
+        For example, Tuesday May 11, 2002 at 2:30:15.0 PM EDT 
+        will be represented by OCTET STRING: 
+
+                   '07D2050B0E1E0F002D0400'H
+
+        Hexadecimal --->     07D2 05 0B 0E 1E 0F 00 2D 04 00
+
+        Decimal/alpha ->     2002  5 11 14 30 15  0  -  4  0
+         hours,minutes,seconds,tenths ...^..^..^..^
+           time-zone-offset hours,minutes ..............^..^
+
+        Using  DISPLAY-HINT 2d-1d-1d,1d:1d:1d.1d,1a1d:1d
+
+        will display:     2002-5-11,14:30:15.0,-4:0
+
+        SNMP managers will reformat this per local custom."
+    ::= { encEventLogEntry 7 }
+
+encEventLogPointTableIndex OBJECT-TYPE
+    SYNTAX     Unsigned32
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Every row in the encEventLogTable represents a point change-of-state 
+        event.  If the event is a discrete alarm point, then this object
+        returns the index of a row in the encAlarmPointTable which corresponds
+        to the point that changed state.  If the event is an analog threshold
+        event, then this object returns the index of a row in the
+        encAnalogPointTable.  If the event is a control point change of 
+        state, then this object returns the index of a row in the
+        encControlPointTable."
+    ::= { encEventLogEntry 8 }
+
+
+-- ****************************************************************************
+--                               encAlarmTable   
+-- ****************************************************************************
+
+encAlarmPointTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF EncAlarmPointEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The table of information about alarm points.
+
+        This table provides a set of points that are always visible to 
+        an SNMP manager.  For all points, the encAlarmState column
+        indicates if a point is ON (asserted) or OFF.  The point names,
+        severity etc. are configured with a web browser.
+
+        A new epoch starts when SNMP MIB-II object SysUpTime is zero
+        or is less than the previous value of SysUpTime. This happens
+        whenever the unit is restarted, or when SysUptime rolls over
+        to zero 497 days after a restart.  At that time all data in 
+        this table is subject to change. During an Epoch, rows
+        will not be added or deleted."
+    ::= { encObjects 3 }
+
+encAlarmPointEntry OBJECT-TYPE
+    SYNTAX     EncAlarmPointEntry
+    MAX-ACCESS not-accessible 
+    STATUS     current
+    DESCRIPTION
+        "A row in the table of alarms. Rows cannot be created, deleted or
+        modified via SNMP operations."
+    INDEX { encAlarmIndex }
+    ::= { encAlarmPointTable 1 }
+
+EncAlarmPointEntry ::= SEQUENCE {
+    encAlarmIndex              Unsigned32,
+    encAlarmName               DisplayString,
+    encAlarmState              EncPointState,
+    encAlarmSeverityName       DisplayString,
+    encAlarmServAffecting      TruthValue
+}
+
+encAlarmIndex OBJECT-TYPE
+    SYNTAX     Unsigned32    (1..4294967295)
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "An arbitrary index to uniquely identify each row in the
+        encPointTable."
+    ::= { encAlarmPointEntry 1 }
+
+
+encAlarmName OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(1..32))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The name of the alarm point."
+    ::= { encAlarmPointEntry 3 }
+
+
+encAlarmState OBJECT-TYPE
+    SYNTAX     EncPointState  
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The current ON/OFF state of the point."
+    ::= { encAlarmPointEntry 4 }
+
+encAlarmSeverityName OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(1..2))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "A short mnemonic representing the severity of the point.
+        The values CR, MJ, MN, ST are possible.  This stands for 
+        critical, major minor and status respectively. The severity of 
+        a point is assigned with a web browser.   This makes the
+        severity value readily visible using a MIB browser."
+    ::= { encAlarmPointEntry 5 }
+
+encAlarmServAffecting OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Indicates whether the point is one which can affect service.
+        This means dropping traffic in a telecommunications syatem.
+        For example, a door-open or tower-light alarm may be a major
+        alarm but would not be classified as service-affecting.
+        The value is 1 for true, 2 for false."
+    ::= { encAlarmPointEntry 6 }
+
+-- ****************************************************************************
+--                               encControlPointTable   
+-- ****************************************************************************
+
+encControlPointTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF EncControlPointEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The table of control points. Each row contains information 
+        about a control point in the SNMP Encoder.  The point names
+        are configured with a web browser.
+
+        A new epoch starts when SNMP MIB-II object SysUpTime is zero
+        or is less than the previous value of SysUpTime. This happens
+        whenever the unit is restarted, or when SysUptime rolls over
+        to zero 497 days after a restart.  At that time all data in 
+        this table is subject to change. During an Epoch, rows
+        will not be added or deleted."
+    ::= { encObjects 4 }
+
+encControlPointEntry OBJECT-TYPE
+    SYNTAX     EncControlPointEntry
+    MAX-ACCESS not-accessible 
+    STATUS     current
+    DESCRIPTION
+        "A row in the table of controls. Rows cannot be created, deleted
+        or modified via SNMP operations."
+    INDEX { encControlIndex } 
+    ::= { encControlPointTable 1 }
+
+EncControlPointEntry ::= SEQUENCE {
+
+
+    encControlIndex           Unsigned32,
+    encControlName       DisplayString,
+    encControlState      EncPointState,
+    encControlReqState   EncPointState,
+    encControlSpinLock   TestAndIncr
+}
+
+
+encControlIndex OBJECT-TYPE
+    SYNTAX     Unsigned32    (1..4294967295)
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "An arbitrary index to uniquely identify each row in the
+        encPointTable."
+    ::= { encControlPointEntry 1 }
+
+
+encControlName OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(1..32))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The name of the control point."
+    ::= { encControlPointEntry 2 }
+
+
+encControlState OBJECT-TYPE
+    SYNTAX     EncPointState  
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The current ON/OFF state of the point."
+    ::= { encControlPointEntry 3 }
+
+
+
+encControlReqState OBJECT-TYPE
+    SYNTAX     EncPointState
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "The requested ON/OFF state of the control point. To turn a control
+        ON or OFF a manager should set this variable to the desired state
+        (1 for on, 2 for off) using an SNMP set request, and set
+        encControlSpinLock to its current value in the same PDU. If 
+        the point is already in the requested state then the set request
+        will fail, and the Encoder will return inconsistentValue.  
+
+        A successful result only indicates to the manager that the request has
+        been queued. A successful result does NOT necessarily indicate that
+        the requested control has been executed, since such operations can
+        take about 0.1 second to complete. A manager should poll the
+        encControlState object for the appropriate row for verification
+        that the control was performed successfully."
+    ::= { encControlPointEntry 4 }
+
+
+encControlSpinLock OBJECT-TYPE
+    SYNTAX     TestAndIncr
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "A manager desiring to set the value of EncControlReqState must
+        simultaneously (in the same PDU) set the value of encControlSpinLock
+        to its current value.  If the current value of encControlSpinLock
+        is 2345, then a manager must set encControlSpinLock to 2345 in
+        the same PDU that sets encControlReqState to a desired value.
+
+        If the operation is successful, then encControlSpinLock will 
+        be incremented by one, and encControlState will be set to match
+        the encReqControlState value that was 'set'.  if encControlSpinLock
+        reaches the maximum value of 2^31-1 (2147483647 decimal), then 
+        the value held by encControlSpinLock is wrapped to zero; otherwise,
+        the value is incremented by one.  
+
+        If the set operation fails, an error of `inconsistentValue' is
+        Returned.  (Note that regardless of whether the
+        management protocol set operation succeeds, the variable-
+        binding in the request and the response PDUs are identical.)
+
+        When the Encoder is restarted, the value this object will
+        be set to 0."
+    ::= { encControlPointEntry 5 }
+
+
+
+
+-- ****************************************************************************
+--                            encAnalogPointTable
+-- ****************************************************************************
+
+
+encAnalogPointTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF EncAnalogPointEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "A table of analog points.  Each row contains 
+        information about an analog value as configured with a web
+        configuration page.  The point names, thresholds, etc.
+        are configured with a web browser.  
+
+        The analog input module is an optional add-in feature
+        for the encoder. If the module is not present, accesses
+        to this object will return a noSuchInstance exception.
+
+        A new epoch starts when SNMP MIB-II object SysUpTime is zero
+        or is less than the previous value of SysUpTime. This happens
+        whenever the unit is restarted, or when SysUptime rolls over
+        to zero 497 days after a restart.  At that time all data in 
+        this table is subject to change.  During an Epoch, rows
+        will not be added or deleted."
+    ::= { encObjects 5 }
+
+encAnalogPointEntry OBJECT-TYPE
+    SYNTAX     EncAnalogPointEntry
+    MAX-ACCESS not-accessible 
+    STATUS     current
+    DESCRIPTION
+        "A row in the table of analog points. Rows cannot be created,
+        deleted or modified via SNMP operations."
+    INDEX { encAnalogIndex } 
+    ::= { encAnalogPointTable 1 }
+
+EncAnalogPointEntry ::= SEQUENCE {
+    encAnalogIndex             Unsigned32,
+    encAnalogName              DisplayString,
+    encAnalogState             EncPointState,
+    encAnalogSeverity          DisplayString,
+    encAnalogServAffecting     TruthValue,
+    encAnalogValue             EncFloat,
+    encAnalogLowThreshold      EncFloat,
+    encAnalogHighThreshold     EncFloat,
+    encAnalogUnits             DisplayString
+}
+
+
+encAnalogIndex OBJECT-TYPE
+    SYNTAX     Unsigned32    (1..4294967295)
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "An arbitrary index to uniquely identify each row in the
+        encAnalogTable."
+    ::= { encAnalogPointEntry 1 }
+
+encAnalogName OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(1..32))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The name of the analog point."
+    ::= { encAnalogPointEntry 2 }
+
+encAnalogState OBJECT-TYPE
+    SYNTAX     EncPointState  
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The current ON/OFF state of the point."
+    ::= { encAnalogPointEntry 3 }
+
+encAnalogSeverity OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(1..2))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "A short mnemonic representing the severity of the point.
+    The values CR, MJ, MN, ST are possible.   This stands for 
+    critical, major minor and status respectively.  The severity
+    of a point is assigned with a web browser. This makes the
+    severity value readily visible using a MIB browser."
+    ::= { encAnalogPointEntry 4 }
+
+encAnalogServAffecting OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Indicates whether the point is one which can affect service.
+       This means dropping traffic in a telecommunications syatem.
+       The value is 1 for true, 2 for false."
+    ::= { encAnalogPointEntry 5 }
+
+encAnalogValue OBJECT-TYPE
+    SYNTAX     EncFloat
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The analog value of the point encoded into an octet string.
+        Examples: -2.123456E+03, +1.234567E-09, +8.000000E+00
+        See the EncFloat Textual-Convention in this MIB."
+     ::= { encAnalogPointEntry 6 }
+
+encAnalogLowThreshold OBJECT-TYPE
+    SYNTAX     EncFloat
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "If encAnalogPointValue is ever less than encAnalogPointLowThreshold,
+         then the analog point is said to be in alarm, and its encState
+         value is set to ON."
+    ::= { encAnalogPointEntry 7 }
+
+encAnalogHighThreshold OBJECT-TYPE
+    SYNTAX     EncFloat
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "If encAnalogPointValue is ever greater than encAnalogPointHighThreshold,
+         then the analog point is said to be in alarm, and its encPointState
+         value is set to ON."
+    ::= { encAnalogPointEntry 8 }
+
+encAnalogUnits OBJECT-TYPE
+    SYNTAX     DisplayString
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The units that describe encAnalogPointValue, such as Volts, Amps, 
+        Gallons, Bit-error-rate.  A web browser is used to specify the
+        Input voltage range, offset, multiplier and units."
+    ::= { encAnalogPointEntry 9 }
+
+
+-- ****************************************************************************
+--                               encMgrNotifyTable   
+-- ****************************************************************************
+
+encMgrNotifyTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF EncMgrNotifyEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The manager notification table.
+        This table provides information about which managers are sent
+        notifications.  This table is provisioned via a web interface.
+        Only the encMgrEventNotify column is read-write.  It is writeable
+        ONLY by the manger whose IP address is provisioned in the
+        same row, so no spinlocks, etc. are necessary.
+ 
+        A new epoch starts when SNMP MIB-II object SysUpTime is zero
+        or is less than the previous value of SysUpTime. This happens
+        whenever the unit is restarted, or when SysUptime rolls over
+        to zero 497 days after a restart.  At that time all data in 
+        this table is subject to change.  During an Epoch, only the 
+        encMgrEventNotify column can change.  During an Epoch, rows
+        will not be added or deleted.
+      
+        The SNMP-NOTIFICATION-MIB and SNMP-TARGET-MIB were deemed
+        too complex for this product.  Alarm monitoring applications
+        using this product generate very few notifications per day,
+        generally for one manager only."
+   ::= { encObjects 6 }
+
+
+encMgrNotifyEntry OBJECT-TYPE
+    SYNTAX     EncMgrNotifyEntry
+    MAX-ACCESS not-accessible 
+    STATUS     current
+    DESCRIPTION
+        "A row in the table of alarms. Rows cannot be created, deleted or
+        modified via SNMP operations."
+    INDEX { encMgrIndex }
+    ::= { encMgrNotifyTable 1 }
+
+EncMgrNotifyEntry ::= SEQUENCE {
+    encMgrIndex                Unsigned32,
+    encMgrIPAddr               IpAddress,
+    encMgrName                 DisplayString,
+    encMgrEventNotify          TruthValue
+}
+
+encMgrIndex OBJECT-TYPE
+    SYNTAX     Unsigned32    (1..4294967295)
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "An arbitrary index to uniquely identify each row in the
+        encMgrNotifyTable."
+    ::= { encMgrNotifyEntry 1 }
+
+
+encMgrIPAddr OBJECT-TYPE
+    SYNTAX     IpAddress
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The IPv4 address in nnn.nnn.nnn.nnn notation for an
+        SNMP manager that is to receive notifications."
+    ::= { encMgrNotifyEntry 2 }
+
+
+encMgrName OBJECT-TYPE
+    SYNTAX     DisplayString  (SIZE(1..32))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "A short description of the Manager or Manager location." 
+    ::= { encMgrNotifyEntry 3 }
+
+
+encMgrEventNotify OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "Instructs the agent whether to send the manager
+        notifications to report events as they happen and
+        are added to the encEventLogTable.  The manager 
+        may set this value to true(1) or false(2).
+        On startup (new epoch) this value is set to the 
+        state that was provisioned in the IP Settings web-
+        page."
+    ::= { encMgrNotifyEntry 4 }
+
+
+-- ****************************************************************************
+--                               encNotifications
+-- ****************************************************************************
+
+encShutdown NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION
+        "Sent when SNMP Encoder program is shut down."
+    ::= { encNotifications 1 }
+
+encStartup NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION
+        "Sent when SNMP Encoder program is started.
+        This message indicates the start of an epoch."
+    ::= { encNotifications 2 }
+
+encEventLog NOTIFICATION-TYPE
+    OBJECTS {
+       --   says not accessable   encEventLogIndex,
+        encEventLogType,
+        encEventLogPointName,
+        encEventLogPointState,
+        encEventLogSeverity,
+        encEventLogSA,
+        encEventLogDateAndTime,
+        encEventLogPointTableIndex
+    }
+    STATUS current
+    DESCRIPTION
+        "Sent to report an alarm or control event, i.e. whenever a 
+        new row is appended to the encEventLogTable. The column values
+        for the entire row are sent in the varbind list of this
+        notification, so the manager may not need to fetch the row from
+        that table. Values are assigned to encEventLogIndex in strictly
+        increasing fashion, so the manager can use the value of that
+        variable to verify that no notifications have been missed.
+
+        For alarm and control points, severities CR, MJ and MN
+        cause a notification to be sent when the on/off state changes.  
+        Severity ST (status) only causes a notification if 'Add ST 
+        events to the event Log' is set to 'Yes' in the 2311 web
+        configuration page.  The severity for Control points
+        is always ST.  Note that a notification is always sent when
+        a control point changes state, regardless of the
+        'Add ST event ...' setting
+
+        This notification is sent only to managers whose IPv4 address
+        appears in the encMgrNotifyTable.
+
+        A manager may enable or disable the sending of this notification
+        to itself by setting encMgrEventNotify to true (1) or
+        false (2) in the encMgrNotifyTable, in the row containing
+        the manager's IP address."
+    ::= { encNotifications 3 }
+
+
+
+
+
+-- ****************************************************************************
+--                         Encoder CONFORMANCE/COMPLIANCE
+-- ****************************************************************************
+
+encMIBCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for SNMP entities that implement the
+        FIAL-ENC-MIB."
+    MODULE
+        MANDATORY-GROUPS {
+            encGlobalsGroup,
+            encEventLogGroup,
+            encAlarmPointGroup,
+            encControlPointGroup,
+            encAnalogPointGroup,
+            encMgrGroup,    
+            encNotificationGroup
+        }
+    ::= { encMIBCompliances 1 }
+
+encGlobalsGroup OBJECT-GROUP
+    OBJECTS {
+        encSiteName,
+        encMIBModuleRev,
+        encEventLogTableLastIndex,
+        encAnalogCard
+    }
+    STATUS      current
+    DESCRIPTION
+        "All accessible global objects in the Encoder MIB."
+    ::= { encMIBGroups 1 }
+
+
+encEventLogGroup OBJECT-GROUP
+    OBJECTS {
+       --  encEventIndex,             
+        encEventLogType,
+        encEventLogPointName,
+        encEventLogPointState,
+        encEventLogSeverity,
+        encEventLogSA,
+        encEventLogDateAndTime,
+        encEventLogPointTableIndex
+    }
+    STATUS current
+    DESCRIPTION
+        "The encAlarmLogTable"
+    ::= { encMIBGroups 2 }
+
+
+encAlarmPointGroup OBJECT-GROUP
+    OBJECTS {
+        encAlarmName,
+        encAlarmState,
+        encAlarmSeverityName,
+        encAlarmServAffecting
+    }
+    STATUS current
+    DESCRIPTION
+        "The encAlarmPointTable"
+    ::= { encMIBGroups 3 }
+
+encControlPointGroup OBJECT-GROUP
+    OBJECTS {
+        encControlName,
+        encControlState,
+        encControlReqState,
+        encControlSpinLock
+    }
+    STATUS current
+    DESCRIPTION
+        "The encControlPointTable"
+    ::= { encMIBGroups 4 }
+
+encAnalogPointGroup OBJECT-GROUP
+    OBJECTS {
+        encAnalogName,
+        encAnalogState,
+        encAnalogSeverity,
+        encAnalogServAffecting,
+        encAnalogValue,
+        encAnalogLowThreshold,
+        encAnalogHighThreshold,
+        encAnalogUnits
+    }
+    STATUS current
+    DESCRIPTION
+        "The encAnalogPointTable"
+    ::= { encMIBGroups 6 }
+
+encMgrGroup OBJECT-GROUP
+    OBJECTS {
+        encMgrIPAddr,
+        encMgrName,
+        encMgrEventNotify
+    }
+    STATUS current
+    DESCRIPTION
+        "The encoder Manager Notify table"
+    ::= { encMIBGroups 7 }
+
+
+
+encNotificationGroup NOTIFICATION-GROUP
+    NOTIFICATIONS {
+        encShutdown,
+        encStartup,
+        encEventLog
+    }
+    STATUS current
+    DESCRIPTION
+        "Encoder Notifications"
+    ::= { encMIBGroups 8 }
+
+END

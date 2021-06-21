@@ -1,0 +1,2343 @@
+{
+  "imports": {
+    "class": "imports",
+    "CISCO-LWAPP-AP-MIB": [
+      "cLApIfMacAddress"
+    ],
+    "CISCO-LWAPP-WLAN-MIB": [
+      "cLWlanIndex"
+    ],
+    "CISCO-LWAPP-WLAN-POLICY-MIB": [
+      "cLWlanWlanPolicyName"
+    ],
+    "CISCO-SMI": [
+      "ciscoMgmt"
+    ],
+    "CISCO-TC": [
+      "Unsigned64"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "NOTIFICATION-TYPE",
+      "TimeTicks",
+      "Bits",
+      "Counter32",
+      "Counter64",
+      "IpAddress",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "Unsigned32",
+      "MibIdentifier",
+      "iso",
+      "MODULE-IDENTITY",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "MacAddress",
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "RowStatus"
+    ]
+  },
+  "ciscoLwappTunnelMIB": {
+    "name": "ciscoLwappTunnelMIB",
+    "oid": "1.3.6.1.4.1.9.9.848",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2018-09-06 00:00",
+        "description": "Added a new module-compliance ciscoLwappTunnelMIBComplianceRev4, new object groups cLGatewayAAAProxyConfigGroup, a new table cLGatewayAAAProxyConfigTable with cLGatewayAAAProxyKey, cLGatewayAAAProxyKeyType, cLGatewayAAAProxyPort, cLGatewayAAAProxyRowStatus to allow for new configuration model of AAA Proxy on gateways. Added a new field clGatewayRuleRealm in CLGatewayRuleTable."
+      },
+      {
+        "revision": "2018-07-01 00:00",
+        "description": "Added a new module-compliance ciscoLwappTunnelMIBComplianceRev3, new object groups clApGatewayTunnelStatsGroup, clGatewayWlanProfileConfigGroup and cLTunnelConfigGroupRev2, a new table cLGatewayWlanProfileConfigTable with cLGatewayWlanProfileTunnelProfile to match new configuration model and clApGatewayTunnelStatsTunnelRxBytes64, clApGatewayTunnelStatsTunnelTxBytes64, clApGatewayTunnelStatsTunnelRxPkts64, clApGatewayTunnelStatsTunnelTxPkts64 in clApGatewayTunnelStatsTable"
+      },
+      {
+        "revision": "2018-02-05 00:00",
+        "description": " Added a new table -cLGatewayWlanConfigTable"
+      },
+      {
+        "revision": "2017-09-20 00:00",
+        "description": "Added clApGatewayTunnelMtu and clApGatewayTunnelFlapCount in ClApGatewayTunnelTable and clGatewayTunnelAdminStatus, clGatewayTunnelMtu and clGatewayTunnelFlapCount clGatewayTunnelTable."
+      },
+      {
+        "revision": "2017-05-26 00:00",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "201809060000Z",
+    "organization": "Cisco Systems Inc.",
+    "contactinfo": "Cisco Systems, Customer Service Postal: 170 West Tasman Drive San Jose, CA 95134 USA Tel: +1 800 553-NETS Email: cs-snmp@cisco.com",
+    "description": "This MIB is intended to be implemented on all those devices operating as Central Controllers (CC) that terminate the Light Weight Access Point Protocol tunnel from Light-weight LWAPP Access Points. This MIB provides configuration and status information about local mobility anchor to which the controller has the joined. The relationship between CC and the LWAPP APs can be depicted as follows: +......+ +......+ +......+ +......+ + + + + + + + + + LMA + + LMA + + LMA + + LMA + + + + + + + + + +......+ +......+ +......+ +......+ .. . . . .. . . . . . . . . . . . . . . . . . . . . . . . +......+ +......+ +......+ +......+ +......+ + + + + + + + + + + + WLC + + WLC + + WLC + + WLC + + WLC + + + + + + + + + + + +......+ +......+ +......+ +......+ +......+ . . . . . . . . . . . . . . . . . . . . . . . . +......+ +......+ +......+ +......+ +......+ + + + + + + + + + + + AP + + AP + + AP + + AP + + AP + + + + + + + + + + + +......+ +......+ +......+ +......+ +......+ . . . . . . . . . . . . . . . . . . . . . . . . +......+ +......+ +......+ +......+ +......+ + + + + + + + + + + + MN + + MN + + MN + + MN + + MN + + + + + + + + + + + +......+ +......+ +......+ +......+ +......+ The LWAPP tunnel exists between the controller and the APs. The MNs communicate with the APs through the protocol defined by the 802.11 standard. LWAPP APs, upon bootup, discover and join one of the controllers and the controller pushes the configuration, that includes the WLAN parameters, to the LWAPP APs. The APs then encapsulate all the 802.11 frames from wireless clients inside LWAPP frames and forward the LWAPP frames to the controller. GLOSSARY Access Point ( AP ) An entity that contains an 802.11 medium access control ( MAC ) and physical layer ( PHY ) interface and provides access to the distribution services via the wireless medium for associated clients. LWAPP APs encapsulate all the 802.11 frames in LWAPP frames and sends it to the controller to which it is logically connected. Central Controller ( CC ) The central entity that terminates the LWAPP protocol tunnel from the LWAPP APs. Throughout this MIB, this entity also referred to as 'controller'. Light Weight Access Point Protocol ( LWAPP ) This is a generic protocol that defines the communication between the Access Points and the Central Controller. Mobile Node ( MN ) A roaming 802.11 wireless device in a wireless network associated with an access point. Gateway Service provider node which assigns IP and maintains the tunneled clients. Tunnel Connection from Wireless LAN controller to the Gateway. Tunnel establishment from WLC and TGW(Tunnel Gateway), in case of Flex-AP, tunnel establishment between AP and TGW. REFERENCE [1] Part 11 Wireless LAN Medium Access Control ( MAC ) and Physical Layer ( PHY ) Specifications. [2] Draft-obara-capwap-lwapp-00.txt, IETF Light Weight Access Point Protocol."
+  },
+  "ciscoLwappTunnelMIBNotifs": {
+    "name": "ciscoLwappTunnelMIBNotifs",
+    "oid": "1.3.6.1.4.1.9.9.848.0",
+    "class": "objectidentity"
+  },
+  "ciscoLwappTunnelMIBObjects": {
+    "name": "ciscoLwappTunnelMIBObjects",
+    "oid": "1.3.6.1.4.1.9.9.848.1",
+    "class": "objectidentity"
+  },
+  "ciscoLwappTunnelMIBConform": {
+    "name": "ciscoLwappTunnelMIBConform",
+    "oid": "1.3.6.1.4.1.9.9.848.2",
+    "class": "objectidentity"
+  },
+  "ciscoLwappGatewayTunnel": {
+    "name": "ciscoLwappGatewayTunnel",
+    "oid": "1.3.6.1.4.1.9.9.848.3",
+    "class": "objectidentity"
+  },
+  "clGatewayGlobalInterface": {
+    "name": "clGatewayGlobalInterface",
+    "oid": "1.3.6.1.4.1.9.9.848.4",
+    "class": "objectidentity"
+  },
+  "clGatewayGlobalHeartbeatInterval": {
+    "name": "clGatewayGlobalHeartbeatInterval",
+    "oid": "1.3.6.1.4.1.9.9.848.5",
+    "class": "objectidentity"
+  },
+  "clGatewayGlobalHeartbeatMaxSkipCount": {
+    "name": "clGatewayGlobalHeartbeatMaxSkipCount",
+    "oid": "1.3.6.1.4.1.9.9.848.6",
+    "class": "objectidentity"
+  },
+  "clGatewayWlanConfig": {
+    "name": "clGatewayWlanConfig",
+    "oid": "1.3.6.1.4.1.9.9.848.7",
+    "class": "objectidentity"
+  },
+  "clGatewayWlanProfileConfig": {
+    "name": "clGatewayWlanProfileConfig",
+    "oid": "1.3.6.1.4.1.9.9.848.8",
+    "class": "objectidentity"
+  },
+  "clGatewayAAAProxyConfig": {
+    "name": "clGatewayAAAProxyConfig",
+    "oid": "1.3.6.1.4.1.9.9.848.9",
+    "class": "objectidentity"
+  },
+  "cLGatewayInterface": {
+    "name": "cLGatewayInterface",
+    "oid": "1.3.6.1.4.1.9.9.848.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "management",
+        "format": "string"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the source interface to tunnel."
+  },
+  "cLGatewayHeartbeatInterval": {
+    "name": "cLGatewayHeartbeatInterval",
+    "oid": "1.3.6.1.4.1.9.9.848.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 60,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the time interval to send echo message."
+  },
+  "cLGatewayHeartbeatMaxSkipCount": {
+    "name": "cLGatewayHeartbeatMaxSkipCount",
+    "oid": "1.3.6.1.4.1.9.9.848.6.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the maximum skip count to send echo message."
+  },
+  "cLGatewayWlanConfigTable": {
+    "name": "cLGatewayWlanConfigTable",
+    "oid": "1.3.6.1.4.1.9.9.848.7.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table represents the information about Gateway related config on a WLAN."
+  },
+  "cLGatewayWlanConfigEntry": {
+    "name": "cLGatewayWlanConfigEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.7.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-WLAN-MIB",
+        "object": "cLWlanIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry in this table represents the configuration attributes of Gateway on a WLAN."
+  },
+  "cLGatewayWlanVlanOverrideEnable": {
+    "name": "cLGatewayWlanVlanOverrideEnable",
+    "oid": "1.3.6.1.4.1.9.9.848.7.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the EoGRE Vlan Override status of a WLAN. A value of 'true' indicates that EoGRE Vlan Override is enabled on a WLAN. A value of 'false' indicates that EoGRE Vlan Override is disabled on a WLAN."
+  },
+  "cLGatewayWlanVlanId": {
+    "name": "cLGatewayWlanVlanId",
+    "oid": "1.3.6.1.4.1.9.9.848.7.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the Vlan ID of the Vlan in which client traffic needs to be carried."
+  },
+  "cLGatewayWlanProfileConfigTable": {
+    "name": "cLGatewayWlanProfileConfigTable",
+    "oid": "1.3.6.1.4.1.9.9.848.8.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table represents the information about Gateway Tunnel profile mapping config on a WLAN policy profile. A row will exist in this table for each WLAN policy profile that has a tunnel profile configured"
+  },
+  "cLGatewayWlanProfileConfigEntry": {
+    "name": "cLGatewayWlanProfileConfigEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.8.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-WLAN-POLICY-MIB",
+        "object": "cLWlanWlanPolicyName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry in this table represents the configuration attributes of Gateway Tunnel Profile on a WLAN policy profile."
+  },
+  "cLGatewayWlanProfileTunnelProfile": {
+    "name": "cLGatewayWlanProfileTunnelProfile",
+    "oid": "1.3.6.1.4.1.9.9.848.8.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the Tunnel Profile to enable on the WLAN policy profile."
+  },
+  "cLGatewayAAAProxyConfigTable": {
+    "name": "cLGatewayAAAProxyConfigTable",
+    "oid": "1.3.6.1.4.1.9.9.848.9.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table represents the configuration details for AAA proxy server on Tunnel Gateway. A row will exist in this table for each Tunnel Gateway that behaves as AAA proxy."
+  },
+  "cLGatewayAAAProxyConfigEntry": {
+    "name": "cLGatewayAAAProxyConfigEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.9.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry in this table represents the configuration attributes of Tunnel Gateway AAA Proxy."
+  },
+  "cLGatewayAAAProxyKey": {
+    "name": "cLGatewayAAAProxyKey",
+    "oid": "1.3.6.1.4.1.9.9.848.9.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the AAA Key for the server on the Tunnel Gateway."
+  },
+  "cLGatewayAAAProxyRowStatus": {
+    "name": "cLGatewayAAAProxyRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.9.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the status column for this row and is used to create and delete specific instances of rows in this table."
+  },
+  "cLGatewayAAAProxyKeyType": {
+    "name": "cLGatewayAAAProxyKeyType",
+    "oid": "1.3.6.1.4.1.9.9.848.9.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "aes": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the AAA Key Type for the server on the Tunnel Gateway."
+  },
+  "cLGatewayAAAProxyPort": {
+    "name": "cLGatewayAAAProxyPort",
+    "oid": "1.3.6.1.4.1.9.9.848.9.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the TCP/UDP port number for the AAA server on the Tunnel Gateway."
+  },
+  "clGatewayTunnelTable": {
+    "name": "clGatewayTunnelTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of tunnel gateways configured on WLC."
+  },
+  "clGatewayTunnelEntry": {
+    "name": "clGatewayTunnelEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelName",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each tunnel created to the gateway, there will be a row."
+  },
+  "clGatewayTunnelName": {
+    "name": "clGatewayTunnelName",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object represents the name of tunnel gateway."
+  },
+  "clGatewayTunnelType": {
+    "name": "clGatewayTunnelType",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "pmipv6": 2,
+          "gtpv2": 3,
+          "eogre": 4
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object represents the type of the tunnel gateway. none - The tunnel is of type unknown. pmipv6 - The tunnel is of type PMIPV6. gtpv2 - The tunnel is of type GTPV2. eogre - The tunnel is of type EoGRE."
+  },
+  "clGatewayTunnelAddressType": {
+    "name": "clGatewayTunnelAddressType",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies the IP address type for tunnel."
+  },
+  "clGatewayTunnelAddress": {
+    "name": "clGatewayTunnelAddress",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies the IP address of the tunnel gateway."
+  },
+  "clGatewayTunnelStatus": {
+    "name": "clGatewayTunnelStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the tunnel status. A value of 'true' indicates that the tunnel is up. A value of 'false' indicates that the tunnel is down."
+  },
+  "clGatewayTunnelRowStatus": {
+    "name": "clGatewayTunnelRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the status column for this row and is used to create and delete specific instances of rows in this table."
+  },
+  "clGatewayTunnelAdminStatus": {
+    "name": "clGatewayTunnelAdminStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents whether the tunnel is enabled to pass WLAN traffic or not. The traffic can reach gateway based on the reachability of gateway. A value of 'true' indicates that the tunnel mapped to WLAN via the profile can pass WLAN traffic. A value of 'false' indicates that the tunnel mapped to WLAN via the profile cannot pass WLAN traffic."
+  },
+  "clGatewayTunnelMtu": {
+    "name": "clGatewayTunnelMtu",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1476,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the MTU of the tunnel between WLC and gateway."
+  },
+  "clGatewayTunnelFlapCount": {
+    "name": "clGatewayTunnelFlapCount",
+    "oid": "1.3.6.1.4.1.9.9.848.3.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the number of times the tunnel between WLC and gateway is flapped."
+  },
+  "clGatewayDomainTable": {
+    "name": "clGatewayDomainTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of domains created, each domain contains maximum of two gateways. At any given time only one gateway is active in a domain."
+  },
+  "clGatewayDomainEntry": {
+    "name": "clGatewayDomainEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainName",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainTunnelType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This object represents an entry of domain configuration details."
+  },
+  "clGatewayDomainName": {
+    "name": "clGatewayDomainName",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object represents name of the domain."
+  },
+  "clGatewayDomainTunnelType": {
+    "name": "clGatewayDomainTunnelType",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "pmipv6": 2,
+          "gtpv2": 3,
+          "eogre": 4
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object represents type of the gateway tunnel that domain contains. none - The tunnel is of type unknown. pmipv6 - The tunnel is of type PMIPV6. gtpv2 - The tunnel is of type GTPV2. eogre - The tunnel is of type EoGRE."
+  },
+  "clGatewayDomainActiveGateway": {
+    "name": "clGatewayDomainActiveGateway",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents name of the active gateway in the domain."
+  },
+  "clGatewayDomainPrimaryGateway": {
+    "name": "clGatewayDomainPrimaryGateway",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies the primary gateway of the domain."
+  },
+  "clGatewayDomainSecondaryGateway": {
+    "name": "clGatewayDomainSecondaryGateway",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object represents the secondary gateway of the domain."
+  },
+  "clGatewayDomainRowStatus": {
+    "name": "clGatewayDomainRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the status column for this row and is used to create and delete specific instances of rows in this table."
+  },
+  "clGatewayDomainGatewayListTable": {
+    "name": "clGatewayDomainGatewayListTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of gateways attached to the domain. At maximum there will be 2 gateways in domain."
+  },
+  "clGatewayDomainGatewayListEntry": {
+    "name": "clGatewayDomainGatewayListEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainName",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainTunnelType",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each gateway added to the domain will be a row."
+  },
+  "clGatewayDomainGatewayListRowStatus": {
+    "name": "clGatewayDomainGatewayListRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the status column for this row and is used to create and delete specific instances of rows in this table."
+  },
+  "clGatewayProfileTable": {
+    "name": "clGatewayProfileTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of profiles created. Rules are attached to the profile. Maximum rules attached to per profile is 32."
+  },
+  "clGatewayProfileEntry": {
+    "name": "clGatewayProfileEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each profile there will be a row."
+  },
+  "clGatewayProfileName": {
+    "name": "clGatewayProfileName",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object represents name of the gateway profile."
+  },
+  "clGatewayProfileDhcpOpt82Status": {
+    "name": "clGatewayProfileDhcpOpt82Status",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies status of DHCP option 82 of the profile. A value of 'true' indicates that DHCP option 82 is enabled. A value of 'false' indicates that DHCP option 82 is disabled."
+  },
+  "clGatewayProfileDhcpOpt82Format": {
+    "name": "clGatewayProfileDhcpOpt82Format",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies binary or ASCII format of the DHCP data."
+  },
+  "clGatewayProfileDhcpOpt82Delimiter": {
+    "name": "clGatewayProfileDhcpOpt82Delimiter",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies delimiter between the attributes of DHCP option."
+  },
+  "clGatewayProfileCircuitId": {
+    "name": "clGatewayProfileCircuitId",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies of circuit-id attributes per profile. Maximum circuit-id per profile supported is 5."
+  },
+  "clGatewayProfileRemoteId": {
+    "name": "clGatewayProfileRemoteId",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies of remote-id attributes per profile. Maximum remote-id per profile supported is 5."
+  },
+  "clGatewayProfileRadiusProxyStatus": {
+    "name": "clGatewayProfileRadiusProxyStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies status of gateway radius proxy of the profile. A value of 'true' indicates that radius proxy is enabled. A value of 'false' indicates that radius proxy is disabled."
+  },
+  "clGatewayProfileRadiusProxyAccounting": {
+    "name": "clGatewayProfileRadiusProxyAccounting",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies status of gateway radius proxy accounting of the profile. A value of 'true' indicates that accounting is enabled on radius proxy. A value of 'false' indicates that accounting is disabled on radius proxy."
+  },
+  "clGatewayProfileRowStatus": {
+    "name": "clGatewayProfileRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the status column for this row and is used to create and delete specific instances of rows in this table."
+  },
+  "clGatewayRuleTable": {
+    "name": "clGatewayRuleTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of rules created. Rules are attached to the profile."
+  },
+  "clGatewayRuleEntry": {
+    "name": "clGatewayRuleEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileName",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each rule a row will be created."
+  },
+  "clGatewayRuleName": {
+    "name": "clGatewayRuleName",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object represents name of the gateway rule, which is applied to profile."
+  },
+  "clGatewayRuleTunnelType": {
+    "name": "clGatewayRuleTunnelType",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "pmipv6": 2,
+          "gtpv2": 3,
+          "eogre": 4
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies type of the gateway tunnel. none - The tunnel is of type unknown. pmipv6 - The tunnel is of type PMIPV6. gtpv2 - The tunnel is of type GTPV2. eogre - The tunnel is of type EoGRE."
+  },
+  "clGatewayRuleVlanId": {
+    "name": "clGatewayRuleVlanId",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies vlan attached to rule."
+  },
+  "clGatewayRuleDomainName": {
+    "name": "clGatewayRuleDomainName",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies domain attached to the rule."
+  },
+  "clGatewayRuleRowStatus": {
+    "name": "clGatewayRuleRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the status column for this row and is used to create and delete specific instances of rows in this table."
+  },
+  "clGatewayRuleRealm": {
+    "name": "clGatewayRuleRealm",
+    "oid": "1.3.6.1.4.1.9.9.848.3.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This objects represents the pattern used to match client reams, in order to classify them."
+  },
+  "clApGatewayTunnelTable": {
+    "name": "clApGatewayTunnelTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of tunnel gateways on flexconnect AP."
+  },
+  "clApGatewayTunnelEntry": {
+    "name": "clApGatewayTunnelEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-AP-MIB",
+        "object": "cLApIfMacAddress",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each tunnel created to the gateway per flexconnect AP, there will be a row."
+  },
+  "clApGatewayTunnelStatus": {
+    "name": "clApGatewayTunnelStatus",
+    "oid": "1.3.6.1.4.1.9.9.848.3.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the tunnel status of the flexconnect AP. A value of 'true' indicates that tunnel is enabled. A value of 'false' indicates that tunnel is disabled."
+  },
+  "clApGatewayTunnelClientCount": {
+    "name": "clApGatewayTunnelClientCount",
+    "oid": "1.3.6.1.4.1.9.9.848.3.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total client count per gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelMtu": {
+    "name": "clApGatewayTunnelMtu",
+    "oid": "1.3.6.1.4.1.9.9.848.3.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1476,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the MTU of the gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelFlapCount": {
+    "name": "clApGatewayTunnelFlapCount",
+    "oid": "1.3.6.1.4.1.9.9.848.3.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the number of time the gateway tunnel is flapped in flexconnect AP."
+  },
+  "clApGatewayDomainTable": {
+    "name": "clApGatewayDomainTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of domains created on AP which contains gateways. Maximum gateways in domain is 2. At anytime only one gateway is active in the domain."
+  },
+  "clApGatewayDomainEntry": {
+    "name": "clApGatewayDomainEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-AP-MIB",
+        "object": "cLApIfMacAddress",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each domain created will be a row."
+  },
+  "clApGatewayDomainActiveGateway": {
+    "name": "clApGatewayDomainActiveGateway",
+    "oid": "1.3.6.1.4.1.9.9.848.3.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents name of the active gateway in the domain."
+  },
+  "clGatewayTunnelStatsTable": {
+    "name": "clGatewayTunnelStatsTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of tunnel gateways statistics. Statistics include per gateway informations like gateway up time, gateway heartbeat information and total number of clients connected to the gateway."
+  },
+  "clGatewayTunnelStatsEntry": {
+    "name": "clGatewayTunnelStatsEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelName",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each tunnel created to the gateway, there will be a row."
+  },
+  "clGatewayTunnelStatsClientCount": {
+    "name": "clGatewayTunnelStatsClientCount",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents total number of clients connected to the gateway tunnel."
+  },
+  "clGatewayTunnelStatsTunnelUpTime": {
+    "name": "clGatewayTunnelStatsTunnelUpTime",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents up time of gateway in seconds."
+  },
+  "clGatewayTunnelStatsKeepaliveLoss": {
+    "name": "clGatewayTunnelStatsKeepaliveLoss",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the number of keep alive message lost per gateway. "
+  },
+  "clGatewayTunnelStatsTunnelRxBytes": {
+    "name": "clGatewayTunnelStatsTunnelRxBytes",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of bytes received per gateway."
+  },
+  "clGatewayTunnelStatsTunnelTxBytes": {
+    "name": "clGatewayTunnelStatsTunnelTxBytes",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of bytes transmitted per gateway."
+  },
+  "clGatewayTunnelStatsTunnelRxPkts": {
+    "name": "clGatewayTunnelStatsTunnelRxPkts",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of packets received per gateway."
+  },
+  "clGatewayTunnelStatsTunnelTxPkts": {
+    "name": "clGatewayTunnelStatsTunnelTxPkts",
+    "oid": "1.3.6.1.4.1.9.9.848.3.8.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of packets transmitted per gateway."
+  },
+  "clApGatewayTunnelStatsTable": {
+    "name": "clApGatewayTunnelStatsTable",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of AP tunnel gateways statistics."
+  },
+  "clApGatewayTunnelStatsEntry": {
+    "name": "clApGatewayTunnelStatsEntry",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-LWAPP-AP-MIB",
+        "object": "cLApIfMacAddress",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a conceptual row in this table. For each tunnel created to the gateway, there will be a row."
+  },
+  "clApGatewayTunnelStatsTunnelUpTime": {
+    "name": "clApGatewayTunnelStatsTunnelUpTime",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents up time of gateway in seconds of flexconnect AP."
+  },
+  "clApGatewayTunnelStatsKeepaliveLoss": {
+    "name": "clApGatewayTunnelStatsKeepaliveLoss",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the number of keep alive message lost per gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelStatsTunnelRxBytes": {
+    "name": "clApGatewayTunnelStatsTunnelRxBytes",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the total number of bytes received per gateway in flexconnect AP. "
+  },
+  "clApGatewayTunnelStatsTunnelTxBytes": {
+    "name": "clApGatewayTunnelStatsTunnelTxBytes",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the total number of bytes transmitted per gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelStatsTunnelRxPkts": {
+    "name": "clApGatewayTunnelStatsTunnelRxPkts",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the total number of packets received per gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelStatsTunnelTxPkts": {
+    "name": "clApGatewayTunnelStatsTunnelTxPkts",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the total number of packets transmitted per gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelStatsTunnelRxBytes64": {
+    "name": "clApGatewayTunnelStatsTunnelRxBytes64",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of bytes received per gateway in flexconnect AP. "
+  },
+  "clApGatewayTunnelStatsTunnelTxBytes64": {
+    "name": "clApGatewayTunnelStatsTunnelTxBytes64",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of bytes transmitted per gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelStatsTunnelRxPkts64": {
+    "name": "clApGatewayTunnelStatsTunnelRxPkts64",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of packets received per gateway in flexconnect AP."
+  },
+  "clApGatewayTunnelStatsTunnelTxPkts64": {
+    "name": "clApGatewayTunnelStatsTunnelTxPkts64",
+    "oid": "1.3.6.1.4.1.9.9.848.3.9.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the total number of packets transmitted per gateway in flexconnect AP."
+  },
+  "cLWATunnelStatusChangeReasonCode": {
+    "name": "cLWATunnelStatusChangeReasonCode",
+    "oid": "1.3.6.1.4.1.9.9.848.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "down": 1,
+          "up": 2,
+          "progress": 3
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents tunnel status reason code down - Tunnel is down up - Tunnel is up progress - Client deletion for that tunnel in progress."
+  },
+  "cLWATunnelGwIPType": {
+    "name": "cLWATunnelGwIPType",
+    "oid": "1.3.6.1.4.1.9.9.848.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents the IP address type of tunnel gateway IP."
+  },
+  "cLWATunnelGwIP": {
+    "name": "cLWATunnelGwIP",
+    "oid": "1.3.6.1.4.1.9.9.848.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents tunnel gateway IP."
+  },
+  "cLWATunnelGwName": {
+    "name": "cLWATunnelGwName",
+    "oid": "1.3.6.1.4.1.9.9.848.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents tunnel gateway name."
+  },
+  "cLWATunnelType": {
+    "name": "cLWATunnelType",
+    "oid": "1.3.6.1.4.1.9.9.848.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "pmipv6": 2,
+          "gtpv2": 3,
+          "eogre": 4
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents tunnel type. none - unknown tunnel. pmipv6 - pmipv6 tunnel type . gtpv2 - gtpv2 tunnel type . eogre - eogre tunnel type."
+  },
+  "cLWATunnelDomainName": {
+    "name": "cLWATunnelDomainName",
+    "oid": "1.3.6.1.4.1.9.9.848.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents tunnel domain name."
+  },
+  "cLWATunnelActiveGwIPType": {
+    "name": "cLWATunnelActiveGwIPType",
+    "oid": "1.3.6.1.4.1.9.9.848.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents the IP address type of the active tunnel gateway IP in domain."
+  },
+  "cLWATunnelActiveGwIP": {
+    "name": "cLWATunnelActiveGwIP",
+    "oid": "1.3.6.1.4.1.9.9.848.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents active gateway IP in domain."
+  },
+  "cLWATunnelActiveGwName": {
+    "name": "cLWATunnelActiveGwName",
+    "oid": "1.3.6.1.4.1.9.9.848.1.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents active gateway name in domain."
+  },
+  "cLWATunnelProfileName": {
+    "name": "cLWATunnelProfileName",
+    "oid": "1.3.6.1.4.1.9.9.848.1.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents tunnel profile name."
+  },
+  "cLWATunnelRealm": {
+    "name": "cLWATunnelRealm",
+    "oid": "1.3.6.1.4.1.9.9.848.1.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents realm of the user. eg. In airtel@a.com username, a.com is realm of the user"
+  },
+  "cLWATunnelVlanId": {
+    "name": "cLWATunnelVlanId",
+    "oid": "1.3.6.1.4.1.9.9.848.1.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents tunnel vlan Id."
+  },
+  "cLWATunnelClientMacAddress": {
+    "name": "cLWATunnelClientMacAddress",
+    "oid": "1.3.6.1.4.1.9.9.848.1.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents the MAC address of the client for this entry."
+  },
+  "cLWATunnelClientTypeChangeReasonCode": {
+    "name": "cLWATunnelClientTypeChangeReasonCode",
+    "oid": "1.3.6.1.4.1.9.9.848.1.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "staticProfile": 1,
+          "aaaOveride": 2,
+          "dot1xAuthentication": 3,
+          "mobilityHandoff": 4
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object represents client type change from simple to EoGRE. staticProfile - This indicates WLAN static profile is applied. AAAOveride - This indicates that AAA override parameters are applied. dot1xAuthentication - This indicates that dot1x authentication is completed. mobilityHandoff - This indicates that mobility handoff has happened."
+  },
+  "cLWATunnelStatusChange": {
+    "name": "cLWATunnelStatusChange",
+    "oid": "1.3.6.1.4.1.9.9.848.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelGwName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelGwIPType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelGwIP"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelStatusChangeReasonCode"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is sent when Tunnel status Changes."
+  },
+  "cLWATunnelDomainStatusChange": {
+    "name": "cLWATunnelDomainStatusChange",
+    "oid": "1.3.6.1.4.1.9.9.848.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelDomainName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwIPType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwIP"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwName"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is sent when Active Gateway is changed in a Domain."
+  },
+  "cLWATunnelClientTypeChange": {
+    "name": "cLWATunnelClientTypeChange",
+    "oid": "1.3.6.1.4.1.9.9.848.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelClientMacAddress"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelProfileName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelRealm"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelVlanId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelDomainName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwIPType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwIP"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelClientTypeChangeReasonCode"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is sent when client type is marked as eogre tunnel user."
+  },
+  "ciscoLwappTunnelMIBCompliances": {
+    "name": "ciscoLwappTunnelMIBCompliances",
+    "oid": "1.3.6.1.4.1.9.9.848.2.1",
+    "class": "objectidentity"
+  },
+  "ciscoLwappTunnelMIBGroups": {
+    "name": "ciscoLwappTunnelMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2",
+    "class": "objectidentity"
+  },
+  "ciscoLwappTunnelMIBCompliance": {
+    "name": "ciscoLwappTunnelMIBCompliance",
+    "oid": "1.3.6.1.4.1.9.9.848.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cLTunnelConfigGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationObjectsGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The compliance statement for the SNMP entities that implement the ciscoLwappTunnelMIB module."
+  },
+  "ciscoLwappTunnelMIBComplianceRev1": {
+    "name": "ciscoLwappTunnelMIBComplianceRev1",
+    "oid": "1.3.6.1.4.1.9.9.848.2.1.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cLTunnelConfigGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationObjectsGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelConfigGroupRev1",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The compliance statement for the SNMP entities that implement the ciscoLwappTunnelMIB module."
+  },
+  "ciscoLwappTunnelMIBComplianceRev2": {
+    "name": "ciscoLwappTunnelMIBComplianceRev2",
+    "oid": "1.3.6.1.4.1.9.9.848.2.1.3",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cLTunnelConfigGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationObjectsGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelConfigGroupRev1",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "clGatewayWlanConfigGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The compliance statement for the SNMP entities that implement the ciscoLwappTunnelMIB module."
+  },
+  "ciscoLwappTunnelMIBComplianceRev3": {
+    "name": "ciscoLwappTunnelMIBComplianceRev3",
+    "oid": "1.3.6.1.4.1.9.9.848.2.1.4",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cLTunnelConfigGroupRev2",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationObjectsGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "clGatewayWlanProfileConfigGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelConfigGroupRev1",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The compliance statement for the SNMP entities that implement the ciscoLwappTunnelMIB module."
+  },
+  "ciscoLwappTunnelMIBComplianceRev4": {
+    "name": "ciscoLwappTunnelMIBComplianceRev4",
+    "oid": "1.3.6.1.4.1.9.9.848.2.1.4",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cLTunnelConfigGroupRev2",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationObjectsGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelNotificationGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "clGatewayWlanProfileConfigGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLGatewayAAAProxyConfigGroup",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      },
+      {
+        "object": "cLTunnelConfigGroupRev1",
+        "module": "CISCO-LWAPP-TUNNEL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for the SNMP entities that implement the ciscoLwappTunnelMIB module."
+  },
+  "cLTunnelConfigGroup": {
+    "name": "cLTunnelConfigGroup",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelAddressType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelAddress"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainActiveGateway"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainGatewayListRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileDhcpOpt82Status"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileDhcpOpt82Format"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileDhcpOpt82Delimiter"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileCircuitId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRemoteId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRadiusProxyStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRadiusProxyAccounting"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleTunnelType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleVlanId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleDomainName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelClientCount"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayDomainActiveGateway"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayInterface"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayHeartbeatInterval"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayHeartbeatMaxSkipCount"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of objects which can be configured to control Tunnel parameters."
+  },
+  "cLTunnelNotificationObjectsGroup": {
+    "name": "cLTunnelNotificationObjectsGroup",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelStatusChangeReasonCode"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelGwName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelGwIPType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelGwIP"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelDomainName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwIPType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwIP"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelActiveGwName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelProfileName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelClientMacAddress"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelRealm"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelVlanId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelClientTypeChangeReasonCode"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelStatsClientCount"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of notifications about the Tunnels behavior on controller"
+  },
+  "cLTunnelNotificationGroup": {
+    "name": "cLTunnelNotificationGroup",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.3",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelStatusChange"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelDomainStatusChange"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLWATunnelClientTypeChange"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of notifications groups thats about tunnels behaviors on controller"
+  },
+  "cLTunnelConfigGroupRev1": {
+    "name": "cLTunnelConfigGroupRev1",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelAdminStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelMtu"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelFlapCount"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelMtu"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelFlapCount"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of objects which can be configured to control Tunnel parameters."
+  },
+  "clGatewayWlanConfigGroup": {
+    "name": "clGatewayWlanConfigGroup",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayWlanVlanOverrideEnable"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayWlanVlanId"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of objects which can be configured to control WLAN parameters of a gateway."
+  },
+  "cLTunnelConfigGroupRev2": {
+    "name": "cLTunnelConfigGroupRev2",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelAddressType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelAddress"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayTunnelRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainActiveGateway"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainPrimaryGateway"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainSecondaryGateway"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayDomainRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileDhcpOpt82Status"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileDhcpOpt82Format"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileDhcpOpt82Delimiter"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileCircuitId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRemoteId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRadiusProxyStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRadiusProxyAccounting"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayProfileRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleTunnelType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleVlanId"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleDomainName"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clGatewayRuleRowStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelStatus"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelClientCount"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayDomainActiveGateway"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayInterface"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayHeartbeatInterval"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayHeartbeatMaxSkipCount"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of objects which can be configured to control Tunnel parameters."
+  },
+  "clGatewayWlanProfileConfigGroup": {
+    "name": "clGatewayWlanProfileConfigGroup",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayWlanProfileTunnelProfile"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of objects which can be configured to control WLAN policy parameters of a gateway."
+  },
+  "clApGatewayTunnelStatsGroup": {
+    "name": "clApGatewayTunnelStatsGroup",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelStatsTunnelRxBytes64"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelStatsTunnelTxBytes64"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelStatsTunnelRxPkts64"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "clApGatewayTunnelStatsTunnelTxPkts64"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of objects which can be read to obtain statistics of a gateway on an access point."
+  },
+  "cLGatewayAAAProxyConfigGroup": {
+    "name": "cLGatewayAAAProxyConfigGroup",
+    "oid": "1.3.6.1.4.1.9.9.848.2.2.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayAAAProxyKey"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayAAAProxyKeyType"
+      },
+      {
+        "module": "CISCO-LWAPP-TUNNEL-MIB",
+        "object": "cLGatewayAAAProxyRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This is a collection of objects which can be defined to control AAA proxy configuration of a gateway."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CISCO-LWAPP-TUNNEL-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:20:35 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CISCO-LWAPP-TUNNEL-MIB"
+  }
+}

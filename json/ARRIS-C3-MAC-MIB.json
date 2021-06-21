@@ -1,0 +1,1637 @@
+{
+  "imports": {
+    "class": "imports",
+    "ARRIS-MIB": [
+      "cmtsC3"
+    ],
+    "DOCS-IF-MIB": [
+      "TenthdB",
+      "TenthdBmV"
+    ],
+    "IF-MIB": [
+      "ifIndex"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MibIdentifier",
+      "Unsigned32",
+      "OBJECT-TYPE",
+      "Integer32",
+      "iso",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "Gauge32",
+      "MODULE-IDENTITY",
+      "Counter32",
+      "Bits",
+      "Counter64",
+      "IpAddress",
+      "NOTIFICATION-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "RowStatus",
+      "DisplayString",
+      "TimeInterval"
+    ]
+  },
+  "cmtsC3MACMIB": {
+    "name": "cmtsC3MACMIB",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2004-11-21 00:00",
+        "description": "Changes to support fully programmable IF frequency. Added support for downstream wireless mode. Updated some mib descriptions for clarity and typos. Added mixed mode to DocsisMacType definition which defines a docsis downstream and euro-docsis upstream configuration that is used by some customers in lieu of annex C mode which the CMTS does not support in hardware. Added support for downstream wireless mode."
+      },
+      {
+        "revision": "2004-11-26 00:00",
+        "description": "Added dcxMACUpChannelinitialRangingDelay."
+      },
+      {
+        "revision": "2004-12-03 00:00",
+        "description": "Added dcxMACUccMaxFailedAttempts."
+      }
+    ],
+    "lastupdated": "200412030000Z",
+    "organization": "Arris International",
+    "contactinfo": " Network Management Postal: Arris International. 4400 Cork Airport Business Park Cork Airport, Kinsale Road Cork, Ireland. Tel: +353 21 7305 800 Fax: +353 21 4321 972",
+    "description": "This MIB manages the MAC software on the Cadant C3 CMTS."
+  },
+  "DocsisMacType": {
+    "name": "DocsisMacType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "docsis": 1,
+          "euroDocsis": 2,
+          "mixed": 3,
+          "custom": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "Indicates the DOCSIS Channel Type."
+  },
+  "dcxMACObjects": {
+    "name": "dcxMACObjects",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1",
+    "class": "objectidentity"
+  },
+  "dcxMACCmtsMacTable": {
+    "name": "dcxMACCmtsMacTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Additional columns for docsIfCmtsMacTable. An entry in this table exists for each ifEntry with an ifType of docsCableMaclayer(127)."
+  },
+  "dcxMACCmtsMacEntry": {
+    "name": "dcxMACCmtsMacEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "dcxMACCmtsMacEntry"
+  },
+  "dcxMACCmtsMacMode": {
+    "name": "dcxMACCmtsMacMode",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DocsisMacType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates the mode in which the MAC is operating. A read to this value may return any of the modes defined by DocsisMacType. Only the modes docsis, euroDocsis and mixed may be written. When set to docsis or euroDocsis, all downstream and upstream channels in this MAC domain will be configured in DOCSIS or EuroDOCSIS mode respectively. When set to mixed, the downstream channels will be configured in DOCSIS and the upstream channels will be running in EuroDOCSIS mode. The value custom will be returned in a read operation if any of the underlying channels has been reconfigured in such a way that the MAC can not be described a docsis, euroDocsis or mixed."
+  },
+  "dcxMACCableAdvanceType": {
+    "name": "dcxMACCableAdvanceType",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "static": 0,
+          "dynamic": 1
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Cable Map Advance Type - 0 for Static, 1 for Dynamic."
+  },
+  "dcxMACPlantLength": {
+    "name": "dcxMACPlantLength",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 161
+          }
+        ]
+      }
+    },
+    "units": "kilometers",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Cable Plant Length (1-way) in kilometers."
+  },
+  "dcxMACFlapAgingTime": {
+    "name": "dcxMACFlapAgingTime",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 864000
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Cable Flap List Aging Time in seconds."
+  },
+  "dcxMACFlapInsertTime": {
+    "name": "dcxMACFlapInsertTime",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 86400
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Cable Flap List Insertion Time threshold in seconds."
+  },
+  "dcxMACFlapMissThresh": {
+    "name": "dcxMACFlapMissThresh",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 12
+          }
+        ]
+      }
+    },
+    "units": "misses",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Cable Flap List Miss Threshold in misses."
+  },
+  "dcxMACFlapListSize": {
+    "name": "dcxMACFlapListSize",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 6000
+          }
+        ]
+      }
+    },
+    "units": "entries",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Cable Flap List Maximum Number of Entries."
+  },
+  "dcxMACCmOfflineAgingTime": {
+    "name": "dcxMACCmOfflineAgingTime",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 3600,
+            "max": 864000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 86400,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Cable modem offline aging time in seconds. Minimum value is 1 hour. Maximum time before aging a modem is 10 days. Default value is 24 hours."
+  },
+  "dcxMACUccMaxFailedAttempts": {
+    "name": "dcxMACUccMaxFailedAttempts",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Maximum number of consecutive failed channel change attempts that a modem is allowed before the CMTS decides to no longer use the modem for load balancing purposes. If a modem successfully completes a channel change before the maximum number of attempts is reached, the number of consecutive failed attempts for the modem is reset. A value of 0 indicates no limit."
+  },
+  "dcxMACDownstreamChannelTable": {
+    "name": "dcxMACDownstreamChannelTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Additional columns for docsIfDownstreamChannelTable. An entry in this table exists for each ifEntry with an ifType of docsCableDownstream(128)."
+  },
+  "dcxMACDownstreamChannelEntry": {
+    "name": "dcxMACDownstreamChannelEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "dcxMACDownstreamChannelEntry"
+  },
+  "dcxMACDownChannelMacMode": {
+    "name": "dcxMACDownChannelMacMode",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DocsisMacType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Configures the downstream to DOCSIS or EuroDOCSIS. When dcxMACDownChannelWirelessMode is disabled, changes to this will impact the downstream annex type, modulation, symbol rate and interleaver. When wireless mode is enabled, only the annex type and interleaver will be changed."
+  },
+  "dcxMACDownChannelUpconverter": {
+    "name": "dcxMACDownChannelUpconverter",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "internal": 1,
+          "external": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether or not the internal upconverter is used. If set to internal, the downstream IF frequency will operate in read-only mode and will be configured internally by the CMTS based on the downstream channel configuration. If set to external, the IF frequency may be programmed to set the frequency supplied to an external upconverter via the IF output. In this mode, the downstream RF frequency and power will both return 0 when read."
+  },
+  "dcxMACDownChannelIfFrequency": {
+    "name": "dcxMACDownChannelIfFrequency",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10000000,
+            "max": 60000000
+          }
+        ]
+      }
+    },
+    "units": "hertz",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The IF frequency output by the modulator for this channel."
+  },
+  "dcxMACDownChannelWirelessMode": {
+    "name": "dcxMACDownChannelWirelessMode",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active": 1,
+          "inactive": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enabling this mode allows non-standard downstream modulations and symbol rates to be configured which are suitable when using the CMTS in a wireless application. Changes to dcxMACDownChannelMacMode when wireless mode is active will only impact the downstream annex type and interleaver settings. Modulation and symbol rates will only be affected when wireless mode is disabled. Disabling wireless mode will reset any non-standard modulation and symbol rates settings in order to restore a standard DOCSIS or EuroDOCSIS downstream. If a set to active fails, a license may be required to activate the feature."
+  },
+  "dcxMACDownChannelSymbolRate": {
+    "name": "dcxMACDownChannelSymbolRate",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1250000,
+            "max": 6952000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Sets the downstream symbol rate."
+  },
+  "dcxMACDownChannelAlpha": {
+    "name": "dcxMACDownChannelAlpha",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "percent",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The percentage of excess bandwidth for the channel."
+  },
+  "dcxMACUpstreamChannelTable": {
+    "name": "dcxMACUpstreamChannelTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Additional columns for docsIfUpstreamChannelTable. An entry in this table exists for each ifEntry with an ifType of docsCableUpstream(129)."
+  },
+  "dcxMACUpstreamChannelEntry": {
+    "name": "dcxMACUpstreamChannelEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "dcxMACUpstreamChannelEntry"
+  },
+  "dcxMACUpChannelMacMode": {
+    "name": "dcxMACUpChannelMacMode",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DocsisMacType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates the mode in which this upstream is operating. A read or write to this may consist only of the values docsis or euroDocsis."
+  },
+  "dcxMACUpChannelAmpAttenuation": {
+    "name": "dcxMACUpChannelAmpAttenuation",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TenthdBmV",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The amplifier attenuation level for this logical channel."
+  },
+  "dcxMACUpChannelIngressCancellation": {
+    "name": "dcxMACUpChannelIngressCancellation",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disabled": 1,
+          "tdmaOnly": 2,
+          "scdmaSec": 3,
+          "scdmaInc1": 4,
+          "scdmaInc2": 5
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Sets the ingress noise cancellation mode for this logical channel. Not all modes may be valid for a given logical channel configuration or hardware."
+  },
+  "dcxMACUpChannelGroupId": {
+    "name": "dcxMACUpChannelGroupId",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The group ID for this logical channel used to associate it with other upsteams on the same physical network. The group ID is an index into the dcxMACUpstreamGroupTable which defines common parameters for grouped upsteams. Upstreams do not have to be grouped and there may be more than one group on the same physical network. Spatially diverse upstreams should not have the same group ID."
+  },
+  "dcxMACUpChannelShortPollInterval": {
+    "name": "dcxMACUpChannelShortPollInterval",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeInterval",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The short interval for initial unicast maintanance on this logical channel."
+  },
+  "dcxMACUpChannelPeriodicPollInterval": {
+    "name": "dcxMACUpChannelPeriodicPollInterval",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeInterval",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 100,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The periodic station maintanance interval on this logical channel."
+  },
+  "dcxMACUpChannelInputPowerMode": {
+    "name": "dcxMACUpChannelInputPowerMode",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "fixed": 1,
+          "automatic": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The receiver input power mode for this logical channel. In fixed mode the input power to the demodulator will remain fixed across symbol rate changes. In automatic mode the demodulator may vary the input power for optimal performance."
+  },
+  "dcxMACUpChannelPower": {
+    "name": "dcxMACUpChannelPower",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TenthdBmV",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The nominal receiver input power for this logical channel."
+  },
+  "dcxMACUpChannelPlantLength": {
+    "name": "dcxMACUpChannelPlantLength",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 320
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The cable length in km to the most distant CM on this logical upstream."
+  },
+  "dcxMACUpChannelMaxCmMapProcTime": {
+    "name": "dcxMACUpChannelMaxCmMapProcTime",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 1000000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum time in microseconds allowed for modems on this logical channel to process the Upstream Bandwidth Allocation MAP."
+  },
+  "dcxMACUpChannelConcatenation": {
+    "name": "dcxMACUpChannelConcatenation",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enables or disables the use of packet concatenation by Cable Modems on this logical channel."
+  },
+  "dcxMACUpChannelSpMgtTriggerIndex": {
+    "name": "dcxMACUpChannelSpMgtTriggerIndex",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "An index into spectral management trigger table, identical to dcxMACSpMgtTriggerIndex in that table. All entries with the same value of dcxMACSpMgtTriggerIndex form a trigger group all assigned to the same logical upstream channel or group. Returns 0 if there are no triggers assigned to this logical channel."
+  },
+  "dcxMACUpChannelLowPowerOffset": {
+    "name": "dcxMACUpChannelLowPowerOffset",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TenthdBmV",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -100,
+            "max": -10
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -60,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum power offset of a burst below the nominal input power to the CMTS that will not cause a RNG-RSP with status continue. Valid range is from -10 dBmV to -1 dBmV in 1 dB increments."
+  },
+  "dcxMACUpChannelHighPowerOffset": {
+    "name": "dcxMACUpChannelHighPowerOffset",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TenthdBmV",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 60,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum power offset of a burst above the nominal input power to the CMTS that will not cause a RNG-RSP with status continue. Valid range is from +1 dBmV to +10 dBmV in 1 dB increments."
+  },
+  "dcxMACUpChannelLogSnrAveTimeconstant": {
+    "name": "dcxMACUpChannelLogSnrAveTimeconstant",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The averaging timeconstant used to calculate the per-logical channel MIB variable docsIfSigQSignalNoise. The averaging uses a logarithmic scale, so that the actual timeconstant used is 2^X, where X is the value configured for this object. Increasing the value of X increases the degree to which the SNR results are averaged over time, and reduces the sensitivity of the reported channel SNR to local oscillations in signal quality. Averaging can effectively be disabled by setting this object to 0"
+  },
+  "dcxMACUpChannelImpulseMitigation": {
+    "name": "dcxMACUpChannelImpulseMitigation",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enabled": 1,
+          "disabled": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enables or disables impulse noise mitigation for this logical channel."
+  },
+  "dcxMACUpChannelRngPreambleGuardSymbols": {
+    "name": "dcxMACUpChannelRngPreambleGuardSymbols",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Number of guard symbols before the preamble pilot pattern for ranging bursts. Guard symbols may help the receiver to mitigate the effects of ISI and\\or help with the detection of bursts with an early arrival time"
+  },
+  "dcxMACUpChannelNrngPreambleGuardSymbols": {
+    "name": "dcxMACUpChannelNrngPreambleGuardSymbols",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Number of guard symbols before the preamble pilot pattern for non-ranging bursts. Guard symbols may help the receiver to mitigate the effects of ISI and\\or help with the detection of bursts with an early arrival time"
+  },
+  "dcxMACUpChannelExtendedFrequencyErrorDetect": {
+    "name": "dcxMACUpChannelExtendedFrequencyErrorDetect",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "initialRanging": 1,
+          "periodicRanging": 2,
+          "allRanging": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Offsets in carrier frequency in the modem are corrected by the CMTS during ranging. Typically most if not all off the frequency error is removed in the initial ranging response with incremental changes removed during periodic ranging. If large frequency offsets are expected during initial or periodic ranging, this value may be configured to provide extended frequency offset detection and correction."
+  },
+  "dcxMACUpChannelLogC3SnrTimeconstant": {
+    "name": "dcxMACUpChannelLogC3SnrTimeconstant",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The averaging timeconstant used to calculate the per-logical channel MIB variable dcxMACUpChannelSignalNoise. The averaging uses a logarithmic scale, so that the actual timeconstant used is 2^X, where X is the value configured for this object. Increasing the value of X increases the degree to which the SNR results are averaged over time, and reduces the sensitivity of the reported channel SNR to local oscillations in signal quality. Averaging can effectively be disabled by setting this object to 0"
+  },
+  "dcxMACUpChannelSignalNoise": {
+    "name": "dcxMACUpChannelSignalNoise",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TenthdB",
+      "class": "type"
+    },
+    "units": "dB",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A measurement of the average signal/noise ratio for the logical upstream. The averaging may be controlled using the dcxMACUpChannelLogC3SnrTimeconstant variable"
+  },
+  "dcxMACUpChannelSafeConfig": {
+    "name": "dcxMACUpChannelSafeConfig",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If true, MIB SETs which would cause this logical channel to go offline will return a failure"
+  },
+  "dcxMACUpChannelInitialRangingDelay": {
+    "name": "dcxMACUpChannelInitialRangingDelay",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.3.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 300,
+            "max": 3000
+          }
+        ]
+      }
+    },
+    "units": "microseconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of extra microseconds to allow in a broadcast IUC3 grant to compensate for modems that perform initial ranging later than expected."
+  },
+  "dcxMACUpstreamGroupTable": {
+    "name": "dcxMACUpstreamGroupTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Entries containing definitions for group IDs that can be associated with an upstream channel."
+  },
+  "dcxMACUpstreamGroupEntry": {
+    "name": "dcxMACUpstreamGroupEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-C3-MAC-MIB",
+        "object": "dcxMACUpstreamGroupId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "dcxMACUpstreamGroupEntry"
+  },
+  "dcxMACUpstreamGroupId": {
+    "name": "dcxMACUpstreamGroupId",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ID for this group."
+  },
+  "dcxMACUpstreamGroupName": {
+    "name": "dcxMACUpstreamGroupName",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name associated with this group"
+  },
+  "dcxMACUpstreamGroupLoadBalancing": {
+    "name": "dcxMACUpstreamGroupLoadBalancing",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "initialNumeric": 2,
+          "periodic": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Configures upstream load balancing for the group. Options are: none, initialNumeric, periodic. If set to none, no load balancing will be performed. If set to initialNumeric, the CMTS may redirect modems to other active upstream channels in the same group by setting the upstream channel ID override in the RNG-RSP at any time up to the point where the modem successfully completes periodic ranging. Once a modem has completed ranging it must be reset before it may be moved to another upstream. The modems in a group will be distributed evenly and numerically across the active channels in the group. When a modems performs initial ranging, it will be sent to the upsteam with the least number of active modems if the number of active modems on the current upsteam is greater than the average number of modems per upsteam in the group. All channels are treated equally when calculating loads. If a modem fails to range on the desired channel following a ranging overide, it will be allowed to remain on the channel on which it next performs initial ranging. If set to periodic, modems will be numerically distributed during initial ranging and then selectively moved after registration using UCC. Periodic load balancing will attempt to distribute the modems to maintain even bandwidth utilization across the channels in a group."
+  },
+  "dcxMACUpstreamGroupFrequencyIndex": {
+    "name": "dcxMACUpstreamGroupFrequencyIndex",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "An index into upstream frequency table, identical to dcxMACUpstreamFrequencyIndex in that table. All entries with the same value of dcxMACUpstreamFrequencyIndex form a spectral frequency group all assigned to the same upstream group. Returns 0 if there are no triggers assigned to this group."
+  },
+  "dcxMACUpstreamGroupSpMgtTriggerIndex": {
+    "name": "dcxMACUpstreamGroupSpMgtTriggerIndex",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "An index into spectral management trigger table, identical to dcxMACSpMgtTriggerIndex in that table. All entries with the same value of dcxMACSpMgtTriggerIndex form a trigger group all assigned to the same upstream group or channel. Returns 0 if there are no triggers assigned to this group."
+  },
+  "dcxMACUpstreamGroupStatus": {
+    "name": "dcxMACUpstreamGroupStatus",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used to create rows in this table"
+  },
+  "dcxMACUpstreamFrequencyTable": {
+    "name": "dcxMACUpstreamFrequencyTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Describes the upstream spectrum available for use by one or more upstream groups. Entries are grouped by dcxMACUpstreamFrequencyIndex, with each group assigned to one or more upstream groups."
+  },
+  "dcxMACUpstreamFrequencyEntry": {
+    "name": "dcxMACUpstreamFrequencyEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-C3-MAC-MIB",
+        "object": "dcxMACUpstreamFrequencyIndex",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-C3-MAC-MIB",
+        "object": "dcxMACUpstreamFrequencyRegion",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Describes a single contiguous region of upstream spectrum, available for use by one or more upstream spectral groups."
+  },
+  "dcxMACUpstreamFrequencyIndex": {
+    "name": "dcxMACUpstreamFrequencyIndex",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index into the upstream frequency table representing a group of spectral regions, all associated with the same upstream spectral group."
+  },
+  "dcxMACUpstreamFrequencyRegion": {
+    "name": "dcxMACUpstreamFrequencyRegion",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index into the upstream frequency table which, when grouped with other frequency regions with the same frequency index fully describe the upstream frequency spectrum available for use by a given spectral group."
+  },
+  "dcxMACUpstreamFrequencyStart": {
+    "name": "dcxMACUpstreamFrequencyStart",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "hertz",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The start frequency for this upstream spectral region."
+  },
+  "dcxMACUpstreamFrequencyStop": {
+    "name": "dcxMACUpstreamFrequencyStop",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "hertz",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The stop frequency for this upstream spectral region."
+  },
+  "dcxMACUpstreamFrequencyStatus": {
+    "name": "dcxMACUpstreamFrequencyStatus",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used to create entries in this table."
+  },
+  "dcxMACSpectralMgtObjects": {
+    "name": "dcxMACSpectralMgtObjects",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6",
+    "class": "objectidentity"
+  },
+  "dcxMACSpectralMgtTriggerTable": {
+    "name": "dcxMACSpectralMgtTriggerTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Describes the spectral management triggers assigned to one or more upstream groups or channels. Entries are grouped by dcxMACSpMgtTriggerIndex, with each group assigned to one or more upstream channels or groups."
+  },
+  "dcxMACSpectralMgtTriggerEntry": {
+    "name": "dcxMACSpectralMgtTriggerEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-C3-MAC-MIB",
+        "object": "dcxMACSpMgtTriggerIndex",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-C3-MAC-MIB",
+        "object": "dcxMACSpMgtTriggerNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Describes a single spectral management trigger, available for use by one or more upstream channels or spectral groups."
+  },
+  "dcxMACSpMgtTriggerIndex": {
+    "name": "dcxMACSpMgtTriggerIndex",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index into the spectral managment trigger table representing a group of triggers, all assigned to the same upstream channel or spectral group."
+  },
+  "dcxMACSpMgtTriggerNumber": {
+    "name": "dcxMACSpMgtTriggerNumber",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index into the spectral managment trigger table which, when grouped with other triggers with the same trigger index fully describe the spectral mangement triggers assigned to the same upstream channel or spectral group."
+  },
+  "dcxMACSpMgtTriggerType": {
+    "name": "dcxMACSpMgtTriggerType",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Identifies the trigger type represented by this entry."
+  },
+  "dcxMACSpMgtTriggerAction": {
+    "name": "dcxMACSpMgtTriggerAction",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "An index into the spectral management action table, identical to dcxMACSpMgtActionIndex in that table, identifying the action to take if this trigger is invoked. Returns 0 if there is no action associated with this trigger."
+  },
+  "dcxMACSpMgtTriggerParam1": {
+    "name": "dcxMACSpMgtTriggerParam1",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerParam2": {
+    "name": "dcxMACSpMgtTriggerParam2",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerParam3": {
+    "name": "dcxMACSpMgtTriggerParam3",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerParam4": {
+    "name": "dcxMACSpMgtTriggerParam4",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerParam5": {
+    "name": "dcxMACSpMgtTriggerParam5",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerParam6": {
+    "name": "dcxMACSpMgtTriggerParam6",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerParam7": {
+    "name": "dcxMACSpMgtTriggerParam7",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerParam8": {
+    "name": "dcxMACSpMgtTriggerParam8",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on trigger type."
+  },
+  "dcxMACSpMgtTriggerStatus": {
+    "name": "dcxMACSpMgtTriggerStatus",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used to create and control the status of entries in this table."
+  },
+  "dcxMACSpectralMgtActionTable": {
+    "name": "dcxMACSpectralMgtActionTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Describes the spectral management actions assigned to one or more spectral managment triggers."
+  },
+  "dcxMACSpectralMgtActionEntry": {
+    "name": "dcxMACSpectralMgtActionEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-C3-MAC-MIB",
+        "object": "dcxMACSpMgtActionIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Describes a single spectral management action, assigned to one or more spectral management triggers."
+  },
+  "dcxMACSpMgtActionIndex": {
+    "name": "dcxMACSpMgtActionIndex",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index into the spectral managment actions table used to assign actions to spectral management triggers."
+  },
+  "dcxMACSpMgtActionType": {
+    "name": "dcxMACSpMgtActionType",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Identifies the action type represented by this entry."
+  },
+  "dcxMACSpMgtActionParam1": {
+    "name": "dcxMACSpMgtActionParam1",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionParam2": {
+    "name": "dcxMACSpMgtActionParam2",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionParam3": {
+    "name": "dcxMACSpMgtActionParam3",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionParam4": {
+    "name": "dcxMACSpMgtActionParam4",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionParam5": {
+    "name": "dcxMACSpMgtActionParam5",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionParam6": {
+    "name": "dcxMACSpMgtActionParam6",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionParam7": {
+    "name": "dcxMACSpMgtActionParam7",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionParam8": {
+    "name": "dcxMACSpMgtActionParam8",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Parameter dependent on action type."
+  },
+  "dcxMACSpMgtActionStatus": {
+    "name": "dcxMACSpMgtActionStatus",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.6.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used to create and control the status of entries in this table."
+  },
+  "dcxMACSharedSecretTable": {
+    "name": "dcxMACSharedSecretTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Set up shared secrets for this DOCSIS MAC Interface"
+  },
+  "dcxMACSharedSecretEntry": {
+    "name": "dcxMACSharedSecretEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-C3-MAC-MIB",
+        "object": "dcxMACSharedSecretId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "dcxMACSharedSecretEntry"
+  },
+  "dcxMACSharedSecretId": {
+    "name": "dcxMACSharedSecretId",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "ID for the associated shared secret."
+  },
+  "dcxMACSharedSecretStr": {
+    "name": "dcxMACSharedSecretStr",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the shared secret itself, which is considered write-only. It can be SET but when a GET operation is performed the value is not returned."
+  },
+  "dcxMACSharedSecretStatus": {
+    "name": "dcxMACSharedSecretStatus",
+    "oid": "1.3.6.1.4.1.4115.1.4.3.6.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Row status."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ARRIS-C3-MAC-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:06:46 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ARRIS-C3-MAC-MIB"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "imports": {
+    "class": "imports",
+    "FOUNDRY-SN-ROOT-MIB": [
+      "fdrySntp"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "NOTIFICATION-TYPE",
+      "Gauge32",
+      "Unsigned32",
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "Counter64",
+      "MibIdentifier",
+      "Integer32",
+      "Counter32",
+      "Bits",
+      "TimeTicks",
+      "iso"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "RowStatus",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "fdrySntpMIB": {
+    "name": "fdrySntpMIB",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2008-02-25 00:00",
+        "description": "Initial version, obsoletes the earlier snNTPServerTable."
+      }
+    ],
+    "lastupdated": "200802250000Z",
+    "organization": "Foundry Networks, Inc.",
+    "contactinfo": "Technical Support Center, Foundry Networks, 4980 Great America Parkway, Santa Clara, CA 95054 Email: support@foundrynet.com Phone: 1-877-TURBO-CALL",
+    "description": "The Foundry proprietary MIB module for Simple Network Time Protocol(SNTP) It has new table combines Ipv4 and Ipv6 Simple Network Time Protocol server configuration. Copyright 1996-2008 Foundry Networks, Inc. All rights reserved. This Foundry Networks SNMP Management Information Base Specification embodies Foundry Networks' confidential and proprietary intellectual property. Foundry Networks retains all title and ownership in the Specification, including any revisions. This Specification is supplied AS IS, and Foundry Networks makes no warranty, either express or implied, as to the use, operation, condition, or performance of the Specification. "
+  },
+  "fdrySntpServer": {
+    "name": "fdrySntpServer",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1",
+    "class": "objectidentity"
+  },
+  "fdrySntpServerTable": {
+    "name": "fdrySntpServerTable",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Simple Network Time Protocol(SNTP) server table."
+  },
+  "fdrySntpServerEntry": {
+    "name": "fdrySntpServerEntry",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "FDRY-SNTP-MIB",
+        "object": "fdrySntpServerIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the SNTP server table. This table uses running index as the Index to the table. Reasons to go for running index Scheme than IP addresses: 1. The table will be Virtual Routing and Forwarding(VRF) independent that multiple VRFs could share the same address type and address. 2. Index with address type and address could be potentially 17 unsigned integer, parsing and finding next index takes CPU time. The PDU gets to be huge too! 3. IP address is just another attribute, they are supposed to be list of servers."
+  },
+  "fdrySntpServerIndex": {
+    "name": "fdrySntpServerIndex",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index to the SNTP server Table. Maximum 3 Sntp servers are supported."
+  },
+  "fdrySntpServerAddrType": {
+    "name": "fdrySntpServerAddrType",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "ipv4",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "SNTP server IP address Type. Supported address types are ipv4(1) and ipv6(2)"
+  },
+  "fdrySntpServerAddr": {
+    "name": "fdrySntpServerAddr",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "SNTP server IP address."
+  },
+  "fdrySntpServerVersion": {
+    "name": "fdrySntpServerVersion",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "SNTP server version."
+  },
+  "fdrySntpServerRowStatus": {
+    "name": "fdrySntpServerRowStatus",
+    "oid": "1.3.6.1.4.1.1991.1.1.7.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, or delete a row in this table. When a row in this table is in active(1) state, no objects in that row can be modified except this object. "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SPR08061c.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:23:04 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "FDRY-SNTP-MIB"
+  }
+}

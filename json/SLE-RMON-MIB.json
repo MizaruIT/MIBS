@@ -1,0 +1,3417 @@
+{
+  "imports": {
+    "class": "imports",
+    "DASAN-SMI": [
+      "sleMgmt"
+    ],
+    "SLE-TC-MIB": [
+      "SleControlRequestResultType",
+      "SleControlStatusType"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "IpAddress",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "iso",
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "Bits",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "Gauge32",
+      "Counter32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "sleRmon": {
+    "name": "sleRmon",
+    "oid": "1.3.6.1.4.1.6296.101.9",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2004-12-08 08:40",
+        "description": "AFI"
+      }
+    ],
+    "lastupdated": "200412080903Z",
+    "organization": "ORGANIZATION",
+    "contactinfo": "Contact ",
+    "description": "This MIB contains all needed informations about rmon and all supported sle rmon features."
+  },
+  "OwnerString": {
+    "name": "OwnerString",
+    "class": "type",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    }
+  },
+  "SleEntryStatus": {
+    "name": "SleEntryStatus",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "valid": 1,
+          "createRequest": 2,
+          "underCreation": 3
+        }
+      }
+    }
+  },
+  "sleHistory": {
+    "name": "sleHistory",
+    "oid": "1.3.6.1.4.1.6296.101.9.1",
+    "class": "objectidentity"
+  },
+  "sleHistoryTable": {
+    "name": "sleHistoryTable",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of history control entries."
+  },
+  "sleHistoryEntry": {
+    "name": "sleHistoryEntry",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A list of parameters that set up a periodic sampling of statistics. As an example, an instance of the sleHistoryControlInterval object might be named sleHistoryControlInterval.2"
+  },
+  "sleHistoryIndex": {
+    "name": "sleHistoryIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "An index that uniquely identifies an entry in the historyControl table. Each such entry defines a set of samples at a particular interval for an interface on the device."
+  },
+  "sleHistoryDataSource": {
+    "name": "sleHistoryDataSource",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the source of the data for which historical data was collected and placed in a media-specific table on behalf of this historyControlEntry. This source can be any interface on this device. In order to identify a particular interface, this object shall identify the instance of the ifIndex object, defined in RFC 1213 and RFC 1573 [4,6], for the desired interface. For example, if an entry were to receive data from interface #1, this object would be set to ifIndex.1. The statistics in this group reflect all packets on the local network segment attached to the identified interface. An agent may or may not be able to tell if fundamental changes to the media of the interface have occurred and necessitate an invalidation of this entry. For example, a hot-pluggable ethernet card could be pulled out and replaced by a token-ring card. In such a case, if the agent has such knowledge of the change, it is recommended that it invalidate this entry. This object may not be modified if the associated historyControlStatus object is equal to valid(1)."
+  },
+  "sleHistoryBucketsRequested": {
+    "name": "sleHistoryBucketsRequested",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 50,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The requested number of discrete time intervals over which data is to be saved in the part of the media-specific table associated with this historyControlEntry. When this object is created or modified, the probe should set historyControlBucketsGranted as closely to this object as is possible for the particular probe implementation and available resources."
+  },
+  "sleHistoryBucketsGranted": {
+    "name": "sleHistoryBucketsGranted",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of discrete sampling intervals over which data shall be saved in the part of the media-specific table associated with this historyControlEntry. When the associated historyControlBucketsRequested object is created or modified, the probe should set this object as closely to the requested value as is possible for the particular probe implementation and available resources. The probe must not lower this value except as a result of a modification to the associated historyControlBucketsRequested object. There will be times when the actual number of buckets associated with this entry is less than the value of this object. In this case, at the end of each sampling interval, a new bucket will be added to the media-specific table. When the number of buckets reaches the value of this object and a new bucket is to be added to the media-specific table, the oldest bucket associated with this historyControlEntry shall be deleted by the agent so that the new bucket can be added. When the value of this object changes to a value less than the current value, entries are deleted from the media-specific table associated with this historyControlEntry. Enough of the oldest of these entries shall be deleted by the agent so that their number remains less than or equal to the new value of this object. When the value of this object changes to a value greater than the current value, the number of associated media- specific entries may be allowed to grow."
+  },
+  "sleHistoryInterval": {
+    "name": "sleHistoryInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 3600
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1800,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The interval in seconds over which the data is sampled for each bucket in the part of the media-specific table associated with this historyControlEntry. This interval can be set to any number of seconds between 1 and 3600 (1 hour). Because the counters in a bucket may overflow at their maximum value with no indication, a prudent manager will take into account the possibility of overflow in any of the associated counters. It is important to consider the minimum time in which any counter could overflow on a particular media type and set the historyControlInterval object to a value less than this interval. This is typically most important for the 'octets' counter in any media-specific table. For example, on an Ethernet network, the etherHistoryOctets counter could overflow in about one hour at the Ethernet's maximum utilization. This object may not be modified if the associated historyControlStatus object is equal to valid(1)."
+  },
+  "sleHistoryOwner": {
+    "name": "sleHistoryOwner",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it."
+  },
+  "sleHistoryStatus": {
+    "name": "sleHistoryStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleEntryStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of this historyControl entry. Each instance of the media-specific table associated with this historyControlEntry will be deleted by the agent if this historyControlEntry is not equal to valid(1)."
+  },
+  "sleHistoryControl": {
+    "name": "sleHistoryControl",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2",
+    "class": "objectidentity"
+  },
+  "sleHistoryControlRequest": {
+    "name": "sleHistoryControlRequest",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createHistory": 1,
+          "destroyHistory": 2,
+          "setHistoryProfile": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " createHistory: sleHistoryControlIndex sleHistoryControlDataSource sleHistoryControlBucketsRequested sleHistoryControlInterval sleHistoryControlOwner sleHistoryControlSts destroyHistory: sleHistoryControlIndex setHistoryProfile: sleHistoryControlIndex sleHistoryControlDataSource sleHistoryControlBucketsRequested sleHistoryControlInterval sleHistoryControlOwner sleHistoryControlSts "
+  },
+  "sleHistoryControlStatus": {
+    "name": "sleHistoryControlStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sleHistoryControlTimer": {
+    "name": "sleHistoryControlTimer",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sleHistoryControlTimeStamp": {
+    "name": "sleHistoryControlTimeStamp",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sleHistoryControlReqResult": {
+    "name": "sleHistoryControlReqResult",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sleHistoryControlIndex": {
+    "name": "sleHistoryControlIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleHistoryControlDataSource": {
+    "name": "sleHistoryControlDataSource",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the source of the data for which historical data was collected and placed in a media-specific table on behalf of this historyControlEntry. This source can be any interface on this device. In order to identify a particular interface, this object shall identify the instance of the ifIndex object, defined in RFC 1213 and RFC 1573 [4,6], for the desired interface. For example, if an entry were to receive data from interface #1, this object would be set to ifIndex.1. The statistics in this group reflect all packets on the local network segment attached to the identified interface. An agent may or may not be able to tell if fundamental changes to the media of the interface have occurred and necessitate an invalidation of this entry. For example, a hot-pluggable ethernet card could be pulled out and replaced by a token-ring card. In such a case, if the agent has such knowledge of the change, it is recommended that it invalidate this entry. This object may not be modified if the associated historyControlStatus object is equal to valid(1)."
+  },
+  "sleHistoryControlBucketsRequested": {
+    "name": "sleHistoryControlBucketsRequested",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 50,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The requested number of discrete time intervals over which data is to be saved in the part of the media-specific table associated with this historyControlEntry. When this object is created or modified, the probe should set historyControlBucketsGranted as closely to this object as is possible for the particular probe implementation and available resources."
+  },
+  "sleHistoryControlInterval": {
+    "name": "sleHistoryControlInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 3600
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1800,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The interval in seconds over which the data is sampled for each bucket in the part of the media-specific table associated with this historyControlEntry. This interval can be set to any number of seconds between 1 and 3600 (1 hour). Because the counters in a bucket may overflow at their maximum value with no indication, a prudent manager will take into account the possibility of overflow in any of the associated counters. It is important to consider the minimum time in which any counter could overflow on a particular media type and set the historyControlInterval object to a value less than this interval. This is typically most important for the 'octets' counter in any media-specific table. For example, on an Ethernet network, the etherHistoryOctets counter could overflow in about one hour at the Ethernet's maximum utilization. This object may not be modified if the associated historyControlStatus object is equal to valid(1)."
+  },
+  "sleHistoryControlOwner": {
+    "name": "sleHistoryControlOwner",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it."
+  },
+  "sleHistoryControlSts": {
+    "name": "sleHistoryControlSts",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.2.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleEntryStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The status of this historyControl entry. Each instance of the media-specific table associated with this historyControlEntry will be deleted by the agent if this historyControlEntry is not equal to valid(1)."
+  },
+  "sleHistoryNotification": {
+    "name": "sleHistoryNotification",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.3",
+    "class": "objectidentity"
+  },
+  "sleHistoryCreated": {
+    "name": "sleHistoryCreated",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryDataSource"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryBucketsRequested"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleHistoryDestroyed": {
+    "name": "sleHistoryDestroyed",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleHistoryProfileChanged": {
+    "name": "sleHistoryProfileChanged",
+    "oid": "1.3.6.1.4.1.6296.101.9.1.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryDataSource"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryBucketsRequested"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleAlarm": {
+    "name": "sleAlarm",
+    "oid": "1.3.6.1.4.1.6296.101.9.2",
+    "class": "objectidentity"
+  },
+  "sleAlarmTable": {
+    "name": "sleAlarmTable",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of alarm entries."
+  },
+  "sleAlarmEntry": {
+    "name": "sleAlarmEntry",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A list of parameters that set up a periodic checking for alarm conditions. For example, an instance of the sleAlarmValue object might be named sleAlarmValue.8"
+  },
+  "sleAlarmIndex": {
+    "name": "sleAlarmIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "An index that uniquely identifies an entry in the alarm table. Each such entry defines a diagnostic sample at a particular interval for an object on the device."
+  },
+  "sleAlarmInterval": {
+    "name": "sleAlarmInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The interval in seconds over which the data is sampled and compared with the rising and falling thresholds. When setting this variable, care should be taken in the case of deltaValue sampling - the interval should be set short enough that the sampled variable is very unlikely to increase or decrease by more than 2^31 - 1 during a single sampling interval. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmVariable": {
+    "name": "sleAlarmVariable",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The object identifier of the particular variable to be sampled. Only variables that resolve to an ASN.1 primitive type of INTEGER (INTEGER, Counter, Gauge, or TimeTicks) may be sampled. Because SNMP access control is articulated entirely in terms of the contents of MIB views, no access control mechanism exists that can restrict the value of this object to identify only those objects that exist in a particular MIB view. Because there is thus no acceptable means of restricting the read access that could be obtained through the alarm mechanism, the probe must only grant write access to this object in those views that have read access to all objects on the probe. During a set operation, if the supplied variable name is not available in the selected MIB view, a badValue error must be returned. If at any time the variable name of an establisled alarmEntry is no longer available in the selected MIB view, the probe must change the status of this alarmEntry to invalid(4). This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmSampleType": {
+    "name": "sleAlarmSampleType",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "absoluteValue": 1,
+          "deltaValue": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The method of sampling the selected variable and calculating the value to be compared against the thresholds. If the value of this object is absoluteValue(1), the value of the selected variable will be compared directly with the thresholds at the end of the sampling interval. If the value of this object is deltaValue(2), the value of the selected variable at the last sample will be subtracted from the current value, and the difference compared with the thresholds. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmValue": {
+    "name": "sleAlarmValue",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of the statistic during the last sampling period. For example, if the sample type is deltaValue, this value will be the difference between the samples at the beginning and end of the period. If the sample type is absoluteValue, this value will be the sampled value at the end of the period. This is the value that is compared with the rising and falling thresholds. The value during the current sampling period is not made available until the period is completed and will remain available until the next period completes."
+  },
+  "sleAlarmStartupAlarm": {
+    "name": "sleAlarmStartupAlarm",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "risingAlarm": 1,
+          "fallingAlarm": 2,
+          "risingOrFallingAlarm": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The alarm that may be sent when this entry is first set to valid. If the first sample after this entry becomes valid is greater than or equal to the risingThreshold and alarmStartupAlarm is equal to risingAlarm(1) or risingOrFallingAlarm(3), then a single rising alarm will be generated. If the first sample after this entry becomes valid is less than or equal to the fallingThreshold and alarmStartupAlarm is equal to fallingAlarm(2) or risingOrFallingAlarm(3), then a single falling alarm will be generated. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmRisingThreshold": {
+    "name": "sleAlarmRisingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A threshold for the sampled statistic. When the current sampled value is greater than or equal to this threshold, and the value at the last sampling interval was less than this threshold, a single event will be generated. A single event will also be generated if the first sample after this entry becomes valid is greater than or equal to this threshold and the associated alarmStartupAlarm is equal to risingAlarm(1) or risingOrFallingAlarm(3). After a rising event is generated, another such event will not be generated until the sampled value falls below this threshold and reaches the alarmFallingThreshold. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmFallingThreshold": {
+    "name": "sleAlarmFallingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A threshold for the sampled statistic. When the current sampled value is less than or equal to this threshold, and the value at the last sampling interval was greater than this threshold, a single event will be generated. A single event will also be generated if the first sample after this entry becomes valid is less than or equal to this threshold and the associated alarmStartupAlarm is equal to fallingAlarm(2) or risingOrFallingAlarm(3). After a falling event is generated, another such event will not be generated until the sampled value rises above this threshold and reaches the alarmRisingThreshold. This object may not be modified if the associated sleAlarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmRisingEventIndex": {
+    "name": "sleAlarmRisingEventIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index of the eventEntry that is used when a rising threshold is crossed. The eventEntry identified by a particular value of this index is the same as identified by the same value of the eventIndex object. If there is no corresponding entry in the eventTable, then no association exists. In particular, if this value is zero, no associated event will be generated, as zero is not a valid event index. This object may not be modified if the associated sleAlarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmFallingEventIndex": {
+    "name": "sleAlarmFallingEventIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index of the eventEntry that is used when a falling threshold is crossed. The eventEntry identified by a particular value of this index is the same as identified by the same value of the eventIndex object. If there is no corresponding entry in the eventTable, then no association exists. In particular, if this value is zero, no associated event will be generated, as zero is not a valid event index. This object may not be modified if the associated sleAlarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmOwner": {
+    "name": "sleAlarmOwner",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it."
+  },
+  "sleAlarmStatus": {
+    "name": "sleAlarmStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleEntryStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of this alarm entry."
+  },
+  "sleAlarmControl": {
+    "name": "sleAlarmControl",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2",
+    "class": "objectidentity"
+  },
+  "sleAlarmControlRequest": {
+    "name": "sleAlarmControlRequest",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createAlarm": 1,
+          "destroyAlarm": 2,
+          "setAlarmProfile": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " createAlarm: (sleAlarmControlIndex) sleAlarmInterval sleAlarmControlVariable sleAlarmControlSampleType sleAlarmControlStartupAlarm sleAlarmControlRisingThreshold sleAlarmControlFallingThreshold sleAlarmControlRisingEventIndex sleAlarmControlFallingEventIndex sleAlarmControlOwner sleAlarmControlSts destroyAlarm: sleAlarmControlIndex setAlarmProfile: sleAlarmControlIndex sleAlarmControlInterval sleAlarmControlVariable sleAlarmControlSampleType sleAlarmControlStartupAlarm sleAlarmControlRisingThreshold sleAlarmControlFallingThreshold sleAlarmControlRisingEventIndex sleAlarmControlFallingEventIndex sleAlarmControlOwner sleAlarmControlSts "
+  },
+  "sleAlarmControlStatus": {
+    "name": "sleAlarmControlStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sleAlarmControlTimer": {
+    "name": "sleAlarmControlTimer",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sleAlarmControlTimeStamp": {
+    "name": "sleAlarmControlTimeStamp",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sleAlarmControlReqResult": {
+    "name": "sleAlarmControlReqResult",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sleAlarmControlIndex": {
+    "name": "sleAlarmControlIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleAlarmControlInterval": {
+    "name": "sleAlarmControlInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The interval in seconds over which the data is sampled and compared with the rising and falling thresholds. When setting this variable, care should be taken in the case of deltaValue sampling - the interval should be set short enough that the sampled variable is very unlikely to increase or decrease by more than 2^31 - 1 during a single sampling interval. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlVariable": {
+    "name": "sleAlarmControlVariable",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The object identifier of the particular variable to be sampled. Only variables that resolve to an ASN.1 primitive type of INTEGER (INTEGER, Counter, Gauge, or TimeTicks) may be sampled. Because SNMP access control is articulated entirely in terms of the contents of MIB views, no access control mechanism exists that can restrict the value of this object to identify only those objects that exist in a particular MIB view. Because there is thus no acceptable means of restricting the read access that could be obtained through the alarm mechanism, the probe must only grant write access to this object in those views that have read access to all objects on the probe. During a set operation, if the supplied variable name is not available in the selected MIB view, a badValue error must be returned. If at any time the variable name of an establisled alarmEntry is no longer available in the selected MIB view, the probe must change the status of this alarmEntry to invalid(4). This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlSampleType": {
+    "name": "sleAlarmControlSampleType",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "absoluteValue": 1,
+          "deltaValue": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The method of sampling the selected variable and calculating the value to be compared against the thresholds. If the value of this object is absoluteValue(1), the value of the selected variable will be compared directly with the thresholds at the end of the sampling interval. If the value of this object is deltaValue(2), the value of the selected variable at the last sample will be subtracted from the current value, and the difference compared with the thresholds. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlStartupAlarm": {
+    "name": "sleAlarmControlStartupAlarm",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "risingAlarm": 1,
+          "fallingAlarm": 2,
+          "risingOrFallingAlarm": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The alarm that may be sent when this entry is first set to valid. If the first sample after this entry becomes valid is greater than or equal to the risingThreshold and alarmStartupAlarm is equal to risingAlarm(1) or risingOrFallingAlarm(3), then a single rising alarm will be generated. If the first sample after this entry becomes valid is less than or equal to the fallingThreshold and alarmStartupAlarm is equal to fallingAlarm(2) or risingOrFallingAlarm(3), then a single falling alarm will be generated. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlRisingThreshold": {
+    "name": "sleAlarmControlRisingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A threshold for the sampled statistic. When the current sampled value is greater than or equal to this threshold, and the value at the last sampling interval was less than this threshold, a single event will be generated. A single event will also be generated if the first sample after this entry becomes valid is greater than or equal to this threshold and the associated alarmStartupAlarm is equal to risingAlarm(1) or risingOrFallingAlarm(3). After a rising event is generated, another such event will not be generated until the sampled value falls below this threshold and reaches the alarmFallingThreshold. This object may not be modified if the associated alarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlFallingThreshold": {
+    "name": "sleAlarmControlFallingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A threshold for the sampled statistic. When the current sampled value is less than or equal to this threshold, and the value at the last sampling interval was greater than this threshold, a single event will be generated. A single event will also be generated if the first sample after this entry becomes valid is less than or equal to this threshold and the associated alarmStartupAlarm is equal to fallingAlarm(2) or risingOrFallingAlarm(3). After a falling event is generated, another such event will not be generated until the sampled value rises above this threshold and reaches the alarmRisingThreshold. This object may not be modified if the associated sleAlarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlRisingEventIndex": {
+    "name": "sleAlarmControlRisingEventIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The index of the eventEntry that is used when a rising threshold is crossed. The eventEntry identified by a particular value of this index is the same as identified by the same value of the eventIndex object. If there is no corresponding entry in the eventTable, then no association exists. In particular, if this value is zero, no associated event will be generated, as zero is not a valid event index. This object may not be modified if the associated sleAlarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlFallingEventIndex": {
+    "name": "sleAlarmControlFallingEventIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The index of the eventEntry that is used when a falling threshold is crossed. The eventEntry identified by a particular value of this index is the same as identified by the same value of the eventIndex object. If there is no corresponding entry in the eventTable, then no association exists. In particular, if this value is zero, no associated event will be generated, as zero is not a valid event index. This object may not be modified if the associated sleAlarmStatus object is equal to valid(1)."
+  },
+  "sleAlarmControlOwner": {
+    "name": "sleAlarmControlOwner",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.15",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it."
+  },
+  "sleAlarmControlSts": {
+    "name": "sleAlarmControlSts",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.2.16",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleEntryStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The status of this alarm entry."
+  },
+  "sleAlarmNotification": {
+    "name": "sleAlarmNotification",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.3",
+    "class": "objectidentity"
+  },
+  "sleAlarmCreated": {
+    "name": "sleAlarmCreated",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmSampleType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmStartupAlarm"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmFallingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmRisingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmFallingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleAlarmDestroyed": {
+    "name": "sleAlarmDestroyed",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleAlarmProfileChanged": {
+    "name": "sleAlarmProfileChanged",
+    "oid": "1.3.6.1.4.1.6296.101.9.2.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmSampleType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmStartupAlarm"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmFallingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmRisingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmFallingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleEvent": {
+    "name": "sleEvent",
+    "oid": "1.3.6.1.4.1.6296.101.9.3",
+    "class": "objectidentity"
+  },
+  "sleEventTable": {
+    "name": "sleEventTable",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of events to be generated."
+  },
+  "sleEventEntry": {
+    "name": "sleEventEntry",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A set of parameters that describe an event to be generated when certain conditions are met. As an example, an instance of the sleEventLastTimeSent object might be named sleEventLastTimeSent.6"
+  },
+  "sleEventIndex": {
+    "name": "sleEventIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "An index that uniquely identifies an entry in the event table. Each such entry defines one event that is to be generated when the appropriate conditions occur."
+  },
+  "sleEventDescription": {
+    "name": "sleEventDescription",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A comment describing this event entry."
+  },
+  "sleEventType": {
+    "name": "sleEventType",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "log": 2,
+          "snmpTrap": 3,
+          "logAndTrap": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of notification that the probe will make about this event. In the case of log, an entry is made in the log table for each event. In the case of snmp-trap, an SNMP trap is sent to one or more management stations."
+  },
+  "sleEventCommunity": {
+    "name": "sleEventCommunity",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If an SNMP trap is to be sent, it will be sent to the SNMP community specified by this octet string. In the future this table will be extended to include the party security mechanism. This object shall be set to a string of length zero if it is intended that that mechanism be used to specify the destination of the trap."
+  },
+  "sleEventLastTimeSent": {
+    "name": "sleEventLastTimeSent",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime at the time this event entry last generated an event. If this entry has not generated any events, this value will be zero."
+  },
+  "sleEventOwner": {
+    "name": "sleEventOwner",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it. If this object contains a string starting with 'monitor' and has associated entries in the log table, all connected management stations should retrieve those log entries, as they may have significance to all management stations connected to this device"
+  },
+  "sleEventStatus": {
+    "name": "sleEventStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleEntryStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of this event entry. If this object is not equal to valid(1), all associated log entries shall be deleted by the agent."
+  },
+  "sleEventControl": {
+    "name": "sleEventControl",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2",
+    "class": "objectidentity"
+  },
+  "sleEventControlRequest": {
+    "name": "sleEventControlRequest",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createEvent": 1,
+          "destroyEvent": 2,
+          "setEventProfile": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " createEvent: (sleEventControlIndex) sleEventControlDescription sleEventControlType sleEventControlCommunity sleEventControlOwner sleEventControlSts destroyEvent: sleEventControlIndex setEventProfile: sleEventControlIndex sleEventControlDescription sleEventControlType sleEventControlCommunity sleEventControlOwner sleEventControlSts "
+  },
+  "sleEventControlStatus": {
+    "name": "sleEventControlStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sleEventControlTimer": {
+    "name": "sleEventControlTimer",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sleEventControlTimeStamp": {
+    "name": "sleEventControlTimeStamp",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sleEventControlReqResult": {
+    "name": "sleEventControlReqResult",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sleEventControlIndex": {
+    "name": "sleEventControlIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleEventControlDescription": {
+    "name": "sleEventControlDescription",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A comment describing this event entry."
+  },
+  "sleEventControlType": {
+    "name": "sleEventControlType",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "log": 2,
+          "snmpTrap": 3,
+          "logAndTrap": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The type of notification that the probe will make about this event. In the case of log, an entry is made in the log table for each event. In the case of snmp-trap, an SNMP trap is sent to one or more management stations."
+  },
+  "sleEventControlCommunity": {
+    "name": "sleEventControlCommunity",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If an SNMP trap is to be sent, it will be sent to the SNMP community specified by this octet string. In the future this table will be extended to include the party security mechanism. This object shall be set to a string of length zero if it is intended that that mechanism be used to specify the destination of the trap."
+  },
+  "sleEventControlOwner": {
+    "name": "sleEventControlOwner",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it. If this object contains a string starting with 'monitor' and has associated entries in the log table, all connected management stations should retrieve those log entries, as they may have significance to all management stations connected to this device"
+  },
+  "sleEventControlSts": {
+    "name": "sleEventControlSts",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.2.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleEntryStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The status of this event entry. If this object is not equal to valid(1), all associated log entries shall be deleted by the agent."
+  },
+  "sleEventNotification": {
+    "name": "sleEventNotification",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.3",
+    "class": "objectidentity"
+  },
+  "sleEventCreated": {
+    "name": "sleEventCreated",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventDescription"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventCommunity"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleEventDestroyed": {
+    "name": "sleEventDestroyed",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleEventProfileChanged": {
+    "name": "sleEventProfileChanged",
+    "oid": "1.3.6.1.4.1.6296.101.9.3.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventDescription"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventCommunity"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleStatistics": {
+    "name": "sleStatistics",
+    "oid": "1.3.6.1.4.1.6296.101.9.4",
+    "class": "objectidentity"
+  },
+  "sleEtherStats": {
+    "name": "sleEtherStats",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1",
+    "class": "objectidentity"
+  },
+  "sleEtherStatsTable": {
+    "name": "sleEtherStatsTable",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleEtherStatsEntry": {
+    "name": "sleEtherStatsEntry",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleEtherStatsIndex": {
+    "name": "sleEtherStatsIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object uniquely identifies this sleEtherStats entry"
+  },
+  "sleEtherStatsDataSource": {
+    "name": "sleEtherStatsDataSource",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the source of the data that this sleEtherStats entry is configured to analyze. This source can be any ethernet interface on this device. In order to identify a particular interface, this object shall identify the instance of the ifIndex object, defined in RFC 1213 and RFC 1573 [4,6], for the desired interface. For example, if an entry were to receive data from interface #1, this object would be set to ifIndex.1. The statistics in this group reflect all packets on the local network segment attached to the identified interface. An agent may or may not be able to tell if fundamental changes to the media of the interface have occurred and necessitate an invalidation of this entry. For example, a hot-pluggable ethernet card could be pulled out and replaced by a token-ring card. In such a case, if the agent has such knowledge of the change, it is recommended that it invalidate this entry. This object may not be modified if the associated sleEtherStatsStatus object is equal to valid(1)."
+  },
+  "sleEtherStatsDropEvents": {
+    "name": "sleEtherStatsDropEvents",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of events in which packets were dropped by the probe due to lack of resources. Note that this number is not necessarily the number of packets dropped; it is just the number of times this condition has been detected."
+  },
+  "sleEtherStatsOctets": {
+    "name": "sleEtherStatsOctets",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of octets of data (including those in bad packets) received on the network (excluding framing bits but including FCS octets). This object can be used as a reasonable estimate of ethernet utilization. If greater precision is desired, the etherStatsPkts and etherStatsOctets objects should be sampled before and after a common interval. The differences in the sampled values are Pkts and Octets, respectively, and the number of seconds in the interval is Interval. These values are used to calculate the Utilization as follows: Pkts * (9.6 + 6.4) + (Octets * .8) Utilization = ------------------------------------- Interval * 10,000 The result of this equation is the value Utilization which is the percent utilization of the ethernet segment on a scale of 0 to 100 percent. "
+  },
+  "sleEtherStatsPkts": {
+    "name": "sleEtherStatsPkts",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets, broadcast packets, and multicast packets) received."
+  },
+  "sleEtherStatsBroadcastPkts": {
+    "name": "sleEtherStatsBroadcastPkts",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of good packets received that were directed to the broadcast address. Note that this does not include multicast packets."
+  },
+  "sleEtherStatsMulticastPkts": {
+    "name": "sleEtherStatsMulticastPkts",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of good packets received that were directed to a multicast address. Note that this number does not include packets directed to the broadcast address. "
+  },
+  "sleEtherStatsCRCAlignErrors": {
+    "name": "sleEtherStatsCRCAlignErrors",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that had a length (excluding framing bits, but including FCS octets) of between 64 and 1518 octets, inclusive, but but had either a bad Frame Check Sequence (FCS) with an integral number of octets (FCS Error) or a bad FCS with a non-integral number of octets (Alignment Error). "
+  },
+  "sleEtherStatsUndersizePkts": {
+    "name": "sleEtherStatsUndersizePkts",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were less than 64 octets long (excluding framing bits, but including FCS octets) and were otherwise well formed. "
+  },
+  "sleEtherStatsOversizePkts": {
+    "name": "sleEtherStatsOversizePkts",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were longer than 1518 octets (excluding framing bits, but including FCS octets) and were otherwise well formed. "
+  },
+  "sleEtherStatsFragments": {
+    "name": "sleEtherStatsFragments",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were less than 64 octets in length (excluding framing bits but including FCS octets) and had either a bad Frame Check Sequence (FCS) with an integral number of octets (FCS Error) or a bad FCS with a non-integral number of octets (Alignment Error). "
+  },
+  "sleEtherStatsJabbers": {
+    "name": "sleEtherStatsJabbers",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were longer than 1518 octets (excluding framing bits, but including FCS octets), and had either a bad Frame Check Sequence (FCS) with an integral number of octets (FCS Error) or a bad FCS with a non-integral number of octets (Alignment Error). "
+  },
+  "sleEtherStatsCollisions": {
+    "name": "sleEtherStatsCollisions",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The best estimate of the total number of collisions on this Ethernet segment. The value returned will depend on the location of the RMON probe. Section 8.2.1.3 (10BASE-5) and section 10.3.1.3 (10BASE-2) of IEEE standard 802.3 states that a station must detect a collision, in the receive mode, if three or more stations are transmitting simultaneously. A repeater port must detect a collision when two or more stations are transmitting simultaneously. Thus a probe placed on a repeater port could record more collisions than a probe connected to a station on the same segment would. Probe location plays a much smaller role when considering 10BASE-T. 14.2.1.4 (10BASE-T) of IEEE standard 802.3 defines a collision as the simultaneous presence of signals on the DO and RD circuits (transmitting and receiving at the same time). A 10BASE-T station can only detect collisions when it is transmitting. Thus probes placed on a station and a repeater, should report the same number of collisions. Note also that an RMON probe inside a repeater should ideally report collisions between the repeater and one or more other hosts (transmit collisions as defined by IEEE 802.3k) plus receiver collisions observed on any coax segments to which the repeater is connected. "
+  },
+  "sleEtherStatsPkts64Octets": {
+    "name": "sleEtherStatsPkts64Octets",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were 64 octets in length (excluding framing bits but including FCS octets). "
+  },
+  "sleEtherStatsPkts65to127Octets": {
+    "name": "sleEtherStatsPkts65to127Octets",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 65 and 127 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "sleEtherStatsPkts128to255Octets": {
+    "name": "sleEtherStatsPkts128to255Octets",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 128 and 255 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "sleEtherStatsPkts256to511Octets": {
+    "name": "sleEtherStatsPkts256to511Octets",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 256 and 511 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "sleEtherStatsPkts512to1023Octets": {
+    "name": "sleEtherStatsPkts512to1023Octets",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 512 and 1023 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "sleEtherStatsPkts1024to1518Octets": {
+    "name": "sleEtherStatsPkts1024to1518Octets",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 1024 and 1518 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "sleEtherStatsOwner": {
+    "name": "sleEtherStatsOwner",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it. "
+  },
+  "sleEtherStatsStatus": {
+    "name": "sleEtherStatsStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleEntryStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of this etherStats entry. "
+  },
+  "sleEtherStatsClearedTime": {
+    "name": "sleEtherStatsClearedTime",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleEtherStatsControl": {
+    "name": "sleEtherStatsControl",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.2",
+    "class": "objectidentity"
+  },
+  "sleEtherStatsControlRequest": {
+    "name": "sleEtherStatsControlRequest",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clearRmonStat": 1
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " createEvent: (sleEventControlIndex) sleEventControlDescription sleEventControlType sleEventControlCommunity sleEventControlOwner sleEventControlSts destroyEvent: sleEventControlIndex setEventProfile: sleEventControlIndex sleEventControlDescription sleEventControlType sleEventControlCommunity sleEventControlOwner sleEventControlSts "
+  },
+  "sleEtherStatsControlStatus": {
+    "name": "sleEtherStatsControlStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sleEtherStatsControlTimer": {
+    "name": "sleEtherStatsControlTimer",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sleEtherStatsControlTimeStamp": {
+    "name": "sleEtherStatsControlTimeStamp",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sleEtherStatsControlReqResult": {
+    "name": "sleEtherStatsControlReqResult",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sleEtherStatsControlIfIndex": {
+    "name": "sleEtherStatsControlIfIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.4.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleRmonSimple": {
+    "name": "sleRmonSimple",
+    "oid": "1.3.6.1.4.1.6296.101.9.5",
+    "class": "objectidentity"
+  },
+  "sleRmonSimpleTable": {
+    "name": "sleRmonSimpleTable",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleRmonSimpleEntry": {
+    "name": "sleRmonSimpleEntry",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimplePortIndex",
+        "implied": 0
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleSampleVariable",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleRmonSimplePortIndex": {
+    "name": "sleRmonSimplePortIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The port index."
+  },
+  "sleRmonSimpleSampleVariable": {
+    "name": "sleRmonSimpleSampleVariable",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "crcAlignError": 1,
+          "jabber": 2,
+          "oversizePackets": 3,
+          "undersizePackets": 4,
+          "fragments": 5,
+          "dropEvents": 6,
+          "collisions": 7,
+          "ifInDiscards": 8,
+          "ifInErrors": 9,
+          "ifOutDiscards": 10,
+          "ifOutErrors": 11,
+          "ifInPauseFrame": 12,
+          "ifOutPauseFrame": 13
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The sample variable type."
+  },
+  "sleRmonSimpleSampleInterval": {
+    "name": "sleRmonSimpleSampleInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The sample interval. (10: minimum)"
+  },
+  "sleRmonSimpleRisingThreshold": {
+    "name": "sleRmonSimpleRisingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The rising threshold."
+  },
+  "sleRmonSimpleFallingThreshold": {
+    "name": "sleRmonSimpleFallingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The falling threshold."
+  },
+  "sleRmonSimpleControl": {
+    "name": "sleRmonSimpleControl",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2",
+    "class": "objectidentity"
+  },
+  "sleRmonSimpleControlRequest": {
+    "name": "sleRmonSimpleControlRequest",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createRmonSimple": 1,
+          "delRmonSimple": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Description"
+  },
+  "sleRmonSimpleControlStatus": {
+    "name": "sleRmonSimpleControlStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sleRmonSimpleControlTimer": {
+    "name": "sleRmonSimpleControlTimer",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sleRmonSimpleControlTimeStamp": {
+    "name": "sleRmonSimpleControlTimeStamp",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sleRmonSimpleControlReqResult": {
+    "name": "sleRmonSimpleControlReqResult",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sleRmonSimpleControlPortIndex": {
+    "name": "sleRmonSimpleControlPortIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port index."
+  },
+  "sleRmonSimpleControlSampleVariable": {
+    "name": "sleRmonSimpleControlSampleVariable",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "crcAlignError": 1,
+          "jabber": 2,
+          "oversizePackets": 3,
+          "undersizePackets": 4,
+          "fragments": 5,
+          "dropEvents": 6,
+          "collisions": 7,
+          "ifInDiscards": 8,
+          "ifInErrors": 9,
+          "ifOutDiscards": 10,
+          "ifOutErrors": 11,
+          "ifInPauseFrame": 12,
+          "ifOutPauseFrame": 13,
+          "allTypes": 255
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The sample variable type. (255: set all sample variable types)"
+  },
+  "sleRmonSimpleControlSampleInterval": {
+    "name": "sleRmonSimpleControlSampleInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The sample interval.(10: minimum)"
+  },
+  "sleRmonSimpleControlRisingThreshold": {
+    "name": "sleRmonSimpleControlRisingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The rising threshold."
+  },
+  "sleRmonSimpleControlFallingThreshold": {
+    "name": "sleRmonSimpleControlFallingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.2.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The falling threshold."
+  },
+  "sleRmonSimpleNotification": {
+    "name": "sleRmonSimpleNotification",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.3",
+    "class": "objectidentity"
+  },
+  "sleRmonSimpleCreated": {
+    "name": "sleRmonSimpleCreated",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlPortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlSampleVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlSampleInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlFallingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "createRmonSimple"
+  },
+  "sleRmonSimpleDeleted": {
+    "name": "sleRmonSimpleDeleted",
+    "oid": "1.3.6.1.4.1.6296.101.9.5.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlPortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlSampleVariable"
+      }
+    ],
+    "status": "current",
+    "description": "delRmonSimple"
+  },
+  "sleRmonSimpleQueue": {
+    "name": "sleRmonSimpleQueue",
+    "oid": "1.3.6.1.4.1.6296.101.9.6",
+    "class": "objectidentity"
+  },
+  "sleRmonSimpleQueueTable": {
+    "name": "sleRmonSimpleQueueTable",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "sleRmonSimpleQueueEntry": {
+    "name": "sleRmonSimpleQueueEntry",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueuePortIndex",
+        "implied": 0
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueSampleVariable",
+        "implied": 0
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueQueueNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleRmonSimpleQueuePortIndex": {
+    "name": "sleRmonSimpleQueuePortIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The port index."
+  },
+  "sleRmonSimpleQueueSampleVariable": {
+    "name": "sleRmonSimpleQueueSampleVariable",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "transmitCount": 1,
+          "dropCount": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The sample variable type."
+  },
+  "sleRmonSimpleQueueQueueNumber": {
+    "name": "sleRmonSimpleQueueQueueNumber",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The queue number 0~7"
+  },
+  "sleRmonSimpleQueueSampleInterval": {
+    "name": "sleRmonSimpleQueueSampleInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The sample interval. (10: minimum)"
+  },
+  "sleRmonSimpleQueueRisingThreshold": {
+    "name": "sleRmonSimpleQueueRisingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The rising threshold."
+  },
+  "sleRmonSimpleQueueFallingThreshold": {
+    "name": "sleRmonSimpleQueueFallingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The falling threshold."
+  },
+  "sleRmonSimpleQueueControl": {
+    "name": "sleRmonSimpleQueueControl",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2",
+    "class": "objectidentity"
+  },
+  "sleRmonSimpleQueueControlRequest": {
+    "name": "sleRmonSimpleQueueControlRequest",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createRmonSimpleQueue": 1,
+          "delRmonSimpleQueue": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Description"
+  },
+  "sleRmonSimpleQueueControlStatus": {
+    "name": "sleRmonSimpleQueueControlStatus",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sleRmonSimpleQueueControlTimer": {
+    "name": "sleRmonSimpleQueueControlTimer",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sleRmonSimpleQueueControlTimeStamp": {
+    "name": "sleRmonSimpleQueueControlTimeStamp",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sleRmonSimpleQueueControlReqResult": {
+    "name": "sleRmonSimpleQueueControlReqResult",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sleRmonSimpleQueueControlPortIndex": {
+    "name": "sleRmonSimpleQueueControlPortIndex",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port index."
+  },
+  "sleRmonSimpleQueueControlSampleVariable": {
+    "name": "sleRmonSimpleQueueControlSampleVariable",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "transmitCount": 1,
+          "dropCount": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The sample variable type."
+  },
+  "sleRmonSimpleQueueControlQueueNumber": {
+    "name": "sleRmonSimpleQueueControlQueueNumber",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The queue number 0~7"
+  },
+  "sleRmonSimpleQueueControlSampleInterval": {
+    "name": "sleRmonSimpleQueueControlSampleInterval",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The sample interval. (10: minimum)"
+  },
+  "sleRmonSimpleQueueControlRisingThreshold": {
+    "name": "sleRmonSimpleQueueControlRisingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The rising threshold."
+  },
+  "sleRmonSimpleQueueControlFallingThreshold": {
+    "name": "sleRmonSimpleQueueControlFallingThreshold",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.2.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The falling threshold."
+  },
+  "sleRmonSimpleQueueNotification": {
+    "name": "sleRmonSimpleQueueNotification",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.3",
+    "class": "objectidentity"
+  },
+  "sleRmonSimpleQueueCreated": {
+    "name": "sleRmonSimpleQueueCreated",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlPortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlSampleVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlQueueNumber"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlSampleInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlFallingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "createRmonSimpleQueue"
+  },
+  "sleRmonSimpleQueueDeleted": {
+    "name": "sleRmonSimpleQueueDeleted",
+    "oid": "1.3.6.1.4.1.6296.101.9.6.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlPortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlSampleVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlQueueNumber"
+      }
+    ],
+    "status": "current",
+    "description": "createRmonSimpleQueue"
+  },
+  "sleRmonGroup": {
+    "name": "sleRmonGroup",
+    "oid": "1.3.6.1.4.1.6296.101.9.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryDataSource"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryBucketsRequested"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryBucketsGranted"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlTimer"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlDataSource"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlBucketsRequested"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryControlSts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmSampleType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmValue"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmStartupAlarm"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmFallingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmRisingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmFallingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlTimer"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlSampleType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlStartupAlarm"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlFallingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlRisingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlFallingEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmControlSts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventDescription"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventCommunity"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventLastTimeSent"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlTimer"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlDescription"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlType"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlCommunity"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventControlSts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsDataSource"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsDropEvents"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsOctets"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsPkts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsBroadcastPkts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsMulticastPkts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsCRCAlignErrors"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsUndersizePkts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsOversizePkts"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsFragments"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsJabbers"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsCollisions"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsPkts64Octets"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsPkts65to127Octets"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsPkts128to255Octets"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsPkts256to511Octets"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsPkts512to1023Octets"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsPkts1024to1518Octets"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsOwner"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsClearedTime"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimplePortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleSampleVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleSampleInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleFallingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlTimer"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlPortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlSampleVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlFallingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleControlSampleInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueuePortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueQueueNumber"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueSampleVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueSampleInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueFallingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlTimer"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlPortIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsControlRequest"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsControlStatus"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsControlTimer"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsControlTimeStamp"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsControlReqResult"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEtherStatsControlIfIndex"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlQueueNumber"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlSampleVariable"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlSampleInterval"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlRisingThreshold"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueControlFallingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleRmonNotificationGroup": {
+    "name": "sleRmonNotificationGroup",
+    "oid": "1.3.6.1.4.1.6296.101.9.8",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryCreated"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryDestroyed"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleHistoryProfileChanged"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmCreated"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmDestroyed"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleAlarmProfileChanged"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventCreated"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventDestroyed"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleEventProfileChanged"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueCreated"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleQueueDeleted"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleDeleted"
+      },
+      {
+        "module": "SLE-RMON-MIB",
+        "object": "sleRmonSimpleCreated"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SLE-RMON-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:11:42 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SLE-RMON-MIB"
+  }
+}

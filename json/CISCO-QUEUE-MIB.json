@@ -1,0 +1,312 @@
+{
+  "imports": {
+    "class": "imports",
+    "CISCO-SMI": [
+      "ciscoMgmt"
+    ],
+    "IF-MIB": [
+      "ifIndex"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "MibIdentifier",
+      "OBJECT-TYPE",
+      "Integer32",
+      "MODULE-IDENTITY",
+      "Bits",
+      "Gauge32",
+      "TimeTicks",
+      "Counter64",
+      "iso",
+      "Unsigned32",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Counter32"
+    ],
+    "SNMPv2-SMI-v1": [
+      "Integer32",
+      "Counter32",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "ciscoQueueMIB": {
+    "name": "ciscoQueueMIB",
+    "oid": "1.3.6.1.4.1.9.9.37",
+    "class": "objectidentity"
+  },
+  "ciscoQueueObjects": {
+    "name": "ciscoQueueObjects",
+    "oid": "1.3.6.1.4.1.9.9.37.1",
+    "class": "objectidentity"
+  },
+  "ciscoQueueTraps": {
+    "name": "ciscoQueueTraps",
+    "oid": "1.3.6.1.4.1.9.9.37.2",
+    "class": "objectidentity"
+  },
+  "ciscoQueueConformance": {
+    "name": "ciscoQueueConformance",
+    "oid": "1.3.6.1.4.1.9.9.37.3",
+    "class": "objectidentity"
+  },
+  "cQCompliances": {
+    "name": "cQCompliances",
+    "oid": "1.3.6.1.4.1.9.9.37.3.1",
+    "class": "objectidentity"
+  },
+  "cQGroups": {
+    "name": "cQGroups",
+    "oid": "1.3.6.1.4.1.9.9.37.3.2",
+    "class": "objectidentity"
+  },
+  "CQAlgorithm": {
+    "name": "CQAlgorithm",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "fifo": 1,
+          "priority": 2,
+          "custom": 3,
+          "weightedFair": 4
+        }
+      }
+    }
+  },
+  "cQIfTable": {
+    "name": "cQIfTable",
+    "oid": "1.3.6.1.4.1.9.9.37.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This table contains objects that describe the queues on a Cisco Interface. An interface queue is modeled as a collection of one or more secondary queues that feed into a device's hardware queue. The hardware queue has a maximum depth set by the MCI tx-queue-limit command or equivalent. The secondary queues (also known as the 'hold queue') have maximum depths set by the hold-queue command or equivalent. This table parallels the ifTable, and indicates the type of queuing in use on the interface, number of queues, and similar parameters."
+  },
+  "cQIfEntry": {
+    "name": "cQIfEntry",
+    "oid": "1.3.6.1.4.1.9.9.37.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "A list of queue attributes for an interface."
+  },
+  "cQIfQType": {
+    "name": "cQIfQType",
+    "oid": "1.3.6.1.4.1.9.9.37.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CQAlgorithm",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The type of queuing used in the Hold Queue. First In First Out Queuing implies that the interface always transmits messages in the order that they are received. Priority Queuing sorts messages out by the use of access lists. Messages in a higher priority queue are always sent in preference to messages in a lower priority queue. Custom Queuing sorts messages out by the use of access lists. Sub-queues are selected in round robin order as either the sub-queue is drained or a given number of octets is moved from the sub-queue to the transmission queue. Weighted Fair Queuing sorts messages by 'conversation', which is source-destination pair of addresses and sockets or ports, as defined by the network layer protocol. Messages are removed from queues in a sequence that gives each conversation a proportion of the available bandwidth."
+  },
+  "cQIfTxLimit": {
+    "name": "cQIfTxLimit",
+    "oid": "1.3.6.1.4.1.9.9.37.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The maximum number of messages placed into the hardware transmission queue. This is a first come first serve queue, fed by the hold queue. If the hold queue contains information, this queue is presumably full."
+  },
+  "cQIfSubqueues": {
+    "name": "cQIfSubqueues",
+    "oid": "1.3.6.1.4.1.9.9.37.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The number of sub-queues of which the hold queue is built. This is a constant for each value of cQIfQType."
+  },
+  "cQStatsTable": {
+    "name": "cQStatsTable",
+    "oid": "1.3.6.1.4.1.9.9.37.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This table contains statistical objects that for the sub-queues of a Cisco Interface."
+  },
+  "cQStatsEntry": {
+    "name": "cQStatsEntry",
+    "oid": "1.3.6.1.4.1.9.9.37.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-QUEUE-MIB",
+        "object": "cQStatsQNumber",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "A list of sub-queue attributes for an interface."
+  },
+  "cQStatsQNumber": {
+    "name": "cQStatsQNumber",
+    "oid": "1.3.6.1.4.1.9.9.37.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "The number of the queue within the queue set. In FIFO queuing, this value is always 2. In Priority Queuing, it corresponds to the various priorities: high = 0 medium = 1 normal = 2 low = 3 In Custom Queuing, it is the queue number referenced in the access list. In Weighted Fair Queuing, it is the queue number associated with the traffic stream (conversation) identified."
+  },
+  "cQStatsDepth": {
+    "name": "cQStatsDepth",
+    "oid": "1.3.6.1.4.1.9.9.37.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The number of messages in the sub-queue."
+  },
+  "cQStatsMaxDepth": {
+    "name": "cQStatsMaxDepth",
+    "oid": "1.3.6.1.4.1.9.9.37.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The maximum number of messages permitted in the sub-queue."
+  },
+  "cQStatsDiscards": {
+    "name": "cQStatsDiscards",
+    "oid": "1.3.6.1.4.1.9.9.37.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The number of messages discarded from this queue since restart by reason of enqueue at a time that cQStatsDepth >= cQStatsMaxDepth."
+  },
+  "cQRotationTable": {
+    "name": "cQRotationTable",
+    "oid": "1.3.6.1.4.1.9.9.37.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This table describes the rotation of Custom Queuing on an Interface."
+  },
+  "cQRotationEntry": {
+    "name": "cQRotationEntry",
+    "oid": "1.3.6.1.4.1.9.9.37.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-QUEUE-MIB",
+        "object": "cQStatsQNumber",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "Custom Queuing sub-queue attributes for an interface."
+  },
+  "cQRotationOctets": {
+    "name": "cQRotationOctets",
+    "oid": "1.3.6.1.4.1.9.9.37.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The number of octets which may be transmitted from a custom queuing sub-queue before it must yield to another queue."
+  },
+  "cQIfGroup": {
+    "name": "cQIfGroup",
+    "oid": "1.3.6.1.4.1.9.9.37.3.2.1",
+    "class": "objectidentity"
+  },
+  "cQStatsGroup": {
+    "name": "cQStatsGroup",
+    "oid": "1.3.6.1.4.1.9.9.37.3.2.2",
+    "class": "objectidentity"
+  },
+  "cQRotationGroup": {
+    "name": "cQRotationGroup",
+    "oid": "1.3.6.1.4.1.9.9.37.3.2.3",
+    "class": "objectidentity"
+  },
+  "cQCompliance": {
+    "name": "cQCompliance",
+    "oid": "1.3.6.1.4.1.9.9.37.3.1.1",
+    "class": "objectidentity"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CISCO-QUEUE-MIB-V1SMI.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:25:27 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CISCO-QUEUE-MIB"
+  }
+}

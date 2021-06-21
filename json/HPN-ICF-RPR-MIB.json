@@ -1,0 +1,1853 @@
+{
+  "imports": {
+    "class": "imports",
+    "HPN-ICF-OID-MIB": [
+      "hpnicfCommon"
+    ],
+    "IEEE-802DOT17-RPR-MIB": [
+      "rprTopoImageMacAddress",
+      "rprTopoImageInetAddress",
+      "rprTopoImageEntry"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "InetAddress",
+      "Counter64",
+      "Bits",
+      "Counter32",
+      "Unsigned32",
+      "MibIdentifier",
+      "Integer32",
+      "MODULE-IDENTITY",
+      "MacAddress",
+      "IpAddress",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "Gauge32",
+      "OBJECT-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "RowStatus",
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "TruthValue"
+    ]
+  },
+  "hpnicfRpr": {
+    "name": "hpnicfRpr",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2005-03-16 10:00",
+        "description": "First published version."
+      }
+    ],
+    "lastupdated": "200503161000Z",
+    "description": "This MIB manages RPR(Resilient Packet Ring)interfaces by providing an operational table which controls parameters of each RPR interface and reports alarm conditions. A RPR ring is composed of two fiber rings: Outer and Inner."
+  },
+  "HpnicfRprRingletID": {
+    "name": "HpnicfRprRingletID",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ringlet0": 1,
+          "ringlet1": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Indicates the path on which data flow is selected. The valid value is ringlet0 and ringlet1. They indicate two RPR fiber rings. Ringlet0 refers to outer ring and ringlet1 refers to inner ring.",
+    "reference": "IEEE 802.17 V3.3 Subclause 11.2.1.1 Span and ringlet parameterization."
+  },
+  "HpnicfRprServiceClass": {
+    "name": "HpnicfRprServiceClass",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "classC": 1,
+          "classB": 2,
+          "classA1": 3,
+          "classA0": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "Indicates the service class of RPR. The valid value is ClassC, ClassB, ClassA1 and ClassA0.",
+    "reference": "IEEE 802.17 V3.3 Subclause 7.3 Service class."
+  },
+  "hpnicfRprObjects": {
+    "name": "hpnicfRprObjects",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1",
+    "class": "objectidentity"
+  },
+  "hpnicfRprMaxmumDefine": {
+    "name": "hpnicfRprMaxmumDefine",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.1",
+    "class": "objectidentity"
+  },
+  "hpnicfRprMaxmumDefineTable": {
+    "name": "hpnicfRprMaxmumDefineTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the specs of RPR ring."
+  },
+  "hpnicfRprMaxmumDefineEntry": {
+    "name": "hpnicfRprMaxmumDefineEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprMaxMumIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The entry of RPR Maximum Table."
+  },
+  "hpnicfRprMaxMumIfIndex": {
+    "name": "hpnicfRprMaxMumIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ifIndex of this RPR interface."
+  },
+  "hpnicfRprMaxStationNumDefine": {
+    "name": "hpnicfRprMaxStationNumDefine",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Max station number supported by RPR ring."
+  },
+  "hpnicfRprMaxReservedRateDefine": {
+    "name": "hpnicfRprMaxReservedRateDefine",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Max reserved rate supported by each RPR ringlet. An estimate of the interface's current bandwidth in units of 1,000,000 bits per second. If this object reports a value of 'n' then the speed of the interface is somewhere in the range of 'n-500,000' to 'n+499,999'. For interfaces which do not vary in bandwidth or for those where no accurate estimation can be made, this object should contain the nominal bandwidth. For a sub-layer which has no concept of bandwidth, this object should be zero."
+  },
+  "hpnicfRprTopoImage": {
+    "name": "hpnicfRprTopoImage",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.2",
+    "class": "objectidentity"
+  },
+  "hpnicfRprTopoImageXTable": {
+    "name": "hpnicfRprTopoImageXTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "reference": "rprTopoImageTable in IEEE-802DOT17-RPR-MIB.",
+    "status": "current",
+    "description": "This table contains additional objects for the rprTopoImageTable in IEEE-802DOT17-RPR-MIB."
+  },
+  "hpnicfRprTopoImageXEntry": {
+    "name": "hpnicfRprTopoImageXEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hpnicfRprTopoImageXEntry",
+      "module": "HPN-ICF-RPR-MIB",
+      "object": "rprTopoImageEntry"
+    },
+    "status": "current",
+    "description": "Each entry contains information specific to a particular station on the ring. The table has at least one entry for the station itself, this entry indicates zero hops on each ringlet."
+  },
+  "hpnicfRprTopoImageXWestEdgeStatus": {
+    "name": "hpnicfRprTopoImageXWestEdgeStatus",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.17 V3.3 Subclause 11.1.1.5, Edges",
+    "status": "current",
+    "description": "The current edge status of the west span. If an edge exists,the hpnicfRprTopoImageXWestEdgeStatus is true. Otherwise, the hpnicfRprTopoImageXWestEdgeStatus is false."
+  },
+  "hpnicfRprTopoImageXEastEdgeStatus": {
+    "name": "hpnicfRprTopoImageXEastEdgeStatus",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.17 V3.3 Subclause 11.1.1.5, Edges",
+    "status": "current",
+    "description": "The current edge status of the east span. If an edge exists, the hpnicfRprTopoImageXEastEdgeStatus is true. Otherwise, the hpnicfRprTopoImageXEastEdgeStatus is false."
+  },
+  "hpnicfRprTopoImageXStationName": {
+    "name": "hpnicfRprTopoImageXStationName",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "reference": "IEEE 802.17 V3.3 Subclause 11.2.6, stationName.",
+    "status": "current",
+    "description": "The operator assigned station name. The operator can assigned it by hpnicfRprTopoImageXStationName."
+  },
+  "hpnicfRprSpanCounters": {
+    "name": "hpnicfRprSpanCounters",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3",
+    "class": "objectidentity"
+  },
+  "hpnicfRprSrcMacCountTable": {
+    "name": "hpnicfRprSrcMacCountTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Source Mac Count Table contains the cumulative sum of frames and octects from the particular source station."
+  },
+  "hpnicfRprSrcMacCountEntry": {
+    "name": "hpnicfRprSrcMacCountEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprSrcMacCountIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprSrcMacCountBySrcAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Source Mac Count Table."
+  },
+  "hpnicfRprSrcMacCountIfIndex": {
+    "name": "hpnicfRprSrcMacCountIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex.",
+    "status": "current",
+    "description": "The ifIndex of this RPR interface."
+  },
+  "hpnicfRprSrcMacCountBySrcAddress": {
+    "name": "hpnicfRprSrcMacCountBySrcAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "MAC address of the source station where the frames come from."
+  },
+  "hpnicfRprSrcMacCountReceivedFrames": {
+    "name": "hpnicfRprSrcMacCountReceivedFrames",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Frames received from a particular MAC address of source station."
+  },
+  "hpnicfRprSrcMacCountReceivedOctets": {
+    "name": "hpnicfRprSrcMacCountReceivedOctets",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Octets received from a particular MAC address of source station."
+  },
+  "hpnicfRprDestMacCountTable": {
+    "name": "hpnicfRprDestMacCountTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Destination MAC Count Table contains the cumulative sum of frames and octects to the particular destination station."
+  },
+  "hpnicfRprDestMacCountEntry": {
+    "name": "hpnicfRprDestMacCountEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprDestMacCountIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprDestMacCountByDestAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR MAC Destination Count Table."
+  },
+  "hpnicfRprDestMacCountIfIndex": {
+    "name": "hpnicfRprDestMacCountIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprDestMacCountByDestAddress": {
+    "name": "hpnicfRprDestMacCountByDestAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "MAC address of the destination station where the frames are sent to."
+  },
+  "hpnicfRprDestMacCountReceivedFrames": {
+    "name": "hpnicfRprDestMacCountReceivedFrames",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Frames sent to a particular MAC address of destination station."
+  },
+  "hpnicfRprDestMacCountReceivedOctets": {
+    "name": "hpnicfRprDestMacCountReceivedOctets",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Octets sent to a particular MAC address of destination station."
+  },
+  "hpnicfRprPktDropCountTable": {
+    "name": "hpnicfRprPktDropCountTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Packet Drop Count Table contains the cumulative sum of packets dropped for congestion."
+  },
+  "hpnicfRprPktDropCountEntry": {
+    "name": "hpnicfRprPktDropCountEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprPktDropCntIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprPktDropCntRingletID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Packet Drop Count Table."
+  },
+  "hpnicfRprPktDropCntIfIndex": {
+    "name": "hpnicfRprPktDropCntIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex.",
+    "status": "current",
+    "description": "The ifIndex of this RPR interface."
+  },
+  "hpnicfRprPktDropCntRingletID": {
+    "name": "hpnicfRprPktDropCntRingletID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Ringlet of the station through which the packets transmit."
+  },
+  "hpnicfRprDownFlowClassAPktDrops": {
+    "name": "hpnicfRprDownFlowClassAPktDrops",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total dropped number of Class A packets which transmit down from the host."
+  },
+  "hpnicfRprUpFlowClassAPktDrops": {
+    "name": "hpnicfRprUpFlowClassAPktDrops",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total dropped number of Class A packets which transmit up to the host."
+  },
+  "hpnicfRprDownFlowClassBPktDrops": {
+    "name": "hpnicfRprDownFlowClassBPktDrops",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total dropped number of Class B packets which transmit down from the host."
+  },
+  "hpnicfRprUpFlowClassBPktDrops": {
+    "name": "hpnicfRprUpFlowClassBPktDrops",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total dropped number of Class B packets which transmit up to the host."
+  },
+  "hpnicfRprDownFlowClassCPktDrops": {
+    "name": "hpnicfRprDownFlowClassCPktDrops",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total dropped number of Class C packets which transmit down from the host."
+  },
+  "hpnicfRprUpFlowClassCPktDrops": {
+    "name": "hpnicfRprUpFlowClassCPktDrops",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.3.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total dropped number of Class C packets which transmit up to the host."
+  },
+  "hpnicfRprRS": {
+    "name": "hpnicfRprRS",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4",
+    "class": "objectidentity"
+  },
+  "hpnicfRprStaticRSTable": {
+    "name": "hpnicfRprStaticRSTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Static Ring Selection table contains the static ring selection information by the way of configuration."
+  },
+  "hpnicfRprStaticRSEntry": {
+    "name": "hpnicfRprStaticRSEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprStaticRSIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprStaticRSMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Static Ring Selection table."
+  },
+  "hpnicfRprStaticRSIfIndex": {
+    "name": "hpnicfRprStaticRSIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprStaticRSMacAddress": {
+    "name": "hpnicfRprStaticRSMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The MAC address of the station on the ring."
+  },
+  "hpnicfRprStaticRSRingletID": {
+    "name": "hpnicfRprStaticRSRingletID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The identifier of the ring which frames are sent from one station to another. Ringlet0 refers to outer ring, while ringlet1 does inner."
+  },
+  "hpnicfRprStaticRSTtl": {
+    "name": "hpnicfRprStaticRSTtl",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The hops from source station to destination station by the selected ringlet."
+  },
+  "hpnicfRprStaticRSValid": {
+    "name": "hpnicfRprStaticRSValid",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The flag identify whether the configed ringlet is valid. If it is true, the configed ringlet is valid, otherwise it's invalid."
+  },
+  "hpnicfRprStaticRSRowStatus": {
+    "name": "hpnicfRprStaticRSRowStatus",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this table entry. The status includes createAndGo, active and destroy."
+  },
+  "hpnicfRprIpv4DynamicRSTable": {
+    "name": "hpnicfRprIpv4DynamicRSTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Ipv4Dynamic Ring Selection Table that contains the dynamic ring selection information by shortest path."
+  },
+  "hpnicfRprIpv4DynamicRSEntry": {
+    "name": "hpnicfRprIpv4DynamicRSEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprIpv4DynamicRSIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprIpv4DynamicRSMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Ipv4Dynamic Ring Selection Table."
+  },
+  "hpnicfRprIpv4DynamicRSIfIndex": {
+    "name": "hpnicfRprIpv4DynamicRSIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprIpv4DynamicRSMacAddress": {
+    "name": "hpnicfRprIpv4DynamicRSMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The Ipv4 MAC address of destination station on the ring."
+  },
+  "hpnicfRprIpv4DynamicRSRingletID": {
+    "name": "hpnicfRprIpv4DynamicRSRingletID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The identifier of the ring which frames are sent from the source station to the destination station."
+  },
+  "hpnicfRprIpv4DynamicRSTtl": {
+    "name": "hpnicfRprIpv4DynamicRSTtl",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The hops from source station to destination station by the selected ringlet."
+  },
+  "hpnicfRprIpv6DynamicRSTable": {
+    "name": "hpnicfRprIpv6DynamicRSTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Ipv6 Dynamic Ring Selection Table that contains the Ipv6 ring selection information by dynamic ring selection and static ring selection."
+  },
+  "hpnicfRprIpv6DynamicRSEntry": {
+    "name": "hpnicfRprIpv6DynamicRSEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprIpv6DynamicRSIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprIpv6DynamicRSMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Ipv6 Ring Selection Table."
+  },
+  "hpnicfRprIpv6DynamicRSIfIndex": {
+    "name": "hpnicfRprIpv6DynamicRSIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprIpv6DynamicRSMacAddress": {
+    "name": "hpnicfRprIpv6DynamicRSMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The Ipv6 MAC address of the destination station on the ring."
+  },
+  "hpnicfRprIpv6DynamicRSRingletID": {
+    "name": "hpnicfRprIpv6DynamicRSRingletID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The identifier of the ring which frames are sent from the source station to the destination station."
+  },
+  "hpnicfRprIpv6DynamicRSTtl": {
+    "name": "hpnicfRprIpv6DynamicRSTtl",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The hops from source station to destination station by selected ringlet."
+  },
+  "hpnicfRprIpv4OverallRSTable": {
+    "name": "hpnicfRprIpv4OverallRSTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Ipv4 Overall Ring Selection Table that contains the overall and active ring selection infomation by dynamic ring selection and static ring selection."
+  },
+  "hpnicfRprIpv4OverallRSEntry": {
+    "name": "hpnicfRprIpv4OverallRSEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprIpv4OverallRSIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprIpv4OverallRSMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Overall Ring Selection Table."
+  },
+  "hpnicfRprIpv4OverallRSIfIndex": {
+    "name": "hpnicfRprIpv4OverallRSIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprIpv4OverallRSMacAddress": {
+    "name": "hpnicfRprIpv4OverallRSMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The MAC address of the destination station on the ring."
+  },
+  "hpnicfRprIpv4OverallRSType": {
+    "name": "hpnicfRprIpv4OverallRSType",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "static": 1,
+          "dynamic": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ring selection item type indicates static or dynamic."
+  },
+  "hpnicfRprIpv4OverallRSRingletID": {
+    "name": "hpnicfRprIpv4OverallRSRingletID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The identifier of the ring which frames are sent from the source station to the destination station."
+  },
+  "hpnicfRprIpv4OverallRSTtl": {
+    "name": "hpnicfRprIpv4OverallRSTtl",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The hops from source station to destination station by selected ringlet."
+  },
+  "hpnicfRprVrrpRSTable": {
+    "name": "hpnicfRprVrrpRSTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR VRRP Ring Selection Table that contains the ring selection information when the vrrp group is configured."
+  },
+  "hpnicfRprVrrpRSEntry": {
+    "name": "hpnicfRprVrrpRSEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprVrrpRSIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprVrrpRSVirtualMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR VRRP Ring Selection Table."
+  },
+  "hpnicfRprVrrpRSIfIndex": {
+    "name": "hpnicfRprVrrpRSIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprVrrpRSVirtualMacAddress": {
+    "name": "hpnicfRprVrrpRSVirtualMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The virtual MAC address of the staion in VRRP group."
+  },
+  "hpnicfRprVrrpRSMacAddress": {
+    "name": "hpnicfRprVrrpRSMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MAC address of the station that is the master in VRRP group."
+  },
+  "hpnicfRprVrrpRSRingletID": {
+    "name": "hpnicfRprVrrpRSRingletID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The identifier of the ring which frames are sent from the source station to the destination station."
+  },
+  "hpnicfRprVrrpRSTtl": {
+    "name": "hpnicfRprVrrpRSTtl",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The hops from source station to destination station by selected ringlet."
+  },
+  "hpnicfRprDefaultRingIDTable": {
+    "name": "hpnicfRprDefaultRingIDTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Default RingID Table specify the default ringID."
+  },
+  "hpnicfRprDefaultRingIDEntry": {
+    "name": "hpnicfRprDefaultRingIDEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprDefaultRingIDIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Default RingID Table."
+  },
+  "hpnicfRprDefaultRingIDIfIndex": {
+    "name": "hpnicfRprDefaultRingIDIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprDefaultConfigRingletID": {
+    "name": "hpnicfRprDefaultConfigRingletID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The default identifier of the ring configured by user."
+  },
+  "hpnicfRprDefaultActiveRingID": {
+    "name": "hpnicfRprDefaultActiveRingID",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.4.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The identifier of the default ring which is active currently. The default ring configured by user may be inactive."
+  },
+  "hpnicfRprDefect": {
+    "name": "hpnicfRprDefect",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.5",
+    "class": "objectidentity"
+  },
+  "hpnicfRprDefectReportTable": {
+    "name": "hpnicfRprDefectReportTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.5.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Defect Report Table that contains the trap information on the ring."
+  },
+  "hpnicfRprDefectReportEntry": {
+    "name": "hpnicfRprDefectReportEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.5.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprDefectIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Defect Report Table."
+  },
+  "hpnicfRprDefectIfIndex": {
+    "name": "hpnicfRprDefectIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.5.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprDefectCurrentStatus": {
+    "name": "hpnicfRprDefectCurrentStatus",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.5.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "topologyOpenRing": 0,
+        "topoInstability": 1,
+        "topoInconsistent": 2,
+        "dulpMacAddress": 3,
+        "dulpIPAddress": 4,
+        "lrttDefect": 5,
+        "protCfgDefect": 6,
+        "jumboCfgDefect": 7,
+        "excessReservedRateDefect": 8,
+        "excessMaxStationNum": 9,
+        "miscabling": 10,
+        "backPressure": 11
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.17 V3.3 Subclause 11.2.9.",
+    "status": "current",
+    "description": "Indicates the current status of RPR ring. This attribute is used to notify the management system that alarms generate or clear about some RPR ring."
+  },
+  "hpnicfRprPriorityMap": {
+    "name": "hpnicfRprPriorityMap",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.6",
+    "class": "objectidentity"
+  },
+  "hpnicfRprPriority2ClassMapTable": {
+    "name": "hpnicfRprPriority2ClassMapTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The Table is for Class Of Service and RPR Service Class Mapping."
+  },
+  "hpnicfRprPriority2ClassMapEntry": {
+    "name": "hpnicfRprPriority2ClassMapEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprPriority2ClassMapIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprPriority2ClassMapType",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprPriorityValue",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the COS to Service Class Map Table."
+  },
+  "hpnicfRprPriority2ClassMapIfIndex": {
+    "name": "hpnicfRprPriority2ClassMapIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprPriority2ClassMapType": {
+    "name": "hpnicfRprPriority2ClassMapType",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.6.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "tag": 1,
+          "mpls": 2,
+          "ip": 3
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The type of Priority,include tag, mpls, ip."
+  },
+  "hpnicfRprPriorityValue": {
+    "name": "hpnicfRprPriorityValue",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.6.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "pri0": 1,
+          "pri1": 2,
+          "pri2": 3,
+          "pri3": 4,
+          "pri4": 5,
+          "pri5": 6,
+          "pri6": 7,
+          "pri7": 8
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The priority of tag,mpls and ip, the value range is 0~7."
+  },
+  "hpnicfRprPriority2ClassMap": {
+    "name": "hpnicfRprPriority2ClassMap",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.6.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprServiceClass",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "reference": "IEEE 802.17 V3.3 Subclause 7.3 Service class.",
+    "status": "current",
+    "description": "The RPR service class."
+  },
+  "hpnicfRprRateLimitConfig": {
+    "name": "hpnicfRprRateLimitConfig",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.7",
+    "class": "objectidentity"
+  },
+  "hpnicfRprRateLimitConfigTable": {
+    "name": "hpnicfRprRateLimitConfigTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.7.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Rate Limit Configuration Table that contains the rate limit infomation of RPR serviec class."
+  },
+  "hpnicfRprRateLimitConfigEntry": {
+    "name": "hpnicfRprRateLimitConfigEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.7.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprRateLimitConfigIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprRateLimitConfigRingletId",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprRateLimitConfigServiceClass",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Rate Limit Configuration Table."
+  },
+  "hpnicfRprRateLimitConfigIfIndex": {
+    "name": "hpnicfRprRateLimitConfigIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.7.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprRateLimitConfigRingletId": {
+    "name": "hpnicfRprRateLimitConfigRingletId",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.7.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The identifier of the ring of RPR ringlet."
+  },
+  "hpnicfRprRateLimitConfigServiceClass": {
+    "name": "hpnicfRprRateLimitConfigServiceClass",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.7.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprServiceClass",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "IEEE 802.17 V3.3 Subclause 7.3 Service class.",
+    "status": "current",
+    "description": "The RPR service class."
+  },
+  "hpnicfRprRateLimitConfigValue": {
+    "name": "hpnicfRprRateLimitConfigValue",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.7.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The value of rate-limit that configured for diffrent service class. The unit is permillage."
+  },
+  "hpnicfRprMacAddrLearn": {
+    "name": "hpnicfRprMacAddrLearn",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8",
+    "class": "objectidentity"
+  },
+  "hpnicfRprMacLearnCfgTable": {
+    "name": "hpnicfRprMacLearnCfgTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR MAC Address Table."
+  },
+  "hpnicfRprMacLearnCfgEntry": {
+    "name": "hpnicfRprMacLearnCfgEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprMacLearnIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprMacLearnRprMac",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The entry of RPR MAC Address Table."
+  },
+  "hpnicfRprMacLearnIfIndex": {
+    "name": "hpnicfRprMacLearnIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface."
+  },
+  "hpnicfRprMacLearnRprMac": {
+    "name": "hpnicfRprMacLearnRprMac",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The MAC address of the RPR station."
+  },
+  "hpnicfRprMacLearnType": {
+    "name": "hpnicfRprMacLearnType",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of MAC address item that the user built. The type includes static and dynamic."
+  },
+  "hpnicfRprMacLearnDestMac": {
+    "name": "hpnicfRprMacLearnDestMac",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The destination of MAC address."
+  },
+  "hpnicfRprMacLearnVlanId": {
+    "name": "hpnicfRprMacLearnVlanId",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4094
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The vlan ID that the MAC address learned from by RPR staion."
+  },
+  "hpnicfRprMacLearnRinglet": {
+    "name": "hpnicfRprMacLearnRinglet",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The identifier of the ring which frames are sent from the source station to the destination station."
+  },
+  "hpnicfRprMacLearnTtl": {
+    "name": "hpnicfRprMacLearnTtl",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The hops from source station to destination station on the selected ringlet."
+  },
+  "hpnicfRprMacLearnIsValid": {
+    "name": "hpnicfRprMacLearnIsValid",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The flag identify whether the configured mac address is valid. If it is true, the configured mac address is valid, otherwise it's invalid."
+  },
+  "hpnicfRprMacLearnRowStatus": {
+    "name": "hpnicfRprMacLearnRowStatus",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.8.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this table entry. The status includes createAndGo, active and destroy."
+  },
+  "hpnicfRprTrapVar": {
+    "name": "hpnicfRprTrapVar",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.9",
+    "class": "objectidentity"
+  },
+  "hpnicfRprTrapVarTable": {
+    "name": "hpnicfRprTrapVarTable",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.9.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The RPR Defect Report Table that contains varible that used to bind in trap."
+  },
+  "hpnicfRprTrapVarEntry": {
+    "name": "hpnicfRprTrapVarEntry",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.9.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RPR Trap Var Table."
+  },
+  "hpnicfRprTrapIfIndex": {
+    "name": "hpnicfRprTrapIfIndex",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.9.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "reference": "RFC 2863, ifIndex",
+    "status": "current",
+    "description": "The ifIndex of RPR interface. It is only used for trap to bind."
+  },
+  "hpnicfRprTrapRinglet": {
+    "name": "hpnicfRprTrapRinglet",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.9.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HpnicfRprRingletID",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The span of RPR station. It is only used for trap to bind."
+  },
+  "hpnicfRprTrapTopoMacAddress": {
+    "name": "hpnicfRprTrapTopoMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.9.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The MAC address of RPR station. It is only used for trap to bind."
+  },
+  "hpnicfRprTrapIpAddress": {
+    "name": "hpnicfRprTrapIpAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.9.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The IP address of RPR station. It is only used for trap to bind."
+  },
+  "hpnicfRprTrap": {
+    "name": "hpnicfRprTrap",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10",
+    "class": "objectidentity"
+  },
+  "hpnicfRprTopologyOpenRing": {
+    "name": "hpnicfRprTopologyOpenRing",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapRinglet"
+      }
+    ],
+    "status": "current",
+    "description": "The topology openRing trap indicates that the RPR ring is opened.",
+    "reference": "IEEE 802.17 Subclause 3.2.77 open ring."
+  },
+  "hpnicfRprTopologyCloseRing": {
+    "name": "hpnicfRprTopologyCloseRing",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapRinglet"
+      }
+    ],
+    "status": "current",
+    "description": "The topology openRing trap indicates that the RPR ring is closed.",
+    "reference": "IEEE 802.17 Subclause 3.2.77 close ring."
+  },
+  "hpnicfRprTopologyInconsistent": {
+    "name": "hpnicfRprTopologyInconsistent",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The topology inconsistent trap indicates that the topology of RPR is inconsistent.",
+    "reference": "IEEE 802.17 Subclause 11.6.6.1 topology consistency."
+  },
+  "hpnicfRprTopologyInstability": {
+    "name": "hpnicfRprTopologyInstability",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The topology instability trap indicates that the topology of RPR is instability."
+  },
+  "hpnicfRprDuplicateMacAddress": {
+    "name": "hpnicfRprDuplicateMacAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapTopoMacAddress"
+      }
+    ],
+    "status": "current",
+    "description": "The duplicate MAC address trap indicates that the mac address of the station on the ring is dulplicate. That means there is the same MAC address between two stations on the ring."
+  },
+  "hpnicfRprDulplicateIPAddress": {
+    "name": "hpnicfRprDulplicateIPAddress",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIpAddress"
+      }
+    ],
+    "status": "current",
+    "description": "The dulplicate IP address trap indicates that the IP address of the station on the ring is dulplicate. That means there is the same IP address between two stations on the ring."
+  },
+  "hpnicfRprIncompleteLRTT": {
+    "name": "hpnicfRprIncompleteLRTT",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The incomplete LRTT trap indicates that LRTT is not completed."
+  },
+  "hpnicfRprProtecConfigInconsistent": {
+    "name": "hpnicfRprProtecConfigInconsistent",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.8",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The protection configuration inconsistent trap indicates that the configuration of protection mode on the ring is inconsistent. That is one station is configured steer mode while the other is configured wrap mode."
+  },
+  "hpnicfRprJumboConfigInconsistent": {
+    "name": "hpnicfRprJumboConfigInconsistent",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.9",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The jumbo configuration inconsistent trap indicates that the configuration of jumbo mode on the ring is inconsistent. That is one station supports jumbo frame while the other doesn't support jumbo frame."
+  },
+  "hpnicfRprExceedMaxReservRate": {
+    "name": "hpnicfRprExceedMaxReservRate",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.10",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapRinglet"
+      }
+    ],
+    "status": "current",
+    "description": "The exceeded max reserved rate trap indicates that the rate on the ringlet exceeded the max reserved rate. The operator can configure reserved rate for every station, but the sum of all stations' reserved rate of each RPR ringlet can't exceed maximum."
+  },
+  "hpnicfRprExceedMaxStationNum": {
+    "name": "hpnicfRprExceedMaxStationNum",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.11",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The exceeded max station number trap indicates that the number of the stations on the ring exceeded the max station number."
+  },
+  "hpnicfRprMiscabling": {
+    "name": "hpnicfRprMiscabling",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.12",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapRinglet"
+      }
+    ],
+    "status": "current",
+    "description": "The miscabling trap indicates that the miscabling event occurred.",
+    "reference": "IEEE 802.17 V3.0 Subclause 11.9.2.1 miscabling defect."
+  },
+  "hpnicfRprBackPressure": {
+    "name": "hpnicfRprBackPressure",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.13",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapRinglet"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprPriority2ClassMap"
+      }
+    ],
+    "status": "current",
+    "description": "The back pressure trap indicates that the backpressure is generated on the ringlet. That is the data flow on the ringlet exceeded the range of rate-limit configured."
+  },
+  "hpnicfRprBackPressureOver": {
+    "name": "hpnicfRprBackPressureOver",
+    "oid": "1.3.6.1.4.1.11.2.14.11.15.2.60.1.10.14",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapIfIndex"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprTrapRinglet"
+      },
+      {
+        "module": "HPN-ICF-RPR-MIB",
+        "object": "hpnicfRprPriority2ClassMap"
+      }
+    ],
+    "status": "current",
+    "description": "The back pressure over trap indicates that the backpressure is disappeared on the ringlet."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/HPN-ICF-RPR-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:39:56 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "HPN-ICF-RPR-MIB"
+  }
+}

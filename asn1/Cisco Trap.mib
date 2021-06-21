@@ -1,0 +1,45 @@
+CISCOTRAP-MIB DEFINITIONS ::= BEGIN
+
+          IMPORTS
+              sysUpTime, ifIndex, ifDescr, ifType, egpNeighAddr, 
+              tcpConnState
+                   FROM RFC1213-MIB
+              cisco
+                   FROM CISCO-SMI
+              whyReload, authAddr
+                   FROM OLD-CISCO-SYSTEM-MIB
+              locIfReason
+                   FROM OLD-CISCO-INTERFACES-MIB
+              tslineSesType, tsLineUser
+                   FROM OLD-CISCO-TS-MIB
+              loctcpConnElapsed, loctcpConnInBytes, loctcpConnOutBytes
+                   FROM OLD-CISCO-TCP-MIB
+              TRAP-TYPE
+                   FROM RFC-1215;
+
+    -- Cisco Private Enterprise Traps
+
+          reload TRAP-TYPE
+              ENTERPRISE  cisco
+              VARIABLES   { sysUpTime, whyReload }
+              DESCRIPTION
+                          "A reload trap signifies that the sending
+                          protocol entity is reinitializing itself such
+                          that the agent's configuration or the protocol
+                          entity implementation may be altered."
+              ::= 0
+
+          tcpConnectionClose TRAP-TYPE
+              ENTERPRISE  cisco
+              VARIABLES   { tslineSesType, tcpConnState, 
+                            loctcpConnElapsed, loctcpConnInBytes,
+                            loctcpConnOutBytes, tsLineUser }
+              DESCRIPTION
+                          "A tty trap signifies that a TCP connection,
+                          previously established with the sending
+                          protocol entity for the purposes of a tty
+                          session, has been terminated."
+              ::= 1
+
+     END
+

@@ -1,0 +1,772 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddress",
+      "InetAddressType"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "Bits",
+      "iso",
+      "TimeTicks",
+      "IpAddress",
+      "Integer32",
+      "Counter64",
+      "Gauge32",
+      "MODULE-IDENTITY",
+      "Unsigned32",
+      "mib-2"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "RowStatus",
+      "DisplayString"
+    ],
+    "VPN-TC-STD-MIB": [
+      "VPNId"
+    ]
+  },
+  "virtualRouterMIB": {
+    "name": "virtualRouterMIB",
+    "oid": "1.3.6.1.2.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2005-07-22 12:00",
+        "description": "Initial version, published as RFC yyyy."
+      }
+    ],
+    "lastupdated": "200507221200Z",
+    "organization": "IETF L3VPN WG",
+    "contactinfo": " Elwin Stelzer Eliazer Corona Networks, Inc. 630 Alder Drive Milpitas, CA 95035 USA Phone: +1-408-519-3832 Email: elwinietf@yahoo.com Samuel Hancock ACM Systems 3034 Gold Canal Drive Rancho Cordova, CA 95670 USA Phone: +1-916-463-7949 Email: hancoc_s@yahoo.com Benson Schliesser SAVVIS Communications 1 Savvis Parkway Town and Country, MO 63017 USA Phone: +1-314-628-7036 Email: bensons@savvis.net Joseph Laria (Editor) Level Stream Research Wilmington, MA 01887 USA Phone: +1-978-223-9908 Email: jlaria@levelstream.com ",
+    "description": "The MIB module is the definition of the managed objects for the Virtual Router."
+  },
+  "VrIdentifier": {
+    "name": "VrIdentifier",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Virtual Router Identifier. VRID 0 is reserved for the Administrative VR and cannot be used to create VR's. "
+  },
+  "VrRpTriggerBitCode": {
+    "name": "VrRpTriggerBitCode",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "rip": 0,
+        "ospf": 1,
+        "bgp": 2,
+        "isis": 3
+      }
+    },
+    "status": "current",
+    "description": "This object represents Routing Protocol (RP) Triggers on a Virtual Router. The BITS represent an Action-code that specifies the action on the Routing Protocols. The actions are: initiate or shutdown. When encoding the RP using the BITS construct, the value is encoded as an OCTET STRING where the first bit (bit 0) is the highest bit of the octet. Bits 0-3 may be specified in any combination to allow multiple Routing Protocols to be acted on simultaneously or individually. "
+  },
+  "vrMIBObjects": {
+    "name": "vrMIBObjects",
+    "oid": "1.3.6.1.2.1.1.1",
+    "class": "objectidentity"
+  },
+  "vrConfig": {
+    "name": "vrConfig",
+    "oid": "1.3.6.1.2.1.1.1.1",
+    "class": "objectidentity"
+  },
+  "vrConfigScalars": {
+    "name": "vrConfigScalars",
+    "oid": "1.3.6.1.2.1.1.1.1.1",
+    "class": "objectidentity"
+  },
+  "vrConfigNextAvailableVrId": {
+    "name": "vrConfigNextAvailableVrId",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VrIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The next available Virtual Router Id (index). This object provides a hint for the vrID value to use when administratively creating a new vrConfigEntry. A GET of this object returns the next available vrId value to be used to create an entry in the associated vrConfigTable; or zero, if no valid vrId value is available. A value of zero(0) indicates that it is not possible to create a new vrConfigEntry This object also returns a value of zero when it is the lexicographic successor of a varbind presented in an SNMP GETNEXT or GETBULK request, for which circumstance it is assumed that ifIndex allocation is unintended. Successive GETs will typically return different values, thus avoiding collisions among cooperating management clients seeking to create table entries simultaneously. Unless specified otherwise by its MAX-ACCESS and DESCRIPTION clauses, an object of this type is read-only, and a SET of such an object returns a notWritable error."
+  },
+  "vrConfigTable": {
+    "name": "vrConfigTable",
+    "oid": "1.3.6.1.2.1.1.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table is for creating the new Virtual Routers."
+  },
+  "vrConfigEntry": {
+    "name": "vrConfigEntry",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The entries in this table can be added/deleted using the vrRowStatus."
+  },
+  "vrId": {
+    "name": "vrId",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VrIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The unique id of this virtual router instance. A Virtual Router cannot not be created with vrId = 0. VRID 0 is reserved for the Administrative VR. "
+  },
+  "vrRowStatus": {
+    "name": "vrRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status column has three defined values: - `active', which indicates that the conceptual row is available for use by the managed device; - `createAndGo', which is supplied by a management station wishing to create a new instance of a conceptual row and to have its status automatically set to active, making it available for use by the managed device; - `destroy', which is supplied by a management station wishing to delete all of the instances associated with an existing conceptual row."
+  },
+  "vrName": {
+    "name": "vrName",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Name of the Virtual Router."
+  },
+  "vrContextName": {
+    "name": "vrContextName",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The SNMPv2 Community String or SNMPv3 contextName denotes the VR 'context' and is used to logically separate the MIB module management."
+  },
+  "vrTrapEnable": {
+    "name": "vrTrapEnable",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This objects is used to enable the generation of the VrUp and VrDown traps. true(1) - VR Traps Enabled false(2) - VR Traps Disabled"
+  },
+  "vrMaxRoutes": {
+    "name": "vrMaxRoutes",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 4294967295,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies the maximum number of routes that this VR can support. The default value is 4 Gig (meaning unlimited)."
+  },
+  "vrAdminStatus": {
+    "name": "vrAdminStatus",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2,
+          "testing": 3,
+          "unknown": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "down",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The administrative state of the Virtual Router."
+  },
+  "vrVpnId": {
+    "name": "vrVpnId",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VPNId",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Virtual Private Network Identifier of the Virtual Router."
+  },
+  "vrRpTrigger": {
+    "name": "vrRpTrigger",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VrRpTriggerBitCode",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "0",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object represents Routing Protocol (RP) Triggers on a Virtual Router and it meant to be used to initiate or shutdown routing protocols on a VR. Multiple RPs can be acted on simultaneously. Also, individual RPs can be brought up in steps, which should not affect the RPs that were running. The BITS represent an Action-code that specifies what action is to be performed for the RPs. The actions are: initiate(1) or shutdown(0). The running status of an RP shall be available in the VR stats table's vrRpStatus, which has a similar format, but represents the status. Bits 0-3 may be specified in any combination. Individual routing protocols may be enabled and disabled independently. Protocols are enabled by setting the respective BIT and are disabled by resetting the BIT. So, for example, to enable RIP and BGP protocols the vrRpTrigger bits 0 and 2 need to be set, and as encoded as 10100000. All zeros should be interpreted as all protocols disable. "
+  },
+  "vrMaxRoutesTrapEnable": {
+    "name": "vrMaxRoutesTrapEnable",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This objects is used to enable the generation of the VR Max Routes Exceeded traps. true(1) - VR Max Routes Exceeded Traps Enabled false(2) - VR Max Routes Exceeded Traps Disabled"
+  },
+  "vrStat": {
+    "name": "vrStat",
+    "oid": "1.3.6.1.2.1.1.1.2",
+    "class": "objectidentity"
+  },
+  "vrStatScalars": {
+    "name": "vrStatScalars",
+    "oid": "1.3.6.1.2.1.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "vrConfiguredVRs": {
+    "name": "vrConfiguredVRs",
+    "oid": "1.3.6.1.2.1.1.1.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of VRs configured on this network element."
+  },
+  "vrActiveVRs": {
+    "name": "vrActiveVRs",
+    "oid": "1.3.6.1.2.1.1.1.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of VRs that are active on the network element. These are VRs for which the vrStatOperStatus = up(1)"
+  },
+  "vrStatTable": {
+    "name": "vrStatTable",
+    "oid": "1.3.6.1.2.1.1.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains statistics for the Virtual Router."
+  },
+  "vrStatEntry": {
+    "name": "vrStatEntry",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entries in this table a per vrId."
+  },
+  "vrStatRouteEntries": {
+    "name": "vrStatRouteEntries",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Total number of routes for this VR."
+  },
+  "vrStatFIBEntries": {
+    "name": "vrStatFIBEntries",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Total number of FIB Entries for this VR."
+  },
+  "vrStatUpTime": {
+    "name": "vrStatUpTime",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time in (in hundredths of a second) since this VR entry has been operational."
+  },
+  "vrOperStatus": {
+    "name": "vrOperStatus",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2,
+          "unknown": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The operational status of the Virtual Router."
+  },
+  "vrRpStatus": {
+    "name": "vrRpStatus",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VrRpTriggerBitCode",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the status of Routing Protocols on this VR corresponding to the list of RP specified in vrRpTrigger. The BITS represent an Action-code that specifies the status of the RPs. The status are: initiated (1) or shutdown (0). Initiated status is indicated when the respective BIT value is 1 and indicates shutdown when the respective BIT value is 0. Bits 0-3 may appear in any combination to indicate that RPs may be enabled and disabled independently or that multiple RP are acted on simultaneously. "
+  },
+  "vrRouterAddressType": {
+    "name": "vrRouterAddressType",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Router Address Type of this VR."
+  },
+  "vrRouterAddress": {
+    "name": "vrRouterAddress",
+    "oid": "1.3.6.1.2.1.1.1.2.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Router Address of this VR. It is derived from one of the interfaces. If loopback interface is present, the loopback interface address can be used. However, loopback interface is optional."
+  },
+  "vrIfConfig": {
+    "name": "vrIfConfig",
+    "oid": "1.3.6.1.2.1.1.1.3",
+    "class": "objectidentity"
+  },
+  "vrIfConfigScalars": {
+    "name": "vrIfConfigScalars",
+    "oid": "1.3.6.1.2.1.1.1.3.1",
+    "class": "objectidentity"
+  },
+  "vrIfConfigTable": {
+    "name": "vrIfConfigTable",
+    "oid": "1.3.6.1.2.1.1.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table is for configuring VR Interfaces."
+  },
+  "vrIfConfigEntry": {
+    "name": "vrIfConfigEntry",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrId",
+        "implied": 0
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrIfId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entries in this table correspond to the entries in the ifTable that apply to the Virtual Router."
+  },
+  "vrIfId": {
+    "name": "vrIfId",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Virtual Router Interface Index."
+  },
+  "vrIfConfigRowStatus": {
+    "name": "vrIfConfigRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": " This object is used to create, delete or modify a row in this table."
+  },
+  "vrNotificationsPrefix": {
+    "name": "vrNotificationsPrefix",
+    "oid": "1.3.6.1.2.1.1.1.4",
+    "class": "objectidentity"
+  },
+  "vrNotifications": {
+    "name": "vrNotifications",
+    "oid": "1.3.6.1.2.1.1.1.4.0",
+    "class": "objectidentity"
+  },
+  "vrUp": {
+    "name": "vrUp",
+    "oid": "1.3.6.1.2.1.1.1.4.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrOperStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the specified VR is about to be initialized or change the VR's operational status from down to up."
+  },
+  "vrDown": {
+    "name": "vrDown",
+    "oid": "1.3.6.1.2.1.1.1.4.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrOperStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the specified VR's operational status is about to go down."
+  },
+  "vrMaxRoutesExceeded": {
+    "name": "vrMaxRoutesExceeded",
+    "oid": "1.3.6.1.2.1.1.1.4.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrRowStatus"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrMaxRoutes"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrStatRouteEntries"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the specified VR has exceeded the maximum number of routes specified. "
+  },
+  "vrConformance": {
+    "name": "vrConformance",
+    "oid": "1.3.6.1.2.1.1.2",
+    "class": "objectidentity"
+  },
+  "vrCompliances": {
+    "name": "vrCompliances",
+    "oid": "1.3.6.1.2.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "vrMIBCompliance": {
+    "name": "vrMIBCompliance",
+    "oid": "1.3.6.1.2.1.1.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "vrConfigGroup",
+        "module": "VIRTUAL-ROUTER-MIB"
+      },
+      {
+        "object": "vrStatGroup",
+        "module": "VIRTUAL-ROUTER-MIB"
+      },
+      {
+        "object": "vrIfGroup",
+        "module": "VIRTUAL-ROUTER-MIB"
+      },
+      {
+        "object": "vrNotificationGroup",
+        "module": "VIRTUAL-ROUTER-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities that implement the VIRTUAL-ROUTER-MIB. Implementation of this MIB module is strongly recommended for any platform targeted for a carrier-class environment. When this MIB module is implemented with support for read-create, then such an implementation can claim full compliance. Such devices can then be both monitored and configured with this MIB."
+  },
+  "vrGroups": {
+    "name": "vrGroups",
+    "oid": "1.3.6.1.2.1.1.2.2",
+    "class": "objectidentity"
+  },
+  "vrConfigGroup": {
+    "name": "vrConfigGroup",
+    "oid": "1.3.6.1.2.1.1.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrRowStatus"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrName"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrContextName"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrTrapEnable"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrMaxRoutes"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrAdminStatus"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrVpnId"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrRpTrigger"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrMaxRoutesTrapEnable"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrConfigNextAvailableVrId"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of attributes that support provisioning of a virtual router."
+  },
+  "vrStatGroup": {
+    "name": "vrStatGroup",
+    "oid": "1.3.6.1.2.1.1.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrConfiguredVRs"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrActiveVRs"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrStatRouteEntries"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrStatFIBEntries"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrStatUpTime"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrOperStatus"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrRpStatus"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrRouterAddress"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrRouterAddressType"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of attributes that contain stats about the virtual router."
+  },
+  "vrIfGroup": {
+    "name": "vrIfGroup",
+    "oid": "1.3.6.1.2.1.1.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrIfConfigRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of attributes that support provisioning of a virtual router interfaces."
+  },
+  "vrNotificationGroup": {
+    "name": "vrNotificationGroup",
+    "oid": "1.3.6.1.2.1.1.2.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrUp"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrDown"
+      },
+      {
+        "module": "VIRTUAL-ROUTER-MIB",
+        "object": "vrMaxRoutesExceeded"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of traps that are supported by the VR."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/VIRTUAL-ROUTER-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:03:07 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "VIRTUAL-ROUTER-MIB"
+  }
+}

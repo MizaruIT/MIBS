@@ -1,0 +1,281 @@
+-- =================================================================
+-- Copyright (C) 2003 by  HUAWEI TECHNOLOGIES. All rights reserved.
+--
+-- Description: Demonstrates how to maintain VFB ports
+-- Reference:   None
+-- Version:     V1.0    
+-- History:
+-- liguanrong, 2003-03-23, VFB MIB first define
+-- liguanrong, 2003-05-24, VFB mib modify transmit gain
+-- =================================================================
+
+HUAWEI-VFB-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE
+        FROM SNMPv2-SMI
+
+    Integer32
+        FROM SNMPv2-SMI
+
+        ifIndex
+                FROM IF-MIB
+    huaweiUtility 
+                FROM HUAWEI-MIB;
+
+hwVFB MODULE-IDENTITY
+            LAST-UPDATED "0302280900Z"
+            ORGANIZATION
+                "Huawei Technologies co.,Ltd."
+            CONTACT-INFO
+                "Kefa Road,
+                 Fx-Net Dep, Huawei Technologies Co.,Ltd.
+			     Science-Based Industrial Park, 
+			     Nanshan District,Shenzhen  P.R. China
+			     http://www.huawei.com
+			     Zip:518057"
+    DESCRIPTION "The HUAWEI-VFB-MIB demonstrates how to maintain VFB ports"
+    ::= { huaweiUtility 23 }
+
+        hwVFBMibObjects       OBJECT IDENTIFIER  ::= { hwVFB   1 }
+
+  vfbTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF VfbEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      "VFB maintain table"
+    ::= { hwVFBMibObjects 1 }
+
+  vfbEntry OBJECT-TYPE
+    SYNTAX      VfbEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      "VFB maintain table index"
+    INDEX    {  
+              ifIndex
+             }
+    ::= { vfbTable 1 }
+
+  VfbEntry ::=
+    SEQUENCE
+    {
+     hwVfbWorkMode       INTEGER,
+     hwVfbReceiveGain    INTEGER,
+     hwVfbTransmitGain   INTEGER,
+     hwVfbUserName       OCTET STRING,
+     hwVfbResistance     Integer32,
+     hwVfbUsable         INTEGER,
+     hwVfbPortState      INTEGER,
+     hwVfbOprType        INTEGER
+    }
+
+  hwVfbWorkMode OBJECT-TYPE
+    SYNTAX      INTEGER
+         {
+          twoline(1),
+          fourline(2)
+         }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " 
+          1.two userline mode
+          2.four userline mode
+          Only even port can work in four userline mode, and the port after will of can not use.
+          
+          端口工作模式 1.二线制 2.四线制
+          只有偶数端口可以修改配置为四线制，并且当端口配置成四线制工作模式时，
+          其后的一个二线制端口将不可使用、配置，网管显示可以屏蔽此不可用端口；
+          查询时，主机按正常操作流程返回查询结果，如果主机返回此端口是否可用叶子为不可用
+          （此时其它各查询叶子除特殊类型叶子有统一规定外，其它值网管不用理会），网管显示可以屏蔽此不可用端口。
+        "
+    DEFVAL {1}
+    ::= { vfbEntry 1 }
+
+  hwVfbReceiveGain OBJECT-TYPE
+    SYNTAX      INTEGER(1..16)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " 
+         port receive gain select, two userline mode range(5-10), four userline mode range(1-16)
+         1:-11dB,
+         2:-10dB,
+         3:-9dB,
+         4:-8dB,
+         5:-7dB, 
+         6:-6dB, 
+         7:-5dB, 
+         8:-4dB, 
+         9:-3dB, 
+         10:-2dB, 
+         11:-1dB, 
+         12:0dB, 
+         13:+1dB, 
+         14:+2dB, 
+         15:+3dB, 
+         16:+4dB
+         
+         端口接收增益选择，二线制端口范围(5-10)，四线制端口范围(1-16)
+         1:-11dB,
+         2:-10dB,
+         3:-9dB,
+         4:-8dB,
+         5:-7dB, 
+         6:-6dB, 
+         7:-5dB, 
+         8:-4dB, 
+         9:-3dB, 
+         10:-2dB, 
+         11:-1dB, 
+         12:0dB, 
+         13:+1dB, 
+         14:+2dB, 
+         15:+3dB, 
+         16:+4dB
+        "
+    DEFVAL {5}
+    ::= { vfbEntry 2 }
+
+  hwVfbTransmitGain OBJECT-TYPE
+    SYNTAX      INTEGER(1..16)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " 
+         port transmit gain select, two userline mode range(10-15), four userline mode range(1-16)
+         1:+14dB,
+         2:+13dB,
+         3:+12dB,
+         4:+11dB,
+         5:+10dB,
+         6:+9dB,
+         7:+8dB,
+         8:+7dB,
+         9:+6dB,
+         10:+5dB,
+         11:+4dB,
+         12:+3dB,
+         13:+2dB,
+         14:+1dB,
+         15:0dB,
+         16:-1dB         
+          
+         端口发送增益选择，二线制端口范围(10-15)，四线制端口范围(1-16)
+         1:+14dB,
+         2:+13dB,
+         3:+12dB,
+         4:+11dB,
+         5:+10dB,
+         6:+9dB,
+         7:+8dB,
+         8:+7dB,
+         9:+6dB,
+         10:+5dB,
+         11:+4dB,
+         12:+3dB,
+         13:+2dB,
+         14:+1dB,
+         15:0dB,
+         16:-1dB         
+        "
+    DEFVAL {10}
+    ::= { vfbEntry 3 }
+
+  hwVfbUserName OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..20))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " 
+          port user name
+          
+          端口用户名称，最长20个字符
+        "
+    ::= { vfbEntry 4 }
+
+  hwVfbResistance OBJECT-TYPE
+    SYNTAX      Integer32(600)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+          port resistance
+
+          端口阻抗，固定值600欧姆
+        "
+    ::= { vfbEntry 5 }
+
+  hwVfbUsable OBJECT-TYPE
+    SYNTAX      INTEGER
+          {
+           usable(1),
+           unusable(2)
+          }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+          Is port can be used.
+           1:usable,
+           2:unusable
+          
+          端口是否可用,
+           1:可用,
+           2:不可用
+        "
+    ::= { vfbEntry 6 }
+
+  hwVfbPortState OBJECT-TYPE
+    SYNTAX      INTEGER
+         {
+          fault(1),
+          normal(2),
+          busy(3),
+          local-loopback(4)
+         }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+          Port state,
+           1:fault,
+           2:normal,
+           3:busy,
+           4:local loopback
+          
+          端口状态,
+           1:故障,
+           2:正常,
+           3:正忙,
+           4:近端环回
+        "
+    ::= { vfbEntry 7 }
+
+  hwVfbOprType OBJECT-TYPE
+    SYNTAX      INTEGER
+         {
+          local-Loopback(1),
+          cancelLoop(2),
+          reset(3)
+         }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " 
+          Port operation type,
+           1:local loopback,
+           2:cancel loopback,
+           3:reset.
+          When read, return -1.
+          
+          端口操作类型，
+           1.近端环回,
+           2.取消环回,
+           3.复位
+          读时返回-1
+        "
+    ::= { vfbEntry 8 }
+
+END

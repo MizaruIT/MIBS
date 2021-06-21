@@ -1,0 +1,1176 @@
+{
+  "imports": {
+    "class": "imports",
+    "DOT3-OAM-MIB": [
+      "dot3OamLoopbackStatus",
+      "dot3OamAdminState",
+      "dot3OamMode"
+    ],
+    "IF-MIB": [
+      "ifIndex"
+    ],
+    "PRVT-SWITCH-MIB": [
+      "switch"
+    ],
+    "Q-BRIDGE-MIB": [
+      "PortList"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "Counter32",
+      "OBJECT-TYPE",
+      "Integer32",
+      "MODULE-IDENTITY",
+      "Bits",
+      "iso",
+      "Gauge32",
+      "TimeTicks",
+      "Unsigned32",
+      "MibIdentifier",
+      "OBJECT-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "Counter64"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "RowStatus",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "prvtSwitchEfmOamMIB": {
+    "name": "prvtSwitchEfmOamMIB",
+    "oid": "1.3.6.1.4.1.738.1.5.133",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2010-02-11 00:00",
+        "description": "Change oids for backward compatibility."
+      },
+      {
+        "revision": "2009-12-01 00:00",
+        "description": "Added dying-gasp notification"
+      },
+      {
+        "revision": "2009-06-01 00:00",
+        "description": "Changed limits for prvtEfmOamPingTable leafs"
+      },
+      {
+        "revision": "2009-04-29 00:00",
+        "description": "Changed type for prvtEfmOamEventForwardStatus and prvtEfmOamEventForwardShutdown to PortList"
+      },
+      {
+        "revision": "2009-03-18 00:00",
+        "description": "Fixed range and measurment unit for prvtEfmOamKeepAlive scalar"
+      },
+      {
+        "revision": "2009-03-06 00:00",
+        "description": "Removed incorrect scalars Removed certain leafs in prvtEfmOamPingTable and prvtEfmOamLoopbackTable Modified prvtEfmOamPingResultTable and prvtEfmOamLoopbackResultTable"
+      }
+    ],
+    "lastupdated": "201002110000Z",
+    "organization": "BATM Advanced Communication",
+    "contactinfo": "BATM/Telco Systems Support team Email: For North America: techsupport@telco.com For North Europe: support@batm.de, info@batm.de For the rest of the world: techsupport@telco.com",
+    "description": "This MIB should provide general configuration and reports of this protocol that are not available in the standard DOT3-OAM-MIB, such as Enabling and Timers, as well as the ability to control private extensions added to the EFM OAM."
+  },
+  "prvtEfmOamNotifications": {
+    "name": "prvtEfmOamNotifications",
+    "oid": "1.3.6.1.4.1.738.1.5.133.0",
+    "class": "objectidentity"
+  },
+  "prvtEfmOamObjects": {
+    "name": "prvtEfmOamObjects",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1",
+    "class": "objectidentity"
+  },
+  "prvtEfmOamConformance": {
+    "name": "prvtEfmOamConformance",
+    "oid": "1.3.6.1.4.1.738.1.5.133.2",
+    "class": "objectidentity"
+  },
+  "prvtEfmOamEnable": {
+    "name": "prvtEfmOamEnable",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable/disable the EFM OAM on the device"
+  },
+  "prvtEfmOamMultiPduCount": {
+    "name": "prvtEfmOamMultiPduCount",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Number of OAM PDUs that will be sent when protocol ask to send multiple subsequent messages."
+  },
+  "prvtEfmOamRemoteEvent": {
+    "name": "prvtEfmOamRemoteEvent",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable or disable sending the local event notifications to the remote device."
+  },
+  "prvtEfmOamLocalSysLog": {
+    "name": "prvtEfmOamLocalSysLog",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Disable/enable sending of Event Notification OAM PDU to the local Syslog daemon."
+  },
+  "prvtEfmOamPriority": {
+    "name": "prvtEfmOamPriority",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 8,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Priority of the sent OAM PDUs. Please note that value 8 represents no-priority."
+  },
+  "prvtEfmOamKeepAlive": {
+    "name": "prvtEfmOamKeepAlive",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 100,
+            "max": 15000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5000,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Aging interval (in miliseconds)of the last heard neighbouring device."
+  },
+  "prvtEfmOamHelloInterval": {
+    "name": "prvtEfmOamHelloInterval",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 100,
+            "max": 5000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1000,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Maximal interval between a pair of PDUs in milliseconds."
+  },
+  "prvtEfmOamPktsSent": {
+    "name": "prvtEfmOamPktsSent",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Sent packets."
+  },
+  "prvtEfmOamPktsReceived": {
+    "name": "prvtEfmOamPktsReceived",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Received packets."
+  },
+  "prvtEfmOamHistorySize": {
+    "name": "prvtEfmOamHistorySize",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1000,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5000,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Number of entries in EFM_OAM history."
+  },
+  "prvtEfmOamTable": {
+    "name": "prvtEfmOamTable",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table shall containg an entry per physical interface, indexed by the corresponding ifIndex from IF-MIB and each row in the table shall contain a single column."
+  },
+  "prvtEfmOamEntry": {
+    "name": "prvtEfmOamEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "EFM Entry"
+  },
+  "prvtEfmOamEnhanceMode": {
+    "name": "prvtEfmOamEnhanceMode",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "basic": 1,
+          "enhance": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "basic",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Used to be used to enable or disable EFM-OAM Vendor specific extensions on the specific interface. Values are : - basic(1) - no Vendor specific OAM extensions are used. - enhance(2) - when the remote device is detected as Vendor device, enhanced mode is used."
+  },
+  "prvtEfmOamEventReturn": {
+    "name": "prvtEfmOamEventReturn",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "0 - feature is disabled (default value) 1-10 - feature is enabled. The number specifies how many handshaking attempts will be done before shutting down the port."
+  },
+  "prvtEfmOamForceLoopbackLocal": {
+    "name": "prvtEfmOamForceLoopbackLocal",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " Used to force permanent loopback configuration on the local side. This is used for loopback traffic analysis for long term (for example, 24 hours length infrastructure testing). "
+  },
+  "prvtEfmOamForceLoopbackRemote": {
+    "name": "prvtEfmOamForceLoopbackRemote",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " Used to force permanent loopback configuration on the remote side. This is used for loopback traffic analysis for long term (for example, 24 hours length infrastructure testing). "
+  },
+  "prvtEfmOamEventForwardStatus": {
+    "name": "prvtEfmOamEventForwardStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortList",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " Forward a Link EventNotification on the specified target interface. Note that the interface which will forward the EventNotification must have efm-oam mode enabled. "
+  },
+  "prvtEfmOamEventForwardShutdown": {
+    "name": "prvtEfmOamEventForwardShutdown",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.10.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortList",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " Shutdown a specified target interface as a result of the current interface status change. "
+  },
+  "prvtEfmOamPing": {
+    "name": "prvtEfmOamPing",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11",
+    "class": "objectidentity"
+  },
+  "prvtEfmOamPingTable": {
+    "name": "prvtEfmOamPingTable",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table let the EFM-OAM non-intrusive monitoring on the specific interface by querying a number of time aFramesTransmittedOK parameter, ping requests, using the variable retrieval EFM OAM PDU."
+  },
+  "prvtEfmOamPingEntry": {
+    "name": "prvtEfmOamPingEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "prvtEfmOamPingEchoNumber": {
+    "name": "prvtEfmOamPingEchoNumber",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of echo packets to send."
+  },
+  "prvtEfmOamPingDelayTime": {
+    "name": "prvtEfmOamPingDelayTime",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 600
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The delay in seconds between packets."
+  },
+  "prvtEfmOamPingTimeOut": {
+    "name": "prvtEfmOamPingTimeOut",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 600
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The time in seconds which the ping should wait for the response."
+  },
+  "prvtEfmOamPingCounterBranch": {
+    "name": "prvtEfmOamPingCounterBranch",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "branch": 7
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set/get the counter of ping-like operation."
+  },
+  "prvtEfmOamPingCounterLeaf": {
+    "name": "prvtEfmOamPingCounterLeaf",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "framesTransmittedOK": 2,
+          "framesReceivedOK": 5,
+          "octetsTransmittedOK": 8,
+          "octetsReceivedOK": 14,
+          "multicastFramesReceivedOK": 21,
+          "broadcastFramesReceivedOK": 22
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set/get the counter of ping-like operation."
+  },
+  "prvtEfmOamPingRowStatus": {
+    "name": "prvtEfmOamPingRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Creation/delete/edit of the ping test."
+  },
+  "prvtEfmOamPingResultTable": {
+    "name": "prvtEfmOamPingResultTable",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Ping results."
+  },
+  "prvtEfmOamPingResultEntry": {
+    "name": "prvtEfmOamPingResultEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "prvtEfmOamPingResultStatus": {
+    "name": "prvtEfmOamPingResultStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noPing": 1,
+          "running": 2,
+          "terminated": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current ping operation status."
+  },
+  "prvtEfmOamPingResultSentPackets": {
+    "name": "prvtEfmOamPingResultSentPackets",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Sent packets"
+  },
+  "prvtEfmOamPingResultReceivedPackets": {
+    "name": "prvtEfmOamPingResultReceivedPackets",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Received packets"
+  },
+  "prvtEfmOamPingResultRcvRateInteger": {
+    "name": "prvtEfmOamPingResultRcvRateInteger",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ping receive rate - Integer part"
+  },
+  "prvtEfmOamPingResultRcvRateFractional": {
+    "name": "prvtEfmOamPingResultRcvRateFractional",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ping receive rate - Fractional part"
+  },
+  "prvtEfmOamPingResultTimeMin": {
+    "name": "prvtEfmOamPingResultTimeMin",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ping minimum time."
+  },
+  "prvtEfmOamPingResultTimeMax": {
+    "name": "prvtEfmOamPingResultTimeMax",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ping maximum time."
+  },
+  "prvtEfmOamPingResultAverageTimeInteger": {
+    "name": "prvtEfmOamPingResultAverageTimeInteger",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ping average time - Integer part."
+  },
+  "prvtEfmOamPingResultAverageTimeFractional": {
+    "name": "prvtEfmOamPingResultAverageTimeFractional",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ping average time - Fractional part."
+  },
+  "prvtEfmOamPingResultClear": {
+    "name": "prvtEfmOamPingResultClear",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.11.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "clear": 1
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Deleteper interface entries in prvtEfmOamPingResultTable."
+  },
+  "prvtEfmOamLoopback": {
+    "name": "prvtEfmOamLoopback",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12",
+    "class": "objectidentity"
+  },
+  "prvtEfmOamLoopbackTable": {
+    "name": "prvtEfmOamLoopbackTable",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table should permit to perform EFM-OAM intrusive monitoring on the specific interface by setting the remote device into loopback state and generating test traffic. It should support: Storm operation, an operation that sets remote loopback, stops local data flow to the remote box and generates a packet burst by CPU. When the burst is received back it is validated and statistics are displayed. Burst operation, an operation that sets remote loopback, stops local data flow to the remote box and generates a packet test burst by the hardware (when available). It means a single packet generated by CPU is repetitively sent by the hardware. When the burst is received back it is ignored and only counters are displayed."
+  },
+  "prvtEfmOamLoopbackEntry": {
+    "name": "prvtEfmOamLoopbackEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "prvtEfmOamLoopbackOperation": {
+    "name": "prvtEfmOamLoopbackOperation",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "storm": 1,
+          "burst": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Represent the operation that the should be performed on the interface."
+  },
+  "prvtEfmOamLoopbackDuration": {
+    "name": "prvtEfmOamLoopbackDuration",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 600
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Represent the amount of time burst test should run in seconds."
+  },
+  "prvtEfmOamLoopbackCount": {
+    "name": "prvtEfmOamLoopbackCount",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483646
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 100,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Represent the count of packets to send in storm operation."
+  },
+  "prvtEfmOamLoopbackPacketSize": {
+    "name": "prvtEfmOamLoopbackPacketSize",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 64,
+            "max": 1512
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 64,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Represent the size of the test packet to use."
+  },
+  "prvtEfmOamLoopbackDelay": {
+    "name": "prvtEfmOamLoopbackDelay",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 600
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Represent the delay between packets in seconds. The default value is 0 and represents no delay."
+  },
+  "prvtEfmOamLoopbackTimeout": {
+    "name": "prvtEfmOamLoopbackTimeout",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 600
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Represent the wait for response in seconds."
+  },
+  "prvtEfmOamLoopbackNoRemote": {
+    "name": "prvtEfmOamLoopbackNoRemote",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Add or not remote to loopback."
+  },
+  "prvtEfmOamLoopbackRowStatus": {
+    "name": "prvtEfmOamLoopbackRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current"
+  },
+  "prvtEfmOamLoopbackResultTable": {
+    "name": "prvtEfmOamLoopbackResultTable",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Loopback results."
+  },
+  "prvtEfmOamLoopbackResultEntry": {
+    "name": "prvtEfmOamLoopbackResultEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "prvtEfmOamLoopbackResultStatus": {
+    "name": "prvtEfmOamLoopbackResultStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noLoopback": 1,
+          "startCmdSent": 2,
+          "startFail": 3,
+          "dataStarted": 4,
+          "stopCmdSent": 5,
+          "terminated": 6,
+          "remoteFailure": 7
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Loopback result status"
+  },
+  "prvtEfmOamLoopbackResultFlood": {
+    "name": "prvtEfmOamLoopbackResultFlood",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Flood value"
+  },
+  "prvtEfmOamLoopbackResultSentPackets": {
+    "name": "prvtEfmOamLoopbackResultSentPackets",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Sent packets"
+  },
+  "prvtEfmOamLoopbackResultReceivedPackets": {
+    "name": "prvtEfmOamLoopbackResultReceivedPackets",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Received packets"
+  },
+  "prvtEfmOamLoopbackResultClear": {
+    "name": "prvtEfmOamLoopbackResultClear",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.12.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "clear": 1
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Delete per interface entries in prvtEfmOamLoopbackResultTable."
+  },
+  "prvtEfmOamPeerTable": {
+    "name": "prvtEfmOamPeerTable",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.13",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table holds the peer extended information available only when local interface is set in enhanced mode (see prvtOamEnhanceMode) and the remote is detected as enhanced-mode device. This table shall containg an entry per physical interface, indexed by the corresponding ifIndex from IF-MIB."
+  },
+  "prvtEfmOamPeerEntry": {
+    "name": "prvtEfmOamPeerEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.13.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "prvtEfmOamPeerPort": {
+    "name": "prvtEfmOamPeerPort",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.13.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Holds the peer port name as string as it is sent by the peer (eg: 1/2/1)."
+  },
+  "prvtEfmOamPeerName": {
+    "name": "prvtEfmOamPeerName",
+    "oid": "1.3.6.1.4.1.738.1.5.133.1.13.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Holds the peer hostname s string as it is sent by the peer."
+  },
+  "prvtOamLoopBackState": {
+    "name": "prvtOamLoopBackState",
+    "oid": "1.3.6.1.4.1.738.1.5.133.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "DOT3-OAM-MIB",
+        "object": "dot3OamAdminState"
+      },
+      {
+        "module": "DOT3-OAM-MIB",
+        "object": "dot3OamMode"
+      },
+      {
+        "module": "DOT3-OAM-MIB",
+        "object": "dot3OamLoopbackStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This trap should be sent whenever the loopback state has been change from Remote, when dot3OamMode is passive or dot3OamAdminState is disable the interface cannot be on remoteLoopback state and should send this trap."
+  },
+  "prvtOamDyingGasp": {
+    "name": "prvtOamDyingGasp",
+    "oid": "1.3.6.1.4.1.738.1.5.133.0.2",
+    "class": "notificationtype",
+    "status": "current",
+    "description": "The notification alarms for a failure due to loss of local power ('Dying Gasp')"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PRVT-SWITCH-EFM-OAM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:48:25 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PRVT-SWITCH-EFM-OAM-MIB"
+  }
+}

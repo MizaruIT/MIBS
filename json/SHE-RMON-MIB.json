@@ -1,0 +1,1169 @@
+{
+  "imports": {
+    "class": "imports",
+    "AN-MIB": [
+      "she"
+    ],
+    "RMON-MIB": [
+      "OwnerString",
+      "alarmRisingThreshold",
+      "alarmFallingThreshold",
+      "alarmVariable"
+    ],
+    "SHE-TC-MIB": [
+      "SheControlStatusType"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Counter64",
+      "Bits",
+      "OBJECT-TYPE",
+      "Integer32",
+      "IpAddress",
+      "Gauge32",
+      "TimeTicks",
+      "Unsigned32",
+      "iso",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "MODULE-IDENTITY",
+      "MibIdentifier",
+      "NOTIFICATION-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "sheRmon": {
+    "name": "sheRmon",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2004-10-27 00:00",
+        "description": "First Release"
+      },
+      {
+        "revision": "2005-01-07 13:40",
+        "description": "Strip ControlRequestType and ControlRequestResultType. Each of this types should only contain Request's or Result's. Add Compliance-Groups."
+      },
+      {
+        "revision": "2005-01-26 12:41",
+        "description": "Add ControlRequest and Notification for clearing one entry in the EtherStatsTable of the Rmon-Mib."
+      },
+      {
+        "revision": "2005-04-21 16:23",
+        "description": "Change syntax for all ControlTimeStamp to U32 and unit sec."
+      },
+      {
+        "revision": "2006-08-14 12:00",
+        "description": "Take over by Gerd Barchmann for R2.5."
+      },
+      {
+        "revision": "2006-11-07 15:11",
+        "description": "Syntax corrections for backward compatibility."
+      },
+      {
+        "revision": "2007-11-20 14:02",
+        "description": "Correct parameter list for alarm and event created traps."
+      }
+    ],
+    "lastupdated": "200711201000Z",
+    "organization": "Nokia Siemens Networks",
+    "contactinfo": "Gerd Barchmann Nokia Siemens Networks GmbH & Co. KG COO BBA DSLAM RD SDE phone +49 3834 555 654 gerd.barchmann@nsn.com",
+    "description": "The MIB module is the proprietary extension of RMON-MIB defining control groups for configuration."
+  },
+  "SheRmonControlRequestType": {
+    "name": "SheRmonControlRequestType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createSample": 1,
+          "deleteSample": 2,
+          "resetStatisticCounters": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type for SHE-RMON control commands."
+  },
+  "SheRmonControlRequestResultType": {
+    "name": "SheRmonControlRequestResultType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "commExecStarted": 30,
+          "paramFaulty": 31,
+          "requestBusy": 32,
+          "setDataFailed": 34,
+          "aswTimeout": 35,
+          "commandFailed": 36,
+          "commandSucceeded": 37
+        }
+      }
+    },
+    "status": "current",
+    "description": "The result type for RMON control commands."
+  },
+  "SheRmonAlarmSampleType": {
+    "name": "SheRmonAlarmSampleType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "absoluteValue": 1,
+          "deltaValue": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type for SHE-RMON alarm sample."
+  },
+  "SheRmonAlarmStartupAlarm": {
+    "name": "SheRmonAlarmStartupAlarm",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "risingAlarm": 1,
+          "fallingAlarm": 2,
+          "risingOrFallingAlarm": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type for SHE-RMON alarm startup."
+  },
+  "SheRmonEventType": {
+    "name": "SheRmonEventType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "log": 2,
+          "snmpTrap": 3,
+          "logAndTrap": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type for SHE-RMON events."
+  },
+  "SheRmonSevProfileIndex": {
+    "name": "SheRmonSevProfileIndex",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": " The type for the alarm severity profile index."
+  },
+  "sheRmonConfigurationObjects": {
+    "name": "sheRmonConfigurationObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1",
+    "class": "objectidentity"
+  },
+  "sheRmonControl": {
+    "name": "sheRmonControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1",
+    "class": "objectidentity"
+  },
+  "sheRmonControlRequest": {
+    "name": "sheRmonControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " This attribute identifies the control commands. createSample: this command starts periodical data sampling at a specific data source object. An entry in the table historyControlTable is created. deleteSample: to stop a sampling. The entry in the historyControlTable is selected. This entry is deleted and also all associated entries in the EtherHistoryTable are also deleted. resetStatisticCounters: to clear one entry in the etherStatsTable of the rmon-Mib. Notifications : sampleCreated / sampleDeleted , sheEtherStatsCountersCleared"
+  },
+  "sheRmonControlStatus": {
+    "name": "sheRmonControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The status of a control request. "
+  },
+  "sheRmonControlTimer": {
+    "name": "sheRmonControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The maximum wait time for the manager for command ending. For long running commands. The manager reads this value from the DSLAM. "
+  },
+  "sheRmonControlControlReqResult": {
+    "name": "sheRmonControlControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The result of the last user command. "
+  },
+  "sheRmonControlTimeStamp": {
+    "name": "sheRmonControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The time stamp of the last command (end of command). "
+  },
+  "sheRmonControlDataSource": {
+    "name": "sheRmonControlDataSource",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the data source for which historical data shall be collected. Possible sources can be - any Ethernet interface on this device. For example, if an entry were to receive data from interface #1, this object would be set to ifIndex.1. - any subscriber side bridgePort of the device "
+  },
+  "sheRmonControlBucketsRequested": {
+    "name": "sheRmonControlBucketsRequested",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 50,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " The requested number of discrete time intervals over which data is to be saved in the part of the media-specific table associated with this historyControlEntry. When this object is created or modified, the probe should set historyControlBucketsGranted as closely to this object as is possible for the particular probe implementation and available resources."
+  },
+  "sheRmonControlInterval": {
+    "name": "sheRmonControlInterval",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 3600
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1800,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The interval in seconds over which the data is sampled for each bucket in the part of the media-specific table associated with this historyControlEntry. This interval can be set to any number of seconds between 1 and 3600 (1 hour). Because the counters in a bucket may overflow at their maximum value with no indication, a prudent manager will take into account the possibility of overflow in any of the associated counters. It is important to consider the minimum time in which any counter could overflow on a particular media type and set the historyControlInterval object to a value less than this interval. This is typically most important for the 'octets' counter in any media-specific table. For example, on an Ethernet network, the etherHistoryOctets counter could overflow in about one hour at the Ethernet's maximum utilization. "
+  },
+  "sheRmonControlOwner": {
+    "name": "sheRmonControlOwner",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it."
+  },
+  "sheRmonControlIndex": {
+    "name": "sheRmonControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.1.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " An index that uniquely identifies an entry in the historyControl table. Each such entry defines a set of samples at a particular interval for an interface on the device. This is used to delete a sample.."
+  },
+  "sheRmonNotifications": {
+    "name": "sheRmonNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2",
+    "class": "objectidentity"
+  },
+  "sheSampleCreated": {
+    "name": "sheSampleCreated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlDataSource"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheSampleDeleted": {
+    "name": "sheSampleDeleted",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlDataSource"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheEtherStatsCountersCleared": {
+    "name": "sheEtherStatsCountersCleared",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "One entry in the EtherStatsTable of the Rmon-Mib was cleared."
+  },
+  "sheAlarmSampleCreated": {
+    "name": "sheAlarmSampleCreated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlInterval"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlVariable"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlSampleType"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlStartupAlarm"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlRisingThreshold"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlFallingThreshold"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlRisingEventIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlFallingEventIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlOwner"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheAlarmSampleDeleted": {
+    "name": "sheAlarmSampleDeleted",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheEventSampleCreated": {
+    "name": "sheEventSampleCreated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlDescription"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlType"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlCommunity"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlOwner"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheEventSampleDeleted": {
+    "name": "sheEventSampleDeleted",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheRmonRisingThreshold": {
+    "name": "sheRmonRisingThreshold",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.8",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "RMON-MIB",
+        "object": "alarmVariable"
+      },
+      {
+        "module": "RMON-MIB",
+        "object": "alarmRisingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheRmonFallingThreshold": {
+    "name": "sheRmonFallingThreshold",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.2.9",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "RMON-MIB",
+        "object": "alarmVariable"
+      },
+      {
+        "module": "RMON-MIB",
+        "object": "alarmFallingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for command execution."
+  },
+  "sheRmonConformance": {
+    "name": "sheRmonConformance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.3",
+    "class": "objectidentity"
+  },
+  "sheRmonCompliances": {
+    "name": "sheRmonCompliances",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.3.1",
+    "class": "objectidentity"
+  },
+  "sheRmonCompliance": {
+    "name": "sheRmonCompliance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "sheRmonControlGroup",
+        "module": "SHE-RMON-MIB"
+      },
+      {
+        "object": "sheRmonNotificationGroup",
+        "module": "SHE-RMON-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheRmonGroups": {
+    "name": "sheRmonGroups",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.3.2",
+    "class": "objectidentity"
+  },
+  "sheRmonControlGroup": {
+    "name": "sheRmonControlGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlRequest"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlStatus"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlTimer"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlReqResult"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlInterval"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlVariable"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlSampleType"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlStartupAlarm"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlRisingThreshold"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlFallingThreshold"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlRisingEventIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlFallingEventIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonAlarmControlOwner"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlRequest"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlStatus"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlTimer"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlReqResult"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlDescription"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlType"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlCommunity"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonEventControlOwner"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlIndex"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlRequest"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlStatus"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlTimer"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlControlReqResult"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlTimeStamp"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlDataSource"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlBucketsRequested"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlInterval"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonControlOwner"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheRmonNotificationGroup": {
+    "name": "sheRmonNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.3.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheSampleCreated"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheSampleDeleted"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheEtherStatsCountersCleared"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheAlarmSampleCreated"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheAlarmSampleDeleted"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheEventSampleCreated"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheEventSampleDeleted"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonRisingThreshold"
+      },
+      {
+        "module": "SHE-RMON-MIB",
+        "object": "sheRmonFallingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheRmonAlarmControl": {
+    "name": "sheRmonAlarmControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4",
+    "class": "objectidentity"
+  },
+  "sheRmonAlarmControlRequest": {
+    "name": "sheRmonAlarmControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specifies the user command. createSample: this command create an entry is RMON alarmTable. deleteSample: this command delete an entry is RMON alarmTable."
+  },
+  "sheRmonAlarmControlStatus": {
+    "name": "sheRmonAlarmControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a control request"
+  },
+  "sheRmonAlarmControlTimer": {
+    "name": "sheRmonAlarmControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for command ending. For long running commands. The manager reads this value from the DSLAM."
+  },
+  "sheRmonAlarmControlReqResult": {
+    "name": "sheRmonAlarmControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheRmonAlarmControlTimeStamp": {
+    "name": "sheRmonAlarmControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheRmonAlarmControlIndex": {
+    "name": "sheRmonAlarmControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Index of sampling"
+  },
+  "sheRmonAlarmControlInterval": {
+    "name": "sheRmonAlarmControlInterval",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "To specify the sampling interval"
+  },
+  "sheRmonAlarmControlVariable": {
+    "name": "sheRmonAlarmControlVariable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The object identifier of the particular variable to be sampled."
+  },
+  "sheRmonAlarmControlSampleType": {
+    "name": "sheRmonAlarmControlSampleType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonAlarmSampleType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The method of sampling the selected variable and calculating the value to be compared against the thresholds."
+  },
+  "sheRmonAlarmControlStartupAlarm": {
+    "name": "sheRmonAlarmControlStartupAlarm",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonAlarmStartupAlarm",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The alarm that may be sent when this entry is first set to valid."
+  },
+  "sheRmonAlarmControlRisingThreshold": {
+    "name": "sheRmonAlarmControlRisingThreshold",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A threshold for the sampled statistic."
+  },
+  "sheRmonAlarmControlFallingThreshold": {
+    "name": "sheRmonAlarmControlFallingThreshold",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A threshold for the sampled statistic."
+  },
+  "sheRmonAlarmControlRisingEventIndex": {
+    "name": "sheRmonAlarmControlRisingEventIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The index of the eventEntry that is used when a rising threshold is crossed."
+  },
+  "sheRmonAlarmControlFallingEventIndex": {
+    "name": "sheRmonAlarmControlFallingEventIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The index of the eventEntry that is used when a falling threshold is crossed."
+  },
+  "sheRmonAlarmControlOwner": {
+    "name": "sheRmonAlarmControlOwner",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.4.15",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it."
+  },
+  "sheRmonEventControl": {
+    "name": "sheRmonEventControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5",
+    "class": "objectidentity"
+  },
+  "sheRmonEventControlRequest": {
+    "name": "sheRmonEventControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specifies the user command. createSample: this command create an entry is RMON eventTable. deleteSample: this command delete an entry is RMON eventTable."
+  },
+  "sheRmonEventControlStatus": {
+    "name": "sheRmonEventControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a control request"
+  },
+  "sheRmonEventControlTimer": {
+    "name": "sheRmonEventControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for command ending. For long running commands. The manager reads this value from the DSLAM."
+  },
+  "sheRmonEventControlReqResult": {
+    "name": "sheRmonEventControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command"
+  },
+  "sheRmonEventControlTimeStamp": {
+    "name": "sheRmonEventControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)"
+  },
+  "sheRmonEventControlIndex": {
+    "name": "sheRmonEventControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Index of sampling"
+  },
+  "sheRmonEventControlDescription": {
+    "name": "sheRmonEventControlDescription",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A comment describing this event entry"
+  },
+  "sheRmonEventControlType": {
+    "name": "sheRmonEventControlType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheRmonEventType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The type of notification that the probe will make about this event"
+  },
+  "sheRmonEventControlCommunity": {
+    "name": "sheRmonEventControlCommunity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If an SNMP trap is to be sent, it will be sent to the SNMP community specified by this octet string."
+  },
+  "sheRmonEventControlOwner": {
+    "name": "sheRmonEventControlOwner",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.8.1.5.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The entity that configured this entry and is therefore using the resources assigned to it."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SHE-RMON-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:42:36 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SHE-RMON-MIB"
+  }
+}

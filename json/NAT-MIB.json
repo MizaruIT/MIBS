@@ -1,0 +1,4452 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "ifCounterDiscontinuityGroup",
+      "InterfaceIndex",
+      "ifIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressPrefixLength",
+      "InetPortNumber",
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "IpAddress",
+      "Unsigned32",
+      "mib-2",
+      "Gauge32",
+      "Bits",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "iso",
+      "TimeTicks",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "StorageType",
+      "DisplayString",
+      "RowStatus"
+    ],
+    "VPN-TC-STD-MIB": [
+      "VPNIdOrZero"
+    ]
+  },
+  "natMIB": {
+    "name": "natMIB",
+    "oid": "1.3.6.1.2.1.123",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-04-26 00:00",
+        "description": "Complete rewrite, published as RFC yyyy."
+      },
+      {
+        "revision": "2005-03-21 00:00",
+        "description": "Initial version, published as RFC 4008."
+      }
+    ],
+    "lastupdated": "201304260000Z",
+    "organization": "IETF Behavior Engineering for Hindrance Avoidance (BEHAVE) Working Group",
+    "contactinfo": "Working Group Email: behave@ietf.org Simon Perreault Viagenie 246 Aberdeen Quebec, QC G1R 2E1 Canada Phone: +1 418 656 9254 Email: simon.perreault@viagenie.ca URI: http://viagenie.ca Tina Tsou Huawei Technologies (USA) 2330 Central Expressway Santa Clara, CA 95050 USA Phone: +1 408 330 4424 Email: tina.tsou.zouting@huawei.com Senthil Sivakumar Cisco Systems 7100-8 Kit Creek Road Research Triangle Park, North Carolina 27709 USA Phone: +1 919 392 5158 Email: ssenthil@cisco.com",
+    "description": "This MIB module defines the generic managed objects for NAT. Copyright (C) The Internet Society (2013). This version of this MIB module is part of RFC yyyy; see the RFC itself for full legal notices."
+  },
+  "natMIBObjects": {
+    "name": "natMIBObjects",
+    "oid": "1.3.6.1.2.1.123.1",
+    "class": "objectidentity"
+  },
+  "NatProtocolType": {
+    "name": "NatProtocolType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "other": 2,
+          "icmp": 3,
+          "udp": 4,
+          "tcp": 5
+        }
+      }
+    },
+    "status": "deprecated",
+    "description": "A list of protocols that support the network address translation. Inclusion of the values is not intended to imply that those protocols need to be supported. Any change in this TEXTUAL-CONVENTION should also be reflected in the definition of NatProtocolMap, which is a BITS representation of this."
+  },
+  "NatProtocolMap": {
+    "name": "NatProtocolMap",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "other": 0,
+        "icmp": 1,
+        "udp": 2,
+        "tcp": 3
+      }
+    },
+    "status": "deprecated",
+    "description": "A bitmap of protocol identifiers that support the network address translation. Any change in this TEXTUAL-CONVENTION should also be reflected in the definition of NatProtocolType."
+  },
+  "NatAddrMapId": {
+    "name": "NatAddrMapId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "deprecated",
+    "description": "A unique id that is assigned to each address map by a NAT enabled device."
+  },
+  "NatBindIdOrZero": {
+    "name": "NatBindIdOrZero",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "deprecated",
+    "description": "A unique id that is assigned to each bind by a NAT enabled device. The bind id will be zero in the case of a Symmetric NAT."
+  },
+  "NatBindId": {
+    "name": "NatBindId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "deprecated",
+    "description": "A unique id that is assigned to each bind by a NAT enabled device."
+  },
+  "NatSessionId": {
+    "name": "NatSessionId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "deprecated",
+    "description": "A unique id that is assigned to each session by a NAT enabled device."
+  },
+  "NatBindMode": {
+    "name": "NatBindMode",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "addressBind": 1,
+          "addressPortBind": 2
+        }
+      }
+    },
+    "status": "deprecated",
+    "description": "An indication of whether the bind is an address bind or an address port bind."
+  },
+  "NatAssociationType": {
+    "name": "NatAssociationType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "static": 1,
+          "dynamic": 2
+        }
+      }
+    },
+    "status": "deprecated",
+    "description": "An indication of whether the association is static or dynamic."
+  },
+  "NatTranslationEntity": {
+    "name": "NatTranslationEntity",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "inboundSrcEndPoint": 0,
+        "outboundDstEndPoint": 1,
+        "inboundDstEndPoint": 2,
+        "outboundSrcEndPoint": 3
+      }
+    },
+    "status": "deprecated",
+    "description": "An indication of a) the direction of a session for which an address map entry, address bind or port bind is applicable, and b) the entity (source or destination) within the session that is subject to translation."
+  },
+  "natDefTimeouts": {
+    "name": "natDefTimeouts",
+    "oid": "1.3.6.1.2.1.123.1.1",
+    "class": "objectidentity"
+  },
+  "natNotifCtrl": {
+    "name": "natNotifCtrl",
+    "oid": "1.3.6.1.2.1.123.1.2",
+    "class": "objectidentity"
+  },
+  "natBindDefIdleTimeout": {
+    "name": "natBindDefIdleTimeout",
+    "oid": "1.3.6.1.2.1.123.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "deprecated",
+    "description": "The default Bind (Address Bind or Port Bind) idle timeout parameter. If the agent is capable of storing non-volatile configuration, then the value of this object must be restored after a re-initialization of the management system."
+  },
+  "natUdpDefIdleTimeout": {
+    "name": "natUdpDefIdleTimeout",
+    "oid": "1.3.6.1.2.1.123.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 300,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "deprecated",
+    "description": "The default UDP idle timeout parameter. If the agent is capable of storing non-volatile configuration, then the value of this object must be restored after a re-initialization of the management system."
+  },
+  "natIcmpDefIdleTimeout": {
+    "name": "natIcmpDefIdleTimeout",
+    "oid": "1.3.6.1.2.1.123.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 300,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "deprecated",
+    "description": "The default ICMP idle timeout parameter. If the agent is capable of storing non-volatile configuration, then the value of this object must be restored after a re-initialization of the management system."
+  },
+  "natOtherDefIdleTimeout": {
+    "name": "natOtherDefIdleTimeout",
+    "oid": "1.3.6.1.2.1.123.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 60,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "deprecated",
+    "description": "The default idle timeout parameter for protocols represented by the value other (2) in NatProtocolType. If the agent is capable of storing non-volatile configuration, then the value of this object must be restored after a re-initialization of the management system."
+  },
+  "natTcpDefIdleTimeout": {
+    "name": "natTcpDefIdleTimeout",
+    "oid": "1.3.6.1.2.1.123.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 86400,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "deprecated",
+    "description": "The default time interval that a NAT session for an established TCP connection is allowed to remain valid without any activity on the TCP connection. If the agent is capable of storing non-volatile configuration, then the value of this object must be restored after a re-initialization of the management system."
+  },
+  "natTcpDefNegTimeout": {
+    "name": "natTcpDefNegTimeout",
+    "oid": "1.3.6.1.2.1.123.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 60,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "deprecated",
+    "description": "The default time interval that a NAT session for a TCP connection that is not in the established state is allowed to remain valid without any activity on the TCP connection. If the agent is capable of storing non-volatile configuration, then the value of this object must be restored after a re-initialization of the management system."
+  },
+  "natNotifThrottlingInterval": {
+    "name": "natNotifThrottlingInterval",
+    "oid": "1.3.6.1.2.1.123.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 5,
+            "max": 3600
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "deprecated",
+    "description": "This object controls the generation of the natPacketDiscard notification. If this object has a value of zero, then no natPacketDiscard notifications will be transmitted by the agent. If this object has a non-zero value, then the agent must not generate more than one natPacketDiscard 'notification-event' in the indicated period, where a 'notification-event' is the generation of a single notification PDU type to a list of notification destinations. If additional NAT packets are discarded within the throttling period, then notification-events for these changes must be suppressed by the agent until the current throttling period expires. If natNotifThrottlingInterval notification generation is enabled, the suggested default throttling period is 60 seconds, but generation of the natPacketDiscard notification should be disabled by default. If the agent is capable of storing non-volatile configuration, then the value of this object must be restored after a re-initialization of the management system. The actual transmission of notifications is controlled via the MIB modules in RFC 3413."
+  },
+  "natInterfaceTable": {
+    "name": "natInterfaceTable",
+    "oid": "1.3.6.1.2.1.123.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This table specifies the attributes for interfaces on a device supporting NAT function."
+  },
+  "natInterfaceEntry": {
+    "name": "natInterfaceEntry",
+    "oid": "1.3.6.1.2.1.123.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "deprecated",
+    "description": "Each entry in the natInterfaceTable holds a set of parameters for an interface, instantiated by ifIndex. Therefore, the interface index must have been assigned, according to the applicable procedures, before it can be meaningfully used. Generally, this means that the interface must exist. When natStorageType is of type nonVolatile, however, this may reflect the configuration for an interface whose ifIndex has been assigned but for which the supporting implementation is not currently present."
+  },
+  "natInterfaceRealm": {
+    "name": "natInterfaceRealm",
+    "oid": "1.3.6.1.2.1.123.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "private": 1,
+          "public": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "public",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object identifies whether this interface is connected to the private or the public realm."
+  },
+  "natInterfaceServiceType": {
+    "name": "natInterfaceServiceType",
+    "oid": "1.3.6.1.2.1.123.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "basicNat": 0,
+        "napt": 1,
+        "bidirectionalNat": 2,
+        "twiceNat": 3
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "An indication of the direction in which new sessions are permitted and the extent of translation done within the IP and transport headers."
+  },
+  "natInterfaceInTranslates": {
+    "name": "natInterfaceInTranslates",
+    "oid": "1.3.6.1.2.1.123.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "Number of packets received on this interface that were translated. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natInterfaceOutTranslates": {
+    "name": "natInterfaceOutTranslates",
+    "oid": "1.3.6.1.2.1.123.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "Number of translated packets that were sent out this interface. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natInterfaceDiscards": {
+    "name": "natInterfaceDiscards",
+    "oid": "1.3.6.1.2.1.123.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "Number of packets that had to be rejected/dropped due to a lack of resources for this interface. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natInterfaceStorageType": {
+    "name": "natInterfaceStorageType",
+    "oid": "1.3.6.1.2.1.123.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "nonVolatile",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Textual Conventions for SMIv2, Section 2.",
+    "status": "deprecated",
+    "description": "The storage type for this conceptual row. Conceptual rows having the value 'permanent' need not allow write-access to any columnar objects in the row."
+  },
+  "natInterfaceRowStatus": {
+    "name": "natInterfaceRowStatus",
+    "oid": "1.3.6.1.2.1.123.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Textual Conventions for SMIv2, Section 2.",
+    "status": "deprecated",
+    "description": "The status of this conceptual row. Until instances of all corresponding columns are appropriately configured, the value of the corresponding instance of the natInterfaceRowStatus column is 'notReady'. In particular, a newly created row cannot be made active until the corresponding instance of natInterfaceServiceType has been set. None of the objects in this row may be modified while the value of this object is active(1)."
+  },
+  "natAddrMapTable": {
+    "name": "natAddrMapTable",
+    "oid": "1.3.6.1.2.1.123.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This table lists address map parameters for NAT."
+  },
+  "natAddrMapEntry": {
+    "name": "natAddrMapEntry",
+    "oid": "1.3.6.1.2.1.123.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapIndex",
+        "implied": 0
+      }
+    ],
+    "status": "deprecated",
+    "description": "This entry represents an address map to be used for NAT and contributes to the dynamic and/or static address mapping tables of the NAT device."
+  },
+  "natAddrMapIndex": {
+    "name": "natAddrMapIndex",
+    "oid": "1.3.6.1.2.1.123.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatAddrMapId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "Along with ifIndex, this object uniquely identifies an entry in the natAddrMapTable. Address map entries are applied in the order specified by natAddrMapIndex."
+  },
+  "natAddrMapName": {
+    "name": "natAddrMapName",
+    "oid": "1.3.6.1.2.1.123.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "Name identifying all map entries in the table associated with the same interface. All map entries with the same ifIndex MUST have the same map name."
+  },
+  "natAddrMapEntryType": {
+    "name": "natAddrMapEntryType",
+    "oid": "1.3.6.1.2.1.123.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatAssociationType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This parameter can be used to set up static or dynamic address maps."
+  },
+  "natAddrMapTranslationEntity": {
+    "name": "natAddrMapTranslationEntity",
+    "oid": "1.3.6.1.2.1.123.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatTranslationEntity",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "The end-point entity (source or destination) in inbound or outbound sessions (i.e., first packets) that may be translated by an address map entry. Session direction (inbound or outbound) is derived from the direction of the first packet of a session traversing a NAT interface. NAT address (and Transport-ID) maps may be defined to effect inbound or outbound sessions. Traditionally, address maps for Basic NAT and NAPT are configured on a public interface for outbound sessions, effecting translation of source end-point. The value of this object must be set to outboundSrcEndPoint for those interfaces. Alternately, if address maps for Basic NAT and NAPT were to be configured on a private interface, the desired value for this object for the map entries would be inboundSrcEndPoint (i.e., effecting translation of source end-point for inbound sessions). If TwiceNAT were to be configured on a private interface, the desired value for this object for the map entries would be a bitmask of inboundSrcEndPoint and inboundDstEndPoint."
+  },
+  "natAddrMapLocalAddrType": {
+    "name": "natAddrMapLocalAddrType",
+    "oid": "1.3.6.1.2.1.123.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natAddrMapLocalAddrFrom and natAddrMapLocalAddrTo."
+  },
+  "natAddrMapLocalAddrFrom": {
+    "name": "natAddrMapLocalAddrFrom",
+    "oid": "1.3.6.1.2.1.123.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object specifies the first IP address of the range of IP addresses mapped by this translation entry. The value of this object must be less than or equal to the value of the natAddrMapLocalAddrTo object. The type of this address is determined by the value of the natAddrMapLocalAddrType object."
+  },
+  "natAddrMapLocalAddrTo": {
+    "name": "natAddrMapLocalAddrTo",
+    "oid": "1.3.6.1.2.1.123.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object specifies the last IP address of the range of IP addresses mapped by this translation entry. If only a single address is being mapped, the value of this object is equal to the value of natAddrMapLocalAddrFrom. For a static NAT, the number of addresses in the range defined by natAddrMapLocalAddrFrom and natAddrMapLocalAddrTo must be equal to the number of addresses in the range defined by natAddrMapGlobalAddrFrom and natAddrMapGlobalAddrTo. The value of this object must be greater than or equal to the value of the natAddrMapLocalAddrFrom object. The type of this address is determined by the value of the natAddrMapLocalAddrType object."
+  },
+  "natAddrMapLocalPortFrom": {
+    "name": "natAddrMapLocalPortFrom",
+    "oid": "1.3.6.1.2.1.123.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "If this conceptual row describes a Basic NAT address mapping, then the value of this object must be zero. If this conceptual row describes NAPT, then the value of this object specifies the first port number in the range of ports being mapped. The value of this object must be less than or equal to the value of the natAddrMapLocalPortTo object. If the translation specifies a single port, then the value of this object is equal to the value of natAddrMapLocalPortTo."
+  },
+  "natAddrMapLocalPortTo": {
+    "name": "natAddrMapLocalPortTo",
+    "oid": "1.3.6.1.2.1.123.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "If this conceptual row describes a Basic NAT address mapping, then the value of this object must be zero. If this conceptual row describes NAPT, then the value of this object specifies the last port number in the range of ports being mapped. The value of this object must be greater than or equal to the value of the natAddrMapLocalPortFrom object. If the translation specifies a single port, then the value of this object is equal to the value of natAddrMapLocalPortFrom."
+  },
+  "natAddrMapGlobalAddrType": {
+    "name": "natAddrMapGlobalAddrType",
+    "oid": "1.3.6.1.2.1.123.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natAddrMapGlobalAddrFrom and natAddrMapGlobalAddrTo."
+  },
+  "natAddrMapGlobalAddrFrom": {
+    "name": "natAddrMapGlobalAddrFrom",
+    "oid": "1.3.6.1.2.1.123.1.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object specifies the first IP address of the range of IP addresses being mapped to. The value of this object must be less than or equal to the value of the natAddrMapGlobalAddrTo object. The type of this address is determined by the value of the natAddrMapGlobalAddrType object."
+  },
+  "natAddrMapGlobalAddrTo": {
+    "name": "natAddrMapGlobalAddrTo",
+    "oid": "1.3.6.1.2.1.123.1.4.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object specifies the last IP address of the range of IP addresses being mapped to. If only a single address is being mapped to, the value of this object is equal to the value of natAddrMapGlobalAddrFrom. For a static NAT, the number of addresses in the range defined by natAddrMapGlobalAddrFrom and natAddrMapGlobalAddrTo must be equal to the number of addresses in the range defined by natAddrMapLocalAddrFrom and natAddrMapLocalAddrTo. The value of this object must be greater than or equal to the value of the natAddrMapGlobalAddrFrom object. The type of this address is determined by the value of the natAddrMapGlobalAddrType object."
+  },
+  "natAddrMapGlobalPortFrom": {
+    "name": "natAddrMapGlobalPortFrom",
+    "oid": "1.3.6.1.2.1.123.1.4.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "If this conceptual row describes a Basic NAT address mapping, then the value of this object must be zero. If this conceptual row describes NAPT, then the value of this object specifies the first port number in the range of ports being mapped to. The value of this object must be less than or equal to the value of the natAddrMapGlobalPortTo object. If the translation specifies a single port, then the value of this object is equal to the value natAddrMapGlobalPortTo."
+  },
+  "natAddrMapGlobalPortTo": {
+    "name": "natAddrMapGlobalPortTo",
+    "oid": "1.3.6.1.2.1.123.1.4.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "If this conceptual row describes a Basic NAT address mapping, then the value of this object must be zero. If this conceptual row describes NAPT, then the value of this object specifies the last port number in the range of ports being mapped to. The value of this object must be greater than or equal to the value of the natAddrMapGlobalPortFrom object. If the translation specifies a single port, then the value of this object is equal to the value of natAddrMapGlobalPortFrom."
+  },
+  "natAddrMapProtocol": {
+    "name": "natAddrMapProtocol",
+    "oid": "1.3.6.1.2.1.123.1.4.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatProtocolMap",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "deprecated",
+    "description": "This object specifies a bitmap of protocol identifiers."
+  },
+  "natAddrMapInTranslates": {
+    "name": "natAddrMapInTranslates",
+    "oid": "1.3.6.1.2.1.123.1.4.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of inbound packets pertaining to this address map entry that were translated. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natAddrMapOutTranslates": {
+    "name": "natAddrMapOutTranslates",
+    "oid": "1.3.6.1.2.1.123.1.4.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of outbound packets pertaining to this address map entry that were translated. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natAddrMapDiscards": {
+    "name": "natAddrMapDiscards",
+    "oid": "1.3.6.1.2.1.123.1.4.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of packets pertaining to this address map entry that were dropped due to lack of addresses in the address pool identified by this address map. The value of this object must always be zero in case of static address map. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natAddrMapAddrUsed": {
+    "name": "natAddrMapAddrUsed",
+    "oid": "1.3.6.1.2.1.123.1.4.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of addresses pertaining to this address map that are currently being used from the NAT pool. The value of this object must always be zero in the case of a static address map."
+  },
+  "natAddrMapStorageType": {
+    "name": "natAddrMapStorageType",
+    "oid": "1.3.6.1.2.1.123.1.4.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "nonVolatile",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Textual Conventions for SMIv2, Section 2.",
+    "status": "deprecated",
+    "description": "The storage type for this conceptual row. Conceptual rows having the value 'permanent' need not allow write-access to any columnar objects in the row."
+  },
+  "natAddrMapRowStatus": {
+    "name": "natAddrMapRowStatus",
+    "oid": "1.3.6.1.2.1.123.1.4.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Textual Conventions for SMIv2, Section 2.",
+    "status": "deprecated",
+    "description": "The status of this conceptual row. Until instances of all corresponding columns are appropriately configured, the value of the corresponding instance of the natAddrMapRowStatus column is 'notReady'. None of the objects in this row may be modified while the value of this object is active(1)."
+  },
+  "natAddrBindNumberOfEntries": {
+    "name": "natAddrBindNumberOfEntries",
+    "oid": "1.3.6.1.2.1.123.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object maintains a count of the number of entries that currently exist in the natAddrBindTable."
+  },
+  "natAddrBindTable": {
+    "name": "natAddrBindTable",
+    "oid": "1.3.6.1.2.1.123.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This table holds information about the currently active NAT BINDs."
+  },
+  "natAddrBindEntry": {
+    "name": "natAddrBindEntry",
+    "oid": "1.3.6.1.2.1.123.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindLocalAddrType",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindLocalAddr",
+        "implied": 0
+      }
+    ],
+    "status": "deprecated",
+    "description": "Each entry in this table holds information about an active address BIND. These entries are lost upon agent restart. This row has indexing which may create variables with more than 128 subidentifiers. Implementers of this table must be careful not to create entries that would result in OIDs which exceed the 128 subidentifier limit. Otherwise, the information cannot be accessed using SNMPv1, SNMPv2c or SNMPv3."
+  },
+  "natAddrBindLocalAddrType": {
+    "name": "natAddrBindLocalAddrType",
+    "oid": "1.3.6.1.2.1.123.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natAddrBindLocalAddr."
+  },
+  "natAddrBindLocalAddr": {
+    "name": "natAddrBindLocalAddr",
+    "oid": "1.3.6.1.2.1.123.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This object represents the private-realm specific network layer address, which maps to the public-realm address represented by natAddrBindGlobalAddr. The type of this address is determined by the value of the natAddrBindLocalAddrType object."
+  },
+  "natAddrBindGlobalAddrType": {
+    "name": "natAddrBindGlobalAddrType",
+    "oid": "1.3.6.1.2.1.123.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natAddrBindGlobalAddr."
+  },
+  "natAddrBindGlobalAddr": {
+    "name": "natAddrBindGlobalAddr",
+    "oid": "1.3.6.1.2.1.123.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the public-realm network layer address that maps to the private-realm network layer address represented by natAddrBindLocalAddr. The type of this address is determined by the value of the natAddrBindGlobalAddrType object."
+  },
+  "natAddrBindId": {
+    "name": "natAddrBindId",
+    "oid": "1.3.6.1.2.1.123.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBindId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents a bind id that is dynamically assigned to each bind by a NAT enabled device. Each bind is represented by a bind id that is unique across both, the natAddrBindTable and the natAddrPortBindTable."
+  },
+  "natAddrBindTranslationEntity": {
+    "name": "natAddrBindTranslationEntity",
+    "oid": "1.3.6.1.2.1.123.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatTranslationEntity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the direction of sessions for which this bind is applicable and the endpoint entity (source or destination) within the sessions that is subject to translation using the BIND. Orientation of the bind can be a superset of translationEntity of the address map entry which forms the basis for this bind. For example, if the translationEntity of an address map entry is outboundSrcEndPoint, the translationEntity of a bind derived from this map entry may either be outboundSrcEndPoint or it may be bidirectional (a bitmask of outboundSrcEndPoint and inboundDstEndPoint)."
+  },
+  "natAddrBindType": {
+    "name": "natAddrBindType",
+    "oid": "1.3.6.1.2.1.123.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatAssociationType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object indicates whether the bind is static or dynamic."
+  },
+  "natAddrBindMapIndex": {
+    "name": "natAddrBindMapIndex",
+    "oid": "1.3.6.1.2.1.123.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatAddrMapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object is a pointer to the natAddrMapTable entry (and the parameters of that entry) which was used in creating this BIND. This object, in conjunction with the ifIndex (which identifies a unique addrMapName) points to a unique entry in the natAddrMapTable."
+  },
+  "natAddrBindSessions": {
+    "name": "natAddrBindSessions",
+    "oid": "1.3.6.1.2.1.123.1.6.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "Number of sessions currently using this BIND."
+  },
+  "natAddrBindMaxIdleTime": {
+    "name": "natAddrBindMaxIdleTime",
+    "oid": "1.3.6.1.2.1.123.1.6.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object indicates the maximum time for which this bind can be idle with no sessions attached to it. The value of this object is of relevance only for dynamic NAT."
+  },
+  "natAddrBindCurrentIdleTime": {
+    "name": "natAddrBindCurrentIdleTime",
+    "oid": "1.3.6.1.2.1.123.1.6.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "At any given instance, this object indicates the time that this bind has been idle without any sessions attached to it. The value of this object is of relevance only for dynamic NAT."
+  },
+  "natAddrBindInTranslates": {
+    "name": "natAddrBindInTranslates",
+    "oid": "1.3.6.1.2.1.123.1.6.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of inbound packets that were successfully translated by using this bind entry. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natAddrBindOutTranslates": {
+    "name": "natAddrBindOutTranslates",
+    "oid": "1.3.6.1.2.1.123.1.6.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of outbound packets that were successfully translated using this bind entry. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natAddrPortBindNumberOfEntries": {
+    "name": "natAddrPortBindNumberOfEntries",
+    "oid": "1.3.6.1.2.1.123.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object maintains a count of the number of entries that currently exist in the natAddrPortBindTable."
+  },
+  "natAddrPortBindTable": {
+    "name": "natAddrPortBindTable",
+    "oid": "1.3.6.1.2.1.123.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This table holds information about the currently active NAPT BINDs."
+  },
+  "natAddrPortBindEntry": {
+    "name": "natAddrPortBindEntry",
+    "oid": "1.3.6.1.2.1.123.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindLocalAddrType",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindLocalAddr",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindLocalPort",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindProtocol",
+        "implied": 0
+      }
+    ],
+    "status": "deprecated",
+    "description": "Each entry in the this table holds information about a NAPT bind that is currently active. These entries are lost upon agent restart. This row has indexing which may create variables with more than 128 subidentifiers. Implementers of this table must be careful not to create entries which would result in OIDs that exceed the 128 subidentifier limit. Otherwise, the information cannot be accessed using SNMPv1, SNMPv2c or SNMPv3."
+  },
+  "natAddrPortBindLocalAddrType": {
+    "name": "natAddrPortBindLocalAddrType",
+    "oid": "1.3.6.1.2.1.123.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natAddrPortBindLocalAddr."
+  },
+  "natAddrPortBindLocalAddr": {
+    "name": "natAddrPortBindLocalAddr",
+    "oid": "1.3.6.1.2.1.123.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This object represents the private-realm specific network layer address which, in conjunction with natAddrPortBindLocalPort, maps to the public-realm network layer address and transport id represented by natAddrPortBindGlobalAddr and natAddrPortBindGlobalPort respectively. The type of this address is determined by the value of the natAddrPortBindLocalAddrType object."
+  },
+  "natAddrPortBindLocalPort": {
+    "name": "natAddrPortBindLocalPort",
+    "oid": "1.3.6.1.2.1.123.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "For a protocol value TCP or UDP, this object represents the private-realm specific port number. On the other hand, for ICMP a bind is created only for query/response type ICMP messages such as ICMP echo, Timestamp, and Information request messages, and this object represents the private-realm specific identifier in the ICMP message, as defined in RFC 792 for ICMPv4 and in RFC 2463 for ICMPv6. This object, together with natAddrPortBindProtocol, natAddrPortBindLocalAddrType, and natAddrPortBindLocalAddr, constitutes a session endpoint in the private realm. A bind entry binds a private realm specific endpoint to a public realm specific endpoint, as represented by the tuple of (natAddrPortBindGlobalPort, natAddrPortBindProtocol, natAddrPortBindGlobalAddrType, and natAddrPortBindGlobalAddr)."
+  },
+  "natAddrPortBindProtocol": {
+    "name": "natAddrPortBindProtocol",
+    "oid": "1.3.6.1.2.1.123.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatProtocolType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This object specifies a protocol identifier. If the value of this object is none(1), then this bind entry applies to all IP traffic. Any other value of this object specifies the class of IP traffic to which this BIND applies."
+  },
+  "natAddrPortBindGlobalAddrType": {
+    "name": "natAddrPortBindGlobalAddrType",
+    "oid": "1.3.6.1.2.1.123.1.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natAddrPortBindGlobalAddr."
+  },
+  "natAddrPortBindGlobalAddr": {
+    "name": "natAddrPortBindGlobalAddr",
+    "oid": "1.3.6.1.2.1.123.1.8.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the public-realm specific network layer address that, in conjunction with natAddrPortBindGlobalPort, maps to the private-realm network layer address and transport id represented by natAddrPortBindLocalAddr and natAddrPortBindLocalPort, respectively. The type of this address is determined by the value of the natAddrPortBindGlobalAddrType object."
+  },
+  "natAddrPortBindGlobalPort": {
+    "name": "natAddrPortBindGlobalPort",
+    "oid": "1.3.6.1.2.1.123.1.8.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "For a protocol value TCP or UDP, this object represents the public-realm specific port number. On the other hand, for ICMP a bind is created only for query/response type ICMP messages such as ICMP echo, Timestamp, and Information request messages, and this object represents the public-realm specific identifier in the ICMP message, as defined in RFC 792 for ICMPv4 and in RFC 2463 for ICMPv6. This object, together with natAddrPortBindProtocol, natAddrPortBindGlobalAddrType, and natAddrPortBindGlobalAddr, constitutes a session endpoint in the public realm. A bind entry binds a public realm specific endpoint to a private realm specific endpoint, as represented by the tuple of (natAddrPortBindLocalPort, natAddrPortBindProtocol, natAddrPortBindLocalAddrType, and natAddrPortBindLocalAddr)."
+  },
+  "natAddrPortBindId": {
+    "name": "natAddrPortBindId",
+    "oid": "1.3.6.1.2.1.123.1.8.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBindId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents a bind id that is dynamically assigned to each bind by a NAT enabled device. Each bind is represented by a unique bind id across both the natAddrBindTable and the natAddrPortBindTable."
+  },
+  "natAddrPortBindTranslationEntity": {
+    "name": "natAddrPortBindTranslationEntity",
+    "oid": "1.3.6.1.2.1.123.1.8.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatTranslationEntity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object represents the direction of sessions for which this bind is applicable and the entity (source or destination) within the sessions that is subject to translation with the BIND. Orientation of the bind can be a superset of the translationEntity of the address map entry that forms the basis for this bind. For example, if the translationEntity of an address map entry is outboundSrcEndPoint, the translationEntity of a bind derived from this map entry may either be outboundSrcEndPoint or may be bidirectional (a bitmask of outboundSrcEndPoint and inboundDstEndPoint)."
+  },
+  "natAddrPortBindType": {
+    "name": "natAddrPortBindType",
+    "oid": "1.3.6.1.2.1.123.1.8.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatAssociationType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object indicates whether the bind is static or dynamic."
+  },
+  "natAddrPortBindMapIndex": {
+    "name": "natAddrPortBindMapIndex",
+    "oid": "1.3.6.1.2.1.123.1.8.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatAddrMapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object is a pointer to the natAddrMapTable entry (and the parameters of that entry) used in creating this BIND. This object, in conjunction with the ifIndex (which identifies a unique addrMapName), points to a unique entry in the natAddrMapTable."
+  },
+  "natAddrPortBindSessions": {
+    "name": "natAddrPortBindSessions",
+    "oid": "1.3.6.1.2.1.123.1.8.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "Number of sessions currently using this BIND."
+  },
+  "natAddrPortBindMaxIdleTime": {
+    "name": "natAddrPortBindMaxIdleTime",
+    "oid": "1.3.6.1.2.1.123.1.8.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object indicates the maximum time for which this bind can be idle without any sessions attached to it. The value of this object is of relevance only for dynamic NAT."
+  },
+  "natAddrPortBindCurrentIdleTime": {
+    "name": "natAddrPortBindCurrentIdleTime",
+    "oid": "1.3.6.1.2.1.123.1.8.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "At any given instance, this object indicates the time that this bind has been idle without any sessions attached to it. The value of this object is of relevance only for dynamic NAT."
+  },
+  "natAddrPortBindInTranslates": {
+    "name": "natAddrPortBindInTranslates",
+    "oid": "1.3.6.1.2.1.123.1.8.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of inbound packets that were translated as per this bind entry. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natAddrPortBindOutTranslates": {
+    "name": "natAddrPortBindOutTranslates",
+    "oid": "1.3.6.1.2.1.123.1.8.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of outbound packets that were translated as per this bind entry. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natSessionTable": {
+    "name": "natSessionTable",
+    "oid": "1.3.6.1.2.1.123.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "The (conceptual) table containing one entry for each NAT session currently active on this NAT device."
+  },
+  "natSessionEntry": {
+    "name": "natSessionEntry",
+    "oid": "1.3.6.1.2.1.123.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionIndex",
+        "implied": 0
+      }
+    ],
+    "status": "deprecated",
+    "description": "An entry (conceptual row) containing information about an active NAT session on this NAT device. These entries are lost upon agent restart."
+  },
+  "natSessionIndex": {
+    "name": "natSessionIndex",
+    "oid": "1.3.6.1.2.1.123.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatSessionId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "The session ID for this NAT session."
+  },
+  "natSessionPrivateSrcEPBindId": {
+    "name": "natSessionPrivateSrcEPBindId",
+    "oid": "1.3.6.1.2.1.123.1.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBindIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The bind id associated between private and public source end points. In the case of Symmetric-NAT, this should be set to zero."
+  },
+  "natSessionPrivateSrcEPBindMode": {
+    "name": "natSessionPrivateSrcEPBindMode",
+    "oid": "1.3.6.1.2.1.123.1.9.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBindMode",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object indicates whether the bind indicated by the object natSessionPrivateSrcEPBindId is an address bind or an address port bind."
+  },
+  "natSessionPrivateDstEPBindId": {
+    "name": "natSessionPrivateDstEPBindId",
+    "oid": "1.3.6.1.2.1.123.1.9.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBindIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The bind id associated between private and public destination end points."
+  },
+  "natSessionPrivateDstEPBindMode": {
+    "name": "natSessionPrivateDstEPBindMode",
+    "oid": "1.3.6.1.2.1.123.1.9.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBindMode",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object indicates whether the bind indicated by the object natSessionPrivateDstEPBindId is an address bind or an address port bind."
+  },
+  "natSessionDirection": {
+    "name": "natSessionDirection",
+    "oid": "1.3.6.1.2.1.123.1.9.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The direction of this session with respect to the local network. 'inbound' indicates that this session was initiated from the public network into the private network. 'outbound' indicates that this session was initiated from the private network into the public network."
+  },
+  "natSessionUpTime": {
+    "name": "natSessionUpTime",
+    "oid": "1.3.6.1.2.1.123.1.9.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The up time of this session in one-hundredths of a second."
+  },
+  "natSessionAddrMapIndex": {
+    "name": "natSessionAddrMapIndex",
+    "oid": "1.3.6.1.2.1.123.1.9.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatAddrMapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object is a pointer to the natAddrMapTable entry (and the parameters of that entry) used in creating this session. This object, in conjunction with the ifIndex (which identifies a unique addrMapName), points to a unique entry in the natAddrMapTable."
+  },
+  "natSessionProtocolType": {
+    "name": "natSessionProtocolType",
+    "oid": "1.3.6.1.2.1.123.1.9.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatProtocolType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The protocol type of this session."
+  },
+  "natSessionPrivateAddrType": {
+    "name": "natSessionPrivateAddrType",
+    "oid": "1.3.6.1.2.1.123.1.9.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natSessionPrivateSrcAddr and natSessionPrivateDstAddr."
+  },
+  "natSessionPrivateSrcAddr": {
+    "name": "natSessionPrivateSrcAddr",
+    "oid": "1.3.6.1.2.1.123.1.9.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The source IP address of the session endpoint that lies in the private network. The value of this object must be zero only when the natSessionPrivateSrcEPBindId object has a zero value. When the value of this object is zero, the NAT session lookup will match any IP address to this field. The type of this address is determined by the value of the natSessionPrivateAddrType object."
+  },
+  "natSessionPrivateSrcPort": {
+    "name": "natSessionPrivateSrcPort",
+    "oid": "1.3.6.1.2.1.123.1.9.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "When the value of protocol is TCP or UDP, this object represents the source port in the first packet of session while in private-realm. On the other hand, when the protocol is ICMP, a NAT session is created only for query/response type ICMP messages such as ICMP echo, Timestamp, and Information request messages, and this object represents the private-realm specific identifier in the ICMP message, as defined in RFC 792 for ICMPv4 and in RFC 2463 for ICMPv6. The value of this object must be zero when the natSessionPrivateSrcEPBindId object has zero value and value of natSessionPrivateSrcEPBindMode is addressPortBind(2). In such a case, the NAT session lookup will match any port number to this field. The value of this object must be zero when the object is not a representative field (SrcPort, DstPort, or ICMP identifier) of the session tuple in either the public realm or the private realm."
+  },
+  "natSessionPrivateDstAddr": {
+    "name": "natSessionPrivateDstAddr",
+    "oid": "1.3.6.1.2.1.123.1.9.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The destination IP address of the session endpoint that lies in the private network. The value of this object must be zero when the natSessionPrivateDstEPBindId object has a zero value. In such a scenario, the NAT session lookup will match any IP address to this field. The type of this address is determined by the value of the natSessionPrivateAddrType object."
+  },
+  "natSessionPrivateDstPort": {
+    "name": "natSessionPrivateDstPort",
+    "oid": "1.3.6.1.2.1.123.1.9.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "When the value of protocol is TCP or UDP, this object represents the destination port in the first packet of session while in private-realm. On the other hand, when the protocol is ICMP, this object is not relevant and should be set to zero. The value of this object must be zero when the natSessionPrivateDstEPBindId object has a zero value and natSessionPrivateDstEPBindMode is set to addressPortBind(2). In such a case, the NAT session lookup will match any port number to this field. The value of this object must be zero when the object is not a representative field (SrcPort, DstPort, or ICMP identifier) of the session tuple in either the public realm or the private realm."
+  },
+  "natSessionPublicAddrType": {
+    "name": "natSessionPublicAddrType",
+    "oid": "1.3.6.1.2.1.123.1.9.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "This object specifies the address type used for natSessionPublicSrcAddr and natSessionPublicDstAddr."
+  },
+  "natSessionPublicSrcAddr": {
+    "name": "natSessionPublicSrcAddr",
+    "oid": "1.3.6.1.2.1.123.1.9.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The source IP address of the session endpoint that lies in the public network. The value of this object must be zero when the natSessionPrivateSrcEPBindId object has a zero value. In such a scenario, the NAT session lookup will match any IP address to this field. The type of this address is determined by the value of the natSessionPublicAddrType object."
+  },
+  "natSessionPublicSrcPort": {
+    "name": "natSessionPublicSrcPort",
+    "oid": "1.3.6.1.2.1.123.1.9.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "When the value of protocol is TCP or UDP, this object represents the source port in the first packet of session while in public-realm. On the other hand, when protocol is ICMP, a NAT session is created only for query/response type ICMP messages such as ICMP echo, Timestamp, and Information request messages, and this object represents the public-realm specific identifier in the ICMP message, as defined in RFC 792 for ICMPv4 and in RFC 2463 for ICMPv6. The value of this object must be zero when the natSessionPrivateSrcEPBindId object has a zero value and natSessionPrivateSrcEPBindMode is set to addressPortBind(2). In such a scenario, the NAT session lookup will match any port number to this field. The value of this object must be zero when the object is not a representative field (SrcPort, DstPort or ICMP identifier) of the session tuple in either the public realm or the private realm."
+  },
+  "natSessionPublicDstAddr": {
+    "name": "natSessionPublicDstAddr",
+    "oid": "1.3.6.1.2.1.123.1.9.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The destination IP address of the session endpoint that lies in the public network. The value of this object must be non-zero when the natSessionPrivateDstEPBindId object has a non-zero value. If the value of this object and the corresponding natSessionPrivateDstEPBindId object value is zero, then the NAT session lookup will match any IP address to this field. The type of this address is determined by the value of the natSessionPublicAddrType object."
+  },
+  "natSessionPublicDstPort": {
+    "name": "natSessionPublicDstPort",
+    "oid": "1.3.6.1.2.1.123.1.9.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "When the value of protocol is TCP or UDP, this object represents the destination port in the first packet of session while in public-realm. On the other hand, when the protocol is ICMP, this object is not relevant for translation and should be zero. The value of this object must be zero when the natSessionPrivateDstEPBindId object has a zero value and natSessionPrivateDstEPBindMode is addressPortBind(2). In such a scenario, the NAT session lookup will match any port number to this field. The value of this object must be zero when the object is not a representative field (SrcPort, DstPort, or ICMP identifier) of the session tuple in either the public realm or the private realm."
+  },
+  "natSessionMaxIdleTime": {
+    "name": "natSessionMaxIdleTime",
+    "oid": "1.3.6.1.2.1.123.1.9.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The max time for which this session can be idle without detecting a packet."
+  },
+  "natSessionCurrentIdleTime": {
+    "name": "natSessionCurrentIdleTime",
+    "oid": "1.3.6.1.2.1.123.1.9.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The time since a packet belonging to this session was last detected."
+  },
+  "natSessionInTranslates": {
+    "name": "natSessionInTranslates",
+    "oid": "1.3.6.1.2.1.123.1.9.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of inbound packets that were translated for this session. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natSessionOutTranslates": {
+    "name": "natSessionOutTranslates",
+    "oid": "1.3.6.1.2.1.123.1.9.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of outbound packets that were translated for this session. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natProtocolTable": {
+    "name": "natProtocolTable",
+    "oid": "1.3.6.1.2.1.123.1.10",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "The (conceptual) table containing per protocol NAT statistics."
+  },
+  "natProtocolEntry": {
+    "name": "natProtocolEntry",
+    "oid": "1.3.6.1.2.1.123.1.10.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natProtocol",
+        "implied": 0
+      }
+    ],
+    "status": "deprecated",
+    "description": "An entry (conceptual row) containing NAT statistics pertaining to a particular protocol."
+  },
+  "natProtocol": {
+    "name": "natProtocol",
+    "oid": "1.3.6.1.2.1.123.1.10.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatProtocolType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "deprecated",
+    "description": "This object represents the protocol pertaining to which parameters are reported."
+  },
+  "natProtocolInTranslates": {
+    "name": "natProtocolInTranslates",
+    "oid": "1.3.6.1.2.1.123.1.10.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of inbound packets pertaining to the protocol identified by natProtocol that underwent NAT. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natProtocolOutTranslates": {
+    "name": "natProtocolOutTranslates",
+    "oid": "1.3.6.1.2.1.123.1.10.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of outbound packets pertaining to the protocol identified by natProtocol that underwent NAT. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natProtocolDiscards": {
+    "name": "natProtocolDiscards",
+    "oid": "1.3.6.1.2.1.123.1.10.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "deprecated",
+    "description": "The number of packets pertaining to the protocol identified by natProtocol that had to be rejected/dropped due to lack of resources. These rejections could be due to session timeout, resource unavailability, lack of address space, etc. Discontinuities in the value of this counter can occur at reinitialization of the management system and at other times, as indicated by the value of ifCounterDiscontinuityTime on the relevant interface."
+  },
+  "natMIBNotifications": {
+    "name": "natMIBNotifications",
+    "oid": "1.3.6.1.2.1.123.0",
+    "class": "objectidentity"
+  },
+  "natPacketDiscard": {
+    "name": "natPacketDiscard",
+    "oid": "1.3.6.1.2.1.123.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      }
+    ],
+    "status": "deprecated",
+    "description": "This notification is generated when IP packets are discarded by the NAT function; e.g., due to lack of mapping space when NAT is out of addresses or ports. Note that the generation of natPacketDiscard notifications is throttled by the agent, as specified by the 'natNotifThrottlingInterval' object."
+  },
+  "natMIBConformance": {
+    "name": "natMIBConformance",
+    "oid": "1.3.6.1.2.1.123.2",
+    "class": "objectidentity"
+  },
+  "natMIBGroups": {
+    "name": "natMIBGroups",
+    "oid": "1.3.6.1.2.1.123.2.1",
+    "class": "objectidentity"
+  },
+  "natMIBCompliances": {
+    "name": "natMIBCompliances",
+    "oid": "1.3.6.1.2.1.123.2.2",
+    "class": "objectidentity"
+  },
+  "natConfigGroup": {
+    "name": "natConfigGroup",
+    "oid": "1.3.6.1.2.1.123.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInterfaceRealm"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natInterfaceServiceType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natInterfaceStorageType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natInterfaceRowStatus"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapName"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapEntryType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapTranslationEntity"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapLocalAddrType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapLocalAddrFrom"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapLocalAddrTo"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapLocalPortFrom"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapLocalPortTo"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapGlobalAddrType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapGlobalAddrFrom"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapGlobalAddrTo"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapGlobalPortFrom"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapGlobalPortTo"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapProtocol"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapStorageType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapRowStatus"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natBindDefIdleTimeout"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natUdpDefIdleTimeout"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natIcmpDefIdleTimeout"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natOtherDefIdleTimeout"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natTcpDefIdleTimeout"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natTcpDefNegTimeout"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natNotifThrottlingInterval"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A collection of configuration-related information required to support management of devices supporting NAT."
+  },
+  "natTranslationGroup": {
+    "name": "natTranslationGroup",
+    "oid": "1.3.6.1.2.1.123.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindNumberOfEntries"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindGlobalAddrType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindGlobalAddr"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindId"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindTranslationEntity"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindMapIndex"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindSessions"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindMaxIdleTime"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindCurrentIdleTime"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindInTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrBindOutTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindNumberOfEntries"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindGlobalAddrType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindGlobalAddr"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindGlobalPort"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindId"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindTranslationEntity"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindMapIndex"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindSessions"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindMaxIdleTime"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindCurrentIdleTime"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindInTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrPortBindOutTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateSrcEPBindId"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateSrcEPBindMode"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateDstEPBindId"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateDstEPBindMode"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionDirection"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionUpTime"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionAddrMapIndex"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionProtocolType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateAddrType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateSrcAddr"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateSrcPort"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateDstAddr"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPrivateDstPort"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPublicAddrType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPublicSrcAddr"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPublicSrcPort"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPublicDstAddr"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionPublicDstPort"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionMaxIdleTime"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionCurrentIdleTime"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionInTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSessionOutTranslates"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A collection of BIND-related objects required to support management of devices supporting NAT."
+  },
+  "natStatsInterfaceGroup": {
+    "name": "natStatsInterfaceGroup",
+    "oid": "1.3.6.1.2.1.123.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInterfaceInTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natInterfaceOutTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natInterfaceDiscards"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A collection of NAT statistics associated with the interface on which NAT is configured, to aid troubleshooting/monitoring of the NAT operation."
+  },
+  "natStatsProtocolGroup": {
+    "name": "natStatsProtocolGroup",
+    "oid": "1.3.6.1.2.1.123.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natProtocolInTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natProtocolOutTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natProtocolDiscards"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A collection of protocol specific NAT statistics, to aid troubleshooting/monitoring of NAT operation."
+  },
+  "natStatsAddrMapGroup": {
+    "name": "natStatsAddrMapGroup",
+    "oid": "1.3.6.1.2.1.123.2.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapInTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapOutTranslates"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapDiscards"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapAddrUsed"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A collection of address map specific NAT statistics, to aid troubleshooting/monitoring of NAT operation."
+  },
+  "natMIBNotificationGroup": {
+    "name": "natMIBNotificationGroup",
+    "oid": "1.3.6.1.2.1.123.2.1.6",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natPacketDiscard"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A collection of notifications generated by devices supporting this MIB."
+  },
+  "natMIBFullCompliance": {
+    "name": "natMIBFullCompliance",
+    "oid": "1.3.6.1.2.1.123.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "ifCounterDiscontinuityGroup",
+        "module": "IF-MIB"
+      },
+      {
+        "object": "natConfigGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natTranslationGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natStatsInterfaceGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natStatsProtocolGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natStatsAddrMapGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natMIBNotificationGroup",
+        "module": "NAT-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "When this MIB is implemented with support for read-create, then such an implementation can claim full compliance. Such devices can then be both monitored and configured with this MIB. The following index objects cannot be added as OBJECT clauses but nevertheless have the compliance requirements: "
+  },
+  "natMIBReadOnlyCompliance": {
+    "name": "natMIBReadOnlyCompliance",
+    "oid": "1.3.6.1.2.1.123.2.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "ifCounterDiscontinuityGroup",
+        "module": "IF-MIB"
+      },
+      {
+        "object": "natConfigGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natTranslationGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natStatsInterfaceGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natStatsProtocolGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natStatsAddrMapGroup",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natMIBNotificationGroup",
+        "module": "NAT-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "When this MIB is implemented without support for read-create (i.e., in read-only mode), then such an implementation can claim read-only compliance. Such a device can then be monitored but cannot be configured with this MIB. The following index objects cannot be added as OBJECT clauses but nevertheless have the compliance requirements: "
+  },
+  "ProtocolNumber": {
+    "name": "ProtocolNumber",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "A transport protocol number, from the 'protocol-numbers' IANA registry."
+  },
+  "NatPoolId": {
+    "name": "NatPoolId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "A unique ID that is assigned to each pool."
+  },
+  "NatBehaviorType": {
+    "name": "NatBehaviorType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "endpointIndependent": 0,
+          "addressDependent": 1,
+          "addressAndPortDependent": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Behavior type as described in [RFC4787] sections 4.1 and 5."
+  },
+  "NatPoolingType": {
+    "name": "NatPoolingType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "arbitrary": 0,
+          "paired": 1
+        }
+      }
+    },
+    "status": "current",
+    "description": "Pooling type as described in [RFC4787] sections 4.1."
+  },
+  "VlanIndexOrZero": {
+    "name": "VlanIndexOrZero",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "A value used to index per-VLAN tables: a value of 4095 is not permitted. A value of 0 indicates no index is present. If the value is between 1 and 4094 inclusive, it represents an IEEE 802.1Q VLAN-ID with global scope within a given bridged domain (see VlanId textual convention in [RFC4363]). If the value is greater than 4095, then it represents a VLAN with scope local to the particular agent, i.e., one without a global VLAN-ID assigned to it. Such VLANs are outside the scope of IEEE 802.1Q, but it is convenient to be able to manage them in the same way using this MIB."
+  },
+  "SubscriberIndex": {
+    "name": "SubscriberIndex",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "A unique ID that is assigned to each subscriber."
+  },
+  "SubscriberIdentifierType": {
+    "name": "SubscriberIdentifierType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "null": 0,
+          "interfaces": 1,
+          "vlan": 2,
+          "vpn": 3,
+          "ipencaps": 4,
+          "other": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": "Type of additional classifying information used by the NAT to identify the subscriber from an incoming packet, when the packet source address is not sufficient to do so unambiguously. null(0) No additional information is needed. interfaces(1) A set of one or more ingress interface indexes specified by the [RFC2863] InterfaceIndex textual convention. vlan(2) An ingress VLAN index using the VlanIndexOrZero textual convention, which is the [RFC4363] VlanIndex textual convention modified for local use in this MIB. vpn(3) An ingress layer 3 VPN identifier using the [RFC4265] VPNIdOrZero textual convention. ipencaps(4) Incoming source address of an encapsulating IPv4 or IPv6 tunnel (e.g., IPv6 as used in DS-Lite, [RFC6333]) as defined by the InetAddressType and InetAddress textual conventions. other(5) The implementation supports other classifiers and/or combinations of classifier types. In the latter case the implementation MUST specify the semantics of the combination ('OR' or 'AND')."
+  },
+  "SubsInterfaceIdRowIndex": {
+    "name": "SubsInterfaceIdRowIndex",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "A unique ID that is assigned to each row in the natSubsInterfaceIdentifierTable."
+  },
+  "natNotifPoolWatermarkLow": {
+    "name": "natNotifPoolWatermarkLow",
+    "oid": "1.3.6.1.2.1.123.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolWatermarkLow"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a pool's usage percentage becomes lower than or equal to the specified threshold. The threshold is specified by the natPoolWatermarkLow object"
+  },
+  "natNotifPoolWatermarkHigh": {
+    "name": "natNotifPoolWatermarkHigh",
+    "oid": "1.3.6.1.2.1.123.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolWatermarkHigh"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a pool's usage percentage becomes greater than or equal to the specified threshold. The threshold is specified by the natPoolWatermarkHigh object"
+  },
+  "natNotifMappings": {
+    "name": "natNotifMappings",
+    "oid": "1.3.6.1.2.1.123.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingCreations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingRemovals"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of active mappings exceeds the value of natMappingsNotifyThreshold."
+  },
+  "natNotifAddrMappings": {
+    "name": "natNotifAddrMappings",
+    "oid": "1.3.6.1.2.1.123.0.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natAddressMappingCreations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddressMappingRemovals"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of active address mappings exceeds the value of natAddrMapNotifyThreshold."
+  },
+  "natNotifSubscriberMappings": {
+    "name": "natNotifSubscriberMappings",
+    "oid": "1.3.6.1.2.1.123.0.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberMappingCreations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberMappingRemovals"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of active mappings exceeds the value of natSubscriberMapNotifyThresh, unless natSubscriberMapNotifyThresh is zero.."
+  },
+  "natInstanceTable": {
+    "name": "natInstanceTable",
+    "oid": "1.3.6.1.2.1.123.1.11",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of NAT instances."
+  },
+  "natInstanceEntry": {
+    "name": "natInstanceEntry",
+    "oid": "1.3.6.1.2.1.123.1.11.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Objects related to a single NAT instance."
+  },
+  "natInstanceIndex": {
+    "name": "natInstanceIndex",
+    "oid": "1.3.6.1.2.1.123.1.11.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "NAT instance index. Semantics of this number are implementation-specific. This object is used as an index for many tables defined below."
+  },
+  "natInstanceAlias": {
+    "name": "natInstanceAlias",
+    "oid": "1.3.6.1.2.1.123.1.11.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is an 'alias' name for the NAT instance as specified by a network manager, and provides a non-volatile 'handle' for the instance. On the first instantiation of a NAT instance, the value of natInstanceAlias associated with that instance is the zero-length string. As and when a value is written into an instance of natInstanceAlias through a network management set operation, then the agent must retain the supplied value in this obejct instance associated with the same interface for as long as that NAT instance remains instantiated, including across all re-initializations/reboots of the network management system, including those which result in a change of the interface's natInstanceIndex value. An example of the value which a network manager might store in this object for a NAT instance is the name/identifier of the interface that brings in internal traffic for this NAT instance or the name of the VRF for internal traffic. An agent may choose to provide read-only access if the agent itself assigns an identifier for the NAT instance. An agent which supports write access to this object is required to keep the value in non-valite storage, but it may limit the length of new values depending on how much storage is already occupied by the current values for other NAT instances."
+  },
+  "natCounters": {
+    "name": "natCounters",
+    "oid": "1.3.6.1.2.1.123.1.12",
+    "class": "objectidentity"
+  },
+  "natCountersTable": {
+    "name": "natCountersTable",
+    "oid": "1.3.6.1.2.1.123.1.12.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of counters of a NAT instance. The counters are global across L4 protocols."
+  },
+  "natCountersEntry": {
+    "name": "natCountersEntry",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Counters related to a single NAT instance."
+  },
+  "natTranslations": {
+    "name": "natTranslations",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets translated."
+  },
+  "natOutOfPortErrors": {
+    "name": "natOutOfPortErrors",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets not translated because no external port was available, excluding quota limitations."
+  },
+  "natResourceErrors": {
+    "name": "natResourceErrors",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets not translated because of resource constraints (excluding out-of-ports error and quota drops)."
+  },
+  "natQuotaDrops": {
+    "name": "natQuotaDrops",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of incoming packets not translated because of quota limitations. Quotas include absolute limits as well as limits on rate of allocation."
+  },
+  "natMappingCreations": {
+    "name": "natMappingCreations",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of mapping creations. This includes static mappings."
+  },
+  "natMappingRemovals": {
+    "name": "natMappingRemovals",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of mapping removals. This includes static mappings."
+  },
+  "natAddressMappingCreations": {
+    "name": "natAddressMappingCreations",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of address mapping creations. This includes static mappings."
+  },
+  "natAddressMappingRemovals": {
+    "name": "natAddressMappingRemovals",
+    "oid": "1.3.6.1.2.1.123.1.12.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of address mapping removals. This includes static mappings. The number of active mappings is equal to natAddressMappingCreations - natAddressMappingRemovals."
+  },
+  "natL4ProtocolTable": {
+    "name": "natL4ProtocolTable",
+    "oid": "1.3.6.1.2.1.123.1.12.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of protocols with per-protocol counters."
+  },
+  "natL4ProtocolEntry": {
+    "name": "natL4ProtocolEntry",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natL4ProtocolNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Per-protocol counters."
+  },
+  "natL4ProtocolNumber": {
+    "name": "natL4ProtocolNumber",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ProtocolNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Counters in this conceptual row apply to packets using the transport protocol identified by this object's value."
+  },
+  "natL4ProtocolTranslations": {
+    "name": "natL4ProtocolTranslations",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets translated."
+  },
+  "natL4ProtocolOutOfPortErrors": {
+    "name": "natL4ProtocolOutOfPortErrors",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets not translated because no external port was available."
+  },
+  "natL4ProtocolResourceErrors": {
+    "name": "natL4ProtocolResourceErrors",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets not translated because of resource constraints (excluding out-of-ports errors and quota drops)."
+  },
+  "natL4ProtocolQuotaDrops": {
+    "name": "natL4ProtocolQuotaDrops",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of incoming packets not translated because of exceeded quotas. Quotas include absolute limits as well as limits on rate of allocation."
+  },
+  "natL4ProtocolMappingCreations": {
+    "name": "natL4ProtocolMappingCreations",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of mapping creations. This includes static mappings."
+  },
+  "natL4ProtocolMappingRemovals": {
+    "name": "natL4ProtocolMappingRemovals",
+    "oid": "1.3.6.1.2.1.123.1.12.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of mapping removals. This includes static mappings. The number of active mappings is equal to natL4ProtocolMappingCreations - natL4ProtocolMappingRemovals."
+  },
+  "natLimitsTable": {
+    "name": "natLimitsTable",
+    "oid": "1.3.6.1.2.1.123.1.13",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of limits for a NAT instance."
+  },
+  "natLimitsEntry": {
+    "name": "natLimitsEntry",
+    "oid": "1.3.6.1.2.1.123.1.13.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Limit related to a single NAT instance."
+  },
+  "natLimitMappings": {
+    "name": "natLimitMappings",
+    "oid": "1.3.6.1.2.1.123.1.13.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Global limit on the total number of mappings. Zero means unlimited."
+  },
+  "natMappingsNotifyThreshold": {
+    "name": "natMappingsNotifyThreshold",
+    "oid": "1.3.6.1.2.1.123.1.13.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "See natNotifMappings."
+  },
+  "natLimitAddressMappings": {
+    "name": "natLimitAddressMappings",
+    "oid": "1.3.6.1.2.1.123.1.13.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Global limit on the total number of internal-to-external address mappings. Zero means unlimited. This limit is only applicable to NATs that have an 'IP address pooling' behavior of 'Paired' [RFC4787]."
+  },
+  "natAddrMapNotifyThreshold": {
+    "name": "natAddrMapNotifyThreshold",
+    "oid": "1.3.6.1.2.1.123.1.13.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "See natNotifAddrMappings."
+  },
+  "natLimitFragments": {
+    "name": "natLimitFragments",
+    "oid": "1.3.6.1.2.1.123.1.13.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Global limit on the total number of fragments pending reassembly. Zero means unlimited. This limit is only applicable to NATs having 'Receive Fragments Out of Order' behavior [RFC4787]."
+  },
+  "natLimitSubscribers": {
+    "name": "natLimitSubscribers",
+    "oid": "1.3.6.1.2.1.123.1.13.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Global limit on the number of subscribers with active mappings. Zero means unlimited."
+  },
+  "natPoolObjects": {
+    "name": "natPoolObjects",
+    "oid": "1.3.6.1.2.1.123.1.14",
+    "class": "objectidentity"
+  },
+  "natPoolTable": {
+    "name": "natPoolTable",
+    "oid": "1.3.6.1.2.1.123.1.14.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of pools."
+  },
+  "natPoolEntry": {
+    "name": "natPoolEntry",
+    "oid": "1.3.6.1.2.1.123.1.14.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry in the table of pools."
+  },
+  "natPoolIndex": {
+    "name": "natPoolIndex",
+    "oid": "1.3.6.1.2.1.123.1.14.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatPoolId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index of an address pool."
+  },
+  "natPoolRealm": {
+    "name": "natPoolRealm",
+    "oid": "1.3.6.1.2.1.123.1.14.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Realm to which this pool's addresses belong."
+  },
+  "natPoolWatermarkLow": {
+    "name": "natPoolWatermarkLow",
+    "oid": "1.3.6.1.2.1.123.1.14.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Low watermark on a pool's usage, in percentage of the total number of ports available. If set to -1, the watermark is disabled. Otherwise when the usage percentage becomes lower than or equal to natPoolWatermarkLow, a notification is sent. The NAT may also start behaving in low usage mode (this is implementation-defined). The pool's current usage percentage can be computed by summing (natPoolRangeAllocations - natPoolRangeDeallocations) over all address ranges belonging to this pool, then dividing by the total number of IP addresses in this pool and by the size of the port range in this pool (natPoolPortMax - natPoolPortMin + 1)."
+  },
+  "natPoolWatermarkHigh": {
+    "name": "natPoolWatermarkHigh",
+    "oid": "1.3.6.1.2.1.123.1.14.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "High watermark on a pool's usage, in percentage of the total number of ports available. If set to -1, the watermark is disabled. Otherwise, when the usage percentage becomes higher than or equal to natPoolWatermarkHigh, a notification is sent. The NAT may also start behaving in high usage mode (this is implementation-defined)."
+  },
+  "natPoolPortMin": {
+    "name": "natPoolPortMin",
+    "oid": "1.3.6.1.2.1.123.1.14.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Minimal port number to be allocated in this pool."
+  },
+  "natPoolPortMax": {
+    "name": "natPoolPortMax",
+    "oid": "1.3.6.1.2.1.123.1.14.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Maximal port number to be allocated in this pool."
+  },
+  "natPoolRangeTable": {
+    "name": "natPoolRangeTable",
+    "oid": "1.3.6.1.2.1.123.1.14.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains address ranges used by pool entries."
+  },
+  "natPoolRangeEntry": {
+    "name": "natPoolRangeEntry",
+    "oid": "1.3.6.1.2.1.123.1.14.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolRangePoolIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "NAT pool address range."
+  },
+  "natPoolRangePoolIndex": {
+    "name": "natPoolRangePoolIndex",
+    "oid": "1.3.6.1.2.1.123.1.14.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatPoolId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index of the address pool to which this address range belongs. See natPoolIndex."
+  },
+  "natPoolRangeType": {
+    "name": "natPoolRangeType",
+    "oid": "1.3.6.1.2.1.123.1.14.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The address type of natPoolRangeBegin and natPoolRangeEnd."
+  },
+  "natPoolRangeBegin": {
+    "name": "natPoolRangeBegin",
+    "oid": "1.3.6.1.2.1.123.1.14.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Lowest address included in this range."
+  },
+  "natPoolRangeEnd": {
+    "name": "natPoolRangeEnd",
+    "oid": "1.3.6.1.2.1.123.1.14.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Highest address included in this range."
+  },
+  "natPoolRangeAllocations": {
+    "name": "natPoolRangeAllocations",
+    "oid": "1.3.6.1.2.1.123.1.14.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of ports that have been allocated on the addresses in this range."
+  },
+  "natPoolRangeDeallocations": {
+    "name": "natPoolRangeDeallocations",
+    "oid": "1.3.6.1.2.1.123.1.14.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of ports that have been allocated and then deallocated on the addresses in this range. The number of ports currently allocated on the addresses in this range can be computed by subtracting natPoolRangeDeallocations from natPoolRangeAllocations."
+  },
+  "natMapObjects": {
+    "name": "natMapObjects",
+    "oid": "1.3.6.1.2.1.123.1.15",
+    "class": "objectidentity"
+  },
+  "natMapIntAddrTable": {
+    "name": "natMapIntAddrTable",
+    "oid": "1.3.6.1.2.1.123.1.15.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of mappings from internal to external address. This table is only applicable to NATs that have an 'IP address pooling' behavior of 'Paired' [RFC4787]."
+  },
+  "natMapIntAddrEntry": {
+    "name": "natMapIntAddrEntry",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMapIntAddrIntRealm",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMapIntAddrIntType",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMapIntAddrInt",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Mapping from internal to external address."
+  },
+  "natMapIntAddrIntRealm": {
+    "name": "natMapIntAddrIntRealm",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Realm to which natMapIntAddrInt belongs."
+  },
+  "natMapIntAddrExtRealm": {
+    "name": "natMapIntAddrExtRealm",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Realm to which natMapIntAddrExt belongs."
+  },
+  "natMapIntAddrIntType": {
+    "name": "natMapIntAddrIntType",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Address type for natMapIntAddrInt."
+  },
+  "natMapIntAddrInt": {
+    "name": "natMapIntAddrInt",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Internal address."
+  },
+  "natMapIntAddrExtType": {
+    "name": "natMapIntAddrExtType",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Address type for natMapIntAddrExt."
+  },
+  "natMapIntAddrExt": {
+    "name": "natMapIntAddrExt",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "External address."
+  },
+  "natMapIntAddrSubsIndex": {
+    "name": "natMapIntAddrSubsIndex",
+    "oid": "1.3.6.1.2.1.123.1.15.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Subscriber to which this address mapping applies, or zero if it applies to all subscribers."
+  },
+  "natMappingTable": {
+    "name": "natMappingTable",
+    "oid": "1.3.6.1.2.1.123.1.15.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of mappings indexed by external 3-tuple."
+  },
+  "natMappingEntry": {
+    "name": "natMappingEntry",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingProto",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingExtRealm",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingExtAddressType",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingExtAddress",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingExtPort",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A single NAT mapping."
+  },
+  "natMappingProto": {
+    "name": "natMappingProto",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ProtocolNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The mapping's transport protocol number."
+  },
+  "natMappingExtRealm": {
+    "name": "natMappingExtRealm",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The realm to which natMappingExtAddress belongs."
+  },
+  "natMappingExtAddressType": {
+    "name": "natMappingExtAddressType",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Type of the mapping's external address."
+  },
+  "natMappingExtAddress": {
+    "name": "natMappingExtAddress",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The mapping's external address. If this is the undefined address, all external addresses are mapped to the internal address."
+  },
+  "natMappingExtPort": {
+    "name": "natMappingExtPort",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The mapping's external port number. If this is zero, all external ports are mapped to the internal port."
+  },
+  "natMappingIntRealm": {
+    "name": "natMappingIntRealm",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The realm to which natMappingIntAddress belongs."
+  },
+  "natMappingIntAddressType": {
+    "name": "natMappingIntAddressType",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of the mapping's internal address."
+  },
+  "natMappingIntAddress": {
+    "name": "natMappingIntAddress",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The mapping's internal address. If this is the undefined address, addresses are not translated."
+  },
+  "natMappingIntPort": {
+    "name": "natMappingIntPort",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The mapping's internal port number. If this is zero, ports are not translated."
+  },
+  "natMappingPool": {
+    "name": "natMappingPool",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Index of the pool that contains this mapping's external address and port. If zero, no pool is associated with this mapping."
+  },
+  "natMappingMapBehavior": {
+    "name": "natMappingMapBehavior",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBehaviorType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Mapping behavior as described in [RFC4787] section 4.1."
+  },
+  "natMappingFilterBehavior": {
+    "name": "natMappingFilterBehavior",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatBehaviorType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Filtering behavior as described in [RFC4787] section 5."
+  },
+  "natMappingAddressPooling": {
+    "name": "natMappingAddressPooling",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NatPoolingType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of address pooling behavior that was used to create this mapping."
+  },
+  "natMappingSubsIndex": {
+    "name": "natMappingSubsIndex",
+    "oid": "1.3.6.1.2.1.123.1.15.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SubscriberIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Subscriber using this mapping."
+  },
+  "natSubscribers": {
+    "name": "natSubscribers",
+    "oid": "1.3.6.1.2.1.123.1.16",
+    "class": "objectidentity"
+  },
+  "natSubscribersTable": {
+    "name": "natSubscribersTable",
+    "oid": "1.3.6.1.2.1.123.1.16.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of CGN subscribers."
+  },
+  "natSubscribersEntry": {
+    "name": "natSubscribersEntry",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry describes a single CGN subscriber or a host served by a managed enterprise NAT."
+  },
+  "natSubscriberIndex": {
+    "name": "natSubscriberIndex",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SubscriberIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index of the subscriber or host."
+  },
+  "natSubscriberIdentifierType": {
+    "name": "natSubscriberIdentifierType",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SubscriberIdentifierType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of additional information needed to identify the subscriber or host from incoming packets, when the packet source address does not do so unambiguously. The implementation MUST ensure that the type and the identifier value provided are synchronized, as follows. Unused identifier values MUST be zero or equivalent. Type Identifier object null(0) None. interfaces(1) natSubsInterfaceIdentifierTable vlan(2) natSubscriberVlanIdentifier vpn(3) natSubscriberVpnIdentifier ipencaps(4) natSubscriberIPEncapsIdType and natSubscriberIPEncapsIdAddr other(5) As specified by the implementation"
+  },
+  "natSubscriberIntPrefixType": {
+    "name": "natSubscriberIntPrefixType",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Subscriber's internal prefix type."
+  },
+  "natSubscriberIntPrefix": {
+    "name": "natSubscriberIntPrefix",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Prefix assigned to a subscriber's CPE."
+  },
+  "natSubscriberIntPrefixLength": {
+    "name": "natSubscriberIntPrefixLength",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Length of the prefix assigned to a subscriber's CPE, in bits. In case a single address is assigned, this will be 32 for IPv4 and 128 for IPv6."
+  },
+  "natSubscriberRealm": {
+    "name": "natSubscriberRealm",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The realm to which this subscriber belongs."
+  },
+  "natSubscriberTranslations": {
+    "name": "natSubscriberTranslations",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of translated packets received from or sent to this subscriber."
+  },
+  "natSubscriberOutOfPortErrors": {
+    "name": "natSubscriberOutOfPortErrors",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets received from this subscriber not translated because no external port was available, excluding quota limitations."
+  },
+  "natSubscriberResourceErrors": {
+    "name": "natSubscriberResourceErrors",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets received from this subscriber not translated because of resource constraints (excluding out-of-port errors and quota drops)."
+  },
+  "natSubscriberQuotaDrops": {
+    "name": "natSubscriberQuotaDrops",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of incoming packets received from or destined to this subscriber not translated because of quota limitations. Quotas include absolute limits as well as limits on the rate of allocation."
+  },
+  "natSubscriberMappingCreations": {
+    "name": "natSubscriberMappingCreations",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of mappings created by or for this subscriber."
+  },
+  "natSubscriberMappingRemovals": {
+    "name": "natSubscriberMappingRemovals",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of mappings removed by or for this subscriber."
+  },
+  "natSubscriberLimitMappings": {
+    "name": "natSubscriberLimitMappings",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Limit on the number of active mappings created by or for this subscriber. Zero means unlimited."
+  },
+  "natSubscriberMapNotifyThresh": {
+    "name": "natSubscriberMapNotifyThresh",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "See natNotifSubscriberMappings."
+  },
+  "natSubscriberVlanIdentifier": {
+    "name": "natSubscriberVlanIdentifier",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "When non-zero, VLAN index used to identify subscriber in combination with packet source address."
+  },
+  "natSubscriberVpnIdentifier": {
+    "name": "natSubscriberVpnIdentifier",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VPNIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "When non-zero, VPN identifier used to identify subscriber in combination with packet source address."
+  },
+  "natSubscriberIPEncapsIdType": {
+    "name": "natSubscriberIPEncapsIdType",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "When not unknown(0), type of address of encapsulating IP ingress tunnel."
+  },
+  "natSubscriberIPEncapsIdAddr": {
+    "name": "natSubscriberIPEncapsIdAddr",
+    "oid": "1.3.6.1.2.1.123.1.16.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Source address in outer header of packets incoming via IP tunnel, used to identify subscriber in combination with inner packet source address."
+  },
+  "natSubsInterfaceIdentifierTable": {
+    "name": "natSubsInterfaceIdentifierTable",
+    "oid": "1.3.6.1.2.1.123.1.16.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of interface indexes. If non-empty, used along with packet source address to identify the subscriber sending the packet. 'OR' semantics if multiple interface indexes are present."
+  },
+  "natSubsInterfaceIdentifierEntry": {
+    "name": "natSubsInterfaceIdentifierEntry",
+    "oid": "1.3.6.1.2.1.123.1.16.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubsInterfaceIdSubsIndex",
+        "implied": 0
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubsInterfaceIdRowIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry provides a single interface index."
+  },
+  "natSubsInterfaceIdSubsIndex": {
+    "name": "natSubsInterfaceIdSubsIndex",
+    "oid": "1.3.6.1.2.1.123.1.16.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SubscriberIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index of the subscriber to which this conceptual table is related."
+  },
+  "natSubsInterfaceIdRowIndex": {
+    "name": "natSubsInterfaceIdRowIndex",
+    "oid": "1.3.6.1.2.1.123.1.16.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SubsInterfaceIdRowIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Row index."
+  },
+  "natSubsInterfaceIndex": {
+    "name": "natSubsInterfaceIndex",
+    "oid": "1.3.6.1.2.1.123.1.16.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Interface index of an ingress interface through which packets from this subscriber may flow."
+  },
+  "natGroupStatelessObjects": {
+    "name": "natGroupStatelessObjects",
+    "oid": "1.3.6.1.2.1.123.2.1.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natInstanceAlias"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natTranslations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natResourceErrors"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natQuotaDrops"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingCreations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingRemovals"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natL4ProtocolTranslations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natL4ProtocolResourceErrors"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natL4ProtocolQuotaDrops"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natL4ProtocolMappingCreations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natL4ProtocolMappingRemovals"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingIntRealm"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingIntAddressType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingIntAddress"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingIntPort"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingPool"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingMapBehavior"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingFilterBehavior"
+      }
+    ],
+    "status": "current",
+    "description": "Basic counters, limits, and thresholds that do not require stateful NAT. That is, they apply to both stateless and stateful NATs. For this MIB's purposes, stateless NATs are defined as NATs that do not create mappings dynamically (either implicitly or explicitly using, for instance, the Port Control Protocol). Their mappings are created statically by the NAT administrator."
+  },
+  "natGroupStatefulObjects": {
+    "name": "natGroupStatefulObjects",
+    "oid": "1.3.6.1.2.1.123.2.1.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natOutOfPortErrors"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natL4ProtocolOutOfPortErrors"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natLimitMappings"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingsNotifyThreshold"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolRealm"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolWatermarkLow"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolWatermarkHigh"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolPortMin"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolPortMax"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolRangeType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolRangeBegin"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolRangeEnd"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolRangeAllocations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natPoolRangeDeallocations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingAddressPooling"
+      }
+    ],
+    "status": "current",
+    "description": "Basic counters, limits, and thresholds that require stateful NAT."
+  },
+  "natGroupAddrMapObjects": {
+    "name": "natGroupAddrMapObjects",
+    "oid": "1.3.6.1.2.1.123.2.1.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natAddressMappingCreations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddressMappingRemovals"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natLimitAddressMappings"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natAddrMapNotifyThreshold"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMapIntAddrExtRealm"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMapIntAddrExtType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMapIntAddrExt"
+      }
+    ],
+    "status": "current",
+    "description": "Objects that require 'Paired IP address pooling' behavior [RFC4787]."
+  },
+  "natGroupFragmentObjects": {
+    "name": "natGroupFragmentObjects",
+    "oid": "1.3.6.1.2.1.123.2.1.10",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natLimitFragments"
+      }
+    ],
+    "status": "current",
+    "description": "Objects that require 'Receive Fragments Out of Order' behavior [RFC4787]."
+  },
+  "natGroupBasicNotifications": {
+    "name": "natGroupBasicNotifications",
+    "oid": "1.3.6.1.2.1.123.2.1.11",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natNotifPoolWatermarkLow"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natNotifPoolWatermarkHigh"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natNotifMappings"
+      }
+    ],
+    "status": "current",
+    "description": "Basic notifications."
+  },
+  "natGroupAddrMapNotifications": {
+    "name": "natGroupAddrMapNotifications",
+    "oid": "1.3.6.1.2.1.123.2.1.12",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natNotifAddrMappings"
+      }
+    ],
+    "status": "current",
+    "description": "Notifications about address mappings."
+  },
+  "natGroupSubscriberObjects": {
+    "name": "natGroupSubscriberObjects",
+    "oid": "1.3.6.1.2.1.123.2.1.13",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natMapIntAddrSubsIndex"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natMappingSubsIndex"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberIdentifierType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberIntPrefixType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberIntPrefix"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberIntPrefixLength"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberRealm"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberTranslations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberOutOfPortErrors"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberResourceErrors"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberQuotaDrops"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberMappingCreations"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberMappingRemovals"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberLimitMappings"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberVlanIdentifier"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberVpnIdentifier"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberIPEncapsIdType"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberIPEncapsIdAddr"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubsInterfaceIndex"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natLimitSubscribers"
+      },
+      {
+        "module": "NAT-MIB",
+        "object": "natSubscriberMapNotifyThresh"
+      }
+    ],
+    "status": "current",
+    "description": "Per-subscriber counters, limits, and thresholds."
+  },
+  "natGroupSubscriberNotifications": {
+    "name": "natGroupSubscriberNotifications",
+    "oid": "1.3.6.1.2.1.123.2.1.14",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "NAT-MIB",
+        "object": "natNotifSubscriberMappings"
+      }
+    ],
+    "status": "current",
+    "description": "Subscriber notifications."
+  },
+  "natBasicStatelessCompliance": {
+    "name": "natBasicStatelessCompliance",
+    "oid": "1.3.6.1.2.1.123.2.2.3",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "natGroupStatelessObjects",
+        "module": "NAT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Basic stateless compliance with this MIB is attained when the objects contained in the mandatory groups are implemented."
+  },
+  "natBasicStatefulCompliance": {
+    "name": "natBasicStatefulCompliance",
+    "oid": "1.3.6.1.2.1.123.2.2.4",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "natGroupStatelessObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupStatefulObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupBasicNotifications",
+        "module": "NAT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Basic stateful compliance with this MIB is attained when the objects contained in the mandatory groups are implemented."
+  },
+  "natAddrMapCompliance": {
+    "name": "natAddrMapCompliance",
+    "oid": "1.3.6.1.2.1.123.2.2.5",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "natGroupStatelessObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupStatefulObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupBasicNotifications",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupAddrMapObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupAddrMapNotifications",
+        "module": "NAT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "NATs that have 'Paired IP address pooling' behavior [RFC4787] and implement the objects in this group can claim this level of compliance."
+  },
+  "natFragmentsCompliance": {
+    "name": "natFragmentsCompliance",
+    "oid": "1.3.6.1.2.1.123.2.2.6",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "natGroupStatelessObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupStatefulObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupBasicNotifications",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupFragmentObjects",
+        "module": "NAT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "NATs that have 'Receive Fragments Out of Order' behavior [RFC4787] and implement the objects in this group can claim this level of compliance."
+  },
+  "natCGNCompliance": {
+    "name": "natCGNCompliance",
+    "oid": "1.3.6.1.2.1.123.2.2.7",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "natGroupStatelessObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupStatefulObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupBasicNotifications",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupAddrMapObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupAddrMapNotifications",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupFragmentObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupSubscriberObjects",
+        "module": "NAT-MIB"
+      },
+      {
+        "object": "natGroupSubscriberNotifications",
+        "module": "NAT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "NATs that have 'Paired IP address pooling' and 'Receive Fragments Out of Order' behavior [RFC4787] and implement the objects in this group can claim this level of compliance. This level of compliance is to be expected of a CGN compliant with [RFC6888]."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/NAT-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:43:57 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "NAT-MIB"
+  }
+}

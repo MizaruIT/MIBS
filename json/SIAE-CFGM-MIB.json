@@ -1,0 +1,276 @@
+{
+  "imports": {
+    "class": "imports",
+    "SIAE-ALARM-MIB": [
+      "alarmTrap"
+    ],
+    "SIAE-EQUIP-MIB": [
+      "equipIpSnmpAgentAddress"
+    ],
+    "SIAE-TREE-MIB": [
+      "siaeMib"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "Gauge32",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "TimeTicks",
+      "MibIdentifier",
+      "Integer32",
+      "Bits",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "Unsigned32",
+      "NOTIFICATION-TYPE",
+      "iso"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "configManagement": {
+    "name": "configManagement",
+    "oid": "1.3.6.1.4.1.3373.1103.30",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2014-07-25 00:00",
+        "description": "MIB version 01.00.01 Added value configUseAndSwitch(5) to configManagementAction "
+      },
+      {
+        "revision": "2014-02-03 00:00",
+        "description": "Improved description of configManagementMibVersion "
+      },
+      {
+        "revision": "2013-04-16 00:00",
+        "description": "Initial version 01.00.00 "
+      }
+    ],
+    "lastupdated": "201407250000Z",
+    "organization": "SIAE MICROELETTRONICA spa",
+    "contactinfo": "SIAE MICROELETTONICA s.p.a. Via Michelangelo Buonarroti, 21 20093 - Cologno Monzese Milano - ITALY Phone : +39-02-27325-1 E-mail: tbd@siaemic.com ",
+    "description": "Backup and Restore (Configuration management) of the NE "
+  },
+  "configManagementMibVersion": {
+    "name": "configManagementMibVersion",
+    "oid": "1.3.6.1.4.1.3373.1103.30.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Numerical version of this module. The string version of this MIB have the following format: XX.YY.ZZ so, for example, the value 1 should be interpreted as 00.00.01 and the value 10001 should be interpreted as 01.00.01."
+  },
+  "configManagementFileName": {
+    "name": "configManagementFileName",
+    "oid": "1.3.6.1.4.1.3373.1103.30.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Name of the file, containing the equipment configuration, to upload or download according to the object configManagementAction"
+  },
+  "configManagementServerIpAddress": {
+    "name": "configManagementServerIpAddress",
+    "oid": "1.3.6.1.4.1.3373.1103.30.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Ip address of the SNMP manager connected from/to which the configuration is downloaded/uploaded, if this object is set '0.0.0.0', then the IP address of server is read from incoming ethernet packet."
+  },
+  "configManagementAction": {
+    "name": "configManagementAction",
+    "oid": "1.3.6.1.4.1.3373.1103.30.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "configNone": 0,
+          "configSave": 1,
+          "configUse": 2,
+          "configBack": 3,
+          "configAbort": 4,
+          "configUseAndSwitch": 5
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "configNone",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Action requested to the equipment: - configNone: no action required; - configSave: the current equipment configuration will be saved in the file whose name is written in the leaf configurationFileName through FTP protocol; - configUse: the configuration file, whose name is written in the leaf configurationFileName, will be transfer- red on the target through FTP protocol and it will be used after an implicit restart of the equip- ment. A copy of the current equipment configuration will be saved on the equipment filesystem in order to return to it. - configBack: the equipment configuration, saved during a config-use action will be used after an implicit restart of the equipment. - configAbort: the action in progress will be interrupted. - configBackAndSwich: the equipment configuration, saved during a config-use action will be used after an implicit bench switch of the equipment. The value of this object is self cleared (reset to the value configNone) after its use. "
+  },
+  "configManagementState": {
+    "name": "configManagementState",
+    "oid": "1.3.6.1.4.1.3373.1103.30.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "configCompleted": 1,
+          "configInterrupted": 2,
+          "configVerifying": 3,
+          "configSaving": 4,
+          "configDownloading": 5,
+          "configUploading": 6,
+          "configUsing": 7,
+          "configMakingCopy": 8,
+          "configAborting": 9,
+          "configRestarting": 10,
+          "configStarted": 11
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "configCompleted",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Action in progess state: - configCompleted: the action required has been successfully completed; - configInterrupted: the action required has been abnormally stopped; - configVerifying: the downloaded configuration is being checked if it is suitable for the equipment; - configSaving: current configuration is being saved to be tranferred to the manager; - configUploading: the current configuration is being transfer- red to the manager; - configDownloading: a configuration file is being transferred from the manager to the equipment; - configUsing: the current configuration is being overwrit- ten with the downloaded one or with the previously saved one; - configMaking-copy: a copy of the current configuration is being saved to eventually return to it; - configAborting: the current action is being aborted as requi- red by the config-abort action. - configRestarting: the equipment is restarting. - configStarted: the action required has been started; A trap is sent at every change of the object value. When the status become configStarted, the sent trap notifies the start of the required action. When the status become configCompleted or config-interrupted, the sent trap notifies a successfully or an abnormal end of the action in progress."
+  },
+  "configManagementFailure": {
+    "name": "configManagementFailure",
+    "oid": "1.3.6.1.4.1.3373.1103.30.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "configNoFailure": 0,
+          "configVerifying": 3,
+          "configSaving": 4,
+          "configDownloading": 5,
+          "configUploading": 6,
+          "configUsing": 7,
+          "configMakingCopy": 8,
+          "configAborted": 9
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "configNoFailure",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies the configuration upload/ download state in which errors have been detected. The value config-aborted means interrupted by user."
+  },
+  "configManagementBackupFileDate": {
+    "name": "configManagementBackupFileDate",
+    "oid": "1.3.6.1.4.1.3373.1103.30.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " Date and time of the previous configuration file saved by the config-use action. The value of this object is expressed as the number of seconds since the midnight of 1/1/1970. A zero value means no previous configuration file has been created."
+  },
+  "configManagementTrapNotification": {
+    "name": "configManagementTrapNotification",
+    "oid": "1.3.6.1.4.1.3373.1103.30.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "trapDisable": 1,
+          "trapEnable": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "trapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable/disable the trap generation on configuration tranfer operation"
+  },
+  "configManagementFtpStatusTrap": {
+    "name": "configManagementFtpStatusTrap",
+    "oid": "1.3.6.1.4.1.3373.1103.0.3001",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SIAE-EQUIP-MIB",
+        "object": "equipIpSnmpAgentAddress"
+      },
+      {
+        "module": "SIAE-CFGM-MIB",
+        "object": "configManagementState"
+      },
+      {
+        "module": "SIAE-CFGM-MIB",
+        "object": "configManagementFailure"
+      }
+    ],
+    "status": "current",
+    "description": "This event is generated by ALCP2E-NE when the status of configuration transfer is changed. The data passed with the event are: 1) equipIpSnmpAgentAddress 2) configurationState 3) configurationFailure"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SIAE-CFGM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:33:49 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SIAE-CFGM-MIB"
+  }
+}

@@ -1,0 +1,659 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "SIAE-TREE-MIB": [
+      "siaeMib"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "NOTIFICATION-TYPE",
+      "Gauge32",
+      "Unsigned32",
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "MibIdentifier",
+      "TimeTicks",
+      "Bits",
+      "IpAddress",
+      "Counter64",
+      "iso",
+      "Counter32"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "MacAddress",
+      "RowStatus",
+      "DisplayString"
+    ]
+  },
+  "mabMib": {
+    "name": "mabMib",
+    "oid": "1.3.6.1.4.1.3373.1103.93",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-02-17 00:00",
+        "description": "Initial version 01.00.00. "
+      }
+    ],
+    "lastupdated": "201502170000Z",
+    "organization": "SIAE MICROELETTRONICA spa",
+    "contactinfo": "SIAE MICROELETTONICA s.p.a. Via Michelangelo Buonarroti, 21 20093 - Cologno Monzese Milano - ITALY Phone : +39-02-27325-1 E-mail: help@siaemic.com ",
+    "description": "Microwave Adaptive Bandwidth (MAB) This management information module supports the configuration of the MW Capacity Management (MCM) feature developed by SIAE MICROELETTRONICA and Cisco that offers reliable QoS and optimized performances even under worst radio propagation conditions. The extension to the original functionality, consisting of the Link ID TLV, is considered by this MIB. "
+  },
+  "MabBwCalculationMethod": {
+    "name": "MabBwCalculationMethod",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "average": 1,
+          "min": 2,
+          "max": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "This Textual Convention describes the method of calculation of the radio bandwitdh (or the throughput of an interface): - average: Average Tx BW value across the observation interval - min: Minimum Tx BW value across the observation interval - max: Maximum Tx BW value across the observation interval "
+  },
+  "MabPduCompliance": {
+    "name": "MabPduCompliance",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "stdMcmCompliant": 1,
+          "extMcmCompliant": 2,
+          "ituG8013Compliant": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "This Textual Convention describes the compliance of the MAB PDU sent by a MAB PDU sender: - stdMcmCompliant: PDU format is compliant with [1] - extMcmCompliant: PDU format is compliant with [2] - ituG8013Compliant: PDU format is compliant with [4] Since [3] and [4] are a draft edition at the time when this MIB is being written, the value ituG8013Compliant(3) is defined for future use. ",
+    "reference": "[1] - MW CAPACITY MANAGEMENT (MCM) - FUNCTIONAL DESCRIPTION This document provides a description of the MW Capacity Management (MCM) feature developed by SIAE MICROELETTRONICA and Cisco. [2] - E-OAM Extensions for Microwave Adaptive Modulation Cisco Document Number EDCS-997459 [3] - Draft revised Recommendation ITU-T G.8021/Y.1341 (for Consent, 5 December 2014) [4] - Draft Amendment 1 to Recommendation ITU-T G.8013/Y.1731(2013) (for Consent, 5 December 2014) "
+  },
+  "MabSenderOption": {
+    "name": "MabSenderOption",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "enableAlways": 0,
+        "enableSignalFail": 1
+      }
+    },
+    "status": "current",
+    "description": "This Textual Convention describes the supported option of a MAB PDU sender: - enableAlways: Enable periodic PDU sending even if the current bandwidth is equal to the nominal bandwidth. - enableSignalFail: PDU are transmitted periodically when the link fails in the tranmit direction. If the NE usually sends PDUs also when the radio bandwitdh (or the throughput of an interface) is null, this option has no effect. ",
+    "reference": "[3] - Draft revised Recommendation ITU-T G.8021/Y.1341 (for Consent, 5 December 2014) "
+  },
+  "mabMibVersion": {
+    "name": "mabMibVersion",
+    "oid": "1.3.6.1.4.1.3373.1103.93.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Numerical version of this module. The string version of this MIB have the following format: XX.YY.ZZ so, for example, the value 1 should be interpreted as 00.00.01 and the value 10001 should be interpreted as 01.00.01. "
+  },
+  "mabSensorTable": {
+    "name": "mabSensorTable",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with MAB sensors entries. Each sensor is associated to a interface, usually an interface with the physical layer consisting of a radio link, and comapares the current bandwidth (throughput) with the nominal one. When nominal and current bandwidth doesn't match to PDU senders associated with a sensor is required to send a MAB PDU every observation time. "
+  },
+  "mabSensorEntry": {
+    "name": "mabSensorEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-MAB-MIB",
+        "object": "mabSensorIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in the mabSensorTable. "
+  },
+  "mabSensorIndex": {
+    "name": "mabSensorIndex",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the MAB sensor inside the Network Element. "
+  },
+  "mabSensorRowStatus": {
+    "name": "mabSensorRowStatus",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this MAB sensor entry. An entry may not exist in the active state unless all objects in the entry have an appropriate value: mabSensorIfIndex must be set to a valid ifIndex number. Otherwise, the error inconsistentValue is returned on the attempt to set active this row. When set to notInService changes may be made to mabSensorIfIndex. Other objects can be changed when mabSensorRowStatus is set to active. A sensor can not be deleted if there is any MAB PDU sender associated with it. "
+  },
+  "mabSensorAdminStatus": {
+    "name": "mabSensorAdminStatus",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "down": 1,
+          "up": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "down",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Administative status of the MAB sensor. The value down(1) turn off all MAB advisers associated with this sensor. "
+  },
+  "mabSensorIfIndex": {
+    "name": "mabSensorIfIndex",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object accepts a greater than zero value to identify an interface in ifTable. The throughput of the selected interface is monitored and notified to all MAB PDU sender associated with this sensor. "
+  },
+  "mabSensorLinkId": {
+    "name": "mabSensorLinkId",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object set the (radio) link identifier that will be inserted in the Link ID TLV of the MAB PDU. "
+  },
+  "mabSensorBwMode": {
+    "name": "mabSensorBwMode",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MabBwCalculationMethod",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "average",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the method of calculation of the current bandwidth. The value of this parameter is sent inside MAB PDUs. "
+  },
+  "mabSensorHoldoffTime": {
+    "name": "mabSensorHoldoffTime",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the wait time (in seconds) for MAB protocol before sending packets if the current bandwidth (throughput) is lower than the nominal. "
+  },
+  "mabSensorObservationTime": {
+    "name": "mabSensorObservationTime",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1
+          },
+          {
+            "min": 10,
+            "max": 10
+          },
+          {
+            "min": 60,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the observation time (in seconds) for MAB protocol during which calculate the minimum, maximum and average value of the current bandwidth (throughput). At the end of each period, a MAB PDU is sent by every MAB PDU sender associated with this sensor. "
+  },
+  "mabSensorFastTime": {
+    "name": "mabSensorFastTime",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 59
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Draft revised Recommendation ITU-T G.8021/Y.1341 (for Consent, 5 December 2014) - 8.1.18 BNM insert process ",
+    "status": "current",
+    "description": "This value is used in place of mabSensorObservationTime for the first mabSensorFastCount PDU packets sent by a MAB PDU sender. The value of mabSensorFastTime must be less than or equal to mabSensorObservationTime. "
+  },
+  "mabSensorFastCount": {
+    "name": "mabSensorFastCount",
+    "oid": "1.3.6.1.4.1.3373.1103.93.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Draft revised Recommendation ITU-T G.8021/Y.1341 (for Consent, 5 December 2014) - 8.1.18 BNM insert process ",
+    "status": "current",
+    "description": "This value specifies how many MAB PDU packets are sent every mabSensorFastTime before to use the standard observation time (mabSensorObservationTime). Zero means which quick sending of packets is disabled. "
+  },
+  "mabSensorStatusTable": {
+    "name": "mabSensorStatusTable",
+    "oid": "1.3.6.1.4.1.3373.1103.93.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with the status of MAB sensor entries. For each row in mabSensorTable a row is created in this table. "
+  },
+  "mabSensorStatusEntry": {
+    "name": "mabSensorStatusEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.93.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-MAB-MIB",
+        "object": "mabSensorIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in the mabSensorTable. "
+  },
+  "mabSensorNominalBw": {
+    "name": "mabSensorNominalBw",
+    "oid": "1.3.6.1.4.1.3373.1103.93.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object reports the nominal bandwidth (throughput) of the interface selected by mabSensorIfIndex. "
+  },
+  "mabSensorCurrentBw": {
+    "name": "mabSensorCurrentBw",
+    "oid": "1.3.6.1.4.1.3373.1103.93.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object reports the current bandwidth (throughput) of the interface selected by mabSensorIfIndex and calculated according to the method set in mabSensorBwMode. "
+  },
+  "mabPduSenderTable": {
+    "name": "mabPduSenderTable",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with MAB PDU sender entries. Each PDU sender refers to an ifIndex in ifTable on which to send a PDU MAB and a sensor that triggers the sending. "
+  },
+  "mabPduSenderEntry": {
+    "name": "mabPduSenderEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-MAB-MIB",
+        "object": "mabPduSenderIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in the mabPduSenderTable. "
+  },
+  "mabPduSenderIndex": {
+    "name": "mabPduSenderIndex",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the MAB PDU sender inside the Network Element. "
+  },
+  "mabPduSenderRowStatus": {
+    "name": "mabPduSenderRowStatus",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this mabPduSender entry. An entry may not exist in the active state unless all objects in the entry have an appropriate value: mabPduSenderIfIndex must be set to a valid ifIndex number and mabPduSenderSensorIndex must be set to a valid MAB sensor, Otherwise, the error inconsistentValue is returned on the attempt to set active this row. When set to notInService changes may be made to mabPduSenderIfIndex, mabPduSenderSensorIndex. Other objects can be changed when mabPduSenderRowStatus is set to active. "
+  },
+  "mabPduSenderAdminStatus": {
+    "name": "mabPduSenderAdminStatus",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "down": 1,
+          "up": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "down",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Administative status of the MAB PDU sender. "
+  },
+  "mabPduSenderIfIndex": {
+    "name": "mabPduSenderIfIndex",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object accepts a greater than zero value to identify an interface in ifTable. MAB PDU is sent over this interface. "
+  },
+  "mabPduSenderSensorIndex": {
+    "name": "mabPduSenderSensorIndex",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object associates a MAB sensor to this PDU sender. "
+  },
+  "mabPduSenderVlanId": {
+    "name": "mabPduSenderVlanId",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 4094
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the VLAN identifier used to tag the MAB PDU. Zero means the PDU is not tagged. "
+  },
+  "mabPduSenderPcp": {
+    "name": "mabPduSenderPcp",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 7,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines packet priority written into the tag of the MAB PDU. "
+  },
+  "mabPduSenderOamMaintLevel": {
+    "name": "mabPduSenderOamMaintLevel",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the OAM maintenance level of the MAB PDU. The multicast destination address of the PDU is according to the selected maintenance level: 01-80-C2-00-00-3x where x = Maintenance Level "
+  },
+  "mabPduSenderDAType": {
+    "name": "mabPduSenderDAType",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "multicastDA": 1,
+          "unicastDA": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "multicastDA",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the destination MAC address type of the PDU: - multicastDA(1): Multicast Class 1 Destination Address (DA) - unicastDA(2): Unicast Destination Address (DA) "
+  },
+  "mabPduSenderUnicastDA": {
+    "name": "mabPduSenderUnicastDA",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "000000000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the unuicast destination address of the PDU when mabPduSenderDAType is set to unicastDA(2). "
+  },
+  "mabPduSenderOption": {
+    "name": "mabPduSenderOption",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MabSenderOption",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object enable the option supported by the MAB PDU sender: - enableAlways: Enable periodic PDU sending even if the current bandwidth is equal to the nominal bandwidth. - enableSignalFail: PDU are transmitted periodically when the link fails in the tranmit direction. If the NE usually sends PDUs also when the radio bandwitdh (or the throughput of an interface) is null, this option has no effect. "
+  },
+  "mabPduSenderPduCompliance": {
+    "name": "mabPduSenderPduCompliance",
+    "oid": "1.3.6.1.4.1.3373.1103.93.4.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MabPduCompliance",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "stdMcmCompliant",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the compliance of the MAB PDU format. "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SIAE-MAB-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:39:07 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SIAE-MAB-MIB"
+  }
+}

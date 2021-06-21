@@ -1,0 +1,319 @@
+ISHELF-PRIV-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY,
+    Unsigned32,
+    IpAddress,
+	Integer32
+        FROM SNMPv2-SMI
+
+    DisplayString,
+    RowStatus,
+    TruthValue
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfPrivate,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+    ;
+
+iShelfPrivMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+        
+    DESCRIPTION "The MIB module for private data."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 11 }
+
+IShelfPrivateDebugLevel ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL DebugLvl
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "Debug level."
+    SYNTAX      INTEGER {
+                    off(0),
+                    l1(1),
+                    l2(2),
+		    l3(3)
+                }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR group
+iShelfPrivateGroup OBJECT IDENTIFIER ::= { iShelfPrivate 1 }
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfPrivateGroup - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR totalmem
+-- %CLICOLLABEL TotalMemory
+iShelfPrivateGroupTotalMemory OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total system memory."
+    ::= { iShelfPrivateGroup 1 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR freemem
+-- %CLICOLLABEL FreeMemory
+iShelfPrivateGroupFreeMemory OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Remaining free system memory."
+    ::= { iShelfPrivateGroup 2 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR xlateindbg
+-- %CLICOLLABEL XlateInDbg
+iShelfPrivateGroupXlateInDbg OBJECT-TYPE
+    SYNTAX      IShelfPrivateDebugLevel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Set/get xlate in debug level."
+    ::= { iShelfPrivateGroup 3 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR xlateoutdbg
+-- %CLICOLLABEL XlateOutDbg
+iShelfPrivateGroupXlateOutDbg OBJECT-TYPE
+    SYNTAX      IShelfPrivateDebugLevel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Set/get xlate out debug level."
+    ::= { iShelfPrivateGroup 4 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR xlatemgrdbg
+-- %CLICOLLABEL XlateMgrDbg
+iShelfPrivateGroupXlateMgrDbg OBJECT-TYPE
+    SYNTAX      IShelfPrivateDebugLevel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Set/get xlate mgr debug level."
+    ::= { iShelfPrivateGroup 5 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR xlateeventdbg
+-- %CLICOLLABEL XlateEventDbg
+iShelfPrivateGroupXlateEventDbg OBJECT-TYPE
+    SYNTAX      IShelfPrivateDebugLevel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Set/get xlate event debug level."
+    ::= { iShelfPrivateGroup 6 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR egwcpdbg
+-- %CLICOLLABEL EgwcpDbg
+iShelfPrivateGroupEgwcpDbg OBJECT-TYPE
+    SYNTAX      IShelfPrivateDebugLevel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Set/get egwcp debug level."
+    ::= { iShelfPrivateGroup 7 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR stubsdbg
+-- %CLICOLLABEL StubsDbg
+iShelfPrivateGroupStubsDbg OBJECT-TYPE
+    SYNTAX      IShelfPrivateDebugLevel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Set/get stubs debug level."
+    ::= { iShelfPrivateGroup 8 }
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR cputraps
+-- %CLICOLLABEL CpuTraps
+iShelfPrivateGroupCpuTraps OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The number of CPU traps received."
+    ::= { iShelfPrivateGroup 9 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfPrivateTrapQueueTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX priv
+-- %CLICMDABBR trapq
+iShelfPrivateTrapQueueTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfPrivateTrapQueueEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPrivateGroup 10 }
+
+iShelfPrivateTrapQueueEntry OBJECT-TYPE
+    SYNTAX      IShelfPrivateTrapQueueEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfPrivateTrapQueueIndex }
+    ::= { iShelfPrivateTrapQueueTable 1 }
+
+IShelfPrivateTrapQueueEntry ::=
+    SEQUENCE {
+        iShelfPrivateTrapQueueIndex
+            INTEGER,
+        iShelfPrivateTrapQueueSize
+            Integer32,
+        iShelfPrivateTrapQueueCurrentDepth
+            Integer32,
+        iShelfPrivateTrapQueueMaxDepth
+            Integer32,
+        iShelfPrivateTrapQueuePostedTraps
+            Integer32,
+        iShelfPrivateTrapQueueDroppedTraps
+            Integer32
+	}
+
+-- %CLICOLLABEL Index
+-- %CLICMDABBR index
+iShelfPrivateTrapQueueIndex OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    snmpTrap1(4),
+                    snmpTrap2(5)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Trap listener that the queue is associated with."
+    ::= { iShelfPrivateTrapQueueEntry 1 }
+
+-- %CLICOLLABEL Size
+-- %CLICMDABBR size
+iShelfPrivateTrapQueueSize OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The size of the trap queue."
+    ::= { iShelfPrivateTrapQueueEntry 2 }
+
+-- %CLICOLLABEL CurrDepth
+-- %CLICMDABBR currdep
+iShelfPrivateTrapQueueCurrentDepth OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current usage of the trap queue."
+    ::= { iShelfPrivateTrapQueueEntry 3 }
+
+-- %CLICOLLABEL MaxDepth
+-- %CLICMDABBR maxdep
+iShelfPrivateTrapQueueMaxDepth OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The max usage of the trap queue."
+    ::= { iShelfPrivateTrapQueueEntry 4 }
+
+-- %CLICOLLABEL Posted
+-- %CLICMDABBR post
+iShelfPrivateTrapQueuePostedTraps OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of traps posted to the queue."
+    ::= { iShelfPrivateTrapQueueEntry 5 }
+
+-- %CLICOLLABEL Dropped
+-- %CLICMDABBR dropped
+iShelfPrivateTrapQueueDroppedTraps OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of trapped dropped."
+    ::= { iShelfPrivateTrapQueueEntry 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysPrivateSnmpGroup - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %CLICMDABBR group
+-- %CLICMDPREFIX priv:snmp
+iShelfPrivateSnmpGroup OBJECT IDENTIFIER ::= { iShelfPrivateGroup 11 }
+
+
+-- %CLICOLLABEL RecvdPackets
+iShelfPrivateSnmpGroupRecvPackets OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Received packet count."
+    ::= { iShelfPrivateSnmpGroup 1 }
+
+-- %CLICOLLABEL MaxProTime
+iShelfPrivateSnmpGroupMaxProcessTime OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Max time taken to process recvd packet."
+    ::= { iShelfPrivateSnmpGroup 2 }
+
+-- %CLICOLLABEL Debug
+iShelfPrivateSnmpGroupDebug OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    off(0),
+                    on(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Enable debug tracing for snmp demon."
+    ::= { iShelfPrivateSnmpGroup 3 }
+
+-- %CLICOLLABEL Threshold
+iShelfPrivateSnmpGroupThreshold OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "If the recvd process time is greater or equal to this value (milliseconds),
+				 a threshold crossing is counted and a debug message is printed."
+    ::= { iShelfPrivateSnmpGroup 4 }
+
+-- %CLICOLLABEL ThresholdCross
+iShelfPrivateSnmpGroupThresholdCrossings OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Number of threshold crossings."
+    ::= { iShelfPrivateSnmpGroup 5 }
+
+END

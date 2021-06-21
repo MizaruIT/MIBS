@@ -1,0 +1,890 @@
+{
+  "imports": {
+    "class": "imports",
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "iso",
+      "IpAddress",
+      "MODULE-IDENTITY",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "Counter32",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "Unsigned32",
+      "Gauge32",
+      "Bits",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "PhysAddress",
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "RowStatus"
+    ],
+    "WS-SMI": [
+      "wsSw"
+    ],
+    "WS-TYPE-MIB": [
+      "DoActionNow",
+      "AbbrevRowStatus"
+    ]
+  },
+  "wsSwRoleFirewallMibModule": {
+    "name": "wsSwRoleFirewallMibModule",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2009-02-24 11:34",
+        "description": "02a05 Added Role sequence number as index to wsSwRoleMuTable"
+      },
+      {
+        "revision": "2009-02-06 11:32",
+        "description": "Added bit position any to encryption type."
+      },
+      {
+        "revision": "2008-12-04 20:18",
+        "description": "Incorporated review comments in the previous revision."
+      },
+      {
+        "revision": "2008-12-04 19:54",
+        "description": "Mib definition for role configuration, attaching Acls and displaying Mus belonging to a role"
+      },
+      {
+        "revision": "2007-07-04 11:29",
+        "description": "Added Initial MIB for Role based Firewall"
+      }
+    ],
+    "lastupdated": "200902241124Z",
+    "organization": "Motorola Pvt Ltd",
+    "contactinfo": "Contact-info.",
+    "description": "Description."
+  },
+  "RoleAuthType": {
+    "name": "RoleAuthType",
+    "class": "type",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "noneOrPreSharedKey": 0,
+        "eap": 1,
+        "kerberos": 2,
+        "hotspot": 3,
+        "macAuthentication": 4,
+        "any": 5
+      }
+    }
+  },
+  "RoleEncryptType": {
+    "name": "RoleEncryptType",
+    "class": "type",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "none": 0,
+        "wep64": 1,
+        "wep128": 2,
+        "tkip": 3,
+        "ccmp": 4,
+        "tkipccmp": 5,
+        "keyGuard": 6,
+        "wep128Keyguard": 7,
+        "any": 8
+      }
+    }
+  },
+  "StringMatchExpression": {
+    "name": "StringMatchExpression",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "exact": 1,
+          "contains": 2,
+          "notContains": 3,
+          "any": 4
+        }
+      }
+    }
+  },
+  "ValueCmpExpression": {
+    "name": "ValueCmpExpression",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "equal": 1,
+          "notequal": 2,
+          "any": 3
+        }
+      }
+    }
+  },
+  "wsSwRoleFirewall": {
+    "name": "wsSwRoleFirewall",
+    "oid": "1.3.6.1.4.1.388.14.2.20",
+    "class": "objectidentity"
+  },
+  "wsSwRoleFirewallMib": {
+    "name": "wsSwRoleFirewallMib",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1",
+    "class": "objectidentity"
+  },
+  "wsSwRoleTable": {
+    "name": "wsSwRoleTable",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Each MU will be assigned a role defined in this table"
+  },
+  "wsSwRoleEntry": {
+    "name": "wsSwRoleEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleSequenceNumber",
+        "implied": 0
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the role table"
+  },
+  "wsSwRoleSequenceNumber": {
+    "name": "wsSwRoleSequenceNumber",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If there are multiple role match, then the lowest sequence number match will be considered. This should be typically specified in multiples of 10 like 10, 20, 30 etc., so that new role can be inserted in between. For e.g. to insert another role between 10 and 20, one has to specify a match-seq-no value of 15."
+  },
+  "wsSwRoleName": {
+    "name": "wsSwRoleName",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 20
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Name of the Role"
+  },
+  "wsSwRoleAuthType": {
+    "name": "wsSwRoleAuthType",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RoleAuthType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU authentication type"
+  },
+  "wsSwRoleAuthMatchExpression": {
+    "name": "wsSwRoleAuthMatchExpression",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ValueCmpExpression",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU authentication to match"
+  },
+  "wsSwRoleEncType": {
+    "name": "wsSwRoleEncType",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RoleEncryptType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU encryption type"
+  },
+  "wsSwRoleEncMatchExpression": {
+    "name": "wsSwRoleEncMatchExpression",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ValueCmpExpression",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU encryption type to match"
+  },
+  "wsSwRoleApLocation": {
+    "name": "wsSwRoleApLocation",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Radio name configuration"
+  },
+  "wsSwRoleApLocationExpression": {
+    "name": "wsSwRoleApLocationExpression",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMatchExpression",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Matching expression which matches the radio name wsSwRoleRadioDescr with the radio name configured in wireless"
+  },
+  "wsSwRoleLocation": {
+    "name": "wsSwRoleLocation",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 40
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU zone "
+  },
+  "wsSwRoleLocationMatchExpression": {
+    "name": "wsSwRoleLocationMatchExpression",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMatchExpression",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Zone-name this should match any one the zones present in SOLE"
+  },
+  "wsSwRoleEssid": {
+    "name": "wsSwRoleEssid",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU essid "
+  },
+  "wsSwRoleEssidMatchExpression": {
+    "name": "wsSwRoleEssidMatchExpression",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMatchExpression",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "this should match the essid specified in wlan <wlan-index> ssid command in wireless context"
+  },
+  "wsSwRoleMuMac": {
+    "name": "wsSwRoleMuMac",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU MAC address"
+  },
+  "wsSwRoleMuMacMask": {
+    "name": "wsSwRoleMuMacMask",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies MU MAC mask "
+  },
+  "wsSwRoleMuMacAny": {
+    "name": "wsSwRoleMuMacAny",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The user does not want to set mac or mask"
+  },
+  "wsSwRoleGroupName": {
+    "name": "wsSwRoleGroupName",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 50
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Radio name configuration"
+  },
+  "wsSwRoleRadioGroupMatchExpression": {
+    "name": "wsSwRoleRadioGroupMatchExpression",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMatchExpression",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Matching expression which matches the radio name wsSwRoleRadioDescr with the radio name configured in wireless"
+  },
+  "wsSwRoleRowStatus": {
+    "name": "wsSwRoleRowStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AbbrevRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Create or delete an entry from role table"
+  },
+  "wsSwRoleFirewallPolicyTable": {
+    "name": "wsSwRoleFirewallPolicyTable",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table will assign firewall policy in inbound and outbound direction for a role"
+  },
+  "wsSwRoleFirewallPolicyEntry": {
+    "name": "wsSwRoleFirewallPolicyEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyRolePriority",
+        "implied": 0
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyRoleName",
+        "implied": 0
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyDirection",
+        "implied": 0
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyAclPrecedence",
+        "implied": 0
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyAclName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the RoleFirewallPolicy Table."
+  },
+  "wsSwRoleFirewallPolicyRolePriority": {
+    "name": "wsSwRoleFirewallPolicyRolePriority",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10001
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Role Priority needed for returning roles in a sorted order"
+  },
+  "wsSwRoleFirewallPolicyRoleName": {
+    "name": "wsSwRoleFirewallPolicyRoleName",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 20
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Name of Role"
+  },
+  "wsSwRoleFirewallPolicyDirection": {
+    "name": "wsSwRoleFirewallPolicyDirection",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This Firewall policy can be applied for which direction ( inbound or outbound) "
+  },
+  "wsSwRoleFirewallPolicyAclPrecedence": {
+    "name": "wsSwRoleFirewallPolicyAclPrecedence",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "ACL precedence - Each Role can have 2 Acls attached in either direction (IN and OUT). The precedences of Acls attached in same direction have to be different."
+  },
+  "wsSwRoleFirewallPolicyAclName": {
+    "name": "wsSwRoleFirewallPolicyAclName",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This either an IP Acl or a Mac ACL configured as apart of global Acl configuration which we are attaching to the role"
+  },
+  "wsSwRoleFirewallPolicyRowStatus": {
+    "name": "wsSwRoleFirewallPolicyRowStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AbbrevRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Row Status - supports create and delete"
+  },
+  "wsSwRoleMuTable": {
+    "name": "wsSwRoleMuTable",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRoleMuEntry": {
+    "name": "wsSwRoleMuEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRolePriority",
+        "implied": 0
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleMuTableRoleName",
+        "implied": 0
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleMuTableMUMac",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Table Of MU mac addresses belonging to a role"
+  },
+  "wsSwRolePriority": {
+    "name": "wsSwRolePriority",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Role Priority"
+  },
+  "wsSwRoleMuTableRoleName": {
+    "name": "wsSwRoleMuTableRoleName",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Role Name"
+  },
+  "wsSwRoleMuTableMUMac": {
+    "name": "wsSwRoleMuTableMUMac",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Mac address of MU belonging to the role"
+  },
+  "wsSwRoleAssignmentImmediateEnable": {
+    "name": "wsSwRoleAssignmentImmediateEnable",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable/Disable role assignment action immediate. When a new role is created send De-Auth to all MU's if this configuration is enabled. No de-auth will be sent if this flag is off, so Mu's will get applied with this new role when it connects next time."
+  },
+  "wsSwRoleConfigLastError": {
+    "name": "wsSwRoleConfigLastError",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "For displaying last error encountered during configuration"
+  },
+  "wsSwRoleFirewallConformance": {
+    "name": "wsSwRoleFirewallConformance",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.100",
+    "class": "objectidentity"
+  },
+  "wsSwRoleFirewallCompliances": {
+    "name": "wsSwRoleFirewallCompliances",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.100.1",
+    "class": "objectidentity"
+  },
+  "wsCcRfCompliance": {
+    "name": "wsCcRfCompliance",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.100.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "wsSwRoleFirewallGroup",
+        "module": "WS-SW-ROLE-FIREWALL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": " "
+  },
+  "wsSwRoleFirewallGroups": {
+    "name": "wsSwRoleFirewallGroups",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.100.2",
+    "class": "objectidentity"
+  },
+  "wsSwRoleFirewallGroup": {
+    "name": "wsSwRoleFirewallGroup",
+    "oid": "1.3.6.1.4.1.388.14.2.20.1.1.100.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleSequenceNumber"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleName"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleAuthType"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleAuthMatchExpression"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleEncType"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleEncMatchExpression"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleLocation"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleLocationMatchExpression"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleEssid"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleEssidMatchExpression"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleMuMac"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleMuMacMask"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleRowStatus"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyDirection"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyAclName"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyAclPrecedence"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyRowStatus"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyRoleName"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleGroupName"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleMuMacAny"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleFirewallPolicyRolePriority"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleConfigLastError"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleRadioGroupMatchExpression"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleApLocation"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleApLocationExpression"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRolePriority"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleMuTableMUMac"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleMuTableRoleName"
+      },
+      {
+        "module": "WS-SW-ROLE-FIREWALL-MIB",
+        "object": "wsSwRoleAssignmentImmediateEnable"
+      }
+    ],
+    "status": "current",
+    "description": " "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/WS-SW-ROLE-FIREWALL-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 20:03:36 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "WS-SW-ROLE-FIREWALL-MIB"
+  }
+}

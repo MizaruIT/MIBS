@@ -1,0 +1,2370 @@
+{
+  "imports": {
+    "class": "imports",
+    "CIENA-WS-MIB": [
+      "cienaWsConfig"
+    ],
+    "CIENA-WS-TYPEDEFS-MIB": [
+      "PtpId",
+      "TraceMismatchFailMode",
+      "TraceTxOperMode",
+      "Decimal2Dig",
+      "TraceMismatchMode",
+      "Decimal1Dig",
+      "Decimal2DigSmall",
+      "NameString",
+      "XcvrId",
+      "EnabledDisabledEnum",
+      "XcvrType",
+      "StringMaxl15",
+      "EnabledDisabledNaEnum",
+      "StringMaxl32",
+      "ChannelsNumber"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Integer32",
+      "Bits",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "Gauge32",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "TimeTicks",
+      "MibIdentifier",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "Unsigned32",
+      "iso",
+      "OBJECT-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "TruthValue"
+    ]
+  },
+  "cienaWsPtpMIB": {
+    "name": "cienaWsPtpMIB",
+    "oid": "1.3.6.1.4.1.1271.3.4.8",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2017-08-07 00:00",
+        "description": "Waveserver Release 1.5 Added 'properties/trace' container. Added ncx:user-write to 'ptps'. Added leaf 'spli-management' to container 'ptps/state'."
+      },
+      {
+        "revision": "2017-03-02 00:00",
+        "description": "Waveserver Release 1.4 Aligned MIB files to respect YANG read/write status."
+      },
+      {
+        "revision": "2016-12-12 00:00",
+        "description": "Waveserver Rel 1.3 revised. New status leafs added to 'channel/tx/power' and 'channel/rx/power' containers. New leaf 'properties/wavelength/actual' added. Changed some types to decimal-2-dig-small."
+      },
+      {
+        "revision": "2016-06-14 00:00",
+        "description": "Waveserver Rel 1.2 revised. Major restructuring of this YANG module."
+      },
+      {
+        "revision": "2016-02-01 00:00",
+        "description": "Waveserver Rel 1.1 revised. New 'ptp-adv-channel-status' container under 'ptp-status'. Added new 'ws-ptp-clear-ptp-statistics' rpc call."
+      },
+      {
+        "revision": "2015-04-29 00:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "201708070000Z",
+    "organization": "Ciena Corporation",
+    "contactinfo": "Web URL: http://www.ciena.com/ Postal: 7035 Ridge Road Hanover, Maryland 21076 U.S.A. Phone: +1 800-921-1144 Fax: +1 410-694-5750",
+    "description": "Physical Termination Point. This module models the physical characteristics of the signal. This base module contains generic definitions for all PTPs. Specific characteristics of PTPs can augment this model to provide more detail. PTPs are automatically provisioned by the system."
+  },
+  "PtpOpEnum": {
+    "name": "PtpOpEnum",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 0,
+          "down": 1,
+          "tuning": 2,
+          "fault": 3,
+          "unknown": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPtpsTable": {
+    "name": "cwsPtpPtpsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPtpsEntry": {
+    "name": "cwsPtpPtpsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpsTable."
+  },
+  "cwsPtpPtpsPtpIndex": {
+    "name": "cwsPtpPtpsPtpIndex",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Unique, index of the PTP. Key value for the PTP list. Read-only attribute."
+  },
+  "cwsPtpPtpIdTable": {
+    "name": "cwsPtpPtpIdTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Identification information of this PTP instance."
+  },
+  "cwsPtpPtpIdEntry": {
+    "name": "cwsPtpPtpIdEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpIdTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpIdTable."
+  },
+  "cwsPtpPtpIdTableSnmpKey": {
+    "name": "cwsPtpPtpIdTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpPtpId"
+  },
+  "cwsPtpPtpIdName": {
+    "name": "cwsPtpPtpIdName",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NameString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Name of the ptp instance. Read only attribute."
+  },
+  "cwsPtpPtpStateTable": {
+    "name": "cwsPtpPtpStateTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "State information of this PTP instance."
+  },
+  "cwsPtpPtpStateEntry": {
+    "name": "cwsPtpPtpStateEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpStateTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpStateTable."
+  },
+  "cwsPtpPtpStateTableSnmpKey": {
+    "name": "cwsPtpPtpStateTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpPtpState"
+  },
+  "cwsPtpPtpStateAdminState": {
+    "name": "cwsPtpPtpStateAdminState",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledDisabledEnum",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Administrative state (enabled or disabled) of the PTP. If Admin State is set to enabled, majority of the ptp fields will no longer be modifiable. When PTP Transmitter State is Disabled, PTP Admin State cannot be changed from Disabled to Enabled."
+  },
+  "cwsPtpPtpStateOperationalState": {
+    "name": "cwsPtpPtpStateOperationalState",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpOpEnum",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Operational state of the ptp. Read-only attribute."
+  },
+  "cwsPtpPtpStateSpliManagement": {
+    "name": "cwsPtpPtpStateSpliManagement",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledDisabledEnum",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "SPLI enabled or disabled state on the PTP."
+  },
+  "cwsPtpPtpPropertiesTable": {
+    "name": "cwsPtpPtpPropertiesTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "All the configurable and operational data of this PTP instance."
+  },
+  "cwsPtpPtpPropertiesEntry": {
+    "name": "cwsPtpPtpPropertiesEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpPropertiesTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpPropertiesTable."
+  },
+  "cwsPtpPtpPropertiesTableSnmpKey": {
+    "name": "cwsPtpPtpPropertiesTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpPtpProperties"
+  },
+  "cwsPtpPtpPropertiesXcvrType": {
+    "name": "cwsPtpPtpPropertiesXcvrType",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "XcvrType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Transceiver type of the xcvr that's associated with this ptp. Type depends on what is physically plugged in. Read only attribute."
+  },
+  "cwsPtpPtpPropertiesParentIndex": {
+    "name": "cwsPtpPtpPropertiesParentIndex",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "XcvrId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Index of the transceiver (XCVR) associated with the PTP. Read-only attribute."
+  },
+  "cwsPtpPtpPropertiesRate": {
+    "name": "cwsPtpPtpPropertiesRate",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "linerate10dot3125gbps": 1,
+          "linerate41dot25gbps": 2,
+          "linerate103dot125gpbs": 3,
+          "linerate2xotu4": 4,
+          "linerate1xotu4": 5,
+          "linerate1dot5xotu4": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Line Rate value, based off the mode of the parent XCVR."
+  },
+  "cwsPtpTransmitterTable": {
+    "name": "cwsPtpTransmitterTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "PTP transmitter related config and operational data fields."
+  },
+  "cwsPtpTransmitterEntry": {
+    "name": "cwsPtpTransmitterEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTransmitterTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpTransmitterTable."
+  },
+  "cwsPtpTransmitterTableSnmpKey": {
+    "name": "cwsPtpTransmitterTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpTransmitter"
+  },
+  "cwsPtpTransmitterState": {
+    "name": "cwsPtpTransmitterState",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledDisabledNaEnum",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Transmitter state (enabled or disabled) of the PTP. PTP Admin State cannot be changed to enabled unless transmitter-state is enabled."
+  },
+  "cwsPtpWavelengthTable": {
+    "name": "cwsPtpWavelengthTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpWavelengthEntry": {
+    "name": "cwsPtpWavelengthEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpWavelengthTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpWavelengthTable."
+  },
+  "cwsPtpWavelengthTableSnmpKey": {
+    "name": "cwsPtpWavelengthTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpWavelength"
+  },
+  "cwsPtpWavelengthValue": {
+    "name": "cwsPtpWavelengthValue",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal2Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Wavelength value setting of the ptp, in nm. This is the configured wavelength value. Wavelength value cannot be modified while Admin State is set to enabled, except when changing from zero value to another value. It also cannot be modified if the PTP XCVR type is not a modem. Wavelength cannot be modified in the same operation as Frequency, Channel, and Wavelength Spacing, only one of those fields may be modified in a single operation. If Wavelength is modified, Frequency and Channel will be automatically updated to valid values. Modification to this field will be validated against the Wavelength Spacing field. In the case of automatic wavelength assignment, if Member ID = n, Port 1 PTP Channel = (n * 2 - 1), P12 PTP Channel = (n * 2). If PTP Wavelength, Frequency, and Channel have non-zero values, automatic wavelength assignment shall be skipped. If user provisions a Member ID that exceeds the maximum wavelength allocation specified in selected Band Plan (e.g. setting Member ID to 45 with Fixed-88 plan), automatic wavelength assignment shall be skipped. "
+  },
+  "cwsPtpWavelengthMinValue": {
+    "name": "cwsPtpWavelengthMinValue",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal2DigSmall",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Wavelength Min value."
+  },
+  "cwsPtpWavelengthMaxValue": {
+    "name": "cwsPtpWavelengthMaxValue",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal2DigSmall",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Wavelength Max Value."
+  },
+  "cwsPtpWavelengthActual": {
+    "name": "cwsPtpWavelengthActual",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal2Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The actual wavelength value of the ptp. in nm. It may or may not be equal to the configurable 'wavelength/value'."
+  },
+  "cwsPtpChannelsTable": {
+    "name": "cwsPtpChannelsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "PTP channels related operational data fields."
+  },
+  "cwsPtpChannelsEntry": {
+    "name": "cwsPtpChannelsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelsTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpChannelsTable."
+  },
+  "cwsPtpChannelsTableSnmpKey": {
+    "name": "cwsPtpChannelsTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpChannels"
+  },
+  "cwsPtpChannelsNumberOfChannels": {
+    "name": "cwsPtpChannelsNumberOfChannels",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ChannelsNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of channels this PTP has."
+  },
+  "cwsPtpChannelTable": {
+    "name": "cwsPtpChannelTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.10",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Operational data of a specific PTP channel."
+  },
+  "cwsPtpChannelEntry": {
+    "name": "cwsPtpChannelEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.10.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelChannelNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpChannelTable."
+  },
+  "cwsPtpChannelChannelNumber": {
+    "name": "cwsPtpChannelChannelNumber",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.10.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Channel number of the channel status."
+  },
+  "cwsPtpRxPowerTable": {
+    "name": "cwsPtpRxPowerTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpRxPowerEntry": {
+    "name": "cwsPtpRxPowerEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelChannelNumber",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRxPowerTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpRxPowerTable."
+  },
+  "cwsPtpRxPowerTableSnmpKey": {
+    "name": "cwsPtpRxPowerTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpRxPower"
+  },
+  "cwsXcvrRxPowerActual": {
+    "name": "cwsXcvrRxPowerActual",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal1Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Actual Tx or Rx optical power in dBm."
+  },
+  "cwsXcvrRxPowerMaximum": {
+    "name": "cwsXcvrRxPowerMaximum",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal1Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Maximum Tx or Rx optical power in dBm."
+  },
+  "cwsXcvrRxPowerMinimum": {
+    "name": "cwsXcvrRxPowerMinimum",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal1Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Minimum Tx or Rx optical power in dBm."
+  },
+  "cwsXcvrRxPowerMaximumRecordedTime": {
+    "name": "cwsXcvrRxPowerMaximumRecordedTime",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The exact date and time when the maximum optical power (Tx or Rx) was recorded. In the format of a date time string."
+  },
+  "cwsXcvrRxPowerMinimumRecordedTime": {
+    "name": "cwsXcvrRxPowerMinimumRecordedTime",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.11.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The exact date and time when the minimum optical power (Tx or Rx) was recorded. In the format of a date time string."
+  },
+  "cwsPtpRxStatusTable": {
+    "name": "cwsPtpRxStatusTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpRxStatusEntry": {
+    "name": "cwsPtpRxStatusEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelChannelNumber",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRxStatusTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpRxStatusTable."
+  },
+  "cwsPtpRxStatusTableSnmpKey": {
+    "name": "cwsPtpRxStatusTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpRxStatus"
+  },
+  "cwsXcvrRxStatusHighAlarmStatus": {
+    "name": "cwsXcvrRxStatusHighAlarmStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power high alarm status, boolean, true if alarm is raised, false if alarm is not raised."
+  },
+  "cwsXcvrRxStatusLowAlarmStatus": {
+    "name": "cwsXcvrRxStatusLowAlarmStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power low alarm status, boolean, true if alarm is raised, false if alarm is not raised."
+  },
+  "cwsXcvrRxStatusHighWarningStatus": {
+    "name": "cwsXcvrRxStatusHighWarningStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power high warning status, boolean, true if warning is raised, false if warning is not raised."
+  },
+  "cwsXcvrRxStatusLowWarningStatus": {
+    "name": "cwsXcvrRxStatusLowWarningStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power low warning status, boolean, true if warning is raised, false if warning is not raised."
+  },
+  "cwsPtpRxStatusLossOfSignal": {
+    "name": "cwsPtpRxStatusLossOfSignal",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Rx Loss of Signal."
+  },
+  "cwsPtpRxStatusLossOfLock": {
+    "name": "cwsPtpRxStatusLossOfLock",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.12.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Rx Loss of Lock."
+  },
+  "cwsPtpTxPowerTable": {
+    "name": "cwsPtpTxPowerTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpTxPowerEntry": {
+    "name": "cwsPtpTxPowerEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelChannelNumber",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTxPowerTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpTxPowerTable."
+  },
+  "cwsPtpTxPowerTableSnmpKey": {
+    "name": "cwsPtpTxPowerTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpTxPower"
+  },
+  "cwsXcvrTxPowerActual": {
+    "name": "cwsXcvrTxPowerActual",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal1Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Actual Tx or Rx optical power in dBm."
+  },
+  "cwsXcvrTxPowerMaximum": {
+    "name": "cwsXcvrTxPowerMaximum",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal1Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Maximum Tx or Rx optical power in dBm."
+  },
+  "cwsXcvrTxPowerMinimum": {
+    "name": "cwsXcvrTxPowerMinimum",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Decimal1Dig",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Minimum Tx or Rx optical power in dBm."
+  },
+  "cwsXcvrTxPowerMaximumRecordedTime": {
+    "name": "cwsXcvrTxPowerMaximumRecordedTime",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The exact date and time when the maximum optical power (Tx or Rx) was recorded. In the format of a date time string."
+  },
+  "cwsXcvrTxPowerMinimumRecordedTime": {
+    "name": "cwsXcvrTxPowerMinimumRecordedTime",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.13.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The exact date and time when the minimum optical power (Tx or Rx) was recorded. In the format of a date time string."
+  },
+  "cwsPtpTxStatusTable": {
+    "name": "cwsPtpTxStatusTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.14",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpTxStatusEntry": {
+    "name": "cwsPtpTxStatusEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.14.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelChannelNumber",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTxStatusTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpTxStatusTable."
+  },
+  "cwsPtpTxStatusTableSnmpKey": {
+    "name": "cwsPtpTxStatusTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.14.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpTxStatus"
+  },
+  "cwsXcvrTxStatusHighAlarmStatus": {
+    "name": "cwsXcvrTxStatusHighAlarmStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.14.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power high alarm status, boolean, true if alarm is raised, false if alarm is not raised."
+  },
+  "cwsXcvrTxStatusLowAlarmStatus": {
+    "name": "cwsXcvrTxStatusLowAlarmStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.14.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power low alarm status, boolean, true if alarm is raised, false if alarm is not raised."
+  },
+  "cwsXcvrTxStatusHighWarningStatus": {
+    "name": "cwsXcvrTxStatusHighWarningStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.14.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power high warning status, boolean, true if warning is raised, false if warning is not raised."
+  },
+  "cwsXcvrTxStatusLowWarningStatus": {
+    "name": "cwsXcvrTxStatusLowWarningStatus",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.14.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Optical power low warning status, boolean, true if warning is raised, false if warning is not raised."
+  },
+  "cwsPtpDiagnosticsTable": {
+    "name": "cwsPtpDiagnosticsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.15",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpDiagnosticsEntry": {
+    "name": "cwsPtpDiagnosticsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.15.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpDiagnosticsTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpDiagnosticsTable."
+  },
+  "cwsPtpDiagnosticsTableSnmpKey": {
+    "name": "cwsPtpDiagnosticsTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.15.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpDiagnostics"
+  },
+  "cwsPtpDiagnosticsNumberOfChannels": {
+    "name": "cwsPtpDiagnosticsNumberOfChannels",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.15.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ChannelsNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of channels the PTP has."
+  },
+  "cwsPtpDiagnosticsNumberOfEthernet": {
+    "name": "cwsPtpDiagnosticsNumberOfEthernet",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.15.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of Ethernet connections the PTP has."
+  },
+  "cwsPtpPtpOpticalDiagnosticsTable": {
+    "name": "cwsPtpPtpOpticalDiagnosticsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.16",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPtpOpticalDiagnosticsEntry": {
+    "name": "cwsPtpPtpOpticalDiagnosticsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.16.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpOpticalDiagnosticsChannelNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpOpticalDiagnosticsTable."
+  },
+  "cwsPtpPtpOpticalDiagnosticsChannelNumber": {
+    "name": "cwsPtpPtpOpticalDiagnosticsChannelNumber",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.16.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Channel number of the physical diagnostic status."
+  },
+  "cwsPtpPtpRxOpticalDiagnosticsTable": {
+    "name": "cwsPtpPtpRxOpticalDiagnosticsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.17",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPtpRxOpticalDiagnosticsEntry": {
+    "name": "cwsPtpPtpRxOpticalDiagnosticsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.17.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpOpticalDiagnosticsChannelNumber",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpRxOpticalDiagnosticsTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpRxOpticalDiagnosticsTable."
+  },
+  "cwsPtpPtpRxOpticalDiagnosticsTableSnmpKey": {
+    "name": "cwsPtpPtpRxOpticalDiagnosticsTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.17.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpPtpRxOpticalDiagnostics"
+  },
+  "cwsPtpPtpRxOpticalDiagnosticsLossOfSignal": {
+    "name": "cwsPtpPtpRxOpticalDiagnosticsLossOfSignal",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.17.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Rx Loss of Signal."
+  },
+  "cwsPtpPtpRxOpticalDiagnosticsLossOfLock": {
+    "name": "cwsPtpPtpRxOpticalDiagnosticsLossOfLock",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.17.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Rx CDR Loss of Lock."
+  },
+  "cwsPtpPtpTxOpticalDiagnosticsTable": {
+    "name": "cwsPtpPtpTxOpticalDiagnosticsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.18",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPtpTxOpticalDiagnosticsEntry": {
+    "name": "cwsPtpPtpTxOpticalDiagnosticsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.18.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpOpticalDiagnosticsChannelNumber",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpTxOpticalDiagnosticsTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpTxOpticalDiagnosticsTable."
+  },
+  "cwsPtpPtpTxOpticalDiagnosticsTableSnmpKey": {
+    "name": "cwsPtpPtpTxOpticalDiagnosticsTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.18.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpPtpTxOpticalDiagnostics"
+  },
+  "cwsPtpPtpTxOpticalDiagnosticsLossOfSignal": {
+    "name": "cwsPtpPtpTxOpticalDiagnosticsLossOfSignal",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.18.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Tx Loss of Signal."
+  },
+  "cwsPtpPtpTxOpticalDiagnosticsLossOfLock": {
+    "name": "cwsPtpPtpTxOpticalDiagnosticsLossOfLock",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.18.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Tx Loss of Lock."
+  },
+  "cwsPtpPtpEthernetDiagnosticsTable": {
+    "name": "cwsPtpPtpEthernetDiagnosticsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.19",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPtpEthernetDiagnosticsEntry": {
+    "name": "cwsPtpPtpEthernetDiagnosticsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.19.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpEthernetDiagnosticsEthernetId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPtpEthernetDiagnosticsTable."
+  },
+  "cwsPtpPtpEthernetDiagnosticsEthernetId": {
+    "name": "cwsPtpPtpEthernetDiagnosticsEthernetId",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.19.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ethernet Connection Id."
+  },
+  "cwsPtpPmaTable": {
+    "name": "cwsPtpPmaTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.20",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPmaEntry": {
+    "name": "cwsPtpPmaEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.20.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpEthernetDiagnosticsEthernetId",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPmaTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPmaTable."
+  },
+  "cwsPtpPmaTableSnmpKey": {
+    "name": "cwsPtpPmaTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.20.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpPma"
+  },
+  "cwsPtpPmaSerdesOutOfLock": {
+    "name": "cwsPtpPmaSerdesOutOfLock",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.20.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Display true if the serializer/deserializer, on a given lane (1 for 10GE, 4 for 40GE and 20 for 100GE), is unable to lock to the incoming signal. Display false otherwise."
+  },
+  "cwsPtpFecTable": {
+    "name": "cwsPtpFecTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.21",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpFecEntry": {
+    "name": "cwsPtpFecEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.21.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpEthernetDiagnosticsEthernetId",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpFecTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpFecTable."
+  },
+  "cwsPtpFecTableSnmpKey": {
+    "name": "cwsPtpFecTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.21.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpFec"
+  },
+  "cwsPtpFecLossOfAlignmentMarkerLock": {
+    "name": "cwsPtpFecLossOfAlignmentMarkerLock",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.21.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Loss of Alignment Marker lock."
+  },
+  "cwsPtpPcsTable": {
+    "name": "cwsPtpPcsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.22",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpPcsEntry": {
+    "name": "cwsPtpPcsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.22.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpEthernetDiagnosticsEthernetId",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPcsTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpPcsTable."
+  },
+  "cwsPtpPcsTableSnmpKey": {
+    "name": "cwsPtpPcsTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.22.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpPcs"
+  },
+  "cwsPtpPcsLossOfAlignmentMarker": {
+    "name": "cwsPtpPcsLossOfAlignmentMarker",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.22.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Loss of Alignment Marker."
+  },
+  "cwsPtpPcsLossOfBlockLock": {
+    "name": "cwsPtpPcsLossOfBlockLock",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.22.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Loss of Block Lock."
+  },
+  "cwsPtpPcsHighBitErrorRate": {
+    "name": "cwsPtpPcsHighBitErrorRate",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.22.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High bit error rate."
+  },
+  "cwsPtpRsTable": {
+    "name": "cwsPtpRsTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.23",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpRsEntry": {
+    "name": "cwsPtpRsEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.23.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpEthernetDiagnosticsEthernetId",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRsTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpRsTable."
+  },
+  "cwsPtpRsTableSnmpKey": {
+    "name": "cwsPtpRsTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.23.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpRs"
+  },
+  "cwsPtpRsLinkDown": {
+    "name": "cwsPtpRsLinkDown",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.23.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Link Down."
+  },
+  "cwsPtpRsLocalFault": {
+    "name": "cwsPtpRsLocalFault",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.23.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Local Fault."
+  },
+  "cwsPtpRsRemoteFault": {
+    "name": "cwsPtpRsRemoteFault",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.23.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Remote Fault."
+  },
+  "cwsPtpTraceTable": {
+    "name": "cwsPtpTraceTable",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "None"
+  },
+  "cwsPtpTraceEntry": {
+    "name": "cwsPtpTraceEntry",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceTableSnmpKey",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry for cwsPtpTraceTable."
+  },
+  "cwsPtpTraceTableSnmpKey": {
+    "name": "cwsPtpTraceTableSnmpKey",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique key for cwsPtpTrace"
+  },
+  "cwsPtpTraceMismatchMode": {
+    "name": "cwsPtpTraceMismatchMode",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TraceMismatchMode",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Mismatch Mode"
+  },
+  "cwsPtpTraceMismatchFailMode": {
+    "name": "cwsPtpTraceMismatchFailMode",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TraceMismatchFailMode",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Mismatch Failure Mode"
+  },
+  "cwsPtpTraceTxSapi": {
+    "name": "cwsPtpTraceTxSapi",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl15",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "SAPI Tx String"
+  },
+  "cwsPtpTraceTxDapi": {
+    "name": "cwsPtpTraceTxDapi",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl15",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "DAPI Tx String"
+  },
+  "cwsPtpTraceTxOper": {
+    "name": "cwsPtpTraceTxOper",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Operator Tx String"
+  },
+  "cwsPtpTraceTxOperActual": {
+    "name": "cwsPtpTraceTxOperActual",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Operator Tx String Actual"
+  },
+  "cwsPtpTraceTxOperMode": {
+    "name": "cwsPtpTraceTxOperMode",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TraceTxOperMode",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Operator Tx Mode"
+  },
+  "cwsPtpTraceRxSapi": {
+    "name": "cwsPtpTraceRxSapi",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl15",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "SAPI Rx String"
+  },
+  "cwsPtpTraceRxDapi": {
+    "name": "cwsPtpTraceRxDapi",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl15",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "DAPI Rx String"
+  },
+  "cwsPtpTraceRxOper": {
+    "name": "cwsPtpTraceRxOper",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Operator Rx String"
+  },
+  "cwsPtpTraceExpSapi": {
+    "name": "cwsPtpTraceExpSapi",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl15",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "SAPI Expected Rx String"
+  },
+  "cwsPtpTraceExpDapi": {
+    "name": "cwsPtpTraceExpDapi",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl15",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "DAPI Expected Rx String"
+  },
+  "cwsPtpTraceExpOper": {
+    "name": "cwsPtpTraceExpOper",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.24.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StringMaxl32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Operator Expected Rx String"
+  },
+  "cienaWsPtpObjects": {
+    "name": "cienaWsPtpObjects",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.1",
+    "class": "objectidentity"
+  },
+  "cienaWsPtpConformance": {
+    "name": "cienaWsPtpConformance",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.2",
+    "class": "objectidentity"
+  },
+  "cienaWsPtpGroups": {
+    "name": "cienaWsPtpGroups",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.2.1",
+    "class": "objectidentity"
+  },
+  "cienaWsPtpGroup": {
+    "name": "cienaWsPtpGroup",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpsPtpIndex"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpIdName"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpStateAdminState"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpStateOperationalState"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpStateSpliManagement"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpPropertiesXcvrType"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpPropertiesParentIndex"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpPropertiesRate"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTransmitterState"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpWavelengthValue"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpWavelengthMinValue"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpWavelengthMaxValue"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpWavelengthActual"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelsNumberOfChannels"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpChannelChannelNumber"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxPowerActual"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxPowerMaximum"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxPowerMinimum"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxPowerMaximumRecordedTime"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxPowerMinimumRecordedTime"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxStatusHighAlarmStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxStatusLowAlarmStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxStatusHighWarningStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrRxStatusLowWarningStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRxStatusLossOfSignal"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRxStatusLossOfLock"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxPowerActual"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxPowerMaximum"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxPowerMinimum"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxPowerMaximumRecordedTime"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxPowerMinimumRecordedTime"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxStatusHighAlarmStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxStatusLowAlarmStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxStatusHighWarningStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsXcvrTxStatusLowWarningStatus"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpDiagnosticsNumberOfChannels"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpDiagnosticsNumberOfEthernet"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpOpticalDiagnosticsChannelNumber"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpRxOpticalDiagnosticsLossOfSignal"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpRxOpticalDiagnosticsLossOfLock"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpTxOpticalDiagnosticsLossOfSignal"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpTxOpticalDiagnosticsLossOfLock"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPtpEthernetDiagnosticsEthernetId"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPmaSerdesOutOfLock"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpFecLossOfAlignmentMarkerLock"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPcsLossOfAlignmentMarker"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPcsLossOfBlockLock"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpPcsHighBitErrorRate"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRsLinkDown"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRsLocalFault"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpRsRemoteFault"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceMismatchMode"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceMismatchFailMode"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceTxSapi"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceTxDapi"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceTxOper"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceTxOperActual"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceTxOperMode"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceRxSapi"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceRxDapi"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceRxOper"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceExpSapi"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceExpDapi"
+      },
+      {
+        "module": "CIENA-WS-PTP-MIB",
+        "object": "cwsPtpTraceExpOper"
+      }
+    ],
+    "status": "current",
+    "description": "Conformance Group"
+  },
+  "cienaWsPtpCompliances": {
+    "name": "cienaWsPtpCompliances",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.2.2",
+    "class": "objectidentity"
+  },
+  "cienaWsPtpCompliance": {
+    "name": "cienaWsPtpCompliance",
+    "oid": "1.3.6.1.4.1.1271.3.4.8.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cienaWsPtpGroup",
+        "module": "CIENA-WS-PTP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CIENA-WS-PTP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:54:03 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CIENA-WS-PTP-MIB"
+  }
+}

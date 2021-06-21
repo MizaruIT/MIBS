@@ -1,0 +1,1404 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndexOrZero",
+      "ifIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddress",
+      "InetAddressType"
+    ],
+    "OSPF-MIB": [
+      "RouterID"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "IpAddress",
+      "OBJECT-TYPE",
+      "MibIdentifier",
+      "Bits",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "mib-2",
+      "TimeTicks",
+      "iso",
+      "Unsigned32",
+      "NOTIFICATION-TYPE",
+      "Gauge32",
+      "Counter64",
+      "Integer32"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "StorageType",
+      "RowStatus"
+    ]
+  },
+  "linkBundlingMIB": {
+    "name": "linkBundlingMIB",
+    "oid": "1.3.6.1.2.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2002-11-01 12:00",
+        "description": "Initial version published as RFC xxxx (to be assigned by RFC Editor)"
+      }
+    ],
+    "lastupdated": "200211011200Z",
+    "organization": "Multiprotocol Label Switching (MPLS) Working Group",
+    "contactinfo": " Martin Dubuc Email: dubuc.consulting@rogers.com Sudheer Dharanikota Email: sudheer@ieee.org Thomas D. Nadeau Postal: Cisco Systems, Inc. 300 Apollo Drive Chelmsford, MA 01824 Tel: +1-978-244-3051 Email: tnadeau@cisco.com Jonathan P. Lang Postal: Calient Networks, Inc. 25 Castilian Drive Goleta, CA 93117 Email: jplang@calient.net",
+    "description": "This MIB contains managed object definitions for MPLS traffic engineering link bundling as defined in: Kompella, K., Rekhter, Y., Berger, L., Link Bundling in MPLS Traffic Engineering Internet Draft <draft-ietf-mpls-bundling-04.txt>, July 2002."
+  },
+  "linkBundlingNotifications": {
+    "name": "linkBundlingNotifications",
+    "oid": "1.3.6.1.2.1.1.0",
+    "class": "objectidentity"
+  },
+  "linkBundlingObjects": {
+    "name": "linkBundlingObjects",
+    "oid": "1.3.6.1.2.1.1.1",
+    "class": "objectidentity"
+  },
+  "linkBundlingConformance": {
+    "name": "linkBundlingConformance",
+    "oid": "1.3.6.1.2.1.1.2",
+    "class": "objectidentity"
+  },
+  "teLinkTable": {
+    "name": "teLinkTable",
+    "oid": "1.3.6.1.2.1.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the grouping of component links into TE links and grouping of TE links into bundled links."
+  },
+  "teLinkEntry": {
+    "name": "teLinkEntry",
+    "oid": "1.3.6.1.2.1.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table exists for each ifEntry with an ifType of teLink(TBD), i.e. for every TE link. An ifEntry in the ifTable must exist before a teLinkEntry is created with the corresponding ifIndex. If a TE link entry in the ifTable is destroyed, then so is the corresponding entry in the teLinkTable. The administrative and operational status values are controlled from the ifEntry. If the link is unnumbered, ifIndex is also used as the outgoing interface identifier."
+  },
+  "teLinkIpAddrType": {
+    "name": "teLinkIpAddrType",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For IPv4 and IPv6 numbered links, this object represents the IP address type associated with the TE link. For unnumbered links, a value of unknown(0) must be used."
+  },
+  "teLinkIpAddr": {
+    "name": "teLinkIpAddr",
+    "oid": "1.3.6.1.2.1.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For IPv4 and IPv6 numbered links, this object represents the IP address associated with the TE link."
+  },
+  "teLinkRemoteIpAddr": {
+    "name": "teLinkRemoteIpAddr",
+    "oid": "1.3.6.1.2.1.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The remote IP address associated with the TE link (IPv4 and IPv6 numbered links)."
+  },
+  "teLinkMetric": {
+    "name": "teLinkMetric",
+    "oid": "1.3.6.1.2.1.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[BUNDLING]",
+    "status": "current",
+    "description": "The traffic engineering metric for the TE link is derived from its component links. All component links within the TE link must have the same traffic engineering metric."
+  },
+  "teLinkMuxCapability": {
+    "name": "teLinkMuxCapability",
+    "oid": "1.3.6.1.2.1.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "packetSwitch1": 1,
+          "packetSwitch2": 2,
+          "packetSwitch3": 3,
+          "packetSwitch4": 4,
+          "layer2Switch": 51,
+          "tdm": 100,
+          "lambdaSwitch": 150,
+          "fiberSwitch": 200
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies link multiplex capability of the TE link, which is derived from its component links. All component links within the same TE link must have the same link multiplex capability."
+  },
+  "teLinkProtectionType": {
+    "name": "teLinkProtectionType",
+    "oid": "1.3.6.1.2.1.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "extraTraffic": 1,
+          "unprotected": 2,
+          "shared": 3,
+          "dedicated1For1": 4,
+          "dedicated1Plus1": 5,
+          "enhanced": 6
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies link protection type of the TE link."
+  },
+  "teLinkWorkingPriority": {
+    "name": "teLinkWorkingPriority",
+    "oid": "1.3.6.1.2.1.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This object represents a priority value such that a new connection with a higher priority, i.e. numerically lower than this value, is guaranteed to be setup on a primary link and not on a secondary link."
+  },
+  "teLinkResourceClass": {
+    "name": "teLinkResourceClass",
+    "oid": "1.3.6.1.2.1.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute specifies the TE link resource class. The resource class is a 32 bit bitfield. The resource class for a link bundle is derived from the resource class of its TE links. All TE links within a link bundle must have the same resource class."
+  },
+  "teLinkIncomingIfId": {
+    "name": "teLinkIncomingIfId",
+    "oid": "1.3.6.1.2.1.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[BUNDLING]",
+    "status": "current",
+    "description": "For unnumbered links, the incoming interface is set to the outgoing interface identifier chosen by the neighboring LSR for the reverse link corresponding to this TE link."
+  },
+  "teLinkOutgoingIfId": {
+    "name": "teLinkOutgoingIfId",
+    "oid": "1.3.6.1.2.1.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[BUNDLING]",
+    "status": "current",
+    "description": "If the link is unnumbered, the outgoing interface identifier is set to the outgoing interface identifier chosen for the TE link by the advertising LSR."
+  },
+  "teLinkFlooding": {
+    "name": "teLinkFlooding",
+    "oid": "1.3.6.1.2.1.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[FLOOD]",
+    "status": "current",
+    "description": "This object only has significance for link bundles which encoding type is not clear. For these link bundles, this object identifies the TE link on which to restrict flooding. If the value is zero, then flooding must be done on all TE links within the link bundle."
+  },
+  "teLinkRowStatus": {
+    "name": "teLinkRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, and/or delete a row in this table. All read-create objects can only be changed when teLinkRowStatus is active."
+  },
+  "teLinkStorageType": {
+    "name": "teLinkStorageType",
+    "oid": "1.3.6.1.2.1.1.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row in the teLinkTable. Conceptual rows having the value 'permanent' need not allow write-access to any columnar object in the row."
+  },
+  "teLinkDescriptorTable": {
+    "name": "teLinkDescriptorTable",
+    "oid": "1.3.6.1.2.1.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the link descriptors associated with the TE links."
+  },
+  "teLinkDescriptorEntry": {
+    "name": "teLinkDescriptorEntry",
+    "oid": "1.3.6.1.2.1.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkDescriptorId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created for every TE link descriptor. An ifEntry in the ifTable must exist before a teLinkDescriptorEntry using the same ifIndex is created. If a TE link entry in the ifTable is destroyed, then so are all entries in the teLinkDescriptorTable that use the ifIndex of this TE link."
+  },
+  "teLinkDescriptorId": {
+    "name": "teLinkDescriptorId",
+    "oid": "1.3.6.1.2.1.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the link descriptor identifier."
+  },
+  "teLinkEncodingType": {
+    "name": "teLinkEncodingType",
+    "oid": "1.3.6.1.2.1.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "packet": 1,
+          "ethernet": 2,
+          "ansiEtsiPdh": 3,
+          "sdhItuSonetAnsi": 5,
+          "digitalWrapper": 7,
+          "lambda": 8,
+          "fiber": 9,
+          "fiberChannel": 11
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS]",
+    "status": "current",
+    "description": "This attribute specifies the TE link encoding type."
+  },
+  "teLinkDescrPriority": {
+    "name": "teLinkDescrPriority",
+    "oid": "1.3.6.1.2.1.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This object specifies the lowest priority at which that link encoding type is available."
+  },
+  "teLinkMinReservableBandwidth": {
+    "name": "teLinkMinReservableBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies the minimum reservable bandwidth on the TE link. This is derived from the union of the minimum reservable bandwidth of all the component links associated with the TE link that can be used to carry live traffic. This value is an estimate in units of 1,000 bits per second."
+  },
+  "teLinkMaxReservableBandwidth": {
+    "name": "teLinkMaxReservableBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies the maximum reservable bandwidth on the TE link. This is the union of the maximum reservable bandwidth of all the component links within the TE link that can be used to carry live traffic. This value is an estimate in units of 1,000 bits per second."
+  },
+  "teLinkDescrRowStatus": {
+    "name": "teLinkDescrRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, and/or delete a row in this table. All read-create objects can only be changed when teLinkDescrRowStatus is active."
+  },
+  "teLinkDescrStorageType": {
+    "name": "teLinkDescrStorageType",
+    "oid": "1.3.6.1.2.1.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row in the teLinkDescriptorTable. Conceptual rows having the value 'permanent' need not allow write-access to any columnar object in the row."
+  },
+  "teLinkOspfTeTable": {
+    "name": "teLinkOspfTeTable",
+    "oid": "1.3.6.1.2.1.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the OSPF traffic engineering information associated with TE links."
+  },
+  "teLinkOspfTeEntry": {
+    "name": "teLinkOspfTeEntry",
+    "oid": "1.3.6.1.2.1.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "teLinkOspfTeEntry",
+      "module": "LINK-BUNDLING-MIB",
+      "object": "teLinkEntry"
+    },
+    "status": "current",
+    "description": "If OSPF is enabled, an entry in this table is created for every TE link."
+  },
+  "teLinkOspfLinkType": {
+    "name": "teLinkOspfLinkType",
+    "oid": "1.3.6.1.2.1.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "pointToPoint": 1,
+          "multiAccess": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute specifies the OSPF link type for the TE link. All TE links within the same bundle must have the same link type."
+  },
+  "teLinkOspfLinkId": {
+    "name": "teLinkOspfLinkId",
+    "oid": "1.3.6.1.2.1.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RouterID",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[BUNDLING]",
+    "status": "current",
+    "description": "On point-to-point link, the link identifier is the Router ID of the neighbor. For bundled link, is derived from the link identifier associated with its TE links."
+  },
+  "teLinkSrlgTable": {
+    "name": "teLinkSrlgTable",
+    "oid": "1.3.6.1.2.1.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the SRLGs associated with TE links."
+  },
+  "teLinkSrlgEntry": {
+    "name": "teLinkSrlgEntry",
+    "oid": "1.3.6.1.2.1.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "srlg",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table contains information about a SRLG associated with a TE link. An ifEntry in the ifTable must exist before a teLinkSrlgEntry using the same ifIndex is created. If a TE link entry in the ifTable is destroyed, then so are all entries in the teLinkSrlgTable that use the ifIndex of this TE link."
+  },
+  "srlg": {
+    "name": "srlg",
+    "oid": "1.3.6.1.2.1.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This identifies a SRLG supported by the TE link."
+  },
+  "srlgRowStatus": {
+    "name": "srlgRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, and/or delete a row in this table. All read-create objects can only be changed when srlgRowStatus is active."
+  },
+  "srlgStorageType": {
+    "name": "srlgStorageType",
+    "oid": "1.3.6.1.2.1.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row in the teLinkSrlgTable. Conceptual rows having the value 'permanent' need not allow write-access to any columnar object in the row."
+  },
+  "teLinkBandwidthTable": {
+    "name": "teLinkBandwidthTable",
+    "oid": "1.3.6.1.2.1.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the priority-based bandwidth table for TE links."
+  },
+  "teLinkBandwidthEntry": {
+    "name": "teLinkBandwidthEntry",
+    "oid": "1.3.6.1.2.1.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkPriority",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table contains information about the priority-based bandwidth of TE links. An ifEntry in the ifTable must exist before a teLinkBandwidthEntry using the same ifIndex is created. If a TE link entry in the ifTable is destroyed, then so are all entries in the teLinkBandwidthTable that use the ifIndex of this TE link."
+  },
+  "teLinkPriority": {
+    "name": "teLinkPriority",
+    "oid": "1.3.6.1.2.1.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies the priority. It should be mapped to a number between 0 and 7"
+  },
+  "teLinkUnreservedBandwidth": {
+    "name": "teLinkUnreservedBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[BUNDLING]",
+    "status": "current",
+    "description": "This attribute specifies the TE link unreserved bandwidth at priority p. It is the sum of the unreserved bandwidths at priority p of all component links associated with the TE link (excludes all links that are strictly used as protecting links). This value is an estimate in units of 1,000 bits per second."
+  },
+  "teLinkMaximumLspBandwidth": {
+    "name": "teLinkMaximumLspBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[BUNDLING]",
+    "status": "current",
+    "description": "This attribute specifies the TE link maximum LSP bandwidth at priority p. It is the maximum of all maximum LSP bandwidth at priority p of the component links associated with the TE link (excludes all links that are strictly used as protecting links). This value is an estimate in units of 1,000 bits per second."
+  },
+  "teLinkBandwidthRowStatus": {
+    "name": "teLinkBandwidthRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, and/or delete a row in this table. All read-create objects can only be changed when teLinkBandwidthRowStatus is active."
+  },
+  "teLinkBandwidthStorageType": {
+    "name": "teLinkBandwidthStorageType",
+    "oid": "1.3.6.1.2.1.1.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row in the teLinkBandwidthTable. Conceptual rows having the value 'permanent' need not allow write-access to any columnar object in the row."
+  },
+  "componentLinkTable": {
+    "name": "componentLinkTable",
+    "oid": "1.3.6.1.2.1.1.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the component link parameters."
+  },
+  "componentLinkEntry": {
+    "name": "componentLinkEntry",
+    "oid": "1.3.6.1.2.1.1.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table exists for each ifEntry that represents a component link. An ifEntry must exist in the ifTable before a componentLinkEntry is created with the corresponding ifIndex. If an entry representing a component link is destroyed in the ifTable, then so is the corresponding entry in the componentLinkTable. The administrative and operational status values are controlled from the ifEntry."
+  },
+  "componentLinkMuxCapability": {
+    "name": "componentLinkMuxCapability",
+    "oid": "1.3.6.1.2.1.1.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "packetSwitch1": 1,
+          "packetSwitch2": 2,
+          "packetSwitch3": 3,
+          "packetSwitch4": 4,
+          "layer2Switch": 51,
+          "tdm": 100,
+          "lambdaSwitch": 150,
+          "fiberSwitch": 200
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies link multiplexing capabilities of the component link."
+  },
+  "componentLinkPreferredProtection": {
+    "name": "componentLinkPreferredProtection",
+    "oid": "1.3.6.1.2.1.1.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "primary": 1,
+          "secondary": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute specifies whether this component link is a primary or secondary entity."
+  },
+  "componentLinkCurrentProtection": {
+    "name": "componentLinkCurrentProtection",
+    "oid": "1.3.6.1.2.1.1.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "primary": 1,
+          "secondary": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This attribute specifies whether this component link is currently used as primary or secondary link."
+  },
+  "componentLinkRowStatus": {
+    "name": "componentLinkRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, and/or delete a row in this table. All read-create objects can only be changed when componentLinkRowStatus is active."
+  },
+  "componentLinkStorageType": {
+    "name": "componentLinkStorageType",
+    "oid": "1.3.6.1.2.1.1.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row in the componentLinkTable. Conceptual rows having the value 'permanent' need not allow write-access to any columnar object in the row."
+  },
+  "componentLinkDescriptorTable": {
+    "name": "componentLinkDescriptorTable",
+    "oid": "1.3.6.1.2.1.1.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the link descriptors associated with the component links."
+  },
+  "componentLinkDescriptorEntry": {
+    "name": "componentLinkDescriptorEntry",
+    "oid": "1.3.6.1.2.1.1.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkDescrId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created for every component link descriptor. An ifEntry in the ifTable must exist before a componentLinkDescriptorEntry using the same ifIndex is created. If a component link entry in the ifTable is destroyed, then so are all entries in the componentLinkDescriptorTable that use the ifIndex of this component link."
+  },
+  "componentLinkDescrId": {
+    "name": "componentLinkDescrId",
+    "oid": "1.3.6.1.2.1.1.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the link descriptor identifier."
+  },
+  "componentLinkEncodingType": {
+    "name": "componentLinkEncodingType",
+    "oid": "1.3.6.1.2.1.1.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "packet": 1,
+          "ethernet": 2,
+          "ansiEtsiPdh": 3,
+          "sdhItuSonetAnsi": 5,
+          "digitalWrapper": 7,
+          "lambda": 8,
+          "fiber": 9,
+          "fiberChannel": 11
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS]",
+    "status": "current",
+    "description": "This attribute specifies the component link encoding type."
+  },
+  "componentLinkDescrPriority": {
+    "name": "componentLinkDescrPriority",
+    "oid": "1.3.6.1.2.1.1.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This object specifies the lowest priority at which that link encoding type is available for the component link."
+  },
+  "componentLinkMinReservBandwidth": {
+    "name": "componentLinkMinReservBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies the minimum reservable bandwidth on the component link. This value is an estimate in units of 1,000 bits per second."
+  },
+  "componentLinkMaxReservBandwidth": {
+    "name": "componentLinkMaxReservBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies the maximum reservable bandwidth on the component link. This value is an estimate in units of 1,000 bits per second."
+  },
+  "componentLinkDescrRowStatus": {
+    "name": "componentLinkDescrRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, and/or delete a row in this table. All read-create objects can only be changed when componentLinkDescrRowStatus is active."
+  },
+  "componentLinkDescrStorageType": {
+    "name": "componentLinkDescrStorageType",
+    "oid": "1.3.6.1.2.1.1.1.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row in the componentLinkDescriptorTable. Conceptual rows having the value 'permanent' need not allow write-access to any columnar object in the row."
+  },
+  "componentLinkBandwidthTable": {
+    "name": "componentLinkBandwidthTable",
+    "oid": "1.3.6.1.2.1.1.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the priority-based bandwidth for component links."
+  },
+  "componentLinkBandwidthEntry": {
+    "name": "componentLinkBandwidthEntry",
+    "oid": "1.3.6.1.2.1.1.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkPriority",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table contains information about the priority-based bandwidth on component links. An ifEntry in the ifTable must exist before a componentLinkBandwidthEntry using the same ifIndex is created. If a component link entry in the ifTable is destroyed, then so are all entries in the componentLinkBandwidthTable that use the ifIndex of this component link."
+  },
+  "componentLinkPriority": {
+    "name": "componentLinkPriority",
+    "oid": "1.3.6.1.2.1.1.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies the priority. It should be mapped to a number between 0 and 7."
+  },
+  "componentLinkUnreservedBandwidth": {
+    "name": "componentLinkUnreservedBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[GMPLS-OPSF]",
+    "status": "current",
+    "description": "This attribute specifies the component link unreserved bandwidth at priority p. This value is an estimate in units of 1,000 bits per second."
+  },
+  "componentLinkMaximumLspBandwidth": {
+    "name": "componentLinkMaximumLspBandwidth",
+    "oid": "1.3.6.1.2.1.1.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "[GMPLS-OSPF]",
+    "status": "current",
+    "description": "This attribute specifies the component link maximum LSP bandwidth at priority p. This value is an estimate in units of 1,000 bits per second."
+  },
+  "componentLinkBandwidthRowStatus": {
+    "name": "componentLinkBandwidthRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is used to create, modify, and/or delete a row in this table. All read-create objects can only be changed when componentLinkBandwidthRowStatus is active."
+  },
+  "componentLinkBwStorageType": {
+    "name": "componentLinkBwStorageType",
+    "oid": "1.3.6.1.2.1.1.1.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row in the componentLinkBandwidthTable. Conceptual rows having the value 'permanent' need not allow write-access to any columnar object in the row."
+  },
+  "linkBundlingNotifEnable": {
+    "name": "linkBundlingNotifEnable",
+    "oid": "1.3.6.1.2.1.1.1.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If this object is true, then it enables the generation of the link bundling notifications, otherwise these notifications are not emitted."
+  },
+  "linkBundleMismatch": {
+    "name": "linkBundleMismatch",
+    "oid": "1.3.6.1.2.1.1.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkIpAddrType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkIpAddr"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkRemoteIpAddr"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a mismatch is found on a bundled link. Such mismatch can be detected for instance if one of the traffic engineering parameters is not consistent across all TE links within a bundled link (resource class, OSPF link type, etc.)."
+  },
+  "linkBundlingGroups": {
+    "name": "linkBundlingGroups",
+    "oid": "1.3.6.1.2.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "linkBundlingCompliances": {
+    "name": "linkBundlingCompliances",
+    "oid": "1.3.6.1.2.1.1.2.2",
+    "class": "objectidentity"
+  },
+  "linkBundlingFullModuleCompliance": {
+    "name": "linkBundlingFullModuleCompliance",
+    "oid": "1.3.6.1.2.1.1.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "linkBundlingGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "teLinkBandwidthGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "componentLinkBandwidthGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "teLinkOspfTeGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "teLinkSrlgGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "linkBundlingNotificationGroup",
+        "module": "LINK-BUNDLING-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that support the configuration and monitoring of link bundling MIB."
+  },
+  "linkBundlingMonModuleCompliance": {
+    "name": "linkBundlingMonModuleCompliance",
+    "oid": "1.3.6.1.2.1.1.2.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "linkBundlingGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "teLinkBandwidthGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "componentLinkBandwidthGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "teLinkOspfTeGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "teLinkSrlgGroup",
+        "module": "LINK-BUNDLING-MIB"
+      },
+      {
+        "object": "linkBundlingNotificationGroup",
+        "module": "LINK-BUNDLING-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that support the monitoring of link bundling MIB."
+  },
+  "linkBundlingGroup": {
+    "name": "linkBundlingGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkIpAddrType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkIpAddr"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkRemoteIpAddr"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkMetric"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkMuxCapability"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkProtectionType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkWorkingPriority"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkResourceClass"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkIncomingIfId"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkOutgoingIfId"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkFlooding"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkRowStatus"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkStorageType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkEncodingType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkDescrPriority"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkMinReservableBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkMaxReservableBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkDescrRowStatus"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkDescrStorageType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkMuxCapability"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkPreferredProtection"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkCurrentProtection"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkRowStatus"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkStorageType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "linkBundlingNotifEnable"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for the monitoring of resources associated with TE links."
+  },
+  "teLinkOspfTeGroup": {
+    "name": "teLinkOspfTeGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkOspfLinkType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkOspfLinkId"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for the OSPF traffic engineering parameters of TE links."
+  },
+  "teLinkSrlgGroup": {
+    "name": "teLinkSrlgGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "srlgRowStatus"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "srlgStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for the monitoring of SRLG resources associated with TE links."
+  },
+  "teLinkBandwidthGroup": {
+    "name": "teLinkBandwidthGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkUnreservedBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkMaximumLspBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkBandwidthRowStatus"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "teLinkBandwidthStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for the monitoring of the priority-based bandwidth resources associated with TE links and component links."
+  },
+  "componentLinkBandwidthGroup": {
+    "name": "componentLinkBandwidthGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkEncodingType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkDescrPriority"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkMinReservBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkMaxReservBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkDescrRowStatus"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkDescrStorageType"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkUnreservedBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkMaximumLspBandwidth"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkBandwidthRowStatus"
+      },
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "componentLinkBwStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for the monitoring of bandwidth parameters associated with component links."
+  },
+  "linkBundlingNotificationGroup": {
+    "name": "linkBundlingNotificationGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.6",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "LINK-BUNDLING-MIB",
+        "object": "linkBundleMismatch"
+      }
+    ],
+    "status": "current",
+    "description": "Set of notifications implemented in this module. None is mandatory."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/LINK-BUNDLING-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:03:57 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "LINK-BUNDLING-MIB"
+  }
+}

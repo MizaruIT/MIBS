@@ -1,0 +1,878 @@
+{
+  "imports": {
+    "class": "imports",
+    "IEEE8021-CFM-MIB": [
+      "Dot1agCfmMepIdOrZero",
+      "Dot1agCfmMDLevelOrNone"
+    ],
+    "PRVT-SERV-MIB": [
+      "sdpInfoEntry"
+    ],
+    "PRVT-SWITCH-MIB": [
+      "switch"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "iso",
+      "Integer32",
+      "OBJECT-IDENTITY",
+      "TimeTicks",
+      "MibIdentifier",
+      "Counter64",
+      "Unsigned32",
+      "OBJECT-TYPE",
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "Counter32",
+      "MODULE-IDENTITY",
+      "Gauge32",
+      "IpAddress"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "RowStatus"
+    ]
+  },
+  "prvtEpsMib": {
+    "name": "prvtEpsMib",
+    "oid": "1.3.6.1.4.1.738.1.5.132",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2011-03-23 00:00",
+        "description": "Added Protection Counter"
+      },
+      {
+        "revision": "2010-04-17 00:00",
+        "description": "Add protection failure trap. Add recovery traps."
+      },
+      {
+        "revision": "2009-07-15 00:00",
+        "description": "Updates for 9.4 release"
+      },
+      {
+        "revision": "2009-03-24 00:00",
+        "description": "Initial"
+      }
+    ],
+    "lastupdated": "201004170000Z",
+    "organization": "BATM Advanced Communication",
+    "contactinfo": " BATM/Telco Systems Support team Email: For North America: techsupport@telco.com For North Europe: support@batm.de, info@batm.de For the rest of the world: techsupport@telco.com",
+    "description": "Private MIB supporting Linear Ethernet Protection Switching (ITU-T G.8031)"
+  },
+  "prvtEpsMibNotifications": {
+    "name": "prvtEpsMibNotifications",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0",
+    "class": "objectidentity"
+  },
+  "prvtEpsMibObjects": {
+    "name": "prvtEpsMibObjects",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1",
+    "class": "objectidentity"
+  },
+  "PrvtEpsRequestStateType": {
+    "name": "PrvtEpsRequestStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rsNone": -1,
+          "rsNoRequest": 0,
+          "rsDoNotRevert": 1,
+          "rsReverseRequest": 2,
+          "rsExercise": 4,
+          "rsWaitToRestore": 5,
+          "rsClear": 6,
+          "rsManualSwitch": 7,
+          "rsSignalDegrade": 9,
+          "rsSignalFail": 11,
+          "rsForcedSwitch": 13,
+          "rsSignalFailForProtection": 14,
+          "rsLockoutOfProtection": 15
+        }
+      }
+    },
+    "status": "current",
+    "reference": "G.8031 clause 11.3"
+  },
+  "PrvtEpsProtectionType": {
+    "name": "PrvtEpsProtectionType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "pt1Plus1": 0,
+          "pt1To1": 1
+        }
+      }
+    },
+    "status": "current",
+    "reference": "G.8031 clause 11.4"
+  },
+  "PrvtEpsDirectionType": {
+    "name": "PrvtEpsDirectionType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "dtUnidirectional": 0,
+          "dtBidirectional": 1
+        }
+      }
+    },
+    "status": "current",
+    "reference": "G.8031 clause 11.4"
+  },
+  "PrvtEpsActivePathType": {
+    "name": "PrvtEpsActivePathType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "working": 0,
+          "protection": 1
+        }
+      }
+    },
+    "status": "current",
+    "reference": "G.8031 clause 11.6"
+  },
+  "PrvtEpsMonitoringType": {
+    "name": "PrvtEpsMonitoringType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "cfmPM": 1,
+          "saa": 2
+        }
+      }
+    },
+    "status": "current"
+  },
+  "PrvtEpsDefectFopType": {
+    "name": "PrvtEpsDefectFopType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "fullyIncompatibleProvisioning": 0,
+        "protectionSwitchingIncomplete": 1,
+        "protectionConfigurationMismatch": 2,
+        "epsConfigurationMismatch": 3
+      }
+    },
+    "status": "current",
+    "reference": "G.8031 clause 11.15"
+  },
+  "PrvtEpsPathStatusType": {
+    "name": "PrvtEpsPathStatusType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "psOk": 0,
+          "psFailed": 1
+        }
+      }
+    },
+    "status": "current",
+    "description": "Status of the primary or backup links"
+  },
+  "prvtEpsService": {
+    "name": "prvtEpsService",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1",
+    "class": "objectidentity"
+  },
+  "prvtEpsServiceTable": {
+    "name": "prvtEpsServiceTable",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains Ethernet Protection Switching services information."
+  },
+  "prvtEpsServiceEntry": {
+    "name": "prvtEpsServiceEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Ethernet Protection Switching information about a specific service."
+  },
+  "prvtEpsSvcId": {
+    "name": "prvtEpsSvcId",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The service ID."
+  },
+  "prvtEpsServiceCfmMdLevel": {
+    "name": "prvtEpsServiceCfmMdLevel",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMDLevelOrNone",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Value of the CFM MD level where the protected domain is situated."
+  },
+  "prvtEpsServicePrimaryLocalCfmMep": {
+    "name": "prvtEpsServicePrimaryLocalCfmMep",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMepIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Primary local CFM MEP Id."
+  },
+  "prvtEpsServicePrimaryRemoteCfmMep": {
+    "name": "prvtEpsServicePrimaryRemoteCfmMep",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMepIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Primary remote CFM MEP Id."
+  },
+  "prvtEpsServiceSecondaryLocalCfmMep": {
+    "name": "prvtEpsServiceSecondaryLocalCfmMep",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMepIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Backup local CFM MEP Id."
+  },
+  "prvtEpsServiceSecondaryRemoteCfmMep": {
+    "name": "prvtEpsServiceSecondaryRemoteCfmMep",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMepIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Backup remote CFM MEP Id."
+  },
+  "prvtEpsServiceLocalState": {
+    "name": "prvtEpsServiceLocalState",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsRequestStateType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Protection state of the local side. The values can be set: rsManualSwitch(7), rsClear(6) or rsLockoutOfProtection(15). The values can be get: rsNoRequest (0), rsDoNotRevert (1), rsReverseRequest (2), rsExercise (4), rsWaitToRestore (5), rsClear (6), rsManualSwitch (7), rsSignalDegrade (9), rsSignalFail (11), rsForcedSwitch (13), rsSignalFailForProtection (14), rsLockoutOfProtection (15)."
+  },
+  "prvtEpsServiceHoldOffTimer": {
+    "name": "prvtEpsServiceHoldOffTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8031 clause 11.12",
+    "status": "current",
+    "description": "Value of the Hold Off timer in msec (increments of 100msec)."
+  },
+  "prvtEpsServiceWaitToRestoreTimer": {
+    "name": "prvtEpsServiceWaitToRestoreTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 5,
+            "max": 12
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8031 clause 11.13",
+    "status": "current",
+    "description": "Value of the Wait To Restore timer in seconds (0 to disable it)."
+  },
+  "prvtEpsServiceApsChannel": {
+    "name": "prvtEpsServiceApsChannel",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Active APS communication."
+  },
+  "prvtEpsServiceProtection": {
+    "name": "prvtEpsServiceProtection",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsProtectionType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of protection (1+1 or 1:1)."
+  },
+  "prvtEpsServiceDirection": {
+    "name": "prvtEpsServiceDirection",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsDirectionType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of protection (unidirectional or bidirectional)."
+  },
+  "prvtEpsServiceRevertive": {
+    "name": "prvtEpsServiceRevertive",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Protection type (revertive or non-revertive)."
+  },
+  "prvtEpsServiceActivePath": {
+    "name": "prvtEpsServiceActivePath",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsActivePathType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "working",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Protected service active path."
+  },
+  "prvtEpsServiceDegradeTestType": {
+    "name": "prvtEpsServiceDegradeTestType",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsMonitoringType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Type of test used for monitoring signal degrade situations."
+  },
+  "prvtEpsServiceDegradeTestOwner": {
+    "name": "prvtEpsServiceDegradeTestOwner",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": "00",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Owner of the SAA test used for monitoring."
+  },
+  "prvtEpsServiceDegradeTestName": {
+    "name": "prvtEpsServiceDegradeTestName",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": "00",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Name of the CFM or SAA test used for monitoring."
+  },
+  "prvtEpsServiceDegradeTestEnable": {
+    "name": "prvtEpsServiceDegradeTestEnable",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Start/stop CFM or SAA test for performance monitoring."
+  },
+  "prvtEpsServiceDefectFop": {
+    "name": "prvtEpsServiceDefectFop",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsDefectFopType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Defects noticed by APS protocol could be either none or a composition of the bits (0-3): fullyIncompatibleProvisioning(0) - occures by the reception of three APS frames with the incompatible 'B' bit value during the period of 22.5 seconds; protectionSwitchingIncomplete(1) - occures if the transmitted 'Requested Signal' and the received 'Bridged Signal' do not match for a period of 50ms or longer; protectionConfigurationMismatch(2) - working/protection configuration mismatch, occures by the reception of three APS frames from the working transport entity during the period of 22.5 seconds; epsConfigurationMismatch(3) - provisioning mismatch - for example the local side is set in revertive mode, the remote side is set in non revertive mode."
+  },
+  "prvtEpsServiceOperationalStatus": {
+    "name": "prvtEpsServiceOperationalStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The purpose of this status is to identify to the User whether this service is ready for running. The operational status can be up or down. When creating the service the operational status will be down. Receiving CCMs from both transport entities and establishment of APS on the protection transport entity will bring the operational status to up."
+  },
+  "prvtEpsServicePrimaryStatus": {
+    "name": "prvtEpsServicePrimaryStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsPathStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Primary path state (psOk(0) or psFailed(1))."
+  },
+  "prvtEpsServiceSecondaryStatus": {
+    "name": "prvtEpsServiceSecondaryStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsPathStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Secondary path state (psOk(0) or psFailed(1))."
+  },
+  "prvtEpsServiceRemoteState": {
+    "name": "prvtEpsServiceRemoteState",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsRequestStateType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Protection state of the remote side. The values can be get: rsNoRequest (0), rsDoNotRevert (1), rsReverseRequest (2), rsExercise (4), rsWaitToRestore (5), rsClear (6), rsManualSwitch (7), rsSignalDegrade (9), rsSignalFail (11), rsForcedSwitch (13), rsSignalFailForProtection (14), rsLockoutOfProtection (15)."
+  },
+  "prvtEpsServiceRemoteApsChannel": {
+    "name": "prvtEpsServiceRemoteApsChannel",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Active APS communication reported by the remote."
+  },
+  "prvtEpsServiceRemoteProtection": {
+    "name": "prvtEpsServiceRemoteProtection",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsProtectionType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of protection (1+1 or 1:1) reported by the remote."
+  },
+  "prvtEpsServiceRemoteDirection": {
+    "name": "prvtEpsServiceRemoteDirection",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtEpsDirectionType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of protection (unidirectional or bidirectional) reported by the remote."
+  },
+  "prvtEpsServiceRemoteRevertive": {
+    "name": "prvtEpsServiceRemoteRevertive",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Protection type (revertive or non-revertive) reported by the remote."
+  },
+  "prvtEpsServiceAdminFreeze": {
+    "name": "prvtEpsServiceAdminFreeze",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used to freeze the state of the protection service."
+  },
+  "prvtEpsServiceAdminStatus": {
+    "name": "prvtEpsServiceAdminStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Administrative status of the protection."
+  },
+  "prvtEpsServiceRowStatus": {
+    "name": "prvtEpsServiceRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of the row. The writable columns in a row can not be changed if the row is active. All columns must have a valid value before a row can be activated."
+  },
+  "prvtEpsServiceProtectionCounter": {
+    "name": "prvtEpsServiceProtectionCounter",
+    "oid": "1.3.6.1.4.1.738.1.5.132.1.1.1.1.31",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Counts how many times the service has gone to Protection."
+  },
+  "prvtEpsDefectAlarm": {
+    "name": "prvtEpsDefectAlarm",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsServiceOperationalStatus"
+      },
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsServiceDefectFop"
+      }
+    ],
+    "status": "current",
+    "description": "1. EPS service is either operational or not operational; 2. Failure of protocol defects."
+  },
+  "prvtEpsSwitchoverAlarm": {
+    "name": "prvtEpsSwitchoverAlarm",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsServiceActivePath"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued if the active link is changed, pointing to the path where the switchover occured."
+  },
+  "prvtEpsLostCommunication": {
+    "name": "prvtEpsLostCommunication",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued in case of non reception of APS frames in three consecutive intervals each representing 5 seconds."
+  },
+  "prvtEpsRestoredCommunication": {
+    "name": "prvtEpsRestoredCommunication",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "APS frames are received normally after APS communication failure."
+  },
+  "prvtEpsSignalFailDetected": {
+    "name": "prvtEpsSignalFailDetected",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued in case of CCMs are not received and (3.5 * CCMtime(CCMinterval)) has expired."
+  },
+  "prvtEpsSignalDegradeDetected": {
+    "name": "prvtEpsSignalDegradeDetected",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued in case of monitored error threshold is crossed: 1W Jitter error, 2W Jitter error, Latency error, Frame loss error."
+  },
+  "prvtEpsProtctSignalFailDetected": {
+    "name": "prvtEpsProtctSignalFailDetected",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued in case of CCMs are not received on the protected link and (3.5 * CCMtime(CCMinterval)) has expired or the protected link is down."
+  },
+  "prvtEpsSignalFailRecovery": {
+    "name": "prvtEpsSignalFailRecovery",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.8",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued in case of CCMs start to be received correctly again after a prvtEpsSignalFailDetected alarm occured and (3.5 * CCMtime(CCMinterval)) timer no longer expires or the link is up ."
+  },
+  "prvtEpsSignalDegradeRecovery": {
+    "name": "prvtEpsSignalDegradeRecovery",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.9",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued in case of monitored error threshold is crossed bellow limis: 1W Jitter error, 2W Jitter error, Latency error, Frame loss error."
+  },
+  "prvtEpsProtctSignalFailRecovery": {
+    "name": "prvtEpsProtctSignalFailRecovery",
+    "oid": "1.3.6.1.4.1.738.1.5.132.0.10",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-EPS-MIB",
+        "object": "prvtEpsSvcId"
+      }
+    ],
+    "status": "current",
+    "description": "The alarm is issued in case of CCMs start to be received correctly again on the protected link after a prvtEpsProtctSignalFailDetected alarm occured and (3.5 * CCMtime(CCMinterval)) timer no longer expires or the link is up ."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PRVT-EPS-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 20:02:51 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PRVT-EPS-MIB"
+  }
+}

@@ -1,0 +1,562 @@
+-- Ericsson Television Limited Standard MIB disclaimer
+-- ###################################################
+-- SNMP MIBs for Ericsson Television Limited products are developed 
+-- primarily for use by Ericsson Television Limited control solutions.
+-- Where MIBs are provided to a third party or other non-Ericsson 
+-- Television Limited person, for the purposes of their development 
+-- of a non-Ericsson Television Limited control or monitoring solution, 
+-- they are provided free of charge, and without obligation on the
+-- part of Ericsson Television Limited to offer priority support, or
+-- changes to suit the third party.
+--
+-- $Date: 2010-02-19 10:55:07 +0000 (Fri, 19 Feb 2010) $
+-- $Revision: 194 $
+ 
+-- MIB module holding the trap tables of a Ericsson Television device.
+ETV-AlarmTrap-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+   Counter32, OBJECT-TYPE, NOTIFICATION-TYPE, OBJECT-IDENTITY, MODULE-IDENTITY
+      FROM SNMPv2-SMI  
+   DisplayString
+     FROM SNMPv2-TC      
+   general, mibEricssonTelevision
+      FROM ETV-Base-MIB
+   Uint32, ModuleType
+      FROM ETV-Types-TC;
+      
+--- Ericsson Television TRAP Definitions
+
+traps MODULE-IDENTITY
+   LAST-UPDATED "1002191052Z"
+   ORGANIZATION "Ericsson Television Limited"
+   CONTACT-INFO "Customer Services
+                 Tel:   +44 (0) 23 8048 4455
+                 Fax:   +44 (0) 23 8048 4467
+                 Email: tvsupportemea@ericsson.com
+                 Web:   http://www.ericsson.com/television"
+   DESCRIPTION  "Traps MIB for Ericsson Television Limited devices."    
+   
+   REVISION "1002191052Z"
+   DESCRIPTION "Updated Imported OID names and module definition name"
+
+   REVISION "1002021211Z"
+   DESCRIPTION "Updated contact information"
+
+   REVISION "0909240825Z"
+   DESCRIPTION "Updated for better complicance to SNMP V2 specs"
+   
+::= { general 11 }
+   
+alarmNormal   NOTIFICATION-TYPE
+   OBJECTS   { trapSequence2,
+               referenceNumberT2,
+               positionNumberT2,
+               portNumberT2,
+               alarmIdT2,
+               alarmTypeT2,
+               alarmTextT2,
+               sourceTextT2,
+               severityLevelT2,
+               moduleTypeT2               
+  }
+  STATUS       current 
+  DESCRIPTION "This TRAP is sent when an alarm is cleared (severity level 1 according to X.733). May be sent as V1 specific:1"
+  ::= { traps 1 }
+
+alarmIndeterminate  NOTIFICATION-TYPE
+   OBJECTS   { trapSequence2,
+               referenceNumberT2,
+               positionNumberT2,
+               portNumberT2,
+               alarmIdT2,
+               alarmTypeT2,
+               alarmTextT2,
+               sourceTextT2,
+               severityLevelT2,
+               moduleTypeT2
+  }
+  STATUS       current 
+  DESCRIPTION "This TRAP is sent when an alarm with unknown level occur (severity level 2 according to X.733). May be sent as V1 specific:2"
+  REFERENCE "alarm2TrapTable"
+  ::= { traps 2 }
+
+alarmWarning   NOTIFICATION-TYPE
+   OBJECTS   { trapSequence2,
+               referenceNumberT2,
+               positionNumberT2,
+               portNumberT2,
+               alarmIdT2,
+               alarmTypeT2,
+               alarmTextT2,
+               sourceTextT2,
+               severityLevelT2,
+               moduleTypeT2               
+  }
+  STATUS       current 
+  DESCRIPTION "This TRAP is sent when an warning alarm occur (severity level 3 according to X.733). May be sent as V1 specific:3"
+  REFERENCE "alarm2TrapTable"
+  ::= { traps 3 }
+
+alarmMinor   NOTIFICATION-TYPE
+   OBJECTS   { trapSequence2,
+               referenceNumberT2,
+               positionNumberT2,
+               portNumberT2,
+               alarmIdT2,
+               alarmTypeT2,
+               alarmTextT2,
+               sourceTextT2,
+               severityLevelT2,
+               moduleTypeT2               
+  }
+  STATUS       current 
+  DESCRIPTION "This TRAP is sent when an minor alarm occur (severity level 4 according to X.733). May be sent as V1 specific:4"
+  REFERENCE "alarm2TrapTable"
+  ::= { traps 4 }
+
+alarmMajor   NOTIFICATION-TYPE
+   OBJECTS   { trapSequence2,
+               referenceNumberT2,
+               positionNumberT2,
+               portNumberT2,
+               alarmIdT2,
+               alarmTypeT2,
+               alarmTextT2,
+               sourceTextT2,
+               severityLevelT2,
+               moduleTypeT2               
+  }
+  STATUS       current 
+  DESCRIPTION "This TRAP is sent when an major alarm occur (severity level 5 according to X.733). May be sent as V1 specific:5"
+  REFERENCE "alarm2TrapTable"
+  ::= { traps 5 }
+
+alarmCritical   NOTIFICATION-TYPE
+   OBJECTS   { trapSequence2,
+               referenceNumberT2,
+               positionNumberT2,
+               portNumberT2,
+               alarmIdT2,
+               alarmTypeT2,
+               alarmTextT2,
+               sourceTextT2,
+               severityLevelT2,
+               moduleTypeT2
+  }
+  STATUS       current 
+  DESCRIPTION "This TRAP is sent when an critical alarm occur (severity level 6 according to X.733). May be sent as V1 specific:6"
+  REFERENCE "alarm2TrapTable"
+  ::= { traps 6 }
+
+information   NOTIFICATION-TYPE
+   OBJECTS   { trapSequence2,
+               referenceNumberT2,
+               positionNumberT2,
+               portNumberT2,
+               alarmIdT2,
+               alarmTypeT2,
+               alarmTextT2,
+               sourceTextT2,
+               severityLevelT2,
+               moduleTypeT2
+  }
+  STATUS       current 
+  DESCRIPTION "This TRAP is sent when a devices wishes to send information about
+               an event to the client.  These are severity level 100, and are not
+			   raised / cleared as with alarm traps.  May be sent as V1 specific:100"
+  REFERENCE "alarm2TrapTable"
+  ::= { traps 100 }
+    
+alarm2TrapTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF Alarm2TrapEntry
+   MAX-ACCESS    not-accessible
+   STATUS        current
+   DESCRIPTION
+      "This table holds the last 20 enterprise specific TRAP messages sent (1 to 6, and 100).
+       This table replace the old trapTable ( general 5 )"
+   ::= { general 9 }
+
+alarm2TrapEntry     OBJECT-TYPE
+   SYNTAX      Alarm2TrapEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+         "An entry in the alarm2TrapTable."
+   INDEX       { trapTableIndex2 }
+   ::= { alarm2TrapTable 1 }
+
+Alarm2TrapEntry ::= SEQUENCE {
+   trapTableIndex2       INTEGER,
+   trapSequence2         Counter32,
+   referenceNumberT2     Uint32,
+   positionNumberT2      Uint32,
+   portNumberT2          Uint32,
+   alarmIdT2             INTEGER,
+   alarmTypeT2           INTEGER,
+   alarmTextT2           DisplayString,
+   sourceTextT2          DisplayString,
+   severityLevelT2       INTEGER,
+   moduleTypeT2          ModuleType
+}
+
+trapTableIndex2  OBJECT-TYPE
+   SYNTAX        INTEGER (1..20)
+   MAX-ACCESS    read-only
+   STATUS        current
+   DESCRIPTION
+         "This is the index to the trap table."
+   ::= { alarm2TrapEntry 1 }
+
+trapSequence2  OBJECT-TYPE
+   SYNTAX      Counter32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "This is the sequence number of the trap."
+   ::= { alarm2TrapEntry 2 }
+
+
+referenceNumberT2 OBJECT-TYPE
+   SYNTAX         Uint32
+   MAX-ACCESS     read-only
+   STATUS         current
+   DESCRIPTION
+         "Code for easy matching of alarms changing state."
+   ::= { alarm2TrapEntry 3 }
+
+positionNumberT2 OBJECT-TYPE
+   SYNTAX         Uint32
+   MAX-ACCESS     read-only
+   STATUS         current
+   DESCRIPTION
+         "Identifies the alarm source position."
+   ::= { alarm2TrapEntry 4 }
+
+
+portNumberT2   OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "This identifies the port on the board sending the trap."
+   ::= { alarm2TrapEntry 5 }
+
+alarmIdT2      OBJECT-TYPE
+   SYNTAX      INTEGER
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "Code which indicates an error or event in a module,
+             as defined in the individual modules."
+   ::= { alarm2TrapEntry 6 }
+
+alarmTypeT2    OBJECT-TYPE
+   SYNTAX      INTEGER {
+                        input (1),
+                        internal (2),
+                        output (3),
+                        reserved (255) }
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "This indicates the type of alarm/event. Input type
+          indicates a alarm/event that could be caused by a faulty input signal
+          Internal alarms are most likely a problem in the reporting device.
+          The reserved value is not to be used."
+   ::= { alarm2TrapEntry 7 }
+
+alarmTextT2    OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+   "The default alarm text. This will be used to describe the alarm
+    if the receiving application is not configured to override the default text.
+    Understanding the semantics of this field is not required for interpretation of the notification"
+   ::= { alarm2TrapEntry 8 }
+
+sourceTextT2   OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+   "The default source text. This will be used to describe the source causing the alarm
+    if the receiving application is not configured to override the default text.
+    Understanding the semantics of this field is not required for interpretation of the notification"
+   ::= { alarm2TrapEntry 9 }
+
+severityLevelT2 OBJECT-TYPE
+   SYNTAX       INTEGER {
+                        cleared (1),
+                        indeterminate (2),
+                        warning (3),
+                        minor (4),
+                        major (5),
+                        critical (6),
+                        information (100) }
+
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "From X.733: This parameter defines six severity
+          levels, which provide an indication of how it is perceived that the
+          capability of the managed object has been affected.
+          Those severity levels which represent service affecting
+          conditions ordered from most severe to least severe are
+          Critical, Major, Minor and Warning.
+          The levels defined for use with this current parameter are
+          -cleared: The Cleared severity level indicates the
+          clearing of one or more previously reported alarms. This
+          alarm clears all alarms for this managed object that have the
+          same Alarm type, Probable cause and Specific problems (if
+          given).
+
+          -indeterminate: The Indeterminate severity level
+          indicates that the severity level cannot be determined.
+
+          -critical: The Critical severity level indicates that a
+          service affecting condition has occurred and an immediate
+          corrective action is required.  Such a severity can be
+          reported, for example, when a managed object becomes totally
+          out of service and its capability must be restored.
+
+          -major: The Major severity level indicates that a
+          service affecting condition has developed and an urgent
+          corrective action is required.  Such a severity can be
+          reported, for example, when there is a severe degradation in
+          the capability of the managed object and its full capability
+          must be restored.
+
+          minor: The Minor severity level indicates the existence
+          of a non-service affecting fault condition and that
+          corrective action should be taken in order to prevent a more
+          serious (for example, service affecting) fault. Such a
+          severity can be reported, for example, when the detected
+          alarm condition is not currently degrading the capacity of
+          the managed object.
+
+          -warning: The Warning severity level indicates the
+          detection of a potential or impending service affecting
+          fault, before any significant effects have been felt. Action
+          should be taken to further diagnose (if necessary) and
+          correct the problem in order to prevent it from becoming a
+          more serious service affecting fault."
+   ::= { alarm2TrapEntry 10 }
+
+moduleTypeT2 OBJECT-TYPE
+   SYNTAX      ModuleType
+   MAX-ACCESS     read-only
+   STATUS         current
+   DESCRIPTION
+         "Identified the source module causing the alarm."
+   ::= { alarm2TrapEntry 11 }
+
+--
+
+alarm2CurrentTable  OBJECT-TYPE
+   SYNTAX           SEQUENCE OF Alarm2CurrentEntry
+   MAX-ACCESS       not-accessible
+   STATUS           current
+   DESCRIPTION
+      "This table holds a list of all currently active alarms in the unit"
+   ::= { general 10 }
+
+alarm2CurrentEntry     OBJECT-TYPE
+   SYNTAX      Alarm2CurrentEntry
+   MAX-ACCESS  not-accessible
+   STATUS      current
+   DESCRIPTION
+         "An entry in the currentAlarmTable."
+   INDEX       { currentTableIndex2 }
+   ::= { alarm2CurrentTable 1 }
+
+Alarm2CurrentEntry ::= SEQUENCE {
+   currentTableIndex2    Uint32,
+   positionNumberC2      Uint32,
+   portNumberC2          Uint32,
+   alarmIdC2             Uint32,
+   alarmTypeC2           INTEGER,
+   alarmTextC2           DisplayString,
+   sourceTextC2          DisplayString,
+   severityLevelC2       INTEGER,
+   referenceNumberC2     Uint32,
+   moduleTypeC2          ModuleType
+}
+
+currentTableIndex2  OBJECT-TYPE
+   SYNTAX           Uint32
+   MAX-ACCESS       read-only
+   STATUS           current
+   DESCRIPTION
+         "This is the index to the trap table."
+   ::= { alarm2CurrentEntry 1 }
+
+positionNumberC2 OBJECT-TYPE
+   SYNTAX         Uint32
+   MAX-ACCESS     read-only
+   STATUS         current
+   DESCRIPTION
+         "Identifies the alarm source position."
+   ::= { alarm2CurrentEntry 2 }
+
+portNumberC2   OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "This identifies the port of the alarm source."
+   ::= { alarm2CurrentEntry 3 }
+
+alarmIdC2      OBJECT-TYPE
+   SYNTAX      Uint32
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "Code which indicates an error or event in a module,
+             as defined in the individual modules."
+   ::= { alarm2CurrentEntry 4 }
+
+alarmTypeC2    OBJECT-TYPE
+   SYNTAX      INTEGER {
+            input (1),
+            internal (2),
+            output (3),
+            reserved (255) }
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "This indicates the type of alarm/event. Input type
+          indicates a alarm/event that could be caused by a faulty input signal
+          Internal alarms are most likely a problem in the reporting device.
+          The reserved value is not to be used."
+   ::= { alarm2CurrentEntry 5 }
+
+alarmTextC2    OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+   "The default alarm text. This will be used to describe the alarm
+    if the receiving application is not configured to override the default text.
+    Understanding the semantics of this field is not required for interpretation of the notification"
+   ::= { alarm2CurrentEntry 6 }
+
+sourceTextC2   OBJECT-TYPE
+   SYNTAX      DisplayString
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+   "The default source text. This will be used to describe the source causing the alarm
+    if the receiving application is not configured to override the default text.
+    Understanding the semantics of this field is not required for interpretation of the notification"
+   ::= { alarm2CurrentEntry 7 }
+
+severityLevelC2 OBJECT-TYPE
+   SYNTAX       INTEGER {
+                        cleared (1),
+                        indeterminate (2),
+                        warning (3),
+                        minor (4),
+                        major (5),
+                        critical (6) }
+
+   MAX-ACCESS  read-only
+   STATUS      current
+   DESCRIPTION
+         "From X.733: This parameter defines six severity
+          levels, which provide an indication of how it is perceived that the
+          capability of the managed object has been affected.
+          Those severity levels which represent service affecting
+          conditions ordered from most severe to least severe are
+          Critical, Major, Minor and Warning.
+          The levels defined for use with this current parameter are
+          -cleared: The Cleared severity level indicates the
+          clearing of one or more previously reported alarms. This
+          alarm clears all alarms for this managed object that have the
+          same Alarm type, Probable cause and Specific problems (if
+          given).
+
+          -indeterminate: The Indeterminate severity level
+          indicates that the severity level cannot be determined.
+
+          -critical: The Critical severity level indicates that a
+          service affecting condition has occurred and an immediate
+          corrective action is required.  Such a severity can be
+          reported, for example, when a managed object becomes totally
+          out of service and its capability must be restored.
+
+          -major: The Major severity level indicates that a
+          service affecting condition has developed and an urgent
+          corrective action is required.  Such a severity can be
+          reported, for example, when there is a severe degradation in
+          the capability of the managed object and its full capability
+          must be restored.
+
+          minor: The Minor severity level indicates the existence
+          of a non-service affecting fault condition and that
+          corrective action should be taken in order to prevent a more
+          serious (for example, service affecting) fault. Such a
+          severity can be reported, for example, when the detected
+          alarm condition is not currently degrading the capacity of
+          the managed object.
+
+          -warning: The Warning severity level indicates the
+          detection of a potential or impending service affecting
+          fault, before any significant effects have been felt. Action
+          should be taken to further diagnose (if necessary) and
+          correct the problem in order to prevent it from becoming a
+          more serious service affecting fault."
+   ::= { alarm2CurrentEntry 8 } 
+
+referenceNumberC2 OBJECT-TYPE
+   SYNTAX         Uint32
+   MAX-ACCESS     read-only
+   STATUS         current
+   DESCRIPTION
+         "Code for easy matching of alarms changing state."
+   ::= { alarm2CurrentEntry 9 }
+
+moduleTypeC2 OBJECT-TYPE
+   SYNTAX      ModuleType
+   MAX-ACCESS     read-only
+   STATUS         current
+   DESCRIPTION
+         "Identified the source module causing the alarm."
+   ::= { alarm2CurrentEntry 10 }
+
+----------------------------------------------------------------------
+--
+-- Trap definition for trap sent when device configuration changes.
+--
+----------------------------------------------------------------------
+
+eventTraps OBJECT IDENTIFIER ::= { general 15 }
+
+currentEventIndex   OBJECT-TYPE
+   SYNTAX           Uint32
+   MAX-ACCESS       read-only
+   STATUS           current
+   DESCRIPTION
+    "This is the index for the last event-trap sent.  In essence this is incremented every time the device status changes."
+   ::= { eventTraps 1 }
+
+currentEventText OBJECT-TYPE
+   SYNTAX        DisplayString
+   MAX-ACCESS    read-only
+   STATUS        current
+   DESCRIPTION
+    "A description of the event."
+    ::= { eventTraps 2 }
+
+eventNotify NOTIFICATION-TYPE
+  OBJECTS    { currentEventIndex,
+               currentEventText
+             }
+  STATUS current             
+  DESCRIPTION
+    "This event Trap is sent to notify config changes.  May be sent as V1 specific:1"
+  REFERENCE "eventTraps"
+  ::= { traps 101 }
+
+END

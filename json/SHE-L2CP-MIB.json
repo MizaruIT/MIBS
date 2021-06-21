@@ -1,0 +1,1500 @@
+{
+  "imports": {
+    "class": "imports",
+    "AN-MIB": [
+      "she"
+    ],
+    "IF-MIB": [
+      "ifIndex"
+    ],
+    "SHE-ALARMING-MIB": [
+      "SheAlarmSevProfileIndex",
+      "sheAlarmTimeAndDate",
+      "sheAlarmSeverity",
+      "sheAlarmReportingSource",
+      "sheAlarmReportingSourceType"
+    ],
+    "SHE-TC-MIB": [
+      "SheControlStatusType"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "NOTIFICATION-TYPE",
+      "iso",
+      "IpAddress",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "Unsigned32",
+      "OBJECT-IDENTITY",
+      "Gauge32",
+      "MibIdentifier",
+      "Counter32",
+      "Integer32",
+      "Bits"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "sheL2cpMib": {
+    "name": "sheL2cpMib",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2005-10-11 13:31",
+        "description": "First release."
+      },
+      {
+        "revision": "2005-11-03 15:26",
+        "description": "Correct notification's object list's."
+      },
+      {
+        "revision": "2005-12-01 15:55",
+        "description": "Correct Range for Timer1 and set default value for Timers and PartitionId."
+      },
+      {
+        "revision": "2005-12-09 11:05",
+        "description": "Change access for table index to readonly."
+      },
+      {
+        "revision": "2006-02-27 10:37",
+        "description": "Add configuration of AlarmSeverity to L2cpIf-Table."
+      },
+      {
+        "revision": "2006-04-05 10:12",
+        "description": "Add new table and control group for configuration of the local l2cp host interface."
+      },
+      {
+        "revision": "2006-05-10 16:06",
+        "description": "Correct access for sheL2coHostIfVlanId. Delete Gateway entry from HostIf-Table."
+      },
+      {
+        "revision": "2006-08-10 16:00",
+        "description": "Merge from VSHE!!"
+      },
+      {
+        "revision": "2007-04-25 10:33",
+        "description": "HostIf configuration is now handled in sheSystemMib for the complete NE. The HostIfTable and Control-group is not longer supported with SHE R2.5.2."
+      },
+      {
+        "revision": "2007-06-06 10:22",
+        "description": "Set status for not longer supported elements obsolete (R2.6)."
+      }
+    ],
+    "lastupdated": "200706060955Z",
+    "organization": "Nokia Siemens Networks",
+    "contactinfo": "Gerd Barchmann COO BBA DSLAM RD SDE gerd.barchmann@nsn.com +49 3834 555654",
+    "description": "She L2CP interface description."
+  },
+  "SheL2cpOperStateType": {
+    "name": "SheL2cpOperStateType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2
+        }
+      }
+    }
+  },
+  "SheL2cpAdjacencyStateType": {
+    "name": "SheL2cpAdjacencyStateType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "l2cpStateRESET": 1,
+          "l2cpStateSYNSENT": 2,
+          "l2cpStateSYNRCVD": 3,
+          "l2cpStateESTAB": 4
+        }
+      }
+    }
+  },
+  "SheL2cpPartitionIdType": {
+    "name": "SheL2cpPartitionIdType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          },
+          {
+            "min": 256,
+            "max": 256
+          },
+          {
+            "min": 257,
+            "max": 257
+          }
+        ]
+      }
+    }
+  },
+  "SheL2cpControlRequestType": {
+    "name": "SheL2cpControlRequestType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createL2cpIf": 1,
+          "deleteL2cpIf": 2,
+          "modifyL2cpIf": 3,
+          "createL2cpHostIf": 6,
+          "modifyL2cpHostIf": 7,
+          "deleteL2cpHostIf": 8,
+          "assignPortToPartition": 10
+        }
+      }
+    }
+  },
+  "SheL2cpControlRequestResultType": {
+    "name": "SheL2cpControlRequestResultType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "commExecStarted": 30,
+          "paramFaulty": 31,
+          "requestBusy": 32,
+          "setDataFailed": 34,
+          "aswTimeout": 35,
+          "commandFailed": 36,
+          "commandSucceeded": 37,
+          "wrongL2cpIfIndex": 40,
+          "tooManyL2cpInterfaces": 41,
+          "wrongL2cpPortPartitionIndex": 50,
+          "wrongL2cpHostIfIndex": 60,
+          "tooManyL2cpHostInterfaces": 61
+        }
+      }
+    }
+  },
+  "sheL2cpObjects": {
+    "name": "sheL2cpObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1",
+    "class": "objectidentity"
+  },
+  "sheL2cpIfTable": {
+    "name": "sheL2cpIfTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The L2CP interface table."
+  },
+  "sheL2cpIfEntry": {
+    "name": "sheL2cpIfEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry of the L2CP interface table (sheL2cpIfTable)"
+  },
+  "sheL2cpIfIndex": {
+    "name": "sheL2cpIfIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index of an L2CP protocol instance in the sheL2cpIfTable."
+  },
+  "sheL2cpOperState": {
+    "name": "sheL2cpOperState",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpOperStateType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The operational state of the L2CP interface."
+  },
+  "sheL2cpAdjacencyState": {
+    "name": "sheL2cpAdjacencyState",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpAdjacencyStateType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The state of the adjacency protocol."
+  },
+  "sheL2cpTimer1": {
+    "name": "sheL2cpTimer1",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 100,
+        "format": "decimal"
+      }
+    },
+    "units": "100ms",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This timer defines the TIMER field is used to inform the receiver of the timer value used in the adjacency protocol of the sender. The timer specifies the nominal time between periodic adjacency protocol messages. It is a constant for the duration of a session."
+  },
+  "sheL2cpTimer2": {
+    "name": "sheL2cpTimer2",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "units": "second",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This value defines the minimum time between two port state messages of the same port. It is used to limit the port messages in case of toggeling ports. The timer base is 1s. 0 means: all port state changes are reported."
+  },
+  "sheL2cpTimer3": {
+    "name": "sheL2cpTimer3",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "units": "second",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This timeout is used to handle L2CP message flooding after Controller recovery. The timer is started when the link to the controller was established, The first port state message is sent when this timer expires."
+  },
+  "sheL2cpControllerIpAddress": {
+    "name": "sheL2cpControllerIpAddress",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address of the remote L2cp controller which should be contacted by this interface."
+  },
+  "sheL2cpAccessNodeIdentifier": {
+    "name": "sheL2cpAccessNodeIdentifier",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the access node. The DSLAM identifies itself with the controller by means of this name."
+  },
+  "sheL2cpPartitionId": {
+    "name": "sheL2cpPartitionId",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpPartitionIdType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 256,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID of the partition managed via this L2CP protocol instance. (see RFC 3292). The value 257 is not used here."
+  },
+  "sheL2cpAlarmSeverityIndex": {
+    "name": "sheL2cpAlarmSeverityIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSevProfileIndex",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The currently used alarm severity profile index for this l2cp interface."
+  },
+  "sheL2cpPortPartitionTable": {
+    "name": "sheL2cpPortPartitionTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The L2CP port table. The index in this table is the ifIndex. But only such interfaces are listed in this table which are of type xDSL."
+  },
+  "sheL2cpPortPartitionEntry": {
+    "name": "sheL2cpPortPartitionEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the L2CP port partition table (sheL2cpPortPartitionTable)."
+  },
+  "sheL2cpPortPartitionId": {
+    "name": "sheL2cpPortPartitionId",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpPartitionIdType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 256,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID of the partition managed the port is assigned to. 0...255: These are really partition IDs. The port is managed by such L2CP interface instances which have the same partition ID. 256: no partition. The port belongs to no partition. It is managed by such L2CP interface instances wich are assigned to 'no partition'. 257: invalid partition The port is not managed by any L2CP instance."
+  },
+  "sheL2cpControl": {
+    "name": "sheL2cpControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4",
+    "class": "objectidentity"
+  },
+  "sheL2cpControlRequest": {
+    "name": "sheL2cpControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The L2CP commands: createL2cpIf: Create a new L2CP interface instance: Parameter: sheL2cpControlTimer1, sheL2cpControlTimer2, sheL2cpControlTimer3, sheL2cpControlControllerIpAddress, sheL2cpControlPartitionId, sheL2cpControlAccessNodeIdentifier sheL2cpControlAlarmSeverityIndex deleteL2cpIf: Delete a L2CP interface instance. Parameter: sheL2cpControlIndex modifyL2cpIf: Change the parameter of an L2CP interface instance. Parameter: sheL2cpControlL2cpIndex, sheL2cpControlTimer1, sheL2cpControlTimer2, sheL2cpControlTimer3, sheL2cpControlControllerIpAddress, sheL2cpControlPartitionId, sheL2cpControlAccessNodeIdentifier sheL2cpControlAlarmSeverityIndex assignPortToPartition: A port is assigned to a partition. Parameter: sheL2cpControlIndex, sheL2cpControlPartitionId "
+  },
+  "sheL2cpControlIndex": {
+    "name": "sheL2cpControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The index of a port in the port partition table (vshL2cpPortPartitionTable) if the PartionId should be set or the index of a valid L2cpIf in the sheL2cpIfTable for modify or delete of these interface. "
+  },
+  "sheL2cpControlStatus": {
+    "name": "sheL2cpControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command."
+  },
+  "sheL2cpControlReqResult": {
+    "name": "sheL2cpControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last ControlRequest"
+  },
+  "sheL2cpControlTimer": {
+    "name": "sheL2cpControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command."
+  },
+  "sheL2cpControlTimeStamp": {
+    "name": "sheL2cpControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheL2cpControlTimer1": {
+    "name": "sheL2cpControlTimer1",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "units": "100ms",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This timer defines the timer value used by the adjacency protocol. It defines the time between perdiodic adjacency protocol messages. The time base are 100ms. (see RFC 3292)"
+  },
+  "sheL2cpControlTimer2": {
+    "name": "sheL2cpControlTimer2",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "units": "second",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This value defines the minimum time between two port state messages of the same port. It is used to limit the port messages in case of toggeling ports. The timer base is 1s. 0 means: all port state changes are reported."
+  },
+  "sheL2cpControlTimer3": {
+    "name": "sheL2cpControlTimer3",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "units": "second",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This value defines the time before all port states are reported to controller after an L2CP connection was established. This timer can be used to avoid a message flooding of the controller. The timer base is 1s."
+  },
+  "sheL2cpControlControllerIpAddress": {
+    "name": "sheL2cpControlControllerIpAddress",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The IP address of the controller."
+  },
+  "sheL2cpControlAccessNodeIdentifier": {
+    "name": "sheL2cpControlAccessNodeIdentifier",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The name of the access node. The DSLAM identifies itself with the controller by means of this name."
+  },
+  "sheL2cpControlPartitionId": {
+    "name": "sheL2cpControlPartitionId",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpPartitionIdType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The ID of the partition managed by an L2CP protocol instance (see RFC 3292). The partition to which a port is assigned. "
+  },
+  "sheL2cpControlAlarmSeverityIndex": {
+    "name": "sheL2cpControlAlarmSeverityIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.4.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSevProfileIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheL2cpNotification": {
+    "name": "sheL2cpNotification",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5",
+    "class": "objectidentity"
+  },
+  "sheL2cpAlarmEvents": {
+    "name": "sheL2cpAlarmEvents",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.1",
+    "class": "objectidentity"
+  },
+  "sheL2cpLinkDown": {
+    "name": "sheL2cpLinkDown",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.1.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSource"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSourceType"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSeverity"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheL2cpConfigEvents": {
+    "name": "sheL2cpConfigEvents",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2",
+    "class": "objectidentity"
+  },
+  "sheL2cpIfCreated": {
+    "name": "sheL2cpIfCreated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpOperState"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer1"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer2"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer3"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControllerIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAccessNodeIdentifier"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAdjacencyState"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpPartitionId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAlarmSeverityIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration trap."
+  },
+  "sheL2cpIfDeleted": {
+    "name": "sheL2cpIfDeleted",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration trap."
+  },
+  "sheL2cpIfModified": {
+    "name": "sheL2cpIfModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpOperState"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer1"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer2"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer3"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControllerIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAccessNodeIdentifier"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAdjacencyState"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpPartitionId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAlarmSeverityIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration trap."
+  },
+  "sheL2cpPartitionPortDataChanged": {
+    "name": "sheL2cpPartitionPortDataChanged",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpPortPartitionId"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration trap."
+  },
+  "sheL2cpHostIfCreated": {
+    "name": "sheL2cpHostIfCreated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlStatus"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlReqResult"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlVlanId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlNetmask"
+      }
+    ],
+    "status": "obsolete",
+    "description": "Note: This parameter is not longer valid starting with release SHE R2.6 The IP interface configuration was moved to sheSystemIpHostTable."
+  },
+  "sheL2cpHostIfModified": {
+    "name": "sheL2cpHostIfModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlStatus"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlReqResult"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlVlanId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlNetmask"
+      }
+    ],
+    "status": "obsolete",
+    "description": "Note: This parameter is not longer valid starting with release SHE R2.6. The IP interface configuration was moved to sheSystemIpHostTable."
+  },
+  "sheL2cpHostIfDeleted": {
+    "name": "sheL2cpHostIfDeleted",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.5.2.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlStatus"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlReqResult"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlTimeStamp"
+      }
+    ],
+    "status": "obsolete",
+    "description": "Note: This parameter is not longer valid starting with release SHE R2.6 The IP interface configuration was moved to sheSystemIpHostTable."
+  },
+  "sheL2cpHostIfTable": {
+    "name": "sheL2cpHostIfTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "obsolete",
+    "description": "Note: This parameter is not longer valid starting with release SHE R2.6. The IP interface configuration was moved to sheSystemIpHostTable."
+  },
+  "sheL2cpHostIfEntry": {
+    "name": "sheL2cpHostIfEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "obsolete",
+    "description": "The index of an L2CP host interface instance in this table. Note: This parameter is not longer valid starting with release SHE R2.6. The IP interface configuration was moved to sheSystemIpHostTable."
+  },
+  "sheL2cpHostIfIndex": {
+    "name": "sheL2cpHostIfIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "Unique key for that table."
+  },
+  "sheL2cpHostIfVlanId": {
+    "name": "sheL2cpHostIfVlanId",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4093
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The host vlan for the local L2cp interface which should be used as tag to contact the remote L2cp controller."
+  },
+  "sheL2cpHostIfIpAddress": {
+    "name": "sheL2cpHostIfIpAddress",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The IP address of the local L2cp interface which should be used by the NE."
+  },
+  "sheL2cpHostIfNetmask": {
+    "name": "sheL2cpHostIfNetmask",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The l2cp host interface Netmask."
+  },
+  "sheL2cpHostIfControl": {
+    "name": "sheL2cpHostIfControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7",
+    "class": "objectidentity"
+  },
+  "sheL2cpHostIfControlRequest": {
+    "name": "sheL2cpHostIfControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "obsolete",
+    "description": "The L2CP commands: Note: This parameter is not longer valid starting with release SHE R2.6. The IP interface configuration was moved to sheSystemIpHostTable. createL2cpHostIf: Create a new L2CP host interface instance: Parameter: sheL2cpHostIfControlVlanId sheL2cpHostIfControlIpAddress sheL2cpHostIfControlNetmask deleteL2cpHostIf: Delete a L2CP host interface instance. Parameter: sheL2cpHostIfControlIndex modifyL2cpHostIf: Change the parameter of an L2CP host interface instance. Parameter: sheL2cpHostIfControlIndex sheL2cpHostIfControlIpAddress sheL2cpHostIfControlNetmask "
+  },
+  "sheL2cpHostIfControlIndex": {
+    "name": "sheL2cpHostIfControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "obsolete",
+    "description": "The index of a valid L2cpHostIf from sheL2cpHostIfTable for modifies or delete. "
+  },
+  "sheL2cpHostIfControlStatus": {
+    "name": "sheL2cpHostIfControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The status of a user command."
+  },
+  "sheL2cpHostIfControlReqResult": {
+    "name": "sheL2cpHostIfControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheL2cpControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The result of the last ControlRequest"
+  },
+  "sheL2cpHostIfControlTimer": {
+    "name": "sheL2cpHostIfControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The maximum wait time for the manager for a long running user command."
+  },
+  "sheL2cpHostIfControlTimeStamp": {
+    "name": "sheL2cpHostIfControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheL2cpHostIfControlVlanId": {
+    "name": "sheL2cpHostIfControlVlanId",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4093
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "obsolete",
+    "description": "The host vlan for the local L2cp interface which should be used as tag to contact the remote L2cp controller. This value could only be used for create command. A modification is not allowed!"
+  },
+  "sheL2cpHostIfControlIpAddress": {
+    "name": "sheL2cpHostIfControlIpAddress",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "obsolete",
+    "description": "The IP address of the local L2cp host interface."
+  },
+  "sheL2cpHostIfControlNetmask": {
+    "name": "sheL2cpHostIfControlNetmask",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.7.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "obsolete",
+    "description": "The l2cp host interface Netmask."
+  },
+  "sheL2cpConformance": {
+    "name": "sheL2cpConformance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8",
+    "class": "objectidentity"
+  },
+  "sheL2cpGroups": {
+    "name": "sheL2cpGroups",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.1",
+    "class": "objectidentity"
+  },
+  "sheL2cpGroup": {
+    "name": "sheL2cpGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpIfIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpOperState"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer1"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer2"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpTimer3"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControllerIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAccessNodeIdentifier"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAlarmSeverityIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpPortPartitionId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpAdjacencyState"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpPartitionId"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing information about a VDSL Line."
+  },
+  "sheL2cpControlGroup": {
+    "name": "sheL2cpControlGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlRequest"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlStatus"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlReqResult"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimer"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlControllerIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimer1"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimer2"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlTimer3"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlAlarmSeverityIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlPartitionId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpControlAccessNodeIdentifier"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheL2cpNotificationGroup": {
+    "name": "sheL2cpNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.1.3",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpLinkDown"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpIfModified"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpPartitionPortDataChanged"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpIfCreated"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpIfDeleted"
+      }
+    ],
+    "status": "current",
+    "description": "This group supports notifications of significant conditions associated with VDSL Lines."
+  },
+  "sheL2cpObsoleteGroup": {
+    "name": "sheL2cpObsoleteGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfVlanId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfNetmask"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlRequest"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlIndex"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlStatus"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlReqResult"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlTimer"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlTimeStamp"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlVlanId"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlIpAddress"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfControlNetmask"
+      }
+    ],
+    "status": "obsolete",
+    "description": "Description."
+  },
+  "sheL2cpObsoleteNotificationGroup": {
+    "name": "sheL2cpObsoleteNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.1.5",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfCreated"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfModified"
+      },
+      {
+        "module": "SHE-L2CP-MIB",
+        "object": "sheL2cpHostIfDeleted"
+      }
+    ],
+    "status": "obsolete",
+    "description": "Description."
+  },
+  "sheL2cpCompliances": {
+    "name": "sheL2cpCompliances",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.2",
+    "class": "objectidentity"
+  },
+  "sheL2cpMibCompliance": {
+    "name": "sheL2cpMibCompliance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.16.1.8.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "sheL2cpGroup",
+        "module": "SHE-L2CP-MIB"
+      },
+      {
+        "object": "sheL2cpControlGroup",
+        "module": "SHE-L2CP-MIB"
+      },
+      {
+        "object": "sheL2cpNotificationGroup",
+        "module": "SHE-L2CP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which manage VDSL interfaces in SHE."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SHE-L2CP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:20:55 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SHE-L2CP-MIB"
+  }
+}

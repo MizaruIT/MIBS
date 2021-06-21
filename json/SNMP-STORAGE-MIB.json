@@ -1,0 +1,355 @@
+{
+  "imports": {
+    "class": "imports",
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Gauge32",
+      "MODULE-IDENTITY",
+      "iso",
+      "Bits",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "TimeTicks",
+      "IpAddress",
+      "Counter32",
+      "Integer32",
+      "snmpModules",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "OBJECT-TYPE",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "DateAndTime",
+      "DisplayString",
+      "AutonomousType",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "snmpStorageMIB": {
+    "name": "snmpStorageMIB",
+    "oid": "1.3.6.1.6.3.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2001-06-21 00:00",
+        "description": "The initial revision, published as RFC XXXX."
+      }
+    ],
+    "lastupdated": "200106210000Z",
+    "organization": "IETF",
+    "contactinfo": "Juergen Schoenwaelder (Editor) TU Braunschweig Bueltenweg 74/75 38106 Braunschweig, Germany Phone: +49 531 391-3289 EMail: schoenw@ibr.cs.tu-bs.de Send comments to <mibs@ops.ietf.org>.",
+    "description": "This MIB modules provides objects that allow management applications to commit non-volatile conceptual rows to stable storage."
+  },
+  "snmpStorageObjects": {
+    "name": "snmpStorageObjects",
+    "oid": "1.3.6.1.6.3.1.1",
+    "class": "objectidentity"
+  },
+  "snmpStorageConformance": {
+    "name": "snmpStorageConformance",
+    "oid": "1.3.6.1.6.3.1.2",
+    "class": "objectidentity"
+  },
+  "snmpStorageGlobControl": {
+    "name": "snmpStorageGlobControl",
+    "oid": "1.3.6.1.6.3.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nop": 1,
+          "write": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Setting this object to write(2) causes the agent to sync not yet committed non-volatile MIB data to stable storage. Setting this object to write(2) while the value of the snmpStorageGlobStatus object is writing(3) leads to an inconsitent value error. Setting this object to nop(1) always succeeds and has no effect. Management applications are advised to make use of the snmpSetSerialNo object defined in the SNMPv2-MIB to coordinate their use of this object."
+  },
+  "snmpStorageGlobStatus": {
+    "name": "snmpStorageGlobStatus",
+    "oid": "1.3.6.1.6.3.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "dirty": 2,
+          "writing": 3,
+          "finished": 4,
+          "error": 5
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object reports the current status of the write operation."
+  },
+  "snmpStorageGlobError": {
+    "name": "snmpStorageGlobError",
+    "oid": "1.3.6.1.6.3.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object contains a descriptive error message if the last attempt to write global stable storage has failed."
+  },
+  "snmpStorageGlobErrorTime": {
+    "name": "snmpStorageGlobErrorTime",
+    "oid": "1.3.6.1.6.3.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The data and time when the snmpStorageGlobError was last updated. The value '0000000000000000'H is returned if snmpStorageGlobError has not yet been updated after the initialization."
+  },
+  "snmpStorageTable": {
+    "name": "snmpStorageTable",
+    "oid": "1.3.6.1.6.3.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "snmpStorageEntry": {
+    "name": "snmpStorageEntry",
+    "oid": "1.3.6.1.6.3.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "snmpStorageIndex": {
+    "name": "snmpStorageIndex",
+    "oid": "1.3.6.1.6.3.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index which uniquely identifies a row in the snmpStorageTable."
+  },
+  "snmpStorageDescr": {
+    "name": "snmpStorageDescr",
+    "oid": "1.3.6.1.6.3.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A textual description which explains the scope of MIB data which is controlled by this row."
+  },
+  "snmpStorageID": {
+    "name": "snmpStorageID",
+    "oid": "1.3.6.1.6.3.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "snmpStorageControl": {
+    "name": "snmpStorageControl",
+    "oid": "1.3.6.1.6.3.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nop": 1,
+          "write": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Setting this object to write(2) causes the agent to sync not yet committed non-volatile MIB data to stable storage. Setting this object to write(2) while the value of the snmpStorageStatus object is writing(3) leads to an inconsitent value error. Setting this object to nop(1) always succeeds and has no effect. Management applications are advised to make use of the snmpSetSerialNo object defined in the SNMPv2-MIB to coordinate their use of this object."
+  },
+  "snmpStorageStatus": {
+    "name": "snmpStorageStatus",
+    "oid": "1.3.6.1.6.3.1.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "dirty": 2,
+          "writing": 3,
+          "finished": 4,
+          "error": 5
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object reports the current status of the write operation."
+  },
+  "snmpStorageError": {
+    "name": "snmpStorageError",
+    "oid": "1.3.6.1.6.3.1.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object contains a descriptive error message if the last attempt to write into stable storage has failed."
+  },
+  "snmpStorageErrorTime": {
+    "name": "snmpStorageErrorTime",
+    "oid": "1.3.6.1.6.3.1.1.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The data and time when the snmpStorageError was last updated. The value '0000000000000000'H is returned if snmpStorageError has not yet been updated after the initialization."
+  },
+  "snmpStorageCompliances": {
+    "name": "snmpStorageCompliances",
+    "oid": "1.3.6.1.6.3.1.2.1",
+    "class": "objectidentity"
+  },
+  "snmpStorageGroups": {
+    "name": "snmpStorageGroups",
+    "oid": "1.3.6.1.6.3.1.2.2",
+    "class": "objectidentity"
+  },
+  "snmpStorageCompliance": {
+    "name": "snmpStorageCompliance",
+    "oid": "1.3.6.1.6.3.1.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "snmpStorageGlobalGroup",
+        "module": "SNMP-STORAGE-MIB"
+      },
+      {
+        "object": "snmpStorageGroup",
+        "module": "SNMP-STORAGE-MIB"
+      }
+    ],
+    "status": "current"
+  },
+  "snmpStorageGlobalGroup": {
+    "name": "snmpStorageGlobalGroup",
+    "oid": "1.3.6.1.6.3.1.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageGlobControl"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageGlobStatus"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageGlobError"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageGlobErrorTime"
+      }
+    ],
+    "status": "current"
+  },
+  "snmpStorageGroup": {
+    "name": "snmpStorageGroup",
+    "oid": "1.3.6.1.6.3.1.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageDescr"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageID"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageControl"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageStatus"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageError"
+      },
+      {
+        "module": "SNMP-STORAGE-MIB",
+        "object": "snmpStorageErrorTime"
+      }
+    ],
+    "status": "current"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SNMP-STORAGE-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:02:21 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SNMP-STORAGE-MIB"
+  }
+}

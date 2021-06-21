@@ -1,0 +1,3103 @@
+{
+  "imports": {
+    "class": "imports",
+    "AT-SMI-MIB": [
+      "modules"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "Bits",
+      "MODULE-IDENTITY",
+      "iso",
+      "TimeTicks",
+      "Gauge32",
+      "Counter32",
+      "NOTIFICATION-TYPE",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "MibIdentifier",
+      "Unsigned32",
+      "Counter64",
+      "IpAddress"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TruthValue",
+      "AutonomousType",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "atPtpMIB": {
+    "name": "atPtpMIB",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2017-01-23 00:00",
+        "description": "Initial revision."
+      }
+    ],
+    "lastupdated": "201701230000Z",
+    "organization": "Allied Telesis, Inc.",
+    "contactinfo": "http://www.alliedtelesis.com",
+    "description": "This MIB file contains definitions of managed objects for the IEEE 1588v2 Precision Time Protocol (PTP) module."
+  },
+  "PtpClockDomainType": {
+    "name": "PtpClockDomainType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "The Domain is identified by an integer, the domainNumber, in the range of 0 to 255. An integer value that is used to assign each PTP device to a particular domain. The following values define the valid domains. Value Definition --------- ------------------- 0 Default domain 1 Alternate domain 1 2 Alternate domain 2 3 Alternate domain 3 4 - 127 User-defined domains 128 - 255 Reserved",
+    "reference": "Section 7.1 Domains, Table 2 of [IEEE 1588-2008]"
+  },
+  "PtpClockIdentity": {
+    "name": "PtpClockIdentity",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "displayhint": "255a",
+    "status": "current",
+    "description": "The clock Identity is an 8-octet array and will be presented in the form of a character array. Network byte order is assumed. The value of the PtpClockIdentity should be taken from the IEEE EUI-64 individual assigned numbers as indicated in Section 7.5.2.2.2 of [IEEE 1588-2008]. It can also be non-EUI-64 address as defined in section 7.5.2.2.3 of [IEEE 1588-2008]. The EUI-64 address is divided into the following fields: OUI bytes (0-2) Extension identifier bytes (3-7) The clock identifier can be constructed from existing EUI-48 assignments and here is an abbreviated example extracted from section 7.5.2.2.2 [IEEE 1588-2008]. Company EUI-48 = 0xACDE4823456716 EUI-64 = ACDE48FFFE23456716 It is important to note the IEEE Registration Authority has deprecated the use of MAC-48 in any new design.",
+    "reference": "Section 7.5.2.2.1 of [IEEE 1588-2008]"
+  },
+  "PtpClockInstanceType": {
+    "name": "PtpClockInstanceType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "The instance of the Clock of a given clock type in a given domain."
+  },
+  "PtpClockIntervalBase2": {
+    "name": "PtpClockIntervalBase2",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -128,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "The interval included in message types Announce, Sync, Delay_Req, and Pdelay_Req as indicated in section 7.7.2.1 of [IEEE 1588-2008]. The mean time interval between successive messages shall be represented as the logarithm to the base 2 of this time interval measured in seconds on the local clock of the device sending the message. The values of these logarithmic attributes shall be selected from integers in the range -128 to 127 subject to further limits established in an applicable PTP profile.",
+    "reference": "Section 7.7.2.1 General interval specification of [IEEE 1588-2008]"
+  },
+  "PtpClockMechanismType": {
+    "name": "PtpClockMechanismType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "e2e": 1,
+          "p2p": 2,
+          "disabled": 254
+        }
+      }
+    },
+    "status": "current",
+    "description": "The clock type based on whether end-to-end or peer-to-peer mechanisms are used. The mechanism used to calculate the Mean Path Delay as indicated in Table 9 of [IEEE 1588-2008]. Delay mechanism Value(hex) Specification --------------- ---------- ------------- E2E 01 The port is configured to use the delay request-response mechanism. P2P 02 The port is configured to use the peer delay mechanism. DISABLED FE The port does not implement the delay mechanism.",
+    "reference": "Sections 8.2.5.4.4 portDS.delayMechanism, 6.6.4 Measuring link propagation delay in clocks supporting peer-to-peer path correction, 7.4.2 communication Path asymmetry of [IEEE 1588-2008]."
+  },
+  "PtpClockPortNumber": {
+    "name": "PtpClockPortNumber",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "An index identifying a specific Precision Time Protocol (PTP) port on a PTP node.",
+    "reference": "Sections 7.5.2.3 portNumber and 5.3.5 PortIdentity of [IEEE 1588-2008]"
+  },
+  "PtpClockPortState": {
+    "name": "PtpClockPortState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "initializing": 1,
+          "faulty": 2,
+          "disabled": 3,
+          "listening": 4,
+          "preMaster": 5,
+          "master": 6,
+          "passive": 7,
+          "uncalibrated": 8,
+          "slave": 9
+        }
+      }
+    },
+    "status": "current",
+    "description": "This is the value of the current state of the protocol engine associated with this port. Port state Value Description ----------------------------------------------------------- initializing 1 In this state a port initializes its data sets, hardware, and communication facilities. faulty 2 The fault state of the protocol. disabled 3 The port shall not place any messages on its communication path. listening 4 The port is waiting for the announceReceiptTimeout to expire or to receive an Announce message from a master. preMaster 5 The port shall behave in all respects as though it were in the MASTER state except that it shall not place any messages on its communication path except for Pdelay_Req, Pdelay_Resp, Pdelay_Resp_Follow_Up, signaling, or management messages. master 6 The port is behaving as a master port. passive 7 The port shall not place any messages on its communication path except for Pdelay_Req, Pdelay_Resp, Pdelay_Resp_Follow_Up, or signaling messages, or management messages that are a required response to another management message uncalibrated 8 The local port is preparing to synchronize to the master port. slave 9 The port is synchronizing to the selected master port.",
+    "reference": "Section 8.2.5.3.1 portState and 9.2.5 State machines of [IEEE 1588-2008]"
+  },
+  "PtpClockPortTransportTypeAddress": {
+    "name": "PtpClockPortTransportTypeAddress",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "displayhint": "255a",
+    "status": "current",
+    "description": "The Clock port transport protocol address used for this communication between the clock nodes. This is a string corresponding to the address type as specified by the transport type used. The transport types can be defined elsewhere, in addition to the ones defined in this document. This can be an address of type IP version 4, IP version 6, Ethernet, DeviceNET, ControlNET or IEC61158. The OCTET STRING representation of the OID of ptpWellKnownTransportTypes will be used in the values contained in the OCTET STRING.",
+    "reference": "Annex D (IPv4), Annex E (IPv6), Annex F (Ethernet), Annex G (DeviceNET), Annex H (ControlNET) and Annex I (IEC61158) of [IEEE 1588-2008]"
+  },
+  "PtpClockProfileType": {
+    "name": "PtpClockProfileType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "default": 1,
+          "telecom": 2,
+          "vendorspecific": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Clock Profile used. A profile is the set of allowed Precision Time Protocol (PTP) features applicable to a device.",
+    "reference": "Section 3.1.30 profile and 19.3 PTP profiles of [IEEE 1588-2008]"
+  },
+  "PtpClockQualityAccuracyType": {
+    "name": "PtpClockQualityAccuracyType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nanoSecond25": 32,
+          "nanoSecond100": 33,
+          "nanoSecond250": 34,
+          "microSec1": 35,
+          "microSec2dot5": 36,
+          "microSec10": 37,
+          "microSec25": 38,
+          "microSec100": 39,
+          "microSec250": 40,
+          "milliSec1": 41,
+          "milliSec2dot5": 42,
+          "milliSec10": 43,
+          "milliSec25": 44,
+          "milliSec100": 45,
+          "milliSec250": 46,
+          "second1": 47,
+          "second10": 48,
+          "secondGreater10": 49,
+          "unknown": 254
+        }
+      }
+    },
+    "status": "current",
+    "description": "The ClockQuality as specified in sections 5.3.7, 7.6.2.5 and Table 6 of [IEEE 1588-2008]. The following values are not represented in the enumerated values. 0x01-0x1F Reserved 0x32-0x7F Reserved It is important to note that section 7.1.1 of [RFC 2578] allows for gaps and enumerate values starting at zero when indicated by the protocol.",
+    "reference": "Section 5.3.7 ClockQuality, 7.6.2.5 clockAccuracy and Table 6 clockAccuracy enumeration of [IEEE 1588-2008]"
+  },
+  "PtpClockQualityClassType": {
+    "name": "PtpClockQualityClassType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clockclass6": 6,
+          "clockclass7": 7,
+          "clockclass13": 13,
+          "clockclass14": 14,
+          "clockclass52": 52,
+          "clockclass58": 58
+        }
+      }
+    },
+    "status": "current",
+    "description": "The ClockQuality as specified in section 5.3.7 ClockQuality, 7.6.2.4 clockClass and Table 5 clockClass specifications of [IEEE 1588-2008]. Value Description -------- ------------------------------------------------ 0 Reserved to enable compatibility with future versions. 1-5 Reserved 6 Shall designate a clock that is synchronized to a primary reference time source. The timescale distributed shall be PTP. A clockClass 6 clock shall not be a slave to another clock in the domain. 7 Shall designate a clock that has previously been designated as clockClass 6 but that has lost the ability to synchronize to a primary reference time source and is in holdover mode and within holdover specifications. The timescale distributed shall be PTP. A clockClass 7 clock shall not be a slave to another clock in the domain. 8 Reserved. 9-10 Reserved to enable compatibility with future versions. 11-12 Reserved. 13 Shall designate a clock that is synchronized to an application-specific source of time. The timescale distributed shall be ARB. A clockClass 13 clock shall not be a slave to another clock in the domain. 14 Shall designate a clock that has previously been designated as clockClass 13 but that has lost the ability to synchronize to an application-specific source of time and is in holdover mode and within holdover specifications. The timescale distributed shall be ARB. A clockClass 14 clock shall not be a slave to another clock in the domain. 15-51 Reserved. 52 Degradation alternative A for a clock of clockClass 7 that is not within holdover specification. A clock of clockClass 52 shall not be a slave to another clock in the domain. 53-57 Reserved. 58 Degradation alternative A for a clock of clockClass 14 that is not within holdover specification. A clock of clockClass 58 shall not be a slave to another clock in the domain. 59-67 Reserved. 68-122 For use by alternate PTP profiles. 123-127 Reserved. 128-132 Reserved. 133-170 For use by alternate PTP profiles. 171-186 Reserved. 187 Degradation alternative B for a clock of clockClass 7 that is not within holdover specification. A clock of clockClass 187 may be a slave to another clock in the domain. 188-192 Reserved. 193 Degradation alternative B for a clock of clockClass 14 that is not within holdover specification. A clock of clockClass 193 may be a slave to another clock in the domain. 194-215 Reserved. 216-232 For use by alternate PTP profiles. 233-247 Reserved. 248 Default. This clockClass shall be used if none of the other clockClass definitions apply. 249-250 Reserved. 251 Reserved for version 1 compatibility; see Clause 18. 252-254 Reserved. 255 Shall be the clockClass of a slave-only clock; see 9.2.2.",
+    "reference": "Section 5.3.7, 7.6.2.4 and Table 5 of [IEEE 1588-2008]."
+  },
+  "PtpClockRoleType": {
+    "name": "PtpClockRoleType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "master": 1,
+          "slave": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The Clock Role. The protocol generates a Master Slave relationship among the clocks in the system. Clock Role Value Description -------------------------------------------------------------- Master clock 1 A clock that is the source of time to which all other clocks on that path synchronize. Slave clock 2 A clock which synchronizes to another clock (master)."
+  },
+  "PtpClockStateType": {
+    "name": "PtpClockStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "freerun": 1,
+          "holdover": 2,
+          "acquiring": 3,
+          "frequencyLocked": 4,
+          "phaseAligned": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": "The clock state returned by a PTP engine. Clock State Value Description -------------------------------------------------------------- Freerun state 1 Applies to a slave device that is not locked to a master. This is the initial state a slave starts out with when it is not getting any PTP packets from the master or because of some other input error (erroneous packets, etc). Holdover state 2 In this state the slave device is locked to a master but communication with the master has been lost or the timestamps in the PTP packets are incorrect. Since the slave was locked to the master, it can run in this state, with similar accuracy for some time. If communication with the master is not restored for an extended period (dependent on the clock implementation), the device should move to the Freerun state. Acquiring state 3 The slave device is receiving packets from a master and is trying to acquire a lock. Freq_locked state 4 Slave device is locked to the Master with respect to frequency, but not phase aligned Phase_aligned state 5 Locked to the master with respect to frequency and phase."
+  },
+  "PtpClockTimeInterval": {
+    "name": "PtpClockTimeInterval",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "displayhint": "255a",
+    "status": "current",
+    "description": "This textual convention corresponds to the TimeInterval structure indicated in section 5.3.2 of [IEEE 1588-2008]. It will be presented in the form of a character array. Network byte order is assumed. The TimeInterval type represents time intervals. struct TimeInterval { Integer64 scaledNanoseconds; }; The scaledNanoseconds member is the time interval expressed in units of nanoseconds and multiplied by 2**16. Positive or negative time intervals outside the maximum range of this data type shall be encoded as the largest positive and negative values of the data type, respectively. For example, 2.5 ns is expressed as string '0000 0000 0002 8000' in Base16.",
+    "reference": "Section 5.3.2 TimeInterval and section 7.7.2.1 Timer interval specification of [IEEE 1588-2008]"
+  },
+  "PtpClockTimeSourceType": {
+    "name": "PtpClockTimeSourceType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "atomicClock": 16,
+          "gps": 32,
+          "terrestrialRadio": 48,
+          "ptp": 64,
+          "ntp": 80,
+          "handSet": 96,
+          "other": 144,
+          "internalOscillator": 160
+        }
+      }
+    },
+    "status": "current",
+    "description": "The ClockQuality as specified in Sections 5.3.7, 7.6.2.6 and Table 7 of [IEEE 1588-2008]. The following values are not represented in the enumerated values. 0xF0-0xFE For use by alternate PTP profiles 0xFF Reserved It is important to note that section 7.1.1 RFC 2578 allows for gaps and enumerate values to start with zero when indicated by the protocol.",
+    "reference": "Section 5.3.7, 7.6.2.6 and Table 7 of [IEEE 1588-2008]."
+  },
+  "PtpClockTxModeType": {
+    "name": "PtpClockTxModeType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unicast": 1,
+          "multicast": 2,
+          "multicastmix": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Transmission mode. Unicast: Using unicast communication channel. Multicast: Using Multicast communication channel. multicast-mix: Using multicast-unicast communication channel"
+  },
+  "PtpClockType": {
+    "name": "PtpClockType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ordinaryClock": 1,
+          "boundaryClock": 2,
+          "transparentClock": 3,
+          "boundaryNode": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "The clock types as defined in the MIB module description.",
+    "reference": "Section 6.5.1 PTP device types of [IEEE 1588-2008]."
+  },
+  "ptpMIBNotifs": {
+    "name": "ptpMIBNotifs",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.0",
+    "class": "objectidentity"
+  },
+  "ptpMIBObjects": {
+    "name": "ptpMIBObjects",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1",
+    "class": "objectidentity"
+  },
+  "ptpMIBConformance": {
+    "name": "ptpMIBConformance",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2",
+    "class": "objectidentity"
+  },
+  "ptpMIBSystemInfo": {
+    "name": "ptpMIBSystemInfo",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1",
+    "class": "objectidentity"
+  },
+  "ptpMIBClockInfo": {
+    "name": "ptpMIBClockInfo",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2",
+    "class": "objectidentity"
+  },
+  "ptpSystemTable": {
+    "name": "ptpSystemTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of count information about the PTP system for all domains."
+  },
+  "ptpSystemEntry": {
+    "name": "ptpSystemEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing count information about a single domain. New row entries are added when the PTP clock for this domain is configured, while the unconfiguration of the PTP clock removes it."
+  },
+  "ptpDomainIndex": {
+    "name": "ptpDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices. The Clock Domain is a logical group of clocks and devices that synchronize with each other using the PTP protocol. 0 Default domain 1 Alternate domain 1 2 Alternate domain 2 3 Alternate domain 3 4 - 127 User-defined domains 128 - 255 Reserved"
+  },
+  "ptpInstanceIndex": {
+    "name": "ptpInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the Clock for this domain."
+  },
+  "ptpDomainClockPortsTotal": {
+    "name": "ptpDomainClockPortsTotal",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "units": "ptp ports",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the total number of clock ports configured within a domain in the system."
+  },
+  "ptpSystemDomainTable": {
+    "name": "ptpSystemDomainTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the PTP system for all clock modes -- ordinary, boundary or transparent."
+  },
+  "ptpSystemDomainEntry": {
+    "name": "ptpSystemDomainEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpSystemDomainClockTypeIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing information about a single clock mode for the PTP system. A row entry gets added when PTP clocks are configured on the node."
+  },
+  "ptpSystemDomainClockTypeIndex": {
+    "name": "ptpSystemDomainClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpSystemDomainTotals": {
+    "name": "ptpSystemDomainTotals",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "domains",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the total number of PTP domains for this particular clock type configured in this node."
+  },
+  "ptpSystemProfile": {
+    "name": "ptpSystemProfile",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockProfileType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 19.3 PTP profiles of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the PTP Profile implemented on the system."
+  },
+  "ptpClockCurrentDSTable": {
+    "name": "ptpClockCurrentDSTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the PTP clock Current Datasets for all domains."
+  },
+  "ptpClockCurrentDSEntry": {
+    "name": "ptpClockCurrentDSEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockCurrentDSDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockCurrentDSClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockCurrentDSInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "reference": "[IEEE 1588-2008] Section 8.2.2 currentDS data set member specifications of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "An entry in the table, containing information about a single PTP clock Current Datasets for a domain."
+  },
+  "ptpClockCurrentDSDomainIndex": {
+    "name": "ptpClockCurrentDSDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockCurrentDSClockTypeIndex": {
+    "name": "ptpClockCurrentDSClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockCurrentDSInstanceIndex": {
+    "name": "ptpClockCurrentDSInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockCurrentDSStepsRemoved": {
+    "name": "ptpClockCurrentDSStepsRemoved",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "Steps",
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.2.2 stepsRemoved of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "The current clock dataset StepsRemoved value. This object specifies the distance measured by the number of Boundary clocks between the local clock and the Foreign master as indicated in the stepsRemoved field of Announce messages."
+  },
+  "ptpClockCurrentDSOffsetFromMaster": {
+    "name": "ptpClockCurrentDSOffsetFromMaster",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockTimeInterval",
+      "class": "type"
+    },
+    "units": "Time Interval",
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.2.3 currentDS.offsetFromMaster of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the current clock dataset ClockOffset value. The value of the computation of the offset in time between a slave and a master clock."
+  },
+  "ptpClockCurrentDSMeanPathDelay": {
+    "name": "ptpClockCurrentDSMeanPathDelay",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockTimeInterval",
+      "class": "type"
+    },
+    "units": "Time Interval",
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.2.4 currentDS.meanPathDelay of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the current clock dataset MeanPathDelay value. The mean path delay between a pair of ports as measured by the delay request-response mechanism."
+  },
+  "ptpClockParentDSTable": {
+    "name": "ptpClockParentDSTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the PTP clock Parent Datasets for all domains."
+  },
+  "ptpClockParentDSEntry": {
+    "name": "ptpClockParentDSEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "reference": "Section 8.2.3 parentDS data set member specifications of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "An entry in the table, containing information about a single PTP clock Parent Datasets for a domain."
+  },
+  "ptpClockParentDSDomainIndex": {
+    "name": "ptpClockParentDSDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockParentDSClockTypeIndex": {
+    "name": "ptpClockParentDSClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockParentDSInstanceIndex": {
+    "name": "ptpClockParentDSInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockParentDSParentPortIdentity": {
+    "name": "ptpClockParentDSParentPortIdentity",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.2 parentDS.parentPortIdentity of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the value of portIdentity of the port on the master that issues the Sync messages used in synchronizing this clock."
+  },
+  "ptpClockParentDSParentStats": {
+    "name": "ptpClockParentDSParentStats",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.3 parentDS.parentStats of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the Parent Dataset ParentStats value. This value indicates whether the values of ParentDSOffset and ParentDSClockPhChRate have been measured and are valid. A TRUE value shall indicate valid data."
+  },
+  "ptpClockParentDSOffset": {
+    "name": "ptpClockParentDSOffset",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIntervalBase2",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -128,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.4 parentDS.observedParentOffsetScaledLogVariance [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the Parent Dataset ParentOffsetScaledLogVariance value. This value is the variance of the parent clock's phase as measured by the local clock."
+  },
+  "ptpClockParentDSClockPhChRate": {
+    "name": "ptpClockParentDSClockPhChRate",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.5 parentDS.observedParentClockPhaseChangeRate of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the clock's parent dataset ParentClockPhaseChangeRate value. This value is an estimate of the parent clock's phase change rate as measured by the slave clock."
+  },
+  "ptpClockParentDSGMClockIdentity": {
+    "name": "ptpClockParentDSGMClockIdentity",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIdentity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.6 parentDS.grandmasterIdentity of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the parent dataset Grandmaster clock identity."
+  },
+  "ptpClockParentDSGMClockPriority1": {
+    "name": "ptpClockParentDSGMClockPriority1",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.8 parentDS.grandmasterPriority1 of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the parent dataset Grandmaster clock priority1."
+  },
+  "ptpClockParentDSGMClockPriority2": {
+    "name": "ptpClockParentDSGMClockPriority2",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.9 parentDS.grandmasterPriority2 of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the parent dataset grandmaster clock priority2."
+  },
+  "ptpClockParentDSGMClockQualityClass": {
+    "name": "ptpClockParentDSGMClockQualityClass",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockQualityClassType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.7 parentDS.grandmasterClockQuality of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the parent dataset grandmaster clock quality class."
+  },
+  "ptpClockParentDSGMClockQualityAccuracy": {
+    "name": "ptpClockParentDSGMClockQualityAccuracy",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockQualityAccuracyType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.7 parentDS.grandmasterClockQuality of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the parent dataset grandmaster clock quality accuracy."
+  },
+  "ptpClockParentDSGMClockQualityOffset": {
+    "name": "ptpClockParentDSGMClockQualityOffset",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.3.7 parentDS.grandmasterClockQuality of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the parent dataset grandmaster clock quality offset."
+  },
+  "ptpClockDefaultDSTable": {
+    "name": "ptpClockDefaultDSTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the PTP clock Default Datasets for all domains."
+  },
+  "ptpClockDefaultDSEntry": {
+    "name": "ptpClockDefaultDSEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing information about a single PTP clock Default Datasets for a domain."
+  },
+  "ptpClockDefaultDSDomainIndex": {
+    "name": "ptpClockDefaultDSDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockDefaultDSClockTypeIndex": {
+    "name": "ptpClockDefaultDSClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockDefaultDSInstanceIndex": {
+    "name": "ptpClockDefaultDSInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockDefaultDSTwoStepFlag": {
+    "name": "ptpClockDefaultDSTwoStepFlag",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies whether the Two Step process is used."
+  },
+  "ptpClockDefaultDSClockIdentity": {
+    "name": "ptpClockDefaultDSClockIdentity",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIdentity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the default Datasets clock identity."
+  },
+  "ptpClockDefaultDSPriority1": {
+    "name": "ptpClockDefaultDSPriority1",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the default Datasets clock Priority1."
+  },
+  "ptpClockDefaultDSPriority2": {
+    "name": "ptpClockDefaultDSPriority2",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the default Datasets clock Priority2."
+  },
+  "ptpClockDefaultDSSlaveOnly": {
+    "name": "ptpClockDefaultDSSlaveOnly",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Whether the SlaveOnly flag is set."
+  },
+  "ptpClockDefaultDSQualityClass": {
+    "name": "ptpClockDefaultDSQualityClass",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockQualityClassType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the default dataset Quality Class."
+  },
+  "ptpClockDefaultDSQualityAccuracy": {
+    "name": "ptpClockDefaultDSQualityAccuracy",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockQualityAccuracyType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the default dataset Quality Accuracy."
+  },
+  "ptpClockDefaultDSQualityOffset": {
+    "name": "ptpClockDefaultDSQualityOffset",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the default dataset Quality offset."
+  },
+  "ptpClockRunningTable": {
+    "name": "ptpClockRunningTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the PTP clock Running Datasets for all domains."
+  },
+  "ptpClockRunningEntry": {
+    "name": "ptpClockRunningEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockRunningDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockRunningClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockRunningInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing information about a single PTP clock running Datasets for a domain."
+  },
+  "ptpClockRunningDomainIndex": {
+    "name": "ptpClockRunningDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a Logical group of PTP devices."
+  },
+  "ptpClockRunningClockTypeIndex": {
+    "name": "ptpClockRunningClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockRunningInstanceIndex": {
+    "name": "ptpClockRunningInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockRunningState": {
+    "name": "ptpClockRunningState",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockStateType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the Clock state returned by a PTP engine which was described earlier. Freerun state. Applies to a slave device that is not locked to a master. This is the initial state a slave starts out with when it is not getting any PTP packets from the master, or because of some other input error (erroneous packets, etc). Holdover state. In this state the slave device is locked to a master but communication with the master has been lost or the timestamps in the PTP packets are incorrect. Since the slave was previously locked to the master, it can run in this state, with similar accuracy for some time. If communication with the master is not restored for an extended period (dependent on the clock implementation), the device should move to the FREERUN state. Acquiring state. The slave device is receiving packets from a master and is trying to acquire a lock. Freq_locked state. Slave device is locked to the Master with respect to frequency, but not phase aligned. Phase_aligned state. Locked to the master with respect to frequency and phase."
+  },
+  "ptpClockRunningPacketsSent": {
+    "name": "ptpClockRunningPacketsSent",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the total number of all unicast and multicast packets that have been sent out for this clock in this domain for this type. These counters are discontinuous."
+  },
+  "ptpClockRunningPacketsReceived": {
+    "name": "ptpClockRunningPacketsReceived",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the total number of all unicast and multicast packets that have been received for this clock in this domain for this type. These counters are discontinuous."
+  },
+  "ptpClockTimePropertiesDSTable": {
+    "name": "ptpClockTimePropertiesDSTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the PTP clock time properties datasets for all domains."
+  },
+  "ptpClockTimePropertiesDSEntry": {
+    "name": "ptpClockTimePropertiesDSEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "reference": "Section 8.2.4 timePropertiesDS data set member specifications of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "An entry in the table, containing information about a single PTP clock timeproperties Datasets for a domain."
+  },
+  "ptpClockTimePropertiesDSDomainIndex": {
+    "name": "ptpClockTimePropertiesDSDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockTimePropertiesDSClockTypeIndex": {
+    "name": "ptpClockTimePropertiesDSClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockTimePropertiesDSInstanceIndex": {
+    "name": "ptpClockTimePropertiesDSInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockTimePropertiesDSCurrentUTCOffsetValid": {
+    "name": "ptpClockTimePropertiesDSCurrentUTCOffsetValid",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.2 timePropertiesDS.currentUtcOffset of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the timeproperties dataset value of whether the current UTC offset is valid."
+  },
+  "ptpClockTimePropertiesDSCurrentUTCOffset": {
+    "name": "ptpClockTimePropertiesDSCurrentUTCOffset",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.3 timePropertiesDS.currentUtcOffsetValid of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the timeproperties dataset value of the current UTC offset. In PTP systems whose epoch is the PTP epoch, the value of timePropertiesDS.currentUtcOffset is the offset between TAI and UTC; otherwise the value has no meaning. The value shall be in units of seconds. The initialization value shall be selected as follows: a) If the timePropertiesDS.ptpTimescale (see 8.2.4.8) is TRUE, the value is the value obtained from a primary reference if the value is known at the time of initialization, else, b) The value shall be the current number of leap seconds (7.2.3) when the node is designed."
+  },
+  "ptpClockTimePropertiesDSLeap59": {
+    "name": "ptpClockTimePropertiesDSLeap59",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.4 timePropertiesDS.leap59 of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the Leap59 value in the clock Current Dataset."
+  },
+  "ptpClockTimePropertiesDSLeap61": {
+    "name": "ptpClockTimePropertiesDSLeap61",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.5 timePropertiesDS.leap61 of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the Leap61 value in the clock Current Dataset."
+  },
+  "ptpClockTimePropertiesDSTimeTraceable": {
+    "name": "ptpClockTimePropertiesDSTimeTraceable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.6 timePropertiesDS.timeTraceable of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the Time Traceable value in the clock Current Dataset."
+  },
+  "ptpClockTimePropertiesDSFreqTraceable": {
+    "name": "ptpClockTimePropertiesDSFreqTraceable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.7 timePropertiesDS.frequencyTraceable of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the Frequency Traceable value in the clock Current Dataset."
+  },
+  "ptpClockTimePropertiesDSPTPTimescale": {
+    "name": "ptpClockTimePropertiesDSPTPTimescale",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.8 timePropertiesDS.ptpTimescale of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the PTP Timescale value in the clock Current Dataset."
+  },
+  "ptpClockTimePropertiesDSSource": {
+    "name": "ptpClockTimePropertiesDSSource",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.5.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockTimeSourceType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.2.4.9 timePropertiesDS.timeSource of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the Timesource value in the clock Current Dataset."
+  },
+  "ptpClockTransDefaultDSTable": {
+    "name": "ptpClockTransDefaultDSTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the PTP Transparent clock Default Datasets for all domains."
+  },
+  "ptpClockTransDefaultDSEntry": {
+    "name": "ptpClockTransDefaultDSEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTransDefaultDSDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTransDefaultDSInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "reference": "Section 8.3.2 transparentClockDefaultDS data set member specifications of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "An entry in the table, containing information about a single PTP Transparent clock Default Datasets for a domain."
+  },
+  "ptpClockTransDefaultDSDomainIndex": {
+    "name": "ptpClockTransDefaultDSDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockTransDefaultDSInstanceIndex": {
+    "name": "ptpClockTransDefaultDSInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockTransDefaultDSClockIdentity": {
+    "name": "ptpClockTransDefaultDSClockIdentity",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIdentity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.2.2.1 transparentClockDefaultDS.clockIdentity of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the value of the clockIdentity attribute of the local clock."
+  },
+  "ptpClockTransDefaultDSNumOfPorts": {
+    "name": "ptpClockTransDefaultDSNumOfPorts",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.2.2.2 transparentClockDefaultDS.numberPorts of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the number of PTP ports of the device. These counters are discontinuous."
+  },
+  "ptpClockTransDefaultDSDelay": {
+    "name": "ptpClockTransDefaultDSDelay",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockMechanismType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.2.3.1 transparentClockDefaultDS.delayMechanism of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object, if the transparent clock is an end-to-end transparent clock, has the value of E2E; if the transparent clock is a peer-to-peer transparent clock, the value shall be P2P."
+  },
+  "ptpClockTransDefaultDSPrimaryDomain": {
+    "name": "ptpClockTransDefaultDSPrimaryDomain",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.2.3.2 transparentClockDefaultDS.primaryDomain of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the value of the primary syntonization domain. The initialization value shall be 0."
+  },
+  "ptpClockPortTable": {
+    "name": "ptpClockPortTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the clock ports for a particular domain."
+  },
+  "ptpClockPortEntry": {
+    "name": "ptpClockPortEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortClockInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTablePortNumberIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing information about a single clock port."
+  },
+  "ptpClockPortDomainIndex": {
+    "name": "ptpClockPortDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockPortClockTypeIndex": {
+    "name": "ptpClockPortClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockPortClockInstanceIndex": {
+    "name": "ptpClockPortClockInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockPortTablePortNumberIndex": {
+    "name": "ptpClockPortTablePortNumberIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the PTP Portnumber for this port."
+  },
+  "ptpClockPortName": {
+    "name": "ptpClockPortName",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the PTP clock port name configured on the node."
+  },
+  "ptpClockPortRole": {
+    "name": "ptpClockPortRole",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockRoleType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object describes the current role (slave/master) of the port."
+  },
+  "ptpClockPortSyncTwoStep": {
+    "name": "ptpClockPortSyncTwoStep",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies that two-step clock operation between the PTP master and slave device is enabled."
+  },
+  "ptpClockPortCurrentPeerAddressType": {
+    "name": "ptpClockPortCurrentPeerAddressType",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the current peer's network address type used for PTP communication."
+  },
+  "ptpClockPortCurrentPeerAddress": {
+    "name": "ptpClockPortCurrentPeerAddress",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortTransportTypeAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the current peer's network address used for PTP communication."
+  },
+  "ptpClockPortNumOfAssociatedPorts": {
+    "name": "ptpClockPortNumOfAssociatedPorts",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.7.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies - For a master port - the number of PTP slave sessions (peers) associated with this PTP port. For a slave port - the number of masters available to this slave port (might or might not be peered)."
+  },
+  "ptpClockPortDSTable": {
+    "name": "ptpClockPortDSTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the clock ports dataset for a particular domain."
+  },
+  "ptpClockPortDSEntry": {
+    "name": "ptpClockPortDSEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSClockInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSPortNumberIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing port dataset information for a single clock port."
+  },
+  "ptpClockPortDSDomainIndex": {
+    "name": "ptpClockPortDSDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockPortDSClockTypeIndex": {
+    "name": "ptpClockPortDSClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockPortDSClockInstanceIndex": {
+    "name": "ptpClockPortDSClockInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockPortDSPortNumberIndex": {
+    "name": "ptpClockPortDSPortNumberIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the PTP portnumber associated with this PTP port."
+  },
+  "ptpClockPortDSName": {
+    "name": "ptpClockPortDSName",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the PTP clock port dataset name."
+  },
+  "ptpClockPortDSPortIdentity": {
+    "name": "ptpClockPortDSPortIdentity",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the PTP clock port Identity."
+  },
+  "ptpClockPortDSlogAnnouncementInterval": {
+    "name": "ptpClockPortDSlogAnnouncementInterval",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIntervalBase2",
+      "class": "type"
+    },
+    "units": "Time Interval",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the Announce message transmission interval associated with this clock port."
+  },
+  "ptpClockPortDSAnnounceRctTimeout": {
+    "name": "ptpClockPortDSAnnounceRctTimeout",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the Announce receipt timeout associated with this clock port."
+  },
+  "ptpClockPortDSlogSyncInterval": {
+    "name": "ptpClockPortDSlogSyncInterval",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIntervalBase2",
+      "class": "type"
+    },
+    "units": "Time Interval",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the Sync message transmission interval."
+  },
+  "ptpClockPortDSMinDelayReqInterval": {
+    "name": "ptpClockPortDSMinDelayReqInterval",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the Delay_Req message transmission interval."
+  },
+  "ptpClockPortDSPeerDelayReqInterval": {
+    "name": "ptpClockPortDSPeerDelayReqInterval",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the Pdelay_Req message transmission interval."
+  },
+  "ptpClockPortDSDelayMech": {
+    "name": "ptpClockPortDSDelayMech",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockMechanismType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the delay mechanism used. If the clock is an end-to-end clock, the value of the is e2e, else if the clock is a peer to-peer clock, the value shall be p2p."
+  },
+  "ptpClockPortDSPeerMeanPathDelay": {
+    "name": "ptpClockPortDSPeerMeanPathDelay",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockTimeInterval",
+      "class": "type"
+    },
+    "units": "Time Interval",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the peer meanPathDelay."
+  },
+  "ptpClockPortDSGrantDuration": {
+    "name": "ptpClockPortDSGrantDuration",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the grant duration allocated by the master."
+  },
+  "ptpClockPortDSPTPVersion": {
+    "name": "ptpClockPortDSPTPVersion",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.8.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the PTP version being used."
+  },
+  "ptpClockPortRunningTable": {
+    "name": "ptpClockPortRunningTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the clock ports running datasets for a particular domain."
+  },
+  "ptpClockPortRunningEntry": {
+    "name": "ptpClockPortRunningEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningClockInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningPortNumberIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing running dataset information about a single clock port."
+  },
+  "ptpClockPortRunningDomainIndex": {
+    "name": "ptpClockPortRunningDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a logical group of PTP devices."
+  },
+  "ptpClockPortRunningClockTypeIndex": {
+    "name": "ptpClockPortRunningClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the clock type as defined in the Textual convention description."
+  },
+  "ptpClockPortRunningClockInstanceIndex": {
+    "name": "ptpClockPortRunningClockInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockPortRunningPortNumberIndex": {
+    "name": "ptpClockPortRunningPortNumberIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the PTP portnumber associated with this clock port."
+  },
+  "ptpClockPortRunningName": {
+    "name": "ptpClockPortRunningName",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the PTP clock port name."
+  },
+  "ptpClockPortRunningState": {
+    "name": "ptpClockPortRunningState",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the port state returned by PTP engine. initializing - In this state a port initializes its data sets, hardware, and communication facilities. faulty - The fault state of the protocol. disabled - The port shall not place any messages on its communication path. listening - The port is waiting for the announceReceiptTimeout to expire or to receive an Announce message from a master. preMaster - The port shall behave in all respects as though it were in the MASTER state except that it shall not place any messages on its communication path except for Pdelay_Req, Pdelay_Resp, Pdelay_Resp_Follow_Up, signaling, or management messages. master - The port is behaving as a master port. passive - The port shall not place any messages on its communication path except for Pdelay_Req, Pdelay_Resp, Pdelay_Resp_Follow_Up, or signaling messages, or management messages that are a required response to another management message uncalibrated - The local port is preparing to synchronize to the master port. slave - The port is synchronizing to the selected master port."
+  },
+  "ptpClockPortRunningRole": {
+    "name": "ptpClockPortRunningRole",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockRoleType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the Clock Role."
+  },
+  "ptpClockPortRunningInterfaceIndex": {
+    "name": "ptpClockPortRunningInterfaceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the interface on the node being used by the PTP Clock for PTP communication."
+  },
+  "ptpClockPortRunningTransport": {
+    "name": "ptpClockPortRunningTransport",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the transport protocol being used for PTP communication (the mapping used)."
+  },
+  "ptpClockPortRunningEncapsulationType": {
+    "name": "ptpClockPortRunningEncapsulationType",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the type of encapsulation if the interface is adding extra layers (e.g., VLAN, Pseudowire encapsulation...) for the PTP messages."
+  },
+  "ptpClockPortRunningTxMode": {
+    "name": "ptpClockPortRunningTxMode",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockTxModeType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the clock transmission mode as unicast: Using unicast communication channel. multicast: Using Multicast communication channel. multicast-mix: Using multicast-unicast communication channel"
+  },
+  "ptpClockPortRunningRxMode": {
+    "name": "ptpClockPortRunningRxMode",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockTxModeType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the clock receive mode as unicast: Using unicast communication channel. multicast: Using Multicast communication channel. multicast-mix: Using multicast-unicast communication channel"
+  },
+  "ptpClockPortRunningPacketsReceived": {
+    "name": "ptpClockPortRunningPacketsReceived",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the packets received on the clock port (cumulative). These counters are discontinuous."
+  },
+  "ptpClockPortRunningPacketsSent": {
+    "name": "ptpClockPortRunningPacketsSent",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.9.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the packets sent on the clock port (cumulative). These counters are discontinuous."
+  },
+  "ptpClockPortTransDSTable": {
+    "name": "ptpClockPortTransDSTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about the Transparent clock ports running dataset for a particular domain."
+  },
+  "ptpClockPortTransDSEntry": {
+    "name": "ptpClockPortTransDSEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTransDSDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTransDSInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTransDSPortNumberIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing clock port Transparent dataset information about a single clock port"
+  },
+  "ptpClockPortTransDSDomainIndex": {
+    "name": "ptpClockPortTransDSDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the domain number used to create a Logical group of PTP devices."
+  },
+  "ptpClockPortTransDSInstanceIndex": {
+    "name": "ptpClockPortTransDSInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockPortTransDSPortNumberIndex": {
+    "name": "ptpClockPortTransDSPortNumberIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "Section 7.5.2 Port Identity of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the PTP port number associated with this port."
+  },
+  "ptpClockPortTransDSPortIdentity": {
+    "name": "ptpClockPortTransDSPortIdentity",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIdentity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.3.2.1 transparentClockPortDS.portIdentity of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the value of the PortIdentity attribute of the local port."
+  },
+  "ptpClockPortTransDSlogMinPdelayReqInt": {
+    "name": "ptpClockPortTransDSlogMinPdelayReqInt",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockIntervalBase2",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.3.3.1 transparentClockPortDS.logMinPdelayReqInterval of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the value of the logarithm to the base 2 of the minPdelayReqInterval."
+  },
+  "ptpClockPortTransDSFaultyFlag": {
+    "name": "ptpClockPortTransDSFaultyFlag",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.3.3.2 transparentClockPortDS.faultyFlag of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies the value TRUE if the port is faulty and FALSE if the port is operating normally."
+  },
+  "ptpClockPortTransDSPeerMeanPathDelay": {
+    "name": "ptpClockPortTransDSPeerMeanPathDelay",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.10.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockTimeInterval",
+      "class": "type"
+    },
+    "units": "Time Interval",
+    "maxaccess": "read-only",
+    "reference": "Section 8.3.3.3.3 transparentClockPortDS.peerMeanPathDelay of [IEEE 1588-2008]",
+    "status": "current",
+    "description": "This object specifies, if the delayMechanism used is P2P, the value of the estimate of the current one-way propagation delay, i.e., <meanPathDelay> on the link attached to this port, computed using the peer delay mechanism. If the value of the delayMechanism used is E2E, then the value will be zero."
+  },
+  "ptpClockPortAssociateTable": {
+    "name": "ptpClockPortAssociateTable",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of information about a given port's associated ports. For a master port: multiple slave ports that have established sessions with the current master port. For a slave port: the list of masters available for a given slave port. Session information (packets, errors) to be displayed based on availability and scenario."
+  },
+  "ptpWellKnownTransportTypes": {
+    "name": "ptpWellKnownTransportTypes",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.12",
+    "class": "objectidentity"
+  },
+  "ptpTransportTypeIPversion4": {
+    "name": "ptpTransportTypeIPversion4",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.12.1",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "IP version 4"
+  },
+  "ptpTransportTypeIPversion6": {
+    "name": "ptpTransportTypeIPversion6",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.12.2",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "IP version 6"
+  },
+  "ptpTransportTypeEthernet": {
+    "name": "ptpTransportTypeEthernet",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.12.3",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "Ethernet"
+  },
+  "ptpTransportTypeDeviceNET": {
+    "name": "ptpTransportTypeDeviceNET",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.12.4",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "Device NET"
+  },
+  "ptpTransportTypeControlNET": {
+    "name": "ptpTransportTypeControlNET",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.12.5",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "Control NET"
+  },
+  "ptpTransportTypeIEC61158": {
+    "name": "ptpTransportTypeIEC61158",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.12.6",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "IEC61158"
+  },
+  "ptpWellKnownEncapsulationTypes": {
+    "name": "ptpWellKnownEncapsulationTypes",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.13",
+    "class": "objectidentity"
+  },
+  "ptpEncapsulationTypeEthernet": {
+    "name": "ptpEncapsulationTypeEthernet",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.13.1",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "Ethernet Encapsulation type."
+  },
+  "ptpEncapsulationTypeVLAN": {
+    "name": "ptpEncapsulationTypeVLAN",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.13.2",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "VLAN Encapsulation type."
+  },
+  "ptpEncapsulationTypeUDPIPLSP": {
+    "name": "ptpEncapsulationTypeUDPIPLSP",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.13.3",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "UDP/IP over MPLS Encapsulation type."
+  },
+  "ptpEncapsulationTypePWUDPIPLSP": {
+    "name": "ptpEncapsulationTypePWUDPIPLSP",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.13.4",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "UDP/IP Pseudowire over MPLS Encapsulation type."
+  },
+  "ptpEncapsulationTypePWEthernetLSP": {
+    "name": "ptpEncapsulationTypePWEthernetLSP",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.13.5",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "Ethernet Pseudowire over MPLS Encapsulation type."
+  },
+  "ptpClockPortAssociateEntry": {
+    "name": "ptpClockPortAssociateEntry",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortCurrentDomainIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortCurrentClockTypeIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortCurrentClockInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortCurrentPortNumberIndex",
+        "implied": 0
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortAssociatePortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table, containing information about a single associated port for the given clockport."
+  },
+  "ptpClockPortCurrentDomainIndex": {
+    "name": "ptpClockPortCurrentDomainIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockDomainType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the given port's domain number."
+  },
+  "ptpClockPortCurrentClockTypeIndex": {
+    "name": "ptpClockPortCurrentClockTypeIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the given port's clock type."
+  },
+  "ptpClockPortCurrentClockInstanceIndex": {
+    "name": "ptpClockPortCurrentClockInstanceIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockInstanceType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the instance of the clock for this clock type in the given domain."
+  },
+  "ptpClockPortCurrentPortNumberIndex": {
+    "name": "ptpClockPortCurrentPortNumberIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the PTP Port Number for the given port."
+  },
+  "ptpClockPortAssociatePortIndex": {
+    "name": "ptpClockPortAssociatePortIndex",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object specifies the associated port's serial number in the current port's context."
+  },
+  "ptpClockPortAssociateAddressType": {
+    "name": "ptpClockPortAssociateAddressType",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the peer port's network address type used for PTP communication. The OCTET STRING representation of the OID of ptpWellKnownTransportTypes will be used in the values contained in the OCTET STRING."
+  },
+  "ptpClockPortAssociateAddress": {
+    "name": "ptpClockPortAssociateAddress",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PtpClockPortTransportTypeAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the peer port's network address used for PTP communication."
+  },
+  "ptpClockPortAssociatePacketsSent": {
+    "name": "ptpClockPortAssociatePacketsSent",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets sent to this peer port from the current port. These counters are discontinuous."
+  },
+  "ptpClockPortAssociatePacketsReceived": {
+    "name": "ptpClockPortAssociatePacketsReceived",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets received from this peer port by the current port. These counters are discontinuous."
+  },
+  "ptpClockPortAssociateInErrors": {
+    "name": "ptpClockPortAssociateInErrors",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the input errors associated with the peer port. These counters are discontinuous."
+  },
+  "ptpClockPortAssociateOutErrors": {
+    "name": "ptpClockPortAssociateOutErrors",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.1.2.11.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the output errors associated with the peer port. These counters are discontinuous."
+  },
+  "ptpMIBCompliances": {
+    "name": "ptpMIBCompliances",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.1",
+    "class": "objectidentity"
+  },
+  "ptpMIBGroups": {
+    "name": "ptpMIBGroups",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2",
+    "class": "objectidentity"
+  },
+  "ptpMIBCompliancesSystemInfo": {
+    "name": "ptpMIBCompliancesSystemInfo",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "ptpMIBSystemInfoGroup",
+        "module": "AT-PTP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that provide read-only support for PTPBASE-MIB to provide system level information of clock devices. Such devices can only be monitored using this MIB module. The Module is implemented with support for read-only. In other words, only monitoring is available by implementing this MODULE-COMPLIANCE."
+  },
+  "ptpMIBCompliancesClockInfo": {
+    "name": "ptpMIBCompliancesClockInfo",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.1.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "ptpMIBClockCurrentDSGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockParentDSGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockDefaultDSGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockRunningGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockTimepropertiesGroup",
+        "module": "AT-PTP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that provide read-only support for PTPBASE-MIB to provide clock related information. Such devices can only be monitored using this MIB module. The Module is implemented with support for read-only. In other words, only monitoring is available by implementing this MODULE-COMPLIANCE."
+  },
+  "ptpMIBCompliancesClockPortInfo": {
+    "name": "ptpMIBCompliancesClockPortInfo",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.1.3",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "ptpMIBClockPortGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockPortDSGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockPortRunningGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockPortAssociateGroup",
+        "module": "AT-PTP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that provide read-only support for PTPBASE-MIB to provide clock port related information. Such devices can only be monitored using this MIB module. The Module is implemented with support for read-only. In other words, only monitoring is available by implementing this MODULE-COMPLIANCE."
+  },
+  "ptpMIBCompliancesTransparentClockInfo": {
+    "name": "ptpMIBCompliancesTransparentClockInfo",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.1.4",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "ptpMIBClockTranparentDSGroup",
+        "module": "AT-PTP-MIB"
+      },
+      {
+        "object": "ptpMIBClockPortTransDSGroup",
+        "module": "AT-PTP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that provide read-only support for PTPBASE-MIB to provide Transparent clock related information. Such devices can only be monitored using this MIB module. The Module is implemented with support for read-only. In other words, only monitoring is available by implementing this MODULE-COMPLIANCE."
+  },
+  "ptpMIBSystemInfoGroup": {
+    "name": "ptpMIBSystemInfoGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpSystemDomainTotals"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpDomainClockPortsTotal"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpSystemProfile"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing system-wide information"
+  },
+  "ptpMIBClockCurrentDSGroup": {
+    "name": "ptpMIBClockCurrentDSGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockCurrentDSStepsRemoved"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockCurrentDSOffsetFromMaster"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockCurrentDSMeanPathDelay"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP Current Dataset information"
+  },
+  "ptpMIBClockParentDSGroup": {
+    "name": "ptpMIBClockParentDSGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSParentPortIdentity"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSParentStats"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSOffset"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSClockPhChRate"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSGMClockIdentity"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSGMClockPriority1"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSGMClockPriority2"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSGMClockQualityClass"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSGMClockQualityAccuracy"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockParentDSGMClockQualityOffset"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP Parent Dataset information"
+  },
+  "ptpMIBClockDefaultDSGroup": {
+    "name": "ptpMIBClockDefaultDSGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSTwoStepFlag"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSClockIdentity"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSPriority1"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSPriority2"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSSlaveOnly"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSQualityClass"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSQualityAccuracy"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockDefaultDSQualityOffset"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP Default Dataset information"
+  },
+  "ptpMIBClockRunningGroup": {
+    "name": "ptpMIBClockRunningGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockRunningState"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockRunningPacketsSent"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockRunningPacketsReceived"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP running state information"
+  },
+  "ptpMIBClockTimepropertiesGroup": {
+    "name": "ptpMIBClockTimepropertiesGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSCurrentUTCOffsetValid"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSCurrentUTCOffset"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSLeap59"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSLeap61"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSTimeTraceable"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSFreqTraceable"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSPTPTimescale"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTimePropertiesDSSource"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP Time Properties information"
+  },
+  "ptpMIBClockTranparentDSGroup": {
+    "name": "ptpMIBClockTranparentDSGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTransDefaultDSClockIdentity"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTransDefaultDSNumOfPorts"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTransDefaultDSDelay"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockTransDefaultDSPrimaryDomain"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP Transparent Dataset information"
+  },
+  "ptpMIBClockPortGroup": {
+    "name": "ptpMIBClockPortGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortName"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortSyncTwoStep"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortCurrentPeerAddress"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortNumOfAssociatedPorts"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortCurrentPeerAddressType"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRole"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing information for a given PTP Port."
+  },
+  "ptpMIBClockPortDSGroup": {
+    "name": "ptpMIBClockPortDSGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSName"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSPortIdentity"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSlogAnnouncementInterval"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSAnnounceRctTimeout"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSlogSyncInterval"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSMinDelayReqInterval"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSPeerDelayReqInterval"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSDelayMech"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSPeerMeanPathDelay"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSGrantDuration"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortDSPTPVersion"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP Port Dataset information"
+  },
+  "ptpMIBClockPortRunningGroup": {
+    "name": "ptpMIBClockPortRunningGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.10",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningName"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningState"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningRole"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningInterfaceIndex"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningTransport"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningEncapsulationType"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningTxMode"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningRxMode"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningPacketsReceived"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortRunningPacketsSent"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP running interface information"
+  },
+  "ptpMIBClockPortTransDSGroup": {
+    "name": "ptpMIBClockPortTransDSGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.11",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTransDSPortIdentity"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTransDSlogMinPdelayReqInt"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTransDSFaultyFlag"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortTransDSPeerMeanPathDelay"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing PTP TransparentDS information"
+  },
+  "ptpMIBClockPortAssociateGroup": {
+    "name": "ptpMIBClockPortAssociateGroup",
+    "oid": "1.3.6.1.4.1.207.8.4.4.4.504.2.2.12",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortAssociatePacketsSent"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortAssociatePacketsReceived"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortAssociateAddress"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortAssociateAddressType"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortAssociateInErrors"
+      },
+      {
+        "module": "AT-PTP-MIB",
+        "object": "ptpClockPortAssociateOutErrors"
+      }
+    ],
+    "status": "current",
+    "description": "Group which aggregates objects describing information on peer PTP ports for a given PTP clock-port."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/AT-PTP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:04:31 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "AT-PTP-MIB"
+  }
+}

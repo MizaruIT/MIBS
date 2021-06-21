@@ -1,0 +1,789 @@
+{
+  "imports": {
+    "class": "imports",
+    "PRVT-CR-LDP-MIB": [
+      "mpls"
+    ],
+    "PRVT-LMGR-MIB": [
+      "PrvtLmgrPartnerStatus",
+      "PrvtLmgrIndex"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Unsigned32",
+      "Integer32",
+      "OBJECT-TYPE",
+      "IpAddress",
+      "Bits",
+      "TimeTicks",
+      "Gauge32",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "MODULE-IDENTITY",
+      "Counter64"
+    ],
+    "SNMPv2-TC": [
+      "RowStatus",
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "DisplayString"
+    ]
+  },
+  "prvtTeMibEntityMib": {
+    "name": "prvtTeMibEntityMib",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2007-12-06 00:00",
+        "description": "Initial."
+      }
+    ],
+    "lastupdated": "200712060000Z",
+    "organization": "BATM Advanced Communication",
+    "contactinfo": " BATM/Telco Systems Support team Email: For North America: techsupport@telco.com For North Europe: support@batm.de, info@batm.de For the rest of the world: techsupport@telco.com",
+    "description": "The MIB module for management of TE-MIB entities."
+  },
+  "prvtTeMibEntityObjects": {
+    "name": "prvtTeMibEntityObjects",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1",
+    "class": "objectidentity"
+  },
+  "PrvtTeMibAdminStatus": {
+    "name": "PrvtTeMibAdminStatus",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The desired administrative state of a TE-MIB entity."
+  },
+  "PrvtTeMibOperStatus": {
+    "name": "PrvtTeMibOperStatus",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2,
+          "goingUp": 3,
+          "goingDown": 4,
+          "actFailed": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": "The current operational state of a TE-MIB entity."
+  },
+  "PrvtTeMibEntityIndex": {
+    "name": "PrvtTeMibEntityIndex",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "The index value identifying a TE-MIB entity."
+  },
+  "PrvtTeMibPartnerStatus": {
+    "name": "PrvtTeMibPartnerStatus",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "initial": 0,
+          "activating": 1,
+          "active": 2,
+          "deactivating": 3,
+          "failedOver": 4,
+          "failed": 5,
+          "unavailable": 6
+        }
+      }
+    },
+    "status": "current",
+    "description": "The state of a TE-MIB entity partner."
+  },
+  "prvtMplsTeMibEntityTable": {
+    "name": "prvtMplsTeMibEntityTable",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table of TE-MIB entities."
+  },
+  "prvtMplsTeMibEntityEntry": {
+    "name": "prvtMplsTeMibEntityEntry",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibEntityIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents a TE-MIB entity."
+  },
+  "prvtMplsTeMibEntityIndex": {
+    "name": "prvtMplsTeMibEntityIndex",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibEntityIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of this TE-MIB entity table entry. This is the HAF entity index passed on the entity create parameters."
+  },
+  "prvtMplsTeMibEntityAdminStatus": {
+    "name": "prvtMplsTeMibEntityAdminStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibAdminStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "up",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The desired administrative state of the TE-MIB entity. When prvtMplsTeMibEntityRowStatus is 'active' and prvtMplsTeMibEntityAdminStatus is 'up' the TE-MIB entity is active and only these two fields can be modified."
+  },
+  "prvtMplsTeMibEntityOperStatus": {
+    "name": "prvtMplsTeMibEntityOperStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibOperStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current operational state of the TE-MIB entity."
+  },
+  "prvtMplsTeMibEntityRowStatus": {
+    "name": "prvtMplsTeMibEntityRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status for the TE-MIB entity table entry, used to create and destroy TE-MIB entities. When prvtMplsTeMibEntityRowStatus is 'active' and prvtMplsTeMibEntityAdminStatus is 'up' the TE-MIB entity is active and only these two fields can be modified."
+  },
+  "prvtMplsTeMibTunnelRetryInterval": {
+    "name": "prvtMplsTeMibTunnelRetryInterval",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 3000,
+        "format": "decimal"
+      }
+    },
+    "units": "milliseconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The persistent tunnel retry interval. This is the interval between the first failure of a persistent tunnel and the first attempt to re-establish the tunnel. A value of 0 indicates retrying is not supported. A management agent may preempt a retry by resetting mplsTunnelAdminStatus for the tunnel in question."
+  },
+  "prvtMplsTeMibTunnelRetryDecayRate": {
+    "name": "prvtMplsTeMibTunnelRetryDecayRate",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 50,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The persistent tunnel decay rate. This is a percentage. Thus a value of 10 increases the retry interval by ten per cent of the previous value. A value of 0 indicates a constant retry rate."
+  },
+  "prvtMplsTeMibTunnelRetryMax": {
+    "name": "prvtMplsTeMibTunnelRetryMax",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum number of retry attempts that will be made before a persistent tunnel is deemed inoperable. Once in this state, a management agent should set mplsTunnelAdminStatus to 'up' to attempt to reestablish the tunnel. A value of -1 indicates infinite retry, so a persistent tunnel will continue to be retried until it is successfully established."
+  },
+  "prvtMplsTeMibTnnlBufPoolSize": {
+    "name": "prvtMplsTeMibTnnlBufPoolSize",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 8,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum number of buffers available for tunnel management messages. This is used to limit the number of tunnel management messages to avoid buffer shortage conditions."
+  },
+  "prvtMplsTeMibLsrIndex": {
+    "name": "prvtMplsTeMibLsrIndex",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtLmgrIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index of the PRVT-LMGR product instance which this TE-MIB is to join to as its LDB interface provider. If this value is not specified, or the value of this object is 0, TE-MIB will use the prvtMplsTeMibEntityIndex value as the Lsr index when joining on the LDB interface."
+  },
+  "prvtMplsTeMibLdbStatus": {
+    "name": "prvtMplsTeMibLdbStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibPartnerStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Diagnostic Field providing information about the status of the Label Database Interface user as seen by the TE-MIB entity."
+  },
+  "prvtMplsTeMibLraStatus": {
+    "name": "prvtMplsTeMibLraStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtLmgrPartnerStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Diagnostic Field providing information about the status of the LRAPI user as seen by the TE-MIB entity."
+  },
+  "prvtMplsTeMibLdiStatus": {
+    "name": "prvtMplsTeMibLdiStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibPartnerStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A diagnostic value which reports the state of the LDI join."
+  },
+  "prvtMplsTeMibRsvpEnable": {
+    "name": "prvtMplsTeMibRsvpEnable",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A boolean indicating whether the PRVT-TE-MIB should expect a join from PRVT-RSVP across the LRAPI. This indicates whether RSVP-TE LSP tunnels are supported or not."
+  },
+  "prvtMplsTeMibCrldpEnable": {
+    "name": "prvtMplsTeMibCrldpEnable",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A boolean indicating whether the PRVT-TE-MIB should join to PRVT-CR-LDP or not across the LDI, and therefore support CR-LDP LSP tunnels or not."
+  },
+  "prvtMplsTeMibCrldpIndex": {
+    "name": "prvtMplsTeMibCrldpIndex",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index of the PRVT-MPLS product instance which this TE-MIB is to join to as its LDI interface provider. If this value is not specified, or the value of this object is 0, TE-MIB will use the prvtMplsTeMibEntityIndex value as the CR-LDP product index when joining on the LDI interface."
+  },
+  "prvtMplsTeMibUseRsvpResvConf": {
+    "name": "prvtMplsTeMibUseRsvpResvConf",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "useResvConfForUNI": 0,
+        "useResvConfForGMPLS": 1
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Flags field indicating whether a RESV_CONFIRM object should be included in RSVP Resv messages. The possible bit values are as follows. - useResvConfForUNI: RESV_CONFIRM objects should be inserted into all UNI Resv messages. - useResvConfForGMPLS: RESV_CONFIRM objects should be inserted into all standard GMPLS Resv messages."
+  },
+  "prvtMplsTeMibAllowGracefulDeletion": {
+    "name": "prvtMplsTeMibAllowGracefulDeletion",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A boolean indicating whether the TE-MIB should allow tunnels to be deleted using the graceful deletion procedure."
+  },
+  "prvtMplsTeMibShowTransitTunnels": {
+    "name": "prvtMplsTeMibShowTransitTunnels",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A flag to indicate whether RSVP should inform TE-MIB about LSPs for which this node is transit."
+  },
+  "prvtMplsTeMibSupportCHopTable": {
+    "name": "prvtMplsTeMibSupportCHopTable",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A flag to indicate whether TE-MIB should support the mplsTunnelCHopTable."
+  },
+  "prvtMplsTeMibNhrIndex": {
+    "name": "prvtMplsTeMibNhrIndex",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index of the PRVT-MPLS product instance which this TE-MIB is to join to as its NHR interface provider. If this value is not specified, or the value of this object is 0, TE-MIB will use the prvtMplsTeMibEntityIndex value as the LSR index when joining on the NHR interface."
+  },
+  "prvtMplsTeMibNhrBufPoolSize": {
+    "name": "prvtMplsTeMibNhrBufPoolSize",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 8,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum number of buffers available for Next Hop Routing Interface messages. This is used to limit the number of tunnel management messages to avoid buffer shortage conditions."
+  },
+  "prvtMplsTeMibNhrStatus": {
+    "name": "prvtMplsTeMibNhrStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibPartnerStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A diagnostic value which reports the state of the NHR join."
+  },
+  "prvtMplsTeMibExtPrtSuppAdminStatus": {
+    "name": "prvtMplsTeMibExtPrtSuppAdminStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibAdminStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "down",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The desired operational state of support for the extended PROTECTION object defined in draft-lang-ccamp-gmpls-recovery-e2e-signaling."
+  },
+  "prvtMplsTeMibRsvpIpv6AdminStatus": {
+    "name": "prvtMplsTeMibRsvpIpv6AdminStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibAdminStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "down",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies whether the local node supports IPv6 LSPs. Setting this to UP means that this node supports IPv6 LSPs being set up to, from and through this node. Setting this to DOWN means that IPv6 LSPs are NOT supported by this node. Existing IPv6 LSPs for which this node is the ingress are torn down. This field can be modified while TE-MIB is oper_status UP or DOWN. The value of this field MUST match the value of the dcRsvpProductIpv6AdminStatus field in the dcRsvpProductTable."
+  },
+  "prvtMplsTeMibRsvpIpv6OperStatus": {
+    "name": "prvtMplsTeMibRsvpIpv6OperStatus",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtTeMibOperStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current operational status for IPv6 support. When this is UP IPv6 LSPs can be set up from this node. When this is DOWN there will be no active IPv6 LSPs."
+  },
+  "prvtMplsTeMibDynFacilityBypass": {
+    "name": "prvtMplsTeMibDynFacilityBypass",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.1.1.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object gives the user ability to globally enable/disable automatically creation of bypass tunnels for all LSPs. Bypass tunnels will be created on FRR tunnel request automatically. The default value is true. The creation of Dynamic bypass tunnels is enabled"
+  },
+  "prvtTeMibEntityConformance": {
+    "name": "prvtTeMibEntityConformance",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.2",
+    "class": "objectidentity"
+  },
+  "prvtTeMibEntityCompliances": {
+    "name": "prvtTeMibEntityCompliances",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.2.1",
+    "class": "objectidentity"
+  },
+  "prvtTeMibEntityGroups": {
+    "name": "prvtTeMibEntityGroups",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.2.2",
+    "class": "objectidentity"
+  },
+  "prvtTeMibEntityMibCompliance": {
+    "name": "prvtTeMibEntityMibCompliance",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mplsTeMibMandatoryGroup",
+        "module": "PRVT-TEMIB-ENTITY-MIB"
+      },
+      {
+        "object": "mplsTeMibOptionalGroup",
+        "module": "PRVT-TEMIB-ENTITY-MIB"
+      },
+      {
+        "object": "mplsTeMibCrldpGroup",
+        "module": "PRVT-TEMIB-ENTITY-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for the PRVT-TEMIB product."
+  },
+  "mplsTeMibMandatoryGroup": {
+    "name": "mplsTeMibMandatoryGroup",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibEntityRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Mandatory Objects."
+  },
+  "mplsTeMibOptionalGroup": {
+    "name": "mplsTeMibOptionalGroup",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibEntityAdminStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibEntityOperStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibTunnelRetryInterval"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibTunnelRetryDecayRate"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibTunnelRetryMax"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibTnnlBufPoolSize"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibLsrIndex"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibLdbStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibLraStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibRsvpEnable"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibUseRsvpResvConf"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibAllowGracefulDeletion"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibShowTransitTunnels"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibSupportCHopTable"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibNhrIndex"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibNhrBufPoolSize"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibNhrStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibExtPrtSuppAdminStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibRsvpIpv6AdminStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibRsvpIpv6OperStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibDynFacilityBypass"
+      }
+    ],
+    "status": "current",
+    "description": "Optional Objects."
+  },
+  "mplsTeMibCrldpGroup": {
+    "name": "mplsTeMibCrldpGroup",
+    "oid": "1.3.6.1.4.1.738.1.6.5.8.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibLdiStatus"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibCrldpEnable"
+      },
+      {
+        "module": "PRVT-TEMIB-ENTITY-MIB",
+        "object": "prvtMplsTeMibCrldpIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Group of objects relating to CR-LDP"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PRVT-TEMIB-ENTITY-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:07:59 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PRVT-TEMIB-ENTITY-MIB"
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "imports": {
+    "class": "imports",
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Gauge32",
+      "Bits",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "MibIdentifier",
+      "iso",
+      "TimeTicks",
+      "Unsigned32",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "Counter32",
+      "Integer32",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ],
+    "WAYSTREAM-SMI": [
+      "wsExperiment"
+    ]
+  },
+  "wsCopy": {
+    "name": "wsCopy",
+    "oid": "1.3.6.1.4.1.9303.3.2",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2017-02-10 11:00",
+        "description": "Company name change: In October 2015 PacketFront Network Products was renamed Waystream. In this update all PacketFront were changed to Waystream and all pf* to ws*."
+      },
+      {
+        "revision": "2011-01-11 17:35",
+        "description": "Updated company name"
+      },
+      {
+        "revision": "2009-03-23 11:17",
+        "description": "Updated telephone information in contact-info"
+      },
+      {
+        "revision": "2008-09-10 15:38",
+        "description": "Initial - moved pfCopy from PACKETFRONT-MIB"
+      }
+    ],
+    "lastupdated": "201702101100Z",
+    "organization": "Waystream AB",
+    "contactinfo": "Waystream AB Customer Service Mail : Farogatan 33 SE-164 51 Kista Sweden Tel : +46 8 5626 9450 E-mail: info@waystream.com Web : http://www.waystream.com",
+    "description": "MIB describing the file copy functions available on Waystream ASRs"
+  },
+  "wsCopyNextState": {
+    "name": "wsCopyNextState",
+    "oid": "1.3.6.1.4.1.9303.3.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Generate a unique filehandle. The filehandle is used with the other objects in the wsCopy branch to set the source and destination and commence file transfer activities."
+  },
+  "wsCopyTable": {
+    "name": "wsCopyTable",
+    "oid": "1.3.6.1.4.1.9303.3.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of current copy sessions. The next available entry is given by the value of wsCopyNextState."
+  },
+  "wsCopyEntry": {
+    "name": "wsCopyEntry",
+    "oid": "1.3.6.1.4.1.9303.3.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WAYSTREAM-COPY-MIB",
+        "object": "wsCopyIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for a copy session."
+  },
+  "wsCopyIndex": {
+    "name": "wsCopyIndex",
+    "oid": "1.3.6.1.4.1.9303.3.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A unique value for each copy session."
+  },
+  "wsCopySource": {
+    "name": "wsCopySource",
+    "oid": "1.3.6.1.4.1.9303.3.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The source URL for a filhandle. The string provided must match an acceptable URL as typed in the command line interface copy command."
+  },
+  "wsCopyDestination": {
+    "name": "wsCopyDestination",
+    "oid": "1.3.6.1.4.1.9303.3.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The destination filename for a filehandle. The string provided must match an acceptable destination as typed in the command line interface copy command."
+  },
+  "wsCopyStatus": {
+    "name": "wsCopyStatus",
+    "oid": "1.3.6.1.4.1.9303.3.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notused": 0,
+          "start": 1,
+          "stop": 2,
+          "destroy": 3,
+          "init": 4,
+          "inprogress": 5,
+          "failed": 6,
+          "finished": 7
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The status of a filehandle notused - Get: The filehandle has not been used during the last 24 hours Set: Not possible start - Get: Not possible Set: Start filetransfer stop - Get: Not possible Set: Stop filetransfer in progress destroy - Get: Not possible Set: Remove source and destination entries for filehandle init - Get: Filtransfer started Set: Not possible inprogress - Get: Filetransfer in progress Set: Not possible failed - Get: A failure occured during last filetransfer Set: Not possible finished - Get: The file was successfully transferred and stored Set: not possible "
+  },
+  "wsCopyError": {
+    "name": "wsCopyError",
+    "oid": "1.3.6.1.4.1.9303.3.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A textual description of the filehandle last error status. If the filehandle does not exist or has not been used for the last 24 hours, a 'No Error' message is returned."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/WAYSTREAM-COPY-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:00:22 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "WAYSTREAM-COPY-MIB"
+  }
+}

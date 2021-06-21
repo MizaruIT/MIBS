@@ -1,0 +1,664 @@
+{
+  "imports": {
+    "class": "imports",
+    "ATM-TC-MIB": [
+      "AtmVpIdentifier",
+      "AtmVcIdentifier"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "PW-MIB": [
+      "pwVcIndex"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "TimeTicks",
+      "Gauge32",
+      "MibIdentifier",
+      "MODULE-IDENTITY",
+      "experimental",
+      "Bits",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "iso",
+      "OBJECT-TYPE",
+      "Integer32"
+    ],
+    "SNMPv2-TC": [
+      "RowPointer",
+      "TEXTUAL-CONVENTION",
+      "RowStatus",
+      "TruthValue",
+      "DisplayString"
+    ]
+  },
+  "pwAtmMIB": {
+    "name": "pwAtmMIB",
+    "oid": "1.3.6.1.3.979",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2003-02-16 12:00",
+        "description": "Initial Version"
+      }
+    ],
+    "lastupdated": "200302161200Z",
+    "organization": "Pseudo-Wire Emulation Edge-to-Edge (PWE3) Working Group",
+    "contactinfo": "Senthilkumar Sathappan Postal: 1000 Marconi Drive Warrendale PA 15086 Tel: +1-724-742-6147 Email: senthilkumar.sathappan@marconi.com Marichetty Venkatesan Postal: 1000 Marconi Drive Warrendale PA 15086 Tel: +1-724-742-7058 Email: venkatesan.marichetty@marconi.com Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Tel: +1-978-497-3051 Email: tnadeau@cisco.com Discussion and general questions should be posed to the PWE3 Working Group (pwe3@ietf.org).",
+    "description": "This MIB contains managed object definitions for Pseudo Wire emulation of ATM over Packet Switched Networks(PSN). This MIB reports to the PW-MIB. The PW-MIB contains structures and MIB associations generic to Pseudo-Wire Virtual Circuit (VC) emulation. VC-specific MIBs (such as this) contain config and stats for specific VC types."
+  },
+  "pwAtmNotifications": {
+    "name": "pwAtmNotifications",
+    "oid": "1.3.6.1.3.979.0",
+    "class": "objectidentity"
+  },
+  "pwAtmObjects": {
+    "name": "pwAtmObjects",
+    "oid": "1.3.6.1.3.979.1",
+    "class": "objectidentity"
+  },
+  "pwAtmConformance": {
+    "name": "pwAtmConformance",
+    "oid": "1.3.6.1.3.979.2",
+    "class": "objectidentity"
+  },
+  "pwAtmOutboundTable": {
+    "name": "pwAtmOutboundTable",
+    "oid": "1.3.6.1.3.979.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the information for an ATM VC to be carried over PSN in the outbound direction."
+  },
+  "pwAtmOutboundEntry": {
+    "name": "pwAtmOutboundEntry",
+    "oid": "1.3.6.1.3.979.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents an ATM VC that needs to be adapted and carried over PSN. This table is indexed by pwVcIndex from pwVcTable."
+  },
+  "pwAtmOutboundAtmIf": {
+    "name": "pwAtmOutboundAtmIf",
+    "oid": "1.3.6.1.3.979.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ATM Interface that receives cells from the ATM network."
+  },
+  "pwAtmOutboundVpi": {
+    "name": "pwAtmOutboundVpi",
+    "oid": "1.3.6.1.3.979.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AtmVpIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "VPI value of this ATM VC. If the pwVcType is atmNto1Transparent then the value will be set to zero."
+  },
+  "pwAtmOutboundVci": {
+    "name": "pwAtmOutboundVci",
+    "oid": "1.3.6.1.3.979.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AtmVcIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "VCI value of this ATM VC. If the pwVcType is atmNto1Transparent, atmCell1to1Vpc or atmCellNto1Vpc then the value should be set to zero."
+  },
+  "pwAtmOutboundTrafficParamDescr": {
+    "name": "pwAtmOutboundTrafficParamDescr",
+    "oid": "1.3.6.1.3.979.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowPointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object represents a pointer to a ATM traffic parameter specification table which will be employed while receiving cells from the ATM network. This table should contain a set of self-consistent ATM traffic parameters including the ATM traffic service category. A value of 0.0 indicates Best Effort"
+  },
+  "pwAtmOutboundRowStatus": {
+    "name": "pwAtmOutboundRowStatus",
+    "oid": "1.3.6.1.3.979.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This Object is used to create, modify or delete a row in this table."
+  },
+  "pwAtmOutboundClpQosMapping": {
+    "name": "pwAtmOutboundClpQosMapping",
+    "oid": "1.3.6.1.3.979.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This Object indicates whether the CLP bits are considered when determining the value placed in the Quality of Service fields (e.g. EXP fields of the MPLS Label Stack) of the encapsulating protocol."
+  },
+  "pwAtmOutboundOamCellSupported": {
+    "name": "pwAtmOutboundOamCellSupported",
+    "oid": "1.3.6.1.3.979.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This Object indicates whether OAM Cells are transported on this VC."
+  },
+  "pwAtmOutboundQosScalingFactor": {
+    "name": "pwAtmOutboundQosScalingFactor",
+    "oid": "1.3.6.1.3.979.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 100,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This Object represents the scaling factor (% value) to be applied to ATM QoS rates when calculating QoS rates for the PSN domain . For example, in the cell transport mode the bandwidth needed in the PSN domain will be higher (since PSN Transport header, PW header, and optional control word have to transmitted with every cell), whereas in the AAL5 mode the bandwidth needed in PSN domain will be less since cell headers will be removed after reassembly."
+  },
+  "pwAtmOutboundPerfTable": {
+    "name": "pwAtmOutboundPerfTable",
+    "oid": "1.3.6.1.3.979.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies performance-related attributes for an ATM VC in the outbound direction."
+  },
+  "pwAtmOutboundPerfEntry": {
+    "name": "pwAtmOutboundPerfEntry",
+    "oid": "1.3.6.1.3.979.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "pwAtmOutboundPerfEntry",
+      "module": "PW-ATM-MIB-DRAFT-00",
+      "object": "pwAtmOutboundEntry"
+    },
+    "status": "current",
+    "description": "A row in this table represents performance for an ATM VC in the outbound direction"
+  },
+  "pwAtmOutboundCellsReceived": {
+    "name": "pwAtmOutboundCellsReceived",
+    "oid": "1.3.6.1.3.979.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This Object indicates the number of cells received by this VC."
+  },
+  "pwAtmOutboundCellsRejected": {
+    "name": "pwAtmOutboundCellsRejected",
+    "oid": "1.3.6.1.3.979.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This Object indicates the number of cells that were rejected by this VC because of policing."
+  },
+  "pwAtmOutboundCellsTagged": {
+    "name": "pwAtmOutboundCellsTagged",
+    "oid": "1.3.6.1.3.979.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This Object indicates the number of cells that were Tagged."
+  },
+  "pwAtmOutboundHCCellsReceived": {
+    "name": "pwAtmOutboundHCCellsReceived",
+    "oid": "1.3.6.1.3.979.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of cells received by this VC."
+  },
+  "pwAtmOutboundHCCellsRejected": {
+    "name": "pwAtmOutboundHCCellsRejected",
+    "oid": "1.3.6.1.3.979.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High Capacity counter for number of cells that were rejected by this VC because of policing."
+  },
+  "pwAtmOutboundHCCellsTagged": {
+    "name": "pwAtmOutboundHCCellsTagged",
+    "oid": "1.3.6.1.3.979.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of cells that were Tagged."
+  },
+  "pwAtmInboundTable": {
+    "name": "pwAtmInboundTable",
+    "oid": "1.3.6.1.3.979.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the information for an ATM VC in the Inbound direction."
+  },
+  "pwAtmInboundEntry": {
+    "name": "pwAtmInboundEntry",
+    "oid": "1.3.6.1.3.979.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents an ATM VC that needs to be sent into the ATM Network after reconstructing cells from Packets received from a PSN This table is indexed by pwVcIndex from pwVcTable"
+  },
+  "pwAtmInboundAtmIf": {
+    "name": "pwAtmInboundAtmIf",
+    "oid": "1.3.6.1.3.979.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ATM Interface that sends cells into the ATM network after reconstructing cells from packets received from a PSN."
+  },
+  "pwAtmInboundVpi": {
+    "name": "pwAtmInboundVpi",
+    "oid": "1.3.6.1.3.979.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AtmVpIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "VPI value of this ATM VC. If the pwVcType is atmNto1Transparent then the value will be set to zero."
+  },
+  "pwAtmInboundVci": {
+    "name": "pwAtmInboundVci",
+    "oid": "1.3.6.1.3.979.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AtmVcIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "VCI value of this ATM VC. If the pwVcType is atmNto1Transparent atmCell1to1Vpc or atmCellNto1Vpc then the value should be set to zero."
+  },
+  "pwAtmInboundTrafficParamDescr": {
+    "name": "pwAtmInboundTrafficParamDescr",
+    "oid": "1.3.6.1.3.979.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowPointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object represents a pointer to a ATM traffic parameter specification table which will be employed while transmit into the ATM network. This table contains a set of self-consistent ATM traffic parameters including the ATM traffic service category. A value of 0.0 indicates Best Effort"
+  },
+  "pwAtmInboundRowStatus": {
+    "name": "pwAtmInboundRowStatus",
+    "oid": "1.3.6.1.3.979.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This Object is used to create, modify or delete a row in this table."
+  },
+  "pwAtmInboundOamCellSupported": {
+    "name": "pwAtmInboundOamCellSupported",
+    "oid": "1.3.6.1.3.979.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This Object indicates whether this VC can receive OAM Cells."
+  },
+  "pwAtmInboundPerfTable": {
+    "name": "pwAtmInboundPerfTable",
+    "oid": "1.3.6.1.3.979.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies the performance for an ATM VC in the Inbound direction."
+  },
+  "pwAtmInboundPerfEntry": {
+    "name": "pwAtmInboundPerfEntry",
+    "oid": "1.3.6.1.3.979.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "pwAtmInboundPerfEntry",
+      "module": "PW-ATM-MIB-DRAFT-00",
+      "object": "pwAtmInboundEntry"
+    },
+    "status": "current",
+    "description": "This table specifies performance-related attributes for an ATM VC in the inbound direction."
+  },
+  "pwAtmInboundPerfCellsXmit": {
+    "name": "pwAtmInboundPerfCellsXmit",
+    "oid": "1.3.6.1.3.979.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This Object indicates the number of cells that were transmitted into ATM network by this VC."
+  },
+  "pwAtmInboundPerfCellsLost": {
+    "name": "pwAtmInboundPerfCellsLost",
+    "oid": "1.3.6.1.3.979.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This Object indicates the number of cells that were dropped by this VC."
+  },
+  "pwAtmInboundPerfHCCellsXmit": {
+    "name": "pwAtmInboundPerfHCCellsXmit",
+    "oid": "1.3.6.1.3.979.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High Capacity counter for the number of cells that were transmitted into ATM network by this VC."
+  },
+  "pwAtmInboundPerfHCCellsLost": {
+    "name": "pwAtmInboundPerfHCCellsLost",
+    "oid": "1.3.6.1.3.979.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High Capacity counter for number of cells that were dropped by this VC."
+  },
+  "pwAtmGroups": {
+    "name": "pwAtmGroups",
+    "oid": "1.3.6.1.3.979.2.1",
+    "class": "objectidentity"
+  },
+  "pwAtmCompliances": {
+    "name": "pwAtmCompliances",
+    "oid": "1.3.6.1.3.979.2.2",
+    "class": "objectidentity"
+  },
+  "pwAtmModuleCompliance": {
+    "name": "pwAtmModuleCompliance",
+    "oid": "1.3.6.1.3.979.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "pwAtmOutboundGroup",
+        "module": "PW-ATM-MIB-DRAFT-00"
+      },
+      {
+        "object": "pwAtmOutboundPerfGroup",
+        "module": "PW-ATM-MIB-DRAFT-00"
+      },
+      {
+        "object": "pwAtmInboundGroup",
+        "module": "PW-ATM-MIB-DRAFT-00"
+      },
+      {
+        "object": "pwAtmInboundPerfGroup",
+        "module": "PW-ATM-MIB-DRAFT-00"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agent that support PW ATM."
+  },
+  "pwAtmOutboundGroup": {
+    "name": "pwAtmOutboundGroup",
+    "oid": "1.3.6.1.3.979.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundAtmIf"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundVpi"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundVci"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundTrafficParamDescr"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundRowStatus"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundClpQosMapping"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundOamCellSupported"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundQosScalingFactor"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects for basic ATM PW outbound config."
+  },
+  "pwAtmOutboundPerfGroup": {
+    "name": "pwAtmOutboundPerfGroup",
+    "oid": "1.3.6.1.3.979.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundCellsReceived"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundCellsRejected"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundCellsTagged"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundHCCellsReceived"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundHCCellsRejected"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmOutboundHCCellsTagged"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects counting various outbound ATM PW statistics."
+  },
+  "pwAtmInboundGroup": {
+    "name": "pwAtmInboundGroup",
+    "oid": "1.3.6.1.3.979.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundAtmIf"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundVpi"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundVci"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundTrafficParamDescr"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundRowStatus"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundOamCellSupported"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects for basic ATM PW inbound config."
+  },
+  "pwAtmInboundPerfGroup": {
+    "name": "pwAtmInboundPerfGroup",
+    "oid": "1.3.6.1.3.979.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundPerfCellsXmit"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundPerfCellsLost"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundPerfHCCellsXmit"
+      },
+      {
+        "module": "PW-ATM-MIB-DRAFT-00",
+        "object": "pwAtmInboundPerfHCCellsLost"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects counting various inbound ATM PW statistics."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PW-ATM-MIB-DRAFT-00.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:26:22 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PW-ATM-MIB-DRAFT-00"
+  }
+}

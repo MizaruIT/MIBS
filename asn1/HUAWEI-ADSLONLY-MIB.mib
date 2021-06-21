@@ -1,0 +1,173 @@
+-- ================================================================================
+-- Copyright (C) 2005 by HUAWEI TECHNOLOGIES. All rights reserved.
+--
+-- Description:  
+-- Reference:  
+-- Version: V1.00
+-- History:
+--   1 y40902 create the file for adsl-only at 2005-9-22
+--   2 2005-11-14 use ifindex; add bypass disable
+-- ================================================================================
+
+HUAWEI-ADSLONLY-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	    OBJECT-TYPE, MODULE-IDENTITY, Integer32		
+	    	FROM SNMPv2-SMI	       
+		hwDev
+		    FROM HUAWEI-DEVICE-MIB;       
+				
+-- hwAdslOnly MODULE-IDENTITY
+-- LAST-UPDATED "200509221200Z"
+-- ORGANIZATION "Fix-Net Dept, Huawei Technologies Co.,Ltd."
+-- CONTACT-INFO 
+-- 	"Floor 5 ,Block 4, R&D Building,
+-- 	Huawei Longgang Production Base,
+-- 		Shenzhen,   P.R.C.
+-- 		http://www.huawei.com
+-- 		Zip:518057
+-- 		"
+-- 	DESCRIPTION 
+-- 		"huawei IPDSLAM adsl-only mib "
+--     ::= { huaweiUtility 50 } 
+    
+hwAdslOnly OBJECT IDENTIFIER ::= { hwDev 20 }    
+-- ================================================================================
+
+       hwSlotComboModeTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwSlotComboModeEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"				
+				Work mode table for combo board
+				"
+			::= { hwAdslOnly 1 }
+		
+		hwSlotComboModeEntry OBJECT-TYPE
+			SYNTAX HwSlotComboModeEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Work mode entry for combo board
+				"
+			INDEX { hwSlotComboFrameID,  hwSlotComboSlotID }
+			::= { hwSlotComboModeTable 1 }
+		
+		HwSlotComboModeEntry ::=
+			SEQUENCE { 
+				hwSlotComboFrameID
+					Integer32,
+				hwSlotComboSlotID
+					Integer32,
+				hwSlotComboMode
+					INTEGER
+			}			 
+			 
+		hwSlotComboFrameID OBJECT-TYPE
+			SYNTAX Integer32(0..255)
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Frame id for combo board
+				"
+			::= { hwSlotComboModeEntry 1 }
+			
+	    hwSlotComboSlotID OBJECT-TYPE
+		   SYNTAX Integer32
+		   MAX-ACCESS not-accessible
+		   STATUS current
+		   DESCRIPTION
+			   "
+			   Slot id for combo board
+		       "
+			::= { hwSlotComboModeEntry 2 }
+			
+	    hwSlotComboMode OBJECT-TYPE
+			SYNTAX INTEGER
+			{
+				splitter(1),
+				combo(2)
+			}	    
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Work mode for combo board
+				"
+			::= { hwSlotComboModeEntry 3 }
+			
+-- ================================================================================			
+        hwPortComboModeTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwPortComboModeEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"				
+				Combo mode table for adsl-only port
+				"
+			::= { hwAdslOnly 2 }
+		
+		hwPortComboModeEntry OBJECT-TYPE
+			SYNTAX HwPortComboModeEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Combo mode entry for adsl-only port
+				"
+			INDEX { ifIndex }
+			::= { hwPortComboModeTable 1 }
+		
+		HwPortComboModeEntry ::=
+			SEQUENCE { 
+				hwPortComboMode
+					INTEGER,
+				hwPortBypassStatus
+					INTEGER,
+				hwPortBypassDuration
+				    Integer32
+			}			 
+			
+	    hwPortComboMode OBJECT-TYPE
+			SYNTAX INTEGER
+			{
+				adsl-only(1),
+				combo(2)   
+			}	    
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Combo mode for adsl-only port
+				"
+			::= { hwPortComboModeEntry 1 }
+			
+    hwPortBypassStatus OBJECT-TYPE
+			SYNTAX INTEGER
+			{
+				disable(1),
+				enable(2)
+			}	    
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				port bypass status
+				"
+			::= { hwPortComboModeEntry 2 }
+			
+	    hwPortBypassDuration OBJECT-TYPE
+			SYNTAX Integer32(10..3600)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				port bypass duration
+				"
+			::= { hwPortComboModeEntry 3 }			
+			
+-- ================================================================================	
+END			

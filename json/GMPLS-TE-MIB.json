@@ -1,0 +1,1176 @@
+{
+  "imports": {
+    "class": "imports",
+    "GMPLS-TC-MIB": [
+      "GmplsHopUnnumAddrTypes"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressIPv6",
+      "InetAddressIPv4"
+    ],
+    "MPLS-TC-MIB": [
+      "MplsTunnelIndex",
+      "MplsTunnelInstanceIndex"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "NOTIFICATION-TYPE",
+      "Unsigned32",
+      "OBJECT-TYPE",
+      "iso",
+      "Bits",
+      "Gauge32",
+      "experimental",
+      "TimeTicks",
+      "Counter32",
+      "MibIdentifier",
+      "Counter64",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "Integer32",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TimeStamp"
+    ]
+  },
+  "gmplsTeMIB": {
+    "name": "gmplsTeMIB",
+    "oid": "1.3.6.1.3.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2002-06-24 09:00",
+        "description": "First revision draft version."
+      }
+    ],
+    "lastupdated": "200206240900Z",
+    "organization": "Common Control And Management Protocols (CCAMP) Working Group",
+    "contactinfo": "Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Tel: +1-978-244-3051 Email: tnadeau@cisco.com Cheenu Srinivasan Postal: Parama Networks, Inc. 1030 Broad Street Shrewsbury, NJ 07702 Tel: +1-732-544-9120 x731 Email: cheenu@paramanet.com Adrian Farrel Postal: Movaz Networks, Inc. 7926 Jones Branch Drive McLean, VA 22102 Tel: +1-703-847-1867 Email: afarrel@movaz.com Edward Harrison Postal: Data Connection Ltd. 100 Church Street Enfield, Middlesex EN2 6BQ, United Kingdom Tel: +44-20-8366-1177 Email: eph@dataconnection.com Tim Hall Postal: Data Connection Ltd. 100 Church Street Enfield, Middlesex EN2 6BQ, United Kingdom Tel: +44-20-8366-1177 Email: timhall@dataconnection.com",
+    "description": "This MIB module contains managed object definitions for GMPLS Traffic Engineering (TE)."
+  },
+  "gmplsTeScalars": {
+    "name": "gmplsTeScalars",
+    "oid": "1.3.6.1.3.1.1",
+    "class": "objectidentity"
+  },
+  "gmplsTeObjects": {
+    "name": "gmplsTeObjects",
+    "oid": "1.3.6.1.3.1.2",
+    "class": "objectidentity"
+  },
+  "gmplsTeConformance": {
+    "name": "gmplsTeConformance",
+    "oid": "1.3.6.1.3.1.3",
+    "class": "objectidentity"
+  },
+  "gmplsTunnelsConfigured": {
+    "name": "gmplsTunnelsConfigured",
+    "oid": "1.3.6.1.3.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of GMPLS tunnels configured on this device. A tunnel is considered configured if an entry for the tunnel exists in the gmplsTunnelTable and the associated mplsTunnelRowStatusis active(1)."
+  },
+  "gmplsTunnelActive": {
+    "name": "gmplsTunnelActive",
+    "oid": "1.3.6.1.3.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of GMPLS tunnels active on this device. A tunnel is considered active if there is an entry in the gmplsTunnelTable and the associated mplsTunnelOperStatus for the tunnel is up(1)."
+  },
+  "gmplsTunnelTable": {
+    "name": "gmplsTunnelTable",
+    "oid": "1.3.6.1.3.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The gmplsTunnelTable 'extends' the mplsTunnelTable. It allows GMPLS tunnels to be created between an LSR and a remote endpoint, and existing tunnels to be reconfigured or removed. Note that only point-to-point tunnel segments are supported, although multi- point-to-point and point-to-multi-point connections are supported by an LSR acting as a cross-connect. Each tunnel can thus have one out-segment originating at this LSR and/or one in-segment terminating at this LSR."
+  },
+  "gmplsTunnelEntry": {
+    "name": "gmplsTunnelEntry",
+    "oid": "1.3.6.1.3.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelIndex",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelInstance",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelIngressLSRId",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelEgressLSRId",
+        "implied": 0
+      }
+    ],
+    "reference": "1. RFC 1700 - Assigned Numbers, Reynolds, J. and J. Postel, Oct. 1994",
+    "status": "current",
+    "description": "An entry in this table in association with the corresponding entry in the mplsTunnelTable represents a GMPLS tunnel. An entry can be created by a network administrator or by an SNMP agent as instructed by a signaling protocol."
+  },
+  "gmplsTunnelUnnumIf": {
+    "name": "gmplsTunnelUnnumIf",
+    "oid": "1.3.6.1.3.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "draft-ietf-mpls-crldp-unnum-06.txt - Signalling Unnumbered Links in CR-LDP, Kompella, K., Rekhter, Y. and Kullberg, A., June 2002. draft-ietf-mpls-rsvp-unnum-06.txt - Signalling Unnumbered Links in RSVP-TE, Kompella, K., and Rekhter, Y., June 2002.",
+    "status": "current",
+    "description": "Denotes whether or not this tunnel corresponds to an unnumbered interface represented in the interfaces group table. This object is only used if mplsTunnelIsIf is set to true. If both this object and the mplsTunnelIsIf object are set to true, the originating LSR adds an LSP_TUNNEL_INTERFACE_ID object to the outgoing Path message. This object contains information that is only used by the terminating LSR."
+  },
+  "gmplsTunnelAttributes": {
+    "name": "gmplsTunnelAttributes",
+    "oid": "1.3.6.1.3.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "localProtectionDesired": 0,
+        "labelRecordingDesired": 1,
+        "seStyleDesired": 2
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "1. RSVP-TE: Extensions to RSVP for LSP Tunnels, Awduche et al, RFC 3209, December 2001.",
+    "status": "current",
+    "description": "This bitmask indicates optional parameters for this tunnel. Some of these bits map direct to signaled values (for example SESSION_ATTRIBUTES flags in RSVP-TE). Others describe qualities of the tunnel. The following describes these bitfields: localProtectionDesired This flag permits transit routers to use a local repair mechanism which may result in violation of the explicit route object. When a fault is detected on an adjacent downstream link or node, a transit router can reroute traffic for fast service restoration. labelRecordingDesired This flag indicates that label information should be included when doing a route record. This bit is not valid unless the recordRoute bit is set. seStyleDesired This flag indicates that the tunnel ingress node may choose to reroute this tunnel without tearing it down. When signaling uses RSVP, a tunnel egress node SHOULD use the SE Style when responding with a Resv message."
+  },
+  "gmplsTunnelLSPEncoding": {
+    "name": "gmplsTunnelLSPEncoding",
+    "oid": "1.3.6.1.3.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "tunnelLspPacket": 1,
+          "tunnelLspEthernet": 2,
+          "tunnelLspAnsiEtsiPdh": 3,
+          "tunnelLspSdhSonet": 5,
+          "tunnelLspDigitalWrapper": 7,
+          "tunnelLspLambda": 8,
+          "tunnelLspFiber": 9,
+          "tunnelLspFiberChannel": 11
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the encoding of the LSP being requested. Ed Note: Should these be assigned and maintained by IANA?"
+  },
+  "gmplsTunnelSwitchingType": {
+    "name": "gmplsTunnelSwitchingType",
+    "oid": "1.3.6.1.3.1.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the type of switching that should be performed on a particular link. This field is needed for links that advertise more than one type of switching capability. Values of this field are as the Switching Capability field defined in [GMPLS-OSPF] Ed Note: Should these values be assigned and maintained by IANA or imported from another MIB? Currently the following values are valid: unknown (0), psc1 (1), psc2 (2), psc3 (3), psc4 (4), l2sc (51), tdm (100), lsc (150), fsc (200)"
+  },
+  "gmplsTunnelLinkProtection": {
+    "name": "gmplsTunnelLinkProtection",
+    "oid": "1.3.6.1.3.1.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "extraTraffic": 1,
+        "unprotected": 2,
+        "shared": 3,
+        "dedicatedOneToOne": 4,
+        "dedicatedOnePlusOne": 5,
+        "enhanced": 6
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This bitmask indicates the level of link protection required. A value of zero (no bits set) indicates that any protection may be used. This object is only used if gmplsTunnelLSPEncoding is not set to 0. The following describes these bitfields: extraTraffic Indicates that the LSP should use links that are protecting other (primary) traffic. Such LSPs may be preempted when the links carrying the (primary) traffic being protected fail. unprotected Indicates that the LSP should not use any link layer protection. shared Indicates that a shared link layer protection scheme, such as 1:N protection, should be used to support the LSP. dedicatedOneToOne Indicates that a dedicated link layer protection scheme, i.e., 1:1 protection, should be used to support the LSP. dedicatedOnePlusOne Indicates that a dedicated link layer protection scheme, i.e., 1+1 protection, should be used to support the LSP. enhanced Indicates that a protection scheme that is more reliable than Dedicated 1+1 should be used, e.g., 4 fiber BLSR/MS-SPRING."
+  },
+  "gmplsTunnelGPid": {
+    "name": "gmplsTunnelGPid",
+    "oid": "1.3.6.1.3.1.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the payload carried by the LSP. It is only required when GMPLS will be used for this LSP. This object is only used if gmplsTunnelLSPEncoding is not set to 0. Ed note: Should IANA maintain these values? Is there a better way of doing this? Say, having an enum for these values, plus another bit mask for the ethertypes and a flag to tell which to use? Currently the following values are valid. unknown(0), asynchE4(5), asynchDS3T3(6), asynchE3(7), bitsynchE3(8), bytesynchE3(9), asynchDS2T2(10), bitsynchDS2T2(11), asynchE1(13), bytesynchE1(14), bytesynch31ByDS0(15), asynchDS1T1(16), bitsynchDS1T1(17), bytesynchDS1T1(18), VC11VC12(19), ds1SFAsynch(22), ds1ESFAsynch(23), ds3M23Asynch(24), ds3CBitParityAsynch(25), vtLovc(26), stsSpeHovc(27), posNoScramble16BitCrc(28), posNoScramble32BitCrc(29), posScramble16BitCrc(30), posScramble32BitCrc(31), atm(32) ethernet(33), sdhSonet(34), digitalwrapper(36), lambda(37), ansiEtsiPdh (38), lapsSdh (40), fddi (41), dqdb (42), fiberChannel3 (43), hdlc (44), ethernetV2DixOnly (45), ethernet802dot3Only (46)"
+  },
+  "gmplsTunnelSecondary": {
+    "name": "gmplsTunnelSecondary",
+    "oid": "1.3.6.1.3.1.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates that the requested LSP is a secondary LSP. This object is only used if gmplsTunnelLSPEncoding is not set to 0."
+  },
+  "gmplsTunnelDirection": {
+    "name": "gmplsTunnelDirection",
+    "oid": "1.3.6.1.3.1.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "forward": 0,
+          "bidirectional": 1
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "forward",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Whether this tunnel carries forward data (is unidirectional) or is bidirectional. By default, tunnels are unidirectional."
+  },
+  "gmplsTunnelPathComp": {
+    "name": "gmplsTunnelPathComp",
+    "oid": "1.3.6.1.3.1.2.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "dynamicFull": 1,
+          "explicit": 2,
+          "dynamicPartial": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "explicit",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This value instructs the source node on how to perform path computation on the explicit route specified by the associated entries in the gmplsTunnelHopTable. dynamicFull The user specifies at least the source and destination of the path and expects that the CSPF will calculate the remainder of the path. explicit The user specifies the entire path for the tunnel to take. This path may contain strict or loose hops. Evaluation of the explicit route will be performed hop by hop through the network. dynamicPartial The user specifies at least the source and destination of the path and expects that the CSPF will calculate the remainder of the path. The path computed by CSPF is allowed to be only partially computed allowing the remainder of the path to be filled in across the network. This object deprecates gmplsTunnelHopEntryPathComp."
+  },
+  "gmplsTunnelHopTable": {
+    "name": "gmplsTunnelHopTable",
+    "oid": "1.3.6.1.3.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The gmplsTunnelHopTable 'extends' the mplsTunnelHopTable. It is used to indicate the explicit labels and unnumbered interface hops to be used for a GMPLS tunnel defined in mplsTunnelTable and gmplsTunnelTable, when it is established using signaling. Each row in this table is indexed by mplsTunnelHopListIndex. Each row also has a secondary index mplsTunnelHopIndex corresponding to the next hop that this row corresponds to. The first row in the table is the first hop after the origination point of the tunnel. In case we want to specify a particular interface on the originating LSR of an outgoing tunnel by which we want packets to exit the LSR, we specify this as the first hop for this tunnel in gmplsTunnelHopTable."
+  },
+  "gmplsTunnelHopEntry": {
+    "name": "gmplsTunnelHopEntry",
+    "oid": "1.3.6.1.3.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelHopListIndex",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelHopPathOptionIndex",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelHopIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table represents a tunnel hop. An entry is created by a network administrator for signaled an ERLSP to be set up by a signaling protocol."
+  },
+  "gmplsTunnelHopUnnumAddrType": {
+    "name": "gmplsTunnelHopUnnumAddrType",
+    "oid": "1.3.6.1.3.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GmplsHopUnnumAddrTypes",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "numbered",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates whether this tunnel hop entry uses an unnumbered link and, if so, whether it is an Ipv4 or Ipv6 hop. When this object is set to unnumberedIfIpV4(2) or unnumberedIfIpV6(3), it overrides the value of the associated mplsTunnelHopAddrType."
+  },
+  "gmplsTunnelHopLabelStatuses": {
+    "name": "gmplsTunnelHopLabelStatuses",
+    "oid": "1.3.6.1.3.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "forwardPresent": 0,
+        "reversePresent": 1
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This bitmask indicates the presence and status of labels indicated by the gmplsTunnelHopExplicitLabel and gmplsTunnelHopExplicitReverseLabel objects. For the Present bits, a set bit indicates that a label is present for this hop in the route."
+  },
+  "gmplsTunnelHopExplicitLabel": {
+    "name": "gmplsTunnelHopExplicitLabel",
+    "oid": "1.3.6.1.3.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the row entry in the mplsLabelTabel that defines the explicit label to use in the explicit route as the forward path label at this point. This value only has meaning if the forwardPresent bit of gmplsTunnelHopLabelStatuses is set. This variable is only valid for settings of gmplsTunnelHopAddrType which may be associated with a forward path label. Note that in implementations where the label may be encoded within a 32 bit integer and where mplsLabelTable is not implemented, this object may directly contain the label value to use."
+  },
+  "gmplsTunnelHopExplicitReverseLabel": {
+    "name": "gmplsTunnelHopExplicitReverseLabel",
+    "oid": "1.3.6.1.3.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the row entry in the mplsLabelTabel that defines the explicit label to use in the explicit route as the reverse path label at this point. This value only has meaning if the reversePresent bit of gmplsTunnelHopLabelStatuses is set. This variable is only valid for settings of gmplsTunnelHopAddrType which may be associated with a reverse path label. Note that in implementations where the label may be encoded within a 32 bit integer and where mplsLabelTable is not implemented, this object may directly contain the label value to use."
+  },
+  "gmplsTunnelHopUnnumberedInterface": {
+    "name": "gmplsTunnelHopUnnumberedInterface",
+    "oid": "1.3.6.1.3.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the interface index of the unnumbered interface to use when setting up the LSP. Only has value when gmplsTunnelHopUnnumAddrType is set to unnumberedIfIpV4(2) or unnumberedIfIpV6(3) in which case the corresponding mplsTunnelHopIpv4Addr or mplsTunnelHopIpv6Addr variable must contain an LSR id."
+  },
+  "gmplsTunnelARHopTable": {
+    "name": "gmplsTunnelARHopTable",
+    "oid": "1.3.6.1.3.1.2.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The gmplsTunnelARHopTable 'extends' the mplsTunnelARHopTable. It is used to indicate the unnumbered hops, strict or loose, for a GMPLS tunnel defined in mplsTunnelTable and gmplsTunnelTable, as reported by the signaling protocol, for the outgoing direction of the tunnel. Each row in this table is indexed by mplsTunnelARHopListIndex. Each row also has a secondary index mplsTunnelARHopIndex, corresponding to the next hop that this row corresponds to. The first row in the table is the first hop after the origination point of the tunnel. In case we want to specify a particular interface on the originating LSR of an outgoing tunnel by which we want packets to exit the LSR, we specify this as the first hop for this tunnel in gmplsTunnelARHopTable. Please note that since the information necessary to build entries within this table is not provided by some signaling protocols, implementation of this table is optional. Furthermore, since the information in this table is actually provided by the signaling protocol after the path has been set-up, the entries in this table are provided only for observation, and hence, all variables in this table are accessible exclusively as read-only."
+  },
+  "gmplsTunnelARHopEntry": {
+    "name": "gmplsTunnelARHopEntry",
+    "oid": "1.3.6.1.3.1.2.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelARHopListIndex",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelARHopIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table represents additional information about a GMPLS tunnel hop. An entry is created by the signaling protocol for a signaled ERLSP set up by the signaling protocol."
+  },
+  "gmplsTunnelARHopUnnumAddrType": {
+    "name": "gmplsTunnelARHopUnnumAddrType",
+    "oid": "1.3.6.1.3.1.2.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GmplsHopUnnumAddrTypes",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "numbered",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Denotes whether this tunnel hop uses numbered or unnumbered interfaces. If set to unnumberedIfIpV4(2) or unnumberedIfIpV6(3) the value overrides the value of the associated mplsTunnelARHopAddrType."
+  },
+  "gmplsTunnelARHopLabelStatuses": {
+    "name": "gmplsTunnelARHopLabelStatuses",
+    "oid": "1.3.6.1.3.1.2.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "forwardPresent": 0,
+        "reversePresent": 1,
+        "forwardGlobal": 2,
+        "reverseGlobal": 3
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This bitmask indicates the presence and status of labels indicated by the gmplsTunnelARHopExplicitLabel and gmplsTunnelARHopExplicitReverseLabel objects. For the Present bits, a set bit indicates that a label is present for this hop in the route. For the Global bits, a set bit indicates that the label comes from the Global Label Space. A clear bit indicates that this is a Per-Interface label. A Global bit only has meaning if the corresponding Present bit is set."
+  },
+  "gmplsTunnelARHopExplicitLabel": {
+    "name": "gmplsTunnelARHopExplicitLabel",
+    "oid": "1.3.6.1.3.1.2.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the row entry in the mplsLabelTabel that defines the label used in the path as forward path at this point. This value only has meaning if the forwardPresent bit of gmplsTunnelARHopLabelStatuses is set. Note that in implementations where the label may be encoded within a 32 bit integer and where mplsLabelTable is not implemented, this object may directly contain the label value to use."
+  },
+  "gmplsTunnelARHopExplicitReverseLabel": {
+    "name": "gmplsTunnelARHopExplicitReverseLabel",
+    "oid": "1.3.6.1.3.1.2.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the row entry in the mplsLabelTabel that defines the label used in the path as reverse path at this point. This value only has meaning if the reversePresent bit of gmplsTunnelARHopLabelStatuses is set. Note that in implementations where the label may be encoded within a 32 bit integer and where mplsLabelTable is not implemented, this object may directly contain the label value to use."
+  },
+  "gmplsTunnelARHopUnnumberedInterface": {
+    "name": "gmplsTunnelARHopUnnumberedInterface",
+    "oid": "1.3.6.1.3.1.2.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the interface index of the unnumbered interface used when setting up the LSP. Only has value when gmplsTunnelARHopUnnumAddrType is set to unnumberedIfIpV4(2) or unnumberedIfIpV6(3) in which case the corresponding gmplsTunnelARHopIpv4Addr or gmplsTunnelARHopIpv6Addr variable must contain an LSR id."
+  },
+  "gmplsTunnelARHopProtection": {
+    "name": "gmplsTunnelARHopProtection",
+    "oid": "1.3.6.1.3.1.2.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "localAvailable": 0,
+        "localInUse": 1
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Availability and usage of protection on the reported link. - localAvailable indicates that the link downstream of this node is protected via a local repair mechanism. This flag can only be set if the localProtectionDesired bit was set in gmplsTunnelAttributes for this tunnel. - localInUse indicates that a local repair mechanism is in use to maintain this tunnel (usually in the face of an outage of the link it was previously routed over)."
+  },
+  "gmplsTunnelCHopTable": {
+    "name": "gmplsTunnelCHopTable",
+    "oid": "1.3.6.1.3.1.2.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The gmplsTunnelCHopTable 'extends' the mplsTunnelCHopTable. It is used to indicate additional information about the hops of a GMPLS tunnel defined in mplsTunnelTable and gmplsTunnelTable, as computed by a constraint-based routing protocol, based on the gmplsTunnelHopTable for the outgoing direction of the tunnel. Each row in this table is indexed by mplsTunnelCHopListIndex. Each row also has a secondary index mplsTunnelCHopIndex, corresponding to the next hop that this row corresponds to. The first row in the table is the first hop after the origination point of the tunnel. In case we want to specify a particular interface on the originating LSR of an outgoing tunnel by which we want packets to exit the LSR, we specify this as the first hop for this tunnel in gmplsTunnelCHopTable. Please note that since the information necessary to build entries within this table may not be supported by some LSRs, implementation of this table is optional. Furthermore, since the information in this table is actually provided by routing protocol after the path has been computed, the entries in this table are provided only for observation, and hence, all variables in this table are accessible exclusively as read-only."
+  },
+  "gmplsTunnelCHopEntry": {
+    "name": "gmplsTunnelCHopEntry",
+    "oid": "1.3.6.1.3.1.2.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelCHopListIndex",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "mplsTunnelCHopIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table represents a tunnel hop. An entry in this table is created by a constraint-based routing protocol based on the hops specified in the corresponding mplsTunnelHopTable and gmplsTunnelHopTable."
+  },
+  "gmplsTunnelCHopUnnumAddrType": {
+    "name": "gmplsTunnelCHopUnnumAddrType",
+    "oid": "1.3.6.1.3.1.2.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GmplsHopUnnumAddrTypes",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "numbered",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Denotes whether this tunnel hop uses numbered or unnumbered interfaces. If set to unnumberedIfIpV4(2) or unnumberedIfIpV6(3) the value overrides the value of the associated mplsTunnelCHopAddrType."
+  },
+  "gmplsTunnelCHopLabelStatuses": {
+    "name": "gmplsTunnelCHopLabelStatuses",
+    "oid": "1.3.6.1.3.1.2.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "forwardPresent": 0,
+        "reversePresent": 1
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This bitmask indicates the presence and status of labels indicated by the gmplsTunnelCHopExplicitLabel and gmplsTunnelCHopExplicitReverseLabel objects. For the Present bits, a set bit indicates that a label is present for this hop in the route."
+  },
+  "gmplsTunnelCHopExplicitLabel": {
+    "name": "gmplsTunnelCHopExplicitLabel",
+    "oid": "1.3.6.1.3.1.2.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the row entry in the mplsLabelTabel that defines the explicit label to use in the explicit route as the forward path label at this point. This value only has meaning if the forwardPresent bit of gmplsTunnelCHopLabelStatuses is set. This variable is only valid for settings of gmplsTunnelCHopAddrType which may be associated with a forward path label. Note that in implementations where the label may be encoded within a 32 bit integer and where mplsLabelTable is not implemented, this object may directly contain the label value to use."
+  },
+  "gmplsTunnelCHopExplicitReverseLabel": {
+    "name": "gmplsTunnelCHopExplicitReverseLabel",
+    "oid": "1.3.6.1.3.1.2.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the row entry in the mplsLabelTabel that defines the explicit label to use in the explicit route as the reverse path label at this point. This value only has meaning if the reversePresent bit of gmplsTunnelCHopLabelStatuses is set. This variable is only valid for settings of gmplsTunnelCHopAddrType which may be associated with a forward path label. Note that in implementations where the label may be encoded within a 32 bit integer and where mplsLabelTable is not implemented, this object may directly contain the label value to use."
+  },
+  "gmplsTunnelCHopUnnumberedInterface": {
+    "name": "gmplsTunnelCHopUnnumberedInterface",
+    "oid": "1.3.6.1.3.1.2.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the interface index of the unnumbered interface to use when setting up the LSP. Only has value when gmplsTunnelCHopUnnumAddrType is set to unnumberedIfIpV4(2) or unnumberedIfIpV6(3) in which case the corresponding mplsTunnelCHopIpv4Addr or mplsTunnelCHopIpv6Addr variable contains an LSR id."
+  },
+  "gmplsTunnelPacketPerfTable": {
+    "name": "gmplsTunnelPacketPerfTable",
+    "oid": "1.3.6.1.3.1.2.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per-tunnel packet performance information."
+  },
+  "gmplsTunnelPacketPerfEntry": {
+    "name": "gmplsTunnelPacketPerfEntry",
+    "oid": "1.3.6.1.3.1.2.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "gmplsTunnelPacketPerfEntry",
+      "module": "GMPLS-TE-MIB",
+      "object": "gmplsTunnelEntry"
+    },
+    "status": "current",
+    "description": "An entry in this table is created by the LSR for every GMPLS tunnel where packets are visible to the LSR. Its is an extension to gmplsTunnelEntry."
+  },
+  "gmplsTunnelPacketPerfRvsPackets": {
+    "name": "gmplsTunnelPacketPerfRvsPackets",
+    "oid": "1.3.6.1.3.1.2.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets forwarded on the tunnel in the reverse direction if it is bidirectional."
+  },
+  "gmplsTunnelPacketPerfRvsHCPackets": {
+    "name": "gmplsTunnelPacketPerfRvsHCPackets",
+    "oid": "1.3.6.1.3.1.2.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of packets forwarded on the tunnel in the reverse direction if it is bidirectional."
+  },
+  "gmplsTunnelPacketPerfRvsErrors": {
+    "name": "gmplsTunnelPacketPerfRvsErrors",
+    "oid": "1.3.6.1.3.1.2.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of errored packets received on the tunnel in the reverse direction if it is bidirectional."
+  },
+  "gmplsTunnelPacketPerfRvsBytes": {
+    "name": "gmplsTunnelPacketPerfRvsBytes",
+    "oid": "1.3.6.1.3.1.2.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of bytes forwarded on the tunnel in the reverse direction if it is bidirectional."
+  },
+  "gmplsTunnelPacketPerfRvsHCBytes": {
+    "name": "gmplsTunnelPacketPerfRvsHCBytes",
+    "oid": "1.3.6.1.3.1.2.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of bytes forwarded on the tunnel in the reverse direction if it is bidirectional."
+  },
+  "gmplsTunnelErrorTable": {
+    "name": "gmplsTunnelErrorTable",
+    "oid": "1.3.6.1.3.1.2.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per-tunnel information about errors. Errors may be detected locally or reported through the signaling protocol."
+  },
+  "gmplsTunnelErrorEntry": {
+    "name": "gmplsTunnelErrorEntry",
+    "oid": "1.3.6.1.3.1.2.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "gmplsTunnelErrorEntry",
+      "module": "GMPLS-TE-MIB",
+      "object": "gmplsTunnelEntry"
+    },
+    "status": "current",
+    "description": "An entry in this table is created by the LSR for every tunnel where error information is visible to the LSR. Its is an extension to gmplsTunnelEntry."
+  },
+  "gmplsTunnelErrorLastError": {
+    "name": "gmplsTunnelErrorLastError",
+    "oid": "1.3.6.1.3.1.2.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noError": 0,
+          "unknown": 1,
+          "localProtocol": 2,
+          "remoteProtocol": 3,
+          "configuration": 4,
+          "pathComputation": 5,
+          "localResources": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The nature of the last error. Protocol errors encompass all errors that may be reported through the protocol and give a wider set of error codes than those provided here. It may be useful for an implementation to report locally detected errors using the codes provided by the signaling protocols to give a better diagnosis of the error. Values in excess of 32767 are reserved for implementation-specific error codes."
+  },
+  "gmplsTunnelErrorLastTime": {
+    "name": "gmplsTunnelErrorLastTime",
+    "oid": "1.3.6.1.3.1.2.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time at which the last error occurred. This is presented as the value of SysUpTime when the error occurred or was reported to this node. If gmplsTunnelErrorLastError has the value noError (0), then this object is ignored."
+  },
+  "gmplsTunnelErrorReporterType": {
+    "name": "gmplsTunnelErrorReporterType",
+    "oid": "1.3.6.1.3.1.2.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noError": 0,
+          "unknown": 1,
+          "localNode": 2,
+          "localIpV4": 3,
+          "remoteIpV4": 4,
+          "localIpV6": 5,
+          "remoteIpV6": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The reporter of the last error recorded. This object is used principally to aid in interpretation of gmplsTunnelErrorReporterIpv4Addr and gmplsTunnelErrorReporterIpv6Addr. Where the error has been locally generated and there is no requirement to associate the error with any specific local address (such as an interface), the value localNode (2) may be used. When gmplsTunnelErrorLastError has the value noError (0), then this object should have the value noError (0) and should be ignored."
+  },
+  "gmplsTunnelErrorReporterIpv4Addr": {
+    "name": "gmplsTunnelErrorReporterIpv4Addr",
+    "oid": "1.3.6.1.3.1.2.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The address of the node reporting the last error, or the address of the resource (such as an interface) associated with the error. This object only has meaning if the object gmplsTunnelErrorReporterType has value localIpV4 (3) or remoteIpV4 (4). Otherwise the object should contain the value zero."
+  },
+  "gmplsTunnelErrorReporterIpv6Addr": {
+    "name": "gmplsTunnelErrorReporterIpv6Addr",
+    "oid": "1.3.6.1.3.1.2.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv6",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The address of the node reporting the last error, or the address of the resource (such as an interface) associated with the error. This object only has meaning if the object gmplsTunnelErrorReporterType has value localIpV4 (3) or remoteIpV4 (4). Otherwise the object should contain the value zero."
+  },
+  "gmplsTunnelErrorProtocolCode": {
+    "name": "gmplsTunnelErrorProtocolCode",
+    "oid": "1.3.6.1.3.1.2.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The primary error code associated with the last error and the protocol used to signal this tunnel. The relevant protocol is indicated by the gmplsTunnelSignallingProto object."
+  },
+  "gmplsTunnelErrorProtocolSubcode": {
+    "name": "gmplsTunnelErrorProtocolSubcode",
+    "oid": "1.3.6.1.3.1.2.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The secondary error code associated with the last error and the protocol used to signal this tunnel. The relevant protocol is indicated by the gmplsTunnelSignallingProto object."
+  },
+  "gmplsTunnelErrorHelpString": {
+    "name": "gmplsTunnelErrorHelpString",
+    "oid": "1.3.6.1.3.1.2.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A textual string containing information about the last error, recovery actions and support advice. If there is no help string this object contains a zero length string."
+  },
+  "gmplsTeGroups": {
+    "name": "gmplsTeGroups",
+    "oid": "1.3.6.1.3.1.3.1",
+    "class": "objectidentity"
+  },
+  "gmplsTeCompliances": {
+    "name": "gmplsTeCompliances",
+    "oid": "1.3.6.1.3.1.3.2",
+    "class": "objectidentity"
+  },
+  "gmplsTeModuleCompliance": {
+    "name": "gmplsTeModuleCompliance",
+    "oid": "1.3.6.1.3.1.3.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "gmplsTunnelGroup",
+        "module": "GMPLS-TE-MIB"
+      },
+      {
+        "object": "gmplsTunnelScalarGroup",
+        "module": "GMPLS-TE-MIB"
+      },
+      {
+        "object": "gmplsTunnelManualGroup",
+        "module": "GMPLS-TE-MIB"
+      },
+      {
+        "object": "gmplsTunnelSignaledGroup",
+        "module": "GMPLS-TE-MIB"
+      },
+      {
+        "object": "gmplsTunnelIsNotIntfcGroup",
+        "module": "GMPLS-TE-MIB"
+      },
+      {
+        "object": "gmplsTunnelIsIntfcGroup",
+        "module": "GMPLS-TE-MIB"
+      },
+      {
+        "object": "gmplsTunnelOptionalGroup",
+        "module": "GMPLS-TE-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that support the GMPLS TE MIB."
+  },
+  "gmplsTunnelGroup": {
+    "name": "gmplsTunnelGroup",
+    "oid": "1.3.6.1.3.1.3.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelDirection"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelPacketPerfRvsPackets"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelPacketPerfRvsHCPackets"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelPacketPerfRvsErrors"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelPacketPerfRvsBytes"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelPacketPerfRvsHCBytes"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorLastError"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorLastTime"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorReporterType"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorReporterIpv4Addr"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorReporterIpv6Addr"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorProtocolCode"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorProtocolSubcode"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelErrorHelpString"
+      }
+    ],
+    "status": "current",
+    "description": "Necessary, but not sufficient, set of objects to implement tunnels. In addition, depending on the type of the tunnels supported (for example, manually configured or signaled, persistent or non-persistent, etc.), the following other groups defined below are mandatory: gmplsTunnelManualGroup and/or gmplsTunnelSignaledGroup, gmplsTunnelIsNotIntfcGroup and/or gmplsTunnelIsIntfcGroup."
+  },
+  "gmplsTunnelManualGroup": {
+    "name": "gmplsTunnelManualGroup",
+    "oid": "1.3.6.1.3.1.3.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelSignallingProto"
+      }
+    ],
+    "status": "current",
+    "description": "Object(s) needed to implement manually configured tunnels."
+  },
+  "gmplsTunnelSignaledGroup": {
+    "name": "gmplsTunnelSignaledGroup",
+    "oid": "1.3.6.1.3.1.3.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelLSPEncoding"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelLinkProtection"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelGPid"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelSecondary"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelHopUnnumAddrType"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelHopLabelStatuses"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelHopExplicitLabel"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelHopExplicitReverseLabel"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelHopUnnumberedInterface"
+      }
+    ],
+    "status": "current",
+    "description": "Objects needed to implement signaled tunnels."
+  },
+  "gmplsTunnelScalarGroup": {
+    "name": "gmplsTunnelScalarGroup",
+    "oid": "1.3.6.1.3.1.3.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelsConfigured"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelActive"
+      }
+    ],
+    "status": "current",
+    "description": "Scalar objects needed to implement MPLS tunnels."
+  },
+  "gmplsTunnelIsIntfcGroup": {
+    "name": "gmplsTunnelIsIntfcGroup",
+    "oid": "1.3.6.1.3.1.3.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelIsUnnum"
+      }
+    ],
+    "status": "current",
+    "description": "Objects needed to implement tunnels that are interfaces."
+  },
+  "gmplsTunnelIsNotIntfcGroup": {
+    "name": "gmplsTunnelIsNotIntfcGroup",
+    "oid": "1.3.6.1.3.1.3.1.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelIsUnnum"
+      }
+    ],
+    "status": "current",
+    "description": "Objects needed to implement tunnels that are not interfaces."
+  },
+  "gmplsTunnelOptionalGroup": {
+    "name": "gmplsTunnelOptionalGroup",
+    "oid": "1.3.6.1.3.1.3.1.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelARHopUnnumAddrType"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelARHopLabelStatuses"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelARHopExplicitLabel"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelARHopExplicitReverseLabel"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelCHopUnnumAddrType"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelCHopLabelStatuses"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelCHopExplicitLabel"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelCHopExplicitReverseLabel"
+      },
+      {
+        "module": "GMPLS-TE-MIB",
+        "object": "gmplsTunnelCHopUnnumberedInterface"
+      }
+    ],
+    "status": "current",
+    "description": "The objects in this group are optional."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/GMPLS-TE-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:29:25 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "GMPLS-TE-MIB"
+  }
+}

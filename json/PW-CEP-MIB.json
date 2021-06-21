@@ -1,0 +1,2757 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "PW-MIB": [
+      "pwVcIndex",
+      "pwVcOperStatus"
+    ],
+    "PerfHist-TC-MIB": [
+      "PerfCurrentCount",
+      "PerfIntervalCount"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Integer32",
+      "experimental",
+      "Counter64",
+      "MODULE-IDENTITY",
+      "Counter32",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "iso",
+      "Gauge32",
+      "MibIdentifier",
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "Unsigned32",
+      "OBJECT-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TimeStamp",
+      "TruthValue",
+      "RowStatus",
+      "DisplayString",
+      "StorageType",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "pwVcCepMIB": {
+    "name": "pwVcCepMIB",
+    "oid": "1.3.6.1.3.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2002-10-23 12:00",
+        "description": "- Added RTP header suppression config object. - Deleted jitter buffer rebuild objects. - Add VT and fractional SPE support. - Adding textual conventions. - Adding types to pwVcCepType. - Changind description of pwVcCepSonetIfIndex, pwVcCepSonetTimeSlot. - Adding badHdrStack as error code. - Change pwVcCepCfgNormalPktLength to pwVcCepSonetPayloadLength to more generally convey fractional SPE modes and VT modes. - Adding pwVcCepFracTable. "
+      },
+      {
+        "revision": "2002-08-16 12:00",
+        "description": "- Updated to become IETF PWE3 working group doc. - Updated references to CEP draft."
+      },
+      {
+        "revision": "2002-05-29 12:00",
+        "description": "- Renamed EsTimeStamp to LastErrorTimeStamp. - Renamed LastDefectsAtEs to LatchedIndications. - Renamed CurrentDefects to CurrentIndications. - Renamed defect indications (cepAis, cepRdi). - Renamed DBA bit settings (ais and unequipped). - Added objects: CfgJtrBfrResetOorange and CfgJtrBfrResetOorangeCnt. - Moved SONET Time Slot and Time Slot cfg error to CEP table from SONET extension table. Deleted SONET extension table. - Added Failure Counts (FCs) to stats tables. - Removed pwVcCepPerfCurrentTimeElapsed (it is a duplicate of pwVcCepTimeElapsed). - Removed 32-bit counters that were duplicates of 64-bit (HC) counters. - Other minor changes."
+      },
+      {
+        "revision": "2002-02-27 12:00",
+        "description": "- Added objects pwVcCepTimeElapsed and pwVcCepValidIntervals for more accurate knowledge of interval data. - Changed pwVcCepCfgJtrBfrDepth units from packets to microseconds, and updated description. - Changed JtrBfrOoseqDropped to JtrBfrOoRngDropped (i.e, 'out of sequence' to 'out of range'). - Removed JtrBfrOverruns counter objects. This info is now contained within the JtrBfrOoRngDropped object. - Changed description of JtrBfrUnderrun. - Moved LastDefectsAtEs, LastEsTimeStamp, and DiscontinuityTime to the pwVcCepTable table. Removed them as conformance config objects. - Created new CurrentDefects in CepTable. - Added cepAis to and changed rdi to cepRdi (both are now in LastDefectsAtEs). Added note to cepAis - it must not (in itself) cause a cep down notification. - Changed the pwVcCepSonetExtTable to augment the sonetPathCurrentTable in RFC 2558. Imported sonetPathCurrentTable from the SONET-MIB. - Renamed PktResequence to PktReorder."
+      },
+      {
+        "revision": "2001-11-16 12:00",
+        "description": "- Changed CEM to CEP. - Removed: 'unstructured' CEP type, ECC references, and signaling (CEP options) references, multiple VC instances references, and APS references. - Improved descriptions and some improved object names. - New conformance section. New ConformanceCfg table. - PktResequence is now read-only. - ConfMaxPktLength is now ConfNormalPktLength. - Replaced User Error Action with PlayOutValue. - New cfg object : consecutive non-SESs to exit UAS. - New cfg objects : elapsed time for stats intervals. - New stats object: summary packet error. - New object : added ConfigError to SonetExt table. - NOTE: Many objects added, deleted, or moved - so many OIDs have been re-ordered."
+      },
+      {
+        "revision": "2001-09-07 12:00",
+        "description": "- Separated Top level Cfg objects from Total CEM stats. - Removed references to VC instances."
+      },
+      {
+        "revision": "2001-07-19 12:00",
+        "description": "Based on the PWE3 Requirements/Framework, the original CEM MIB (draft-danenberg-sonet-ces-mpls-mib-00.txt) has Been split into 3 drafts: - PW-MIB (Zelig, et al). Service-independent MIB. - PW-TC-MIB (Nadeau, et al). Textual Conventions. - PW-CEM-MIB (Danenberg, et al). Service-specific MIB. Aside from the split, then PW-CEM-MIB has undergone other changes: - Ability to define LOPS (loss of packet sync), SES and UAS. - Support for 'unstructured' operation. - Support for CEM-RDI. - Many more minor changes and clarifications."
+      }
+    ],
+    "lastupdated": "200210231200Z",
+    "organization": "Pseudo-Wire Emulation Edge-to-Edge (PWE3) Working Group",
+    "contactinfo": " Dave Danenberg Postal: Litchfield Communications, Inc. 27 Princeton Rd Princeton Center West Watertown, CT 06795 Tel: 203-591-7062 Email: dave_danenberg@litchfieldcomm.com Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Tel: 978-244-3051 Email: tnadeau@cisco.com David Zelig Postal: Corrigent Systems LTD. 126, Yigal Alon St. Tel Aviv, ISRAEL Phone: +972-3-6945273 E-mail: davidz@corrigent.com Andrew G. Malis Postal: Vivace Networks, Inc. 2730 Orchard Parkway San Jose, CA 95134 Email: Andy.Malis@vivacenetworks.com Ron Cohen Postal: Lycium Networks P.O.Box 12256 Herzeliya, Israel 46733 Email: ronc@lyciumnetworks.com Or the PWE3 Working Group (pwe3@ietf.org) ",
+    "description": "This MIB contains managed object definitions for Circuit Emulation over Packet (CEP) as in: Malis, A., Johnson, T., Zelig, D., and Martini, L. 'SONET/SDH Circuit Emulation Over Packet (CEP) encapsulation', Internet Draft <draft- ietf-pwe3-sonet>. This MIB reports to the PW-MIB as in: Zelig, D., Nadeau, T. 'Pseudo Wire (PW) Management Information Base'. The PW-MIB contains structures and MIB associations generic to Pseudo-Wire Virtual Circuit (VC) emulation. VC-specific MIBs (such as this) contain config and stats for specific VC types."
+  },
+  "PwVcCepCfgIndex": {
+    "name": "PwVcCepCfgIndex",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "Index into the pwVcCepCfgTable."
+  },
+  "PwVcCepSonetEbm": {
+    "name": "PwVcCepSonetEbm",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "Equipped Bit Mask (EBM) as defined in draft-ietf-pwe3- sonet-vt used for fractional STS-1/VC-3. The EBM bits are the 28 least significant bits out of the 32 bit value"
+  },
+  "PwVcCepSdhVc4Ebm": {
+    "name": "PwVcCepSdhVc4Ebm",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "Equipped Bit Mask (EBM) as defined in draft-ietf-pwe3- sonet-vt used for each TUG-3 in fractional VC-4 circuits. The EBM bits are the 30 least significant bits out of the 32 bit value "
+  },
+  "PwVcCepSonetVtgMap": {
+    "name": "PwVcCepSonetVtgMap",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "The VT/VC types carried in the 7 VTG/TUG-2s. The format is 28 bits in the form of an Equipped Bit Mask (EBM) as defined in draft-ietf-pwe3-sonet-vt used for fractional STS-1/VC-3. The EBM specifies the maximal occupancies of VT/VC within each VTG/TUG-2. For example, all four bits are set to 1 in a VTG carrying VT1.5s, while only three are set when VT2 are carried within this VTG. The relevant bits are the 28 least significant bits out of the 32 bit value."
+  },
+  "PwVcCepFracAsyncMap": {
+    "name": "PwVcCepFracAsyncMap",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 0,
+          "ds3": 1,
+          "e3": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type of Asynchronous mapping carried inside STS-1, VC-3 or TUG-3 containing TU-3 circuit. The value of 'other' MUST be used if the Use of this object is not applicable."
+  },
+  "pwVcCepNotifications": {
+    "name": "pwVcCepNotifications",
+    "oid": "1.3.6.1.3.1.0",
+    "class": "objectidentity"
+  },
+  "pwVcCepNotifyPrefix": {
+    "name": "pwVcCepNotifyPrefix",
+    "oid": "1.3.6.1.3.1.0.0",
+    "class": "objectidentity"
+  },
+  "pwVcCepObjects": {
+    "name": "pwVcCepObjects",
+    "oid": "1.3.6.1.3.1.1",
+    "class": "objectidentity"
+  },
+  "pwVcCepConformance": {
+    "name": "pwVcCepConformance",
+    "oid": "1.3.6.1.3.1.2",
+    "class": "objectidentity"
+  },
+  "pwVcCepTable": {
+    "name": "pwVcCepTable",
+    "oid": "1.3.6.1.3.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the index to the entry SONET path table for this CEP VC, and the index to the CEP config table."
+  },
+  "pwVcCepEntry": {
+    "name": "pwVcCepEntry",
+    "oid": "1.3.6.1.3.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This MIB reports to the PW-MIB. This table is indexed by the same index that was created for the associated entry in the PW VC Table (in the PW-MIB). - The PwVcIndex. An entry is created in this table by the agent for every entry in the pwVc table with a VcType of 'cep'."
+  },
+  "pwVcCepType": {
+    "name": "pwVcCepType",
+    "oid": "1.3.6.1.3.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "spe": 1,
+          "vt": 2,
+          "fracSpe": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "spe",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specifies the type of CEP VC. Currently only structured types are supported. Other CEP Types may be defined in the future. Currently supported CEP types are: 1 - spe : SONET STS-Nc signals. 2 - vt : SONET VT-x (x=1.5,2,3,6) signals. 3 - fracSpe : SONET fractional STS-1 or SDH fractional VC-3 or VC-4 carrying tributaries or Asynchronous signals. Support of vt and fracSpe is optional."
+  },
+  "pwVcCepSonetIfIndex": {
+    "name": "pwVcCepSonetIfIndex",
+    "oid": "1.3.6.1.3.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This is a unique index within the ifTable. It represents the interface index for the SONET path for SPE emulation (RFC2558 section 3.3), an interface index for the SONET VT (RFC2558 section 3.4) if the VT to be emulated is extracted a SONET signal, or the ifIndex of the physical port emulated in VT mode if the VT to be emulated is directly feeded from a physical interface. A value of zero indicates an interface index that has yet to be determined. Once set, if the SONET ifIndex is (for some reason) later removed, the agent MAY delete the associated PW VC rows (e.g., this pwVcCep table entry). If the agent does not delete the rows, it is recommended that the agent set this object to zero."
+  },
+  "pwVcCepSonetTimeSlot": {
+    "name": "pwVcCepSonetTimeSlot",
+    "oid": "1.3.6.1.3.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 192
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "reference": "RFC 2558, sonetPathCurrentWidth.",
+    "status": "current",
+    "description": "In structured SPE CEP, this object indicates the starting time-slot for this SONET path within the SONET line and section. For OC-48, this value could range from 1 to 48. The SONET path width must be taken into consideration here. For example, in an OC-48, an STS-3c could not start at time-slot 47. In structured VT CEP, this object indicates the starting time slot for this tributary within the SONET path. For example, for VT1.5 tributary within STS-1, this value could range from 1 to 28."
+  },
+  "pwVcCepSonetConfigError": {
+    "name": "pwVcCepSonetConfigError",
+    "oid": "1.3.6.1.3.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "other": 0,
+        "timeslotInUse": 1,
+        "timeslotMisuse": 2
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "timeslotInUse is when another CEP VC (via SONET ifIndex) has already reserved a timeslot(s) that this CEP VC is attempting to reserved. timeslotMisuse is set, for example, if specifying a starting timeslot of 45 for a SONET path of an STS-12c width."
+  },
+  "pwVcCepCfgIndex": {
+    "name": "pwVcCepCfgIndex",
+    "oid": "1.3.6.1.3.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepCfgIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Index to CEP configuration table below. It is likely that multiple CEP VCs will share 1 CEP Cfg table entry."
+  },
+  "pwVcCepTimeElapsed": {
+    "name": "pwVcCepTimeElapsed",
+    "oid": "1.3.6.1.3.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 900
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of seconds, including partial seconds, that have elapsed since the beginning of the current measurement period. If, for some reason, such as an adjustment in the system's time-of-day clock, the current interval exceeds the maximum value, the agent will return the maximum value."
+  },
+  "pwVcCepValidIntervals": {
+    "name": "pwVcCepValidIntervals",
+    "oid": "1.3.6.1.3.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 96
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of previous 15-minute intervals for which data was collected. An agent with CEP capability must be capable of supporting at least n intervals. The minimum value of n is 4, The default of n is 32 and the maximum value of n is 96. The value will be <n> unless the measurement was (re-)started within the last (<n>*15) minutes, in which case the value will be the number of complete 15 minute intervals for which the agent has at least some data. In certain cases (e.g., in the case where the agent is a proxy) it is possible that some intervals are unavailable. In this case, this interval is the maximum interval number for which data is available. "
+  },
+  "pwVcCepCurrentIndications": {
+    "name": "pwVcCepCurrentIndications",
+    "oid": "1.3.6.1.3.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "missingPkt": 0,
+        "ooRngDropped": 1,
+        "jtrBfrUnder": 2,
+        "pktBadLength": 3,
+        "lops": 4,
+        "cepRdi": 5,
+        "cepAis": 6,
+        "badHdrStack": 7
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Definitions: missingPkt - While playing out a sequence of packets, a packet(s) was determined to be missing based on a gap in the CEP sequence number. Note: If the imple- mentation supports packet re-ordering, detecting gaps should not take place as packets arrive, only as they are played out - this gives time for mis-ordered packets to arrive late. ooRngDropped - Packet(s) arrives that is outside the range of the jitter buffer. This may be because the jitter buffer is full, or the sequence number addresses a buffer outside the current jitter buffer range, or addresses an already occupied buffer within range. Whether or not packet re-ordering is supported by the implementation, this indication MUST be supported. jtrBfrUnder - The jitter buffer underflowed due to not enough packets arriving as packets were being played out. pktBadLength - Non-bandwidth-saving packet arrives larger or smaller than pwVcCepCfgSonetPayloadLength, or when a fractional SPE packet length does not match the extension header or manual configuration indicating the number of equipped VTs. lops - Loss Of Packet Sync. See draft-ietf-pwe3-sonet. cepRdi - Circuit Emulation over Packet Remote Defect Indication. Generated by the remote CEP de-packetizer when detecting LOPS. Note: not gen- erated by the remote SONET function. See draft-ietf- pwe3-sonet. cepAis - Remote CEP packetizer has detected AIS on its incoming SONET stream. See draft-ietf-pwe3- sonet. Note: cepAis MUST NOT (in itself) cause a CEP down notification. This would be a layer violation. badHdrStack - This indication is set when the number of CEP header extensions detected in incoming packets does not match the expected number. Note: currently there is no hierarchy of CEP defects. Note: the algorithm used to capture these indications is implementation specific."
+  },
+  "pwVcCepLatchedIndications": {
+    "name": "pwVcCepLatchedIndications",
+    "oid": "1.3.6.1.3.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "missingPkt": 0,
+        "ooRngDropped": 1,
+        "jtrBfrUnder": 2,
+        "pktBadLength": 3,
+        "lops": 4,
+        "cepRdi": 5,
+        "cepAis": 6,
+        "badHdrStack": 7
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The state of CEP indicators when the CEP VC last declared an errored second (either as ES, SES or a second with errors inside a UAS) condition. At this time, only LOPS can create a failure. Since indicators other than LOPS are useful, all are latched here. For bit definitions, see pwVcCepCurrentIndications above. Note: the algorithm used to latch these indications when entering an defect state is implementation specific."
+  },
+  "pwVcCepLastEsTimeStamp": {
+    "name": "pwVcCepLastEsTimeStamp",
+    "oid": "1.3.6.1.3.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion at which the CEP VC entered the ES or SES state."
+  },
+  "pwVcCepCfgIndexNext": {
+    "name": "pwVcCepCfgIndexNext",
+    "oid": "1.3.6.1.3.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepCfgIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object contains an appropriate value to be used for pwVcCepCfgIndex when creating entries in the pwVcCepCfgTable. The value 0 indicates that no unassigned entries are available. To obtain the value of pwVcCepCfgIndex for a new entry in the pwVcCepCfgTable, the manager issues a management protocol retrieval operation to obtain the current value of pwVcCepCfgIndex. After each retrieval operation, the agent should modify the value to reflect the next unassigned index. After a manager retrieves a value the agent will determine through its local policy when this index value will be made available for reuse."
+  },
+  "pwVcCepCfgTable": {
+    "name": "pwVcCepCfgTable",
+    "oid": "1.3.6.1.3.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains a set of parameters that may be referenced by 1 or more CEP VCs by pwVcCepTable."
+  },
+  "pwVcCepCfgEntry": {
+    "name": "pwVcCepCfgEntry",
+    "oid": "1.3.6.1.3.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgTableIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "These parameters define the characteristics of a CEP VC. They are grouped here to ease NMS burden. Once an entry is created here it may be re-used by many VCs."
+  },
+  "pwVcCepCfgTableIndex": {
+    "name": "pwVcCepCfgTableIndex",
+    "oid": "1.3.6.1.3.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepCfgIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Primary index to this table"
+  },
+  "pwVcCepConfigError": {
+    "name": "pwVcCepConfigError",
+    "oid": "1.3.6.1.3.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "other": 0,
+        "dba": 1,
+        "lopsPktCount": 2,
+        "pktLength": 3,
+        "jtrBfrDepth": 4
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Various configurations errors. Illegal settings within the pwVcCepCfg or pwVcCepSonetExt tables."
+  },
+  "pwVcCepSonetPayloadLength": {
+    "name": "pwVcCepSonetPayloadLength",
+    "oid": "1.3.6.1.3.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "See FEC element format and Interfaces Parameters format in Martini. L, et al, <draft-martini-l2circuit-trans- mpls-06>. For use of payload bytes see Malis, A., et al, <draft-ietf-pwe3-sonet> and Pate, P. et al, <draft-ietf- sonet-vt>.",
+    "status": "current",
+    "description": "The number of SONET bytes of the Path or VT carried as payload within one packet. For example, for STS-1 SPE circuits, value of 783 bytes indicates that each packet carries payload equivalent to one frame. For VT1.5 circuits, a payload length of 104 bytes indicates that each packet carries payload equivalent to one VT1.5 super-frame. The actual payload size may be different, due to bandwidth reduction modes, e.g. DBA mode or dynamically assigned fractional SPE. This length applies to inbound and outbound packets carrying user payload. Although there is no control over inbound packets, those of illegal length are discarded and accounted for (see pwVcCepPerf...PktsBadLength.) "
+  },
+  "pwVcCepCfgMinPktLength": {
+    "name": "pwVcCepCfgMinPktLength",
+    "oid": "1.3.6.1.3.1.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "See FEC element format and Interfaces Parameters format in Martini. L, et al, <draft-martini-l2circuit-trans- mpls-06>. For use of payload bytes see Malis, A., et al, <draft-ietf-pwe3-sonet>.",
+    "status": "current",
+    "description": "This is the minimum CEP packet length in number of bytes (including CEP header and payload). It applies to CEP's bandwidth-savings packets. Currently DBA is the only bandwidth-savings packet type (in the future, CEP may support compression). Minimum packet length is necessary in some systems or networks. Setting Zero here indicates that there is no minimum packet restriction."
+  },
+  "pwVcCepCfgPktReorder": {
+    "name": "pwVcCepCfgPktReorder",
+    "oid": "1.3.6.1.3.1.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If set True: as inbound packets are queued in the jitter buffer, out of order packets are re-ordeed. The maximum sequence number differential (i.e., the range in which resequencing can occur) is dependant on the depth of the jitter buffer. See pwVcCepCfgJtrBfrDepth. NOTE: Some implementations may not support this feature. The agent is then required to set this False."
+  },
+  "pwVcCepCfgEnableDBA": {
+    "name": "pwVcCepCfgEnableDBA",
+    "oid": "1.3.6.1.3.1.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "ais": 0,
+        "unequipped": 1
+      }
+    },
+    "default": {
+      "value": {
+        "type": "Bits",
+        "class": "type",
+        "bits": {
+          "unequipped": 1
+        }
+      },
+      "format": "bits"
+    },
+    "maxaccess": "read-create",
+    "reference": "See Malis, A., et al, <draft-ietf-pwe3-sonet>.",
+    "status": "current",
+    "description": "Bits set here MUST enable the DBA (dynamic bandwidth allocation) feature for the specified condition. Setting 'ais' MUST cause CEP packet payload suppression when AIS is detected on the associated SONET path. Similarly, 'unequipped' MUST cause payload suppression when an un-equipped condition is detected on the SONET path. During these conditions, CEP packets will continue to be sent, but with indicators set in the CEP header instructing the remote to play all ones (for AIS) or all zeros (for un-equipped) onto its SONET path. NOTE: Some implementations may not support this feature. In these cases, if the 'ais' or 'unequipped' bits are set, then 'dba' error code MUST be set in pwVcCepConfigError."
+  },
+  "pwVcCepCfgRtpHdrSuppress": {
+    "name": "pwVcCepCfgRtpHdrSuppress",
+    "oid": "1.3.6.1.3.1.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "See Malis, A., et al, <draft-ietf-pwe3-sonet>.",
+    "status": "current",
+    "description": "If set True: an RTP header is not pre-pended to the CEP packet."
+  },
+  "pwVcCepCfgJtrBfrDepth": {
+    "name": "pwVcCepCfgJtrBfrDepth",
+    "oid": "1.3.6.1.3.1.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "micro-seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This setting configures the number of microseconds of expected packet delay variation for this CEP VC over the PSN. The actual jitter buffer MUST be at least twice this value for proper operation, and is implementation specific. If configured to a value not supported by the implementation, the agent MUST return an error code 'jtrBfrDepth' in 'pwVcCepConfigError ' NOTE: Like bandwidth and time-slots, jitter buffers are a limited resource to be managed."
+  },
+  "pwVcCepCfgConsecPktsInsync": {
+    "name": "pwVcCepCfgConsecPktsInsync",
+    "oid": "1.3.6.1.3.1.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "See Malis, A., et al, <draft-ietf-pwe3-sonet>.",
+    "status": "current",
+    "description": "Consecutive pkts with sequential sequence numbers required to exit the LOPS state."
+  },
+  "pwVcCepCfgConsecMissingOutSync": {
+    "name": "pwVcCepCfgConsecMissingOutSync",
+    "oid": "1.3.6.1.3.1.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "See Malis, A., et al, <draft-ietf-pwe3-sonet>.",
+    "status": "current",
+    "description": "Consecutive missing pkts required to enter the LOPS state."
+  },
+  "pwVcCepCfgPktErrorPlayOutValue": {
+    "name": "pwVcCepCfgPktErrorPlayOutValue",
+    "oid": "1.3.6.1.3.1.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 255,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the value played when inbound packets have over/underflowed the jitter buffer, or are missing for any reason. This byte pattern is sent (played) on the SONET path."
+  },
+  "pwVcCepCfgMissingPktsToSes": {
+    "name": "pwVcCepCfgMissingPktsToSes",
+    "oid": "1.3.6.1.3.1.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Number of missing packets detected (consecutive or not) within a 1 second window to cause a Severely Errored Second (SES) to be counted."
+  },
+  "pwVcCepCfgSesToUas": {
+    "name": "pwVcCepCfgSesToUas",
+    "oid": "1.3.6.1.3.1.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Number of consecutive SESs before declaring VC in UAS state (and at which point pwVcCepPerfUASs starts counting). The SesToUas default value is 10 seconds. NOTE: Similar to RFC 2558, If the agent chooses to update the various performance statistics in real time then it must be prepared to retroactively reduce the ES, SES, counts by this value and increase the UAS count by this value when it determines that UAS state has been entered. NOTE: See pwVcCepPerfSESs and pwVcCepPerfUASs."
+  },
+  "pwVcCepCfgSecsToExitUas": {
+    "name": "pwVcCepCfgSecsToExitUas",
+    "oid": "1.3.6.1.3.1.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Number of consecutive nonSESs before declaring VC is NOT in UAS state (and at which point pwVcCepPerfUASs stops counting)."
+  },
+  "pwVcCepCfgRowStatus": {
+    "name": "pwVcCepCfgRowStatus",
+    "oid": "1.3.6.1.3.1.1.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For creating, modifying, and deleting this row."
+  },
+  "pwVcCepCfgStorageType": {
+    "name": "pwVcCepCfgStorageType",
+    "oid": "1.3.6.1.3.1.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable indicates the storage type for this object."
+  },
+  "pwVcCepFracTable": {
+    "name": "pwVcCepFracTable",
+    "oid": "1.3.6.1.3.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains a set of parameters for CEP circuits with pwVcCepType FRAC type."
+  },
+  "pwVcCepFracEntry": {
+    "name": "pwVcCepFracEntry",
+    "oid": "1.3.6.1.3.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is created in this table by the agent for every entry in the pwVcCep table in which the pwVcCepType is fracSpe."
+  },
+  "pwVcCepFracMode": {
+    "name": "pwVcCepFracMode",
+    "oid": "1.3.6.1.3.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notApplicable": 0,
+          "dynamic": 1,
+          "static": 2,
+          "staticWithEbm": 3,
+          "staticAsync": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "dynamic",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Fractional mode for STS-1/VC-3 circuits: notApplicable - When this is not STS-1/VC-3 signal. dynamic - EBM carried within the CEP header. Unequipped VTs are removed from the payload on the fly. static - EBM not carried within the CEP header. Only VTs defined in the EBM are carried within the payload. staticWithEbm - EBM carried within the CEP header. Only VTs defined in the EBM are carried within the payload. staticAsync - Asynchronous E3/T3 fixed byte removal only. "
+  },
+  "pwVcCepFracConfigError": {
+    "name": "pwVcCepFracConfigError",
+    "oid": "1.3.6.1.3.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "other": 0,
+        "vtgMapEbmconflict": 1,
+        "vtgMapAsyncConflict": 2
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "vtgMapEbmConflict is set when the configured static EBM does not match the configured vtgMap for fractional STS-1/VC-3 circuits, or when the TUG2Map is in conflict with the static EBM for VC-4 circuits. For example, if the vtgMap specifies that VTG#1 carries VT2 VTs while the EBM indicate that four VTs are equipped within VTG#1. vtgMapAsyncConflict is set when there is a conflict between the mode, the async indication and the vtgMap fields. For example fractional mode is set to Static Async while the VtgMap indicate that the STS-1/VC-3 carries VTs. Or in fractional VC-4 circuits both async1 and Tug2Map are set."
+  },
+  "pwVcCepFracAsync": {
+    "name": "pwVcCepFracAsync",
+    "oid": "1.3.6.1.3.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepFracAsyncMap",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "other",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The Asynchronous payload carried within the STS-1/VC-3. This variable should be set when 'staticAsync' Fractional STS-1/VC-3 pwVcCepFracMode is selected, and hold the value Of 'other' otherwise."
+  },
+  "pwVcCepFracVtgMap": {
+    "name": "pwVcCepFracVtgMap",
+    "oid": "1.3.6.1.3.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSonetVtgMap",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The VT/VC types of the seven VTG/TUG-2 within the STS-1/VC-3. This variable should be set when 'dynamic', 'static' Or 'staticWithEbm' Fractional STS-1/VC-3 pwVcCepFracMode is selected. "
+  },
+  "pwVcCepFracEbm": {
+    "name": "pwVcCepFracEbm",
+    "oid": "1.3.6.1.3.1.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSonetEbm",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Static Equipped Bit Mask (EBM) for STS-1/VC-3 channel. This variable should be set when 'static' Or 'staticWithEbm' Fractional STS-1/VC-3 pwVcCepFracMode is selected. "
+  },
+  "pwVcCepFracPeerEbm": {
+    "name": "pwVcCepFracPeerEbm",
+    "oid": "1.3.6.1.3.1.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSonetEbm",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Equipped Bit Mask (EBM) for STS-1/VC-3 channel received from peer within the CEP extension header."
+  },
+  "pwVcCepFracSdhVc4Mode": {
+    "name": "pwVcCepFracSdhVc4Mode",
+    "oid": "1.3.6.1.3.1.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notApplicable": 0,
+          "dynamic": 1,
+          "static": 2,
+          "staticWithEbm": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "notApplicable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Fractional mode for VC-4 circuits: notApllicable - When this is not VC-4 circuit. dynamic - EBM carried within the CEP header. Unequipped VCs are removed from the payload on the fly. dtatic - EBM not carried within the CEP header. Only VCs defined in the EBM are carried within the payload. staticWithEbm - EBM carried within the CEP header. Only VCs defined in the EBM are carried within the payload. "
+  },
+  "pwVcCepFracSdhVc4Tu3Map1": {
+    "name": "pwVcCepFracSdhVc4Tu3Map1",
+    "oid": "1.3.6.1.3.1.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepFracAsyncMap",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "other",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If the first TUG-3 within the VC-4 contains a TU-3, this variable must be set. "
+  },
+  "pwVcCepFracSdhVc4Tu3Map2": {
+    "name": "pwVcCepFracSdhVc4Tu3Map2",
+    "oid": "1.3.6.1.3.1.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepFracAsyncMap",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "other",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If the second TUG-3 within the VC-4 contains a TU-3, this variable must be set."
+  },
+  "pwVcCepFracSdhVc4Tu3Map3": {
+    "name": "pwVcCepFracSdhVc4Tu3Map3",
+    "oid": "1.3.6.1.3.1.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepFracAsyncMap",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "other",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If the third TUG-3 within the VC-4 contains a TU-3, this variable must be set. "
+  },
+  "pwVcCepFracSdhVc4Tug2Map1": {
+    "name": "pwVcCepFracSdhVc4Tug2Map1",
+    "oid": "1.3.6.1.3.1.1.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSonetVtgMap",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The VC types of the seven TUG-2 within the first TUG-3 of the VC-4. "
+  },
+  "pwVcCepFracSdhVc4Tug2Map2": {
+    "name": "pwVcCepFracSdhVc4Tug2Map2",
+    "oid": "1.3.6.1.3.1.1.4.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSonetVtgMap",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The VC types of the seven TUG-2 within the second TUG-3 of the VC-4. "
+  },
+  "pwVcCepFracSdhVc4Tug2Map3": {
+    "name": "pwVcCepFracSdhVc4Tug2Map3",
+    "oid": "1.3.6.1.3.1.1.4.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSonetVtgMap",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The VC types of the seven TUG-2 within the third TUG-3 of the VC-4. "
+  },
+  "pwVcCepFracSdhVc4Ebm1": {
+    "name": "pwVcCepFracSdhVc4Ebm1",
+    "oid": "1.3.6.1.3.1.1.4.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSdhVc4Ebm",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Static Equipped Bit Mask (EBM) for first TUG-3 within the VC-4. This variable should be set when 'static' or 'staticWithEbm' Fractional VC-4 pwVcCepFracMode is selected. "
+  },
+  "pwVcCepFracSdhVc4Ebm2": {
+    "name": "pwVcCepFracSdhVc4Ebm2",
+    "oid": "1.3.6.1.3.1.1.4.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSdhVc4Ebm",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Static Equipped Bit Mask (EBM) for second TUG-3 within the VC-4. This variable should be set when 'static' or 'StaticWithEbm' Fractional VC-4 pwVcCepFracMode is selected. "
+  },
+  "pwVcCepFracSdhVc4Ebm3": {
+    "name": "pwVcCepFracSdhVc4Ebm3",
+    "oid": "1.3.6.1.3.1.1.4.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSdhVc4Ebm",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Static Equipped Bit Mask (EBM) for third TUG-3 within the VC-4. This variable should be set when 'Static' or 'staticWithEbm' Fractional VC-4 pwVcCepFracMode is selected. "
+  },
+  "pwVcCepFracSdhVc4PeerEbm1": {
+    "name": "pwVcCepFracSdhVc4PeerEbm1",
+    "oid": "1.3.6.1.3.1.1.4.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSdhVc4Ebm",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Equipped Bit Mask (EBM) for the first TUG-3 within the fractional VC-4 channel received from peer within the CEP extension header."
+  },
+  "pwVcCepFracSdhVc4PeerEbm2": {
+    "name": "pwVcCepFracSdhVc4PeerEbm2",
+    "oid": "1.3.6.1.3.1.1.4.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSdhVc4Ebm",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Equipped Bit Mask (EBM) for the second TUG-3 within the fractional VC-4 channel received from peer within the CEP extension header."
+  },
+  "pwVcCepFracSdhVc4PeerEbm3": {
+    "name": "pwVcCepFracSdhVc4PeerEbm3",
+    "oid": "1.3.6.1.3.1.1.4.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcCepSdhVc4Ebm",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Equipped Bit Mask (EBM) for the third TUG-3 within the fractional VC-4 channel received from peer within the CEP extension header."
+  },
+  "pwVcCepPerfCurrentTable": {
+    "name": "pwVcCepPerfCurrentTable",
+    "oid": "1.3.6.1.3.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "CEP bridges the SONET and packet worlds. In the packet world, counts typically start from the time of service creation - and don't stop. In the SONET world, counts are kept in 15 minute intervals. The CEP-MIB supports both methods. The current 15 minute interval counts are in this table. The interval and total stats are in tables following this. This table provides per CEP VC performance information. HC (high capacity) counters are required for some counts due to the high speeds expected with CEP services. A SONET path of width 48 (STS-48c) can rollover non-HC counters in a few minutes."
+  },
+  "pwVcCepPerfCurrentEntry": {
+    "name": "pwVcCepPerfCurrentEntry",
+    "oid": "1.3.6.1.3.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created by the agent for every pwVcCep entry. After 15 minutes, the contents of this table entry are copied to a new entry in the pwVcCepPerfInterval table and the counts in this entry are reset to zero."
+  },
+  "pwVcCepPerfCurrentDbaInPacketsHC": {
+    "name": "pwVcCepPerfCurrentDbaInPacketsHC",
+    "oid": "1.3.6.1.3.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets received."
+  },
+  "pwVcCepPerfCurrentDbaOutPacketsHC": {
+    "name": "pwVcCepPerfCurrentDbaOutPacketsHC",
+    "oid": "1.3.6.1.3.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets sent."
+  },
+  "pwVcCepPerfCurrentInNegPtrAdjust": {
+    "name": "pwVcCepPerfCurrentInNegPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments sent on the SONET path based on CEP pointer adjustments received."
+  },
+  "pwVcCepPerfCurrentInPosPtrAdjust": {
+    "name": "pwVcCepPerfCurrentInPosPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of postive pointer adjustments sent on the SONET path based on CEP pointer adjustments received."
+  },
+  "pwVcCepPerfCurrentInPtrAdjustSecs": {
+    "name": "pwVcCepPerfCurrentInPtrAdjustSecs",
+    "oid": "1.3.6.1.3.1.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of seconds in which a pos or neg pointer adjustment was sent on the SONET path."
+  },
+  "pwVcCepPerfCurrentOutNegPtrAdjust": {
+    "name": "pwVcCepPerfCurrentOutNegPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments seen on the SONET path and encoded onto sent CEP packets."
+  },
+  "pwVcCepPerfCurrentOutPosPtrAdjust": {
+    "name": "pwVcCepPerfCurrentOutPosPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of positive pointer adjustments seen on the SONET path and encoded onto sent CEP packets."
+  },
+  "pwVcCepPerfCurrentOutPtrAdjustSecs": {
+    "name": "pwVcCepPerfCurrentOutPtrAdjustSecs",
+    "oid": "1.3.6.1.3.1.1.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of seconds in which a pos or neg pointer adjustment was seen on the SONET path."
+  },
+  "pwVcCepPerfCurrentAbsPtrAdjust": {
+    "name": "pwVcCepPerfCurrentAbsPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.5.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Absolute Pointer adjustments is relative adjustment drifts between inbound and outbound streams. It is calculated as absolute value of : ( InPosPtrAdjust - InNegPtrAdjust) - (OutPosPtrAdjust - OutNegPtrAdjust) "
+  },
+  "pwVcCepPerfCurrentMissingPkts": {
+    "name": "pwVcCepPerfCurrentMissingPkts",
+    "oid": "1.3.6.1.3.1.1.5.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of missing packets (as detected via CEP header sequence number gaps)."
+  },
+  "pwVcCepPerfCurrentPktsOoseq": {
+    "name": "pwVcCepPerfCurrentPktsOoseq",
+    "oid": "1.3.6.1.3.1.1.5.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets detected out of sequence (via CEP header sequence numbers), but successfully re-ordered. Note: some implementations may not support this feature (see pwVcCepCfgPktReorder)."
+  },
+  "pwVcCepPerfCurrentPktsOoRngDropped": {
+    "name": "pwVcCepPerfCurrentPktsOoRngDropped",
+    "oid": "1.3.6.1.3.1.1.5.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets detected out of range (via CEP header sequence numbers), and could not be re- ordered, or could not fit in the jitter buffer."
+  },
+  "pwVcCepPerfCurrentJtrBfrUnderruns": {
+    "name": "pwVcCepPerfCurrentJtrBfrUnderruns",
+    "oid": "1.3.6.1.3.1.1.5.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of times a packet needed to be played out and the jitter buffer was empty."
+  },
+  "pwVcCepPerfCurrentPktsBadLength": {
+    "name": "pwVcCepPerfCurrentPktsBadLength",
+    "oid": "1.3.6.1.3.1.1.5.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of normal (non-bandwidth-saving packets received) larger or smaller than pwVcCepCfgNormalPktLength."
+  },
+  "pwVcCepPerfCurrentSummaryErrors": {
+    "name": "pwVcCepPerfCurrentSummaryErrors",
+    "oid": "1.3.6.1.3.1.1.5.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A summary of all the packet error types above (from missing packets to bad length packets)."
+  },
+  "pwVcCepPerfCurrentESs": {
+    "name": "pwVcCepPerfCurrentESs",
+    "oid": "1.3.6.1.3.1.1.5.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCurrentCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Errored Seconds encountered."
+  },
+  "pwVcCepPerfCurrentSESs": {
+    "name": "pwVcCepPerfCurrentSESs",
+    "oid": "1.3.6.1.3.1.1.5.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCurrentCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Severely Errored Seconds encountered."
+  },
+  "pwVcCepPerfCurrentUASs": {
+    "name": "pwVcCepPerfCurrentUASs",
+    "oid": "1.3.6.1.3.1.1.5.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCurrentCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Unavailable Seconds encountered."
+  },
+  "pwVcCepPerfCurrentFC": {
+    "name": "pwVcCepPerfCurrentFC",
+    "oid": "1.3.6.1.3.1.1.5.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCurrentCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "CEP Failure Counts (FC-CEP). The number of CEP failure events. A failure event begins when the LOPS failure is declared, and ends when the failure is cleared. A failure event that begins in one period and ends in another period is counted only in the period in which it begins."
+  },
+  "pwVcCepPerfIntervalTable": {
+    "name": "pwVcCepPerfIntervalTable",
+    "oid": "1.3.6.1.3.1.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per CEP VC performance information much like the pwVcCepPerfCurrentTable above. However, these counts represent historical 15 minute intervals. Typically, this table will have a maximum of 96 entries for a 24 hour period, but is not limited to this. NOTE: Counter64 objects are used here, Counter32 is too small for OC-768 CEP VCs."
+  },
+  "pwVcCepPerfIntervalEntry": {
+    "name": "pwVcCepPerfIntervalEntry",
+    "oid": "1.3.6.1.3.1.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created by the agent for every pwVcCepPerfCurrentEntry that is 15 minutes old. The contents of the Current entry are copied to the new entry here. The Current entry, then resets its counts to zero for the next current 15 minute interval. pwVcCepIndex is found in the pwVcCepCfg table."
+  },
+  "pwVcCepPerfIntervalNumber": {
+    "name": "pwVcCepPerfIntervalNumber",
+    "oid": "1.3.6.1.3.1.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A number (normally between 1 and 96 to cover a 24 hour period) which identifies the interval for which the set of statistics is available. The interval identified by 1 is the most recently completed 15 minute interval, and the interval identified by N is the interval immediately preceding the one identified by N-1. The minimum range of N is 1 through 4. The default range is 1 through 32. The maximum value of N is 1 through 96."
+  },
+  "pwVcCepPerfIntervalValidData": {
+    "name": "pwVcCepPerfIntervalValidData",
+    "oid": "1.3.6.1.3.1.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable indicates if the data for this interval is valid."
+  },
+  "pwVcCepPerfIntervalReset": {
+    "name": "pwVcCepPerfIntervalReset",
+    "oid": "1.3.6.1.3.1.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "reset": 1,
+          "normal": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Used in cases where the user knows that the errors within this interval should not be counted. Writing 'reset' sets all error counts to zero."
+  },
+  "pwVcCepPerfIntervalTimeElapsed": {
+    "name": "pwVcCepPerfIntervalTimeElapsed",
+    "oid": "1.3.6.1.3.1.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The duration of a particular interval in seconds, Adjustments in the system's time-of-day clock, may cause the interval to be greater or less than, the normal value. Therefore this actual interval value is provided."
+  },
+  "pwVcCepPerfIntervalDbaInPacketsHC": {
+    "name": "pwVcCepPerfIntervalDbaInPacketsHC",
+    "oid": "1.3.6.1.3.1.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets received."
+  },
+  "pwVcCepPerfIntervalDbaOutPacketsHC": {
+    "name": "pwVcCepPerfIntervalDbaOutPacketsHC",
+    "oid": "1.3.6.1.3.1.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets sent."
+  },
+  "pwVcCepPerfIntervalInNegPtrAdjust": {
+    "name": "pwVcCepPerfIntervalInNegPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments sent on the SONET path based on CEP pointer adjustments received."
+  },
+  "pwVcCepPerfIntervalInPosPtrAdjust": {
+    "name": "pwVcCepPerfIntervalInPosPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of postive pointer adjustments sent on the SONET path based on CEP pointer adjustments received."
+  },
+  "pwVcCepPerfIntervalInPtrAdjustSecs": {
+    "name": "pwVcCepPerfIntervalInPtrAdjustSecs",
+    "oid": "1.3.6.1.3.1.1.6.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of seconds in which a pos or neg pointer adjustment was sent on the SONET path."
+  },
+  "pwVcCepPerfIntervalOutNegPtrAdjust": {
+    "name": "pwVcCepPerfIntervalOutNegPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.6.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments seen on the SONET path and encoded onto sent CEP packets."
+  },
+  "pwVcCepPerfIntervalOutPosPtrAdjust": {
+    "name": "pwVcCepPerfIntervalOutPosPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.6.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of positive pointer adjustments seen on the SONET path and encoded onto sent CEP packets."
+  },
+  "pwVcCepPerfIntervalOutPtrAdjustSecs": {
+    "name": "pwVcCepPerfIntervalOutPtrAdjustSecs",
+    "oid": "1.3.6.1.3.1.1.6.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of seconds in which a pos or neg pointer adjustment was seen on the SONET path."
+  },
+  "pwVcCepPerfIntervalAbsPtrAdjust": {
+    "name": "pwVcCepPerfIntervalAbsPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.6.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Absolute Pointer adjustments is relative adjustment drifts between inbound and outbound streams. It is calculated as absolute value of : ( InPosPtrAdjust - InNegPtrAdjust) - (OutPosPtrAdjust - OutNegPtrAdjust) "
+  },
+  "pwVcCepPerfIntervalMissingPkts": {
+    "name": "pwVcCepPerfIntervalMissingPkts",
+    "oid": "1.3.6.1.3.1.1.6.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of missing packets (as detected via CEP header sequence number gaps)."
+  },
+  "pwVcCepPerfIntervalPktsOoseq": {
+    "name": "pwVcCepPerfIntervalPktsOoseq",
+    "oid": "1.3.6.1.3.1.1.6.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets detected out of sequence (via CEP header sequence numbers), but succesfully re-ordered. Note: some implementations mat not support this feature (see pwVcCepCfgPktReorder)."
+  },
+  "pwVcCepPerfIntervalPktsOoRngDropped": {
+    "name": "pwVcCepPerfIntervalPktsOoRngDropped",
+    "oid": "1.3.6.1.3.1.1.6.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets detected out of range (via CEP header sequence numbers), and could not be re- ordered, or could not fit in the jitter buffer."
+  },
+  "pwVcCepPerfIntervalJtrBfrUnderruns": {
+    "name": "pwVcCepPerfIntervalJtrBfrUnderruns",
+    "oid": "1.3.6.1.3.1.1.6.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of times a packet needed to be played out and the jitter buffer was empty."
+  },
+  "pwVcCepPerfIntervalPktsBadLength": {
+    "name": "pwVcCepPerfIntervalPktsBadLength",
+    "oid": "1.3.6.1.3.1.1.6.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets received larger or smaller than pwVcCepCfgNormalPktLength."
+  },
+  "pwVcCepPerfIntervalSummaryErrors": {
+    "name": "pwVcCepPerfIntervalSummaryErrors",
+    "oid": "1.3.6.1.3.1.1.6.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A summary of all the packet error types above (from missing packets to bad length packets)."
+  },
+  "pwVcCepPerfIntervalESs": {
+    "name": "pwVcCepPerfIntervalESs",
+    "oid": "1.3.6.1.3.1.1.6.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfIntervalCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Errored Seconds encountered."
+  },
+  "pwVcCepPerfIntervalSESs": {
+    "name": "pwVcCepPerfIntervalSESs",
+    "oid": "1.3.6.1.3.1.1.6.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfIntervalCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Severely Errored Seconds encountered."
+  },
+  "pwVcCepPerfIntervalUASs": {
+    "name": "pwVcCepPerfIntervalUASs",
+    "oid": "1.3.6.1.3.1.1.6.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfIntervalCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Unavailable Seconds encountered."
+  },
+  "pwVcCepPerfIntervalFC": {
+    "name": "pwVcCepPerfIntervalFC",
+    "oid": "1.3.6.1.3.1.1.6.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfIntervalCount",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "CEP Failure Counts (FC-CEP). The number of CEP failure events. A failure event begins when the LOPS failure is declared, and ends when the failure is cleared. A failure event that begins in one period and ends in another period is counted only in the period in which it begins."
+  },
+  "pwVcCepPerfTotalTable": {
+    "name": "pwVcCepPerfTotalTable",
+    "oid": "1.3.6.1.3.1.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per CEP VC performance information much like the pwVcCepPerfIntervalTable above. However, these counts represent complete historical information. NOTE: Counter64 objects are used here, Counter32 is too small for OC-768 CEP VCs."
+  },
+  "pwVcCepPerfTotalEntry": {
+    "name": "pwVcCepPerfTotalEntry",
+    "oid": "1.3.6.1.3.1.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is created in this table by the agent for every entry in the pwVcCep table."
+  },
+  "pwVcCepPerfTotalDbaInPacketsHC": {
+    "name": "pwVcCepPerfTotalDbaInPacketsHC",
+    "oid": "1.3.6.1.3.1.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets received."
+  },
+  "pwVcCepPerfTotalDbaOutPacketsHC": {
+    "name": "pwVcCepPerfTotalDbaOutPacketsHC",
+    "oid": "1.3.6.1.3.1.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of DBA packets sent."
+  },
+  "pwVcCepPerfTotalInNegPtrAdjust": {
+    "name": "pwVcCepPerfTotalInNegPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments sent on the SONET path based on CEP pointer adjustments received."
+  },
+  "pwVcCepPerfTotalInPosPtrAdjust": {
+    "name": "pwVcCepPerfTotalInPosPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of postive pointer adjustments sent on the SONET path based on CEP pointer adjustments received."
+  },
+  "pwVcCepPerfTotalInPtrAdjustSecs": {
+    "name": "pwVcCepPerfTotalInPtrAdjustSecs",
+    "oid": "1.3.6.1.3.1.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of seconds in which a pos or neg pointer adjustment was sent on the SONET path."
+  },
+  "pwVcCepPerfTotalOutNegPtrAdjust": {
+    "name": "pwVcCepPerfTotalOutNegPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of negative pointer adjustments seen on the SONET path and encoded onto sent CEP packets."
+  },
+  "pwVcCepPerfTotalOutPosPtrAdjust": {
+    "name": "pwVcCepPerfTotalOutPosPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of positive pointer adjustments seen on the SONET path and encoded onto sent CEP packets."
+  },
+  "pwVcCepPerfTotalOutPtrAdjustSecs": {
+    "name": "pwVcCepPerfTotalOutPtrAdjustSecs",
+    "oid": "1.3.6.1.3.1.1.7.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of seconds in which a pos or neg pointer adjustment was seen on the SONET path."
+  },
+  "pwVcCepPerfTotalAbsPtrAdjust": {
+    "name": "pwVcCepPerfTotalAbsPtrAdjust",
+    "oid": "1.3.6.1.3.1.1.7.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Absolute Pointer adjustments is relative adjustment drifts between inbound and outbound streams. It is calculated as absolute value of : ( InPosPtrAdjust - InNegPtrAdjust) - (OutPosPtrAdjust - OutNegPtrAdjust) "
+  },
+  "pwVcCepPerfTotalMissingPkts": {
+    "name": "pwVcCepPerfTotalMissingPkts",
+    "oid": "1.3.6.1.3.1.1.7.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of missing packets (as detected via CEP header sequence number gaps)."
+  },
+  "pwVcCepPerfTotalPktsOoseq": {
+    "name": "pwVcCepPerfTotalPktsOoseq",
+    "oid": "1.3.6.1.3.1.1.7.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets detected out of sequence (via CEP header sequence numbers), but successfully re-ordered. Note: some implementations may not support this feature (see pwVcCepCfgPktReorder)."
+  },
+  "pwVcCepPerfTotalPktsOoRngDropped": {
+    "name": "pwVcCepPerfTotalPktsOoRngDropped",
+    "oid": "1.3.6.1.3.1.1.7.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets detected out of range (via CEP header sequence numbers), and could not be re- ordered, or could not fit in the jitter buffer."
+  },
+  "pwVcCepPerfTotalJtrBfrUnderruns": {
+    "name": "pwVcCepPerfTotalJtrBfrUnderruns",
+    "oid": "1.3.6.1.3.1.1.7.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of times a packet needed to be played out and the jitter buffer was empty."
+  },
+  "pwVcCepPerfTotalPktsBadLength": {
+    "name": "pwVcCepPerfTotalPktsBadLength",
+    "oid": "1.3.6.1.3.1.1.7.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of packets received larger or smaller than pwVcCepCfgNormalPktLength."
+  },
+  "pwVcCepPerfTotalSummaryErrors": {
+    "name": "pwVcCepPerfTotalSummaryErrors",
+    "oid": "1.3.6.1.3.1.1.7.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A summary of all the packet error types above (from missing packets to bad length packets)."
+  },
+  "pwVcCepPerfTotalESs": {
+    "name": "pwVcCepPerfTotalESs",
+    "oid": "1.3.6.1.3.1.1.7.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Errored Seconds encountered. See draft-ietf-pwe3-sonet for definition of ES."
+  },
+  "pwVcCepPerfTotalSESs": {
+    "name": "pwVcCepPerfTotalSESs",
+    "oid": "1.3.6.1.3.1.1.7.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of Severely Errored Seconds. See pwVcCepCfgMissingPktsToSes. Also see draft-ietf-pwe3-sonet for definition."
+  },
+  "pwVcCepPerfTotalUASs": {
+    "name": "pwVcCepPerfTotalUASs",
+    "oid": "1.3.6.1.3.1.1.7.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter associated with the number of UnAvailable Seconds. See pwVcCepCfgSesToUAS. NOTE: When first entering the UAS state, the number of SesToUas is added to this object, then as each additional UAS occurs, this object increments by one. NOTE: Similar to RFC 2558, If the agent chooses to update the various performance statistics in real time then it must be prepared to retroactively reduce the ES, SES, counts (by the value of pwVcCepCfgSesToUas) and increase the UAS count (by that same value) when it determines that UAS state has been entered."
+  },
+  "pwVcCepPerfTotalFC": {
+    "name": "pwVcCepPerfTotalFC",
+    "oid": "1.3.6.1.3.1.1.7.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "CEP Failure Counts (FC-CEP). The number of CEP failure events. A failure event begins when the LOPS failure is declared, and ends when the failure is cleared."
+  },
+  "pwVcCepPerfTotalDiscontinuityTime": {
+    "name": "pwVcCepPerfTotalDiscontinuityTime",
+    "oid": "1.3.6.1.3.1.1.7.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion at which any one or more of this segment's Counter32 or Counter64 suffered a discontinuity. If no such discontinuities have occurred since the last re- initialization of the local management subsystem, then this object contains a zero value."
+  },
+  "pwVcCepGlobalNotifyEnable": {
+    "name": "pwVcCepGlobalNotifyEnable",
+    "oid": "1.3.6.1.3.1.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If this object is true, then it enables the generation of pwVcCepUp and pwVcCepDown notifications, otherwise these notifications are not emitted. Note: enabling/disabling notifications for individual CEP VCs is for further study."
+  },
+  "pwVcCepUp": {
+    "name": "pwVcCepUp",
+    "oid": "1.3.6.1.3.1.0.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcOperStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a CEP VC has exited the 'failure' state."
+  },
+  "pwVcCepDown": {
+    "name": "pwVcCepDown",
+    "oid": "1.3.6.1.3.1.0.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepLatchedIndications"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a CEP VC has entered the 'failure' state. See description of LastIndications object."
+  },
+  "pwVcCepConformanceCfgTable": {
+    "name": "pwVcCepConformanceCfgTable",
+    "oid": "1.3.6.1.3.1.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides the means for the agent to declare whether certain CEP VC statistics objects are supported (conformed to) or not. If not supported, then the object MUST be return 0."
+  },
+  "pwVcCepConformanceCfgEntry": {
+    "name": "pwVcCepConformanceCfgEntry",
+    "oid": "1.3.6.1.3.1.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepConformanceCfgIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The agent MUST create a single entry in this table."
+  },
+  "pwVcCepConformanceCfgIndex": {
+    "name": "pwVcCepConformanceCfgIndex",
+    "oid": "1.3.6.1.3.1.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Any arbitrary number"
+  },
+  "pwVcCepPerfDbaInPacketsHCTruth": {
+    "name": "pwVcCepPerfDbaInPacketsHCTruth",
+    "oid": "1.3.6.1.3.1.1.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Tells whether the pwVcCepPerf...DbaInPacketsHC in the pwVcCepPerf...Table is supported."
+  },
+  "pwVcCepPerfDbaInPacketsHCDesc": {
+    "name": "pwVcCepPerfDbaInPacketsHCDesc",
+    "oid": "1.3.6.1.3.1.1.9.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Explanation for pwVcCepPerf...DbaInPacketsHC support in the pwVcCepPerf...Table."
+  },
+  "pwVcCepPerfDbaOutPacketsHCTruth": {
+    "name": "pwVcCepPerfDbaOutPacketsHCTruth",
+    "oid": "1.3.6.1.3.1.1.9.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Tells whether the pwVcCepPerf...DbaOutPacketsHC in the pwVcCepPerf...Table is supported."
+  },
+  "pwVcCepPerfDbaOutPacketsHCDesc": {
+    "name": "pwVcCepPerfDbaOutPacketsHCDesc",
+    "oid": "1.3.6.1.3.1.1.9.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Explanation for pwVcCepPerf...DbaOutPacketsHC support in the pwVcCepPerf...Table."
+  },
+  "pwVcCepPerfPktsOoseqTruth": {
+    "name": "pwVcCepPerfPktsOoseqTruth",
+    "oid": "1.3.6.1.3.1.1.9.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Tells whether the pwVcCepPerf...PktsOoseq in the pwVcCepPerf...Table is supported."
+  },
+  "pwVcCepPerfPktsOoseqDesc": {
+    "name": "pwVcCepPerfPktsOoseqDesc",
+    "oid": "1.3.6.1.3.1.1.9.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Explanation for pwVcCepPerf...PktsOoseq support in the pwVcCepPerf...Table."
+  },
+  "pwVcCepPerfPktsOoRngDroppedTruth": {
+    "name": "pwVcCepPerfPktsOoRngDroppedTruth",
+    "oid": "1.3.6.1.3.1.1.9.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Tells whether the pwVcCepPerf...PktsOoRngDropped in the pwVcCepPerf...Table is supported."
+  },
+  "pwVcCepPerfPktsOoRngDroppedDesc": {
+    "name": "pwVcCepPerfPktsOoRngDroppedDesc",
+    "oid": "1.3.6.1.3.1.1.9.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Explanation for pwVcCepPerf...PktsOoRngDropped support in the pwVcCepPerf...Table."
+  },
+  "pwVcCepPerfSummaryErrorsTruth": {
+    "name": "pwVcCepPerfSummaryErrorsTruth",
+    "oid": "1.3.6.1.3.1.1.9.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Tells whether the pwVcCepPerf...SummaryError in the pwVcCepPerf...Table is supported."
+  },
+  "pwVcCepPerfSummaryErrorsDesc": {
+    "name": "pwVcCepPerfSummaryErrorsDesc",
+    "oid": "1.3.6.1.3.1.1.9.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Explanation for pwVcCepPerf...SummaryError support in the pwVcCepPerf...Table."
+  },
+  "pwVcCepGroups": {
+    "name": "pwVcCepGroups",
+    "oid": "1.3.6.1.3.1.2.1",
+    "class": "objectidentity"
+  },
+  "pwVcCepCompliances": {
+    "name": "pwVcCepCompliances",
+    "oid": "1.3.6.1.3.1.2.2",
+    "class": "objectidentity"
+  },
+  "pwCepModuleCompliance": {
+    "name": "pwCepModuleCompliance",
+    "oid": "1.3.6.1.3.1.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "pwVcCepGroup",
+        "module": "PW-CEP-MIB"
+      },
+      {
+        "object": "pwVcCepCfgGroup",
+        "module": "PW-CEP-MIB"
+      },
+      {
+        "object": "pwVcCepPerfCurrentGroup",
+        "module": "PW-CEP-MIB"
+      },
+      {
+        "object": "pwVcCepPerfIntervalGroup",
+        "module": "PW-CEP-MIB"
+      },
+      {
+        "object": "pwVcCepPerfTotalGroup",
+        "module": "PW-CEP-MIB"
+      },
+      {
+        "object": "pwVcCepEventGroup",
+        "module": "PW-CEP-MIB"
+      },
+      {
+        "object": "pwVcCepConformanceCfgGroup",
+        "module": "PW-CEP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agent that support PW over CEP PSN operation."
+  },
+  "pwVcCepGroup": {
+    "name": "pwVcCepGroup",
+    "oid": "1.3.6.1.3.1.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepType"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepSonetIfIndex"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepSonetTimeSlot"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepSonetConfigError"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgIndex"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepTimeElapsed"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepValidIntervals"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCurrentIndications"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepLatchedIndications"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepLastEsTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects for basic CEP VC config and status."
+  },
+  "pwVcCepCfgGroup": {
+    "name": "pwVcCepCfgGroup",
+    "oid": "1.3.6.1.3.1.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgIndexNext"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepConfigError"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepSonetPayloadLength"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgMinPktLength"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgPktReorder"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgEnableDBA"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgRtpHdrSuppress"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgJtrBfrDepth"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgConsecPktsInsync"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgConsecMissingOutSync"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgPktErrorPlayOutValue"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgMissingPktsToSes"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgSesToUas"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgSecsToExitUas"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgRowStatus"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepCfgStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of detailed objects needed to configure CEP VCs."
+  },
+  "pwVcCepPerfCurrentGroup": {
+    "name": "pwVcCepPerfCurrentGroup",
+    "oid": "1.3.6.1.3.1.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentDbaInPacketsHC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentDbaOutPacketsHC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentInNegPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentInPosPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentInPtrAdjustSecs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentOutNegPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentOutPosPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentOutPtrAdjustSecs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentAbsPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentMissingPkts"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentPktsOoseq"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentPktsOoRngDropped"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentJtrBfrUnderruns"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentPktsBadLength"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentSummaryErrors"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentESs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentSESs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentUASs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfCurrentFC"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of statistics objects for CEP VCs."
+  },
+  "pwVcCepPerfIntervalGroup": {
+    "name": "pwVcCepPerfIntervalGroup",
+    "oid": "1.3.6.1.3.1.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalValidData"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalReset"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalTimeElapsed"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalDbaInPacketsHC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalDbaOutPacketsHC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalInNegPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalInPosPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalInPtrAdjustSecs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalOutNegPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalOutPosPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalOutPtrAdjustSecs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalAbsPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalMissingPkts"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalPktsOoseq"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalPktsOoRngDropped"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalJtrBfrUnderruns"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalPktsBadLength"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalSummaryErrors"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalESs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalSESs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalUASs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfIntervalFC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepGlobalNotifyEnable"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of statistics objects for CEP VCs."
+  },
+  "pwVcCepPerfTotalGroup": {
+    "name": "pwVcCepPerfTotalGroup",
+    "oid": "1.3.6.1.3.1.2.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalDbaInPacketsHC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalDbaOutPacketsHC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalInNegPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalInPosPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalInPtrAdjustSecs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalOutNegPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalOutPosPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalOutPtrAdjustSecs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalAbsPtrAdjust"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalMissingPkts"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalPktsOoseq"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalPktsOoRngDropped"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalJtrBfrUnderruns"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalPktsBadLength"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalSummaryErrors"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalESs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalSESs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalUASs"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalFC"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfTotalDiscontinuityTime"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of statistics objects for CEP VCs."
+  },
+  "pwVcCepEventGroup": {
+    "name": "pwVcCepEventGroup",
+    "oid": "1.3.6.1.3.1.2.1.7",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepUp"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepDown"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of event objects for CEP VCs."
+  },
+  "pwVcCepFracGroup": {
+    "name": "pwVcCepFracGroup",
+    "oid": "1.3.6.1.3.1.2.1.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracMode"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracConfigError"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracAsync"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracVtgMap"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracEbm"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracPeerEbm"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Mode"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Tu3Map1"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Tu3Map2"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Tu3Map3"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Tug2Map1"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Tug2Map2"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Tug2Map3"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Ebm1"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Ebm2"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4Ebm3"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4PeerEbm1"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4PeerEbm2"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepFracSdhVc4PeerEbm3"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of fractional SPE groups. These objects are optional and should be supported only if fractional SPE is supported within the network element. "
+  },
+  "pwVcCepConformanceCfgGroup": {
+    "name": "pwVcCepConformanceCfgGroup",
+    "oid": "1.3.6.1.3.1.2.1.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfDbaInPacketsHCTruth"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfDbaInPacketsHCDesc"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfDbaOutPacketsHCTruth"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfDbaOutPacketsHCDesc"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfPktsOoseqTruth"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfPktsOoseqDesc"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfPktsOoRngDroppedTruth"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfPktsOoRngDroppedDesc"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfSummaryErrorsTruth"
+      },
+      {
+        "module": "PW-CEP-MIB",
+        "object": "pwVcCepPerfSummaryErrorsDesc"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects declaring conformance to other objects."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PW-CEP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:42:16 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PW-CEP-MIB"
+  }
+}

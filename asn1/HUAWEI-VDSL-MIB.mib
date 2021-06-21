@@ -1,0 +1,349 @@
+-- ============================================================================
+-- Copyright (C) 2003 by  HUAWEI TECHNOLOGIES. All rights reserved.
+--
+-- Description:  
+-- Reference:  
+-- Version: V3.00
+-- History:
+-- liu chenglong 2003-04-28 Added IPR Decriptions and updated all MIB version to V3.00
+-- ============================================================================
+	HUAWEI-VDSL-MIB DEFINITIONS ::= BEGIN
+ 
+		IMPORTS
+			ifIndex			
+				FROM IF-MIB			
+			Integer32, Counter32, OBJECT-TYPE			
+				FROM SNMPv2-SMI			
+			vdslMibObjects, vdslPhysEntry, vdslPhysSide, vdslLineConfProfileEntry, vdslLineConfProfileName			
+				FROM VDSL-LINE-MIB;
+	
+	
+
+		hwVdslActualRate OBJECT-TYPE
+			SYNTAX Integer32
+			UNITS "bps"
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The actual rate of this Vtu.
+				
+				实际速率."
+			::= { vdslPhysEntry 65536 }
+		
+		hwVdslCurrSnr OBJECT-TYPE
+			SYNTAX Integer32
+			UNITS "tenth dB"
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"Current Signal to Noise Ratio.
+				
+				当前信噪比."
+			::= { vdslPhysEntry 65537 }
+		
+		hwVdslMse OBJECT-TYPE
+			SYNTAX Integer32
+			UNITS "tenth dB"
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"Minimum Square Error.
+				
+				最小方差."
+			::= { vdslPhysEntry 65538 }
+		
+		hwVdslChipHrdVer OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"VDSL chip hardware version
+				
+				VDSL 套片硬件版本"
+			::= { vdslPhysEntry 65539 }
+		
+		hwVdslChipSftVer OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"VDSL chip software version
+				
+				VDSL套片软件版本"
+			::= { vdslPhysEntry 65540 }
+		
+		hwVdslChipPatchVer OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"VDSL chip patch version
+				
+				VDSL套片补丁版本"
+			::= { vdslPhysEntry 65541 }
+		
+		hwVdslLineConfAutoTrain OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				enabled(1),
+				disabled(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This object specifies if the modem is allowed to train automatically.
+				
+				自动训练开关"
+			DEFVAL { 1 }
+			::= { vdslLineConfProfileEntry 65536 }
+		
+		hwVdslEtherStatsTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwVdslEtherStatsEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"This table provides one row for each Vtu. Each row 
+				contains the ehternet statistic Parameters table for
+				that Vtu.
+				
+				VDSL以太网统计表	 "
+			::= { vdslMibObjects 65536 }
+		
+		hwVdslEtherStatsEntry OBJECT-TYPE
+			SYNTAX HwVdslEtherStatsEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the hwVdslEtherStatsTable.
+				
+				该表定义并收集以太网统计数据."
+			INDEX { ifIndex, vdslPhysSide }
+			::= { hwVdslEtherStatsTable 1 }
+		
+		HwVdslEtherStatsEntry ::=
+			SEQUENCE { 
+				hwVdslEtherStatsAlignmentErrors
+					Counter32,
+				hwVdslEtherStatsSingleCollisionFrames
+					Counter32,
+				hwVdslEtherStatsMultipleCollisionFrames
+					Counter32,
+				hwVdslEtherStatsDeferredTransmissions
+					Counter32,
+				hwVdslEtherStatsLateCollisionFrames
+					Counter32,
+				hwVdslEtherStatsExcessiveCollisionFrames
+					Counter32,
+				hwVdslEtherStatsReceiveErrors
+					Counter32,
+				hwVdslEtherStatsCarrierErrors
+					Counter32,
+				hwVdslEtherStatsTooLongErrors
+					Counter32,
+				hwVdslEtherStatsSequenceErrors
+					Counter32,
+				hwVdslEtherStatsTransmitOctets
+					Counter32,
+				hwVdslEtherStatsReceiveOctets
+					Counter32,
+				hwVdslEtherStatsReceiveBroadcastFrames
+					Counter32,
+				hwVdslEtherStatsReceivePauseFrames
+					Counter32,
+				hwVdslEtherStatsTransmitPauseFrames
+					Counter32,
+				hwVdslEtherStatsTransmitFrames
+					Counter32,
+				hwVdslEtherStatsReceiveFrames
+					Counter32
+			 }
+
+		hwVdslEtherStatsAlignmentErrors OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of frames received with alignment errors (an odd
+				number of nibbles).
+				
+				接收到的对齐错误帧的总数"
+			::= { hwVdslEtherStatsEntry 1 }
+		
+		hwVdslEtherStatsSingleCollisionFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"A count of successfully transmitted frames for which transmission 
+				was inhibited by exactly one collision.
+				
+				成功发送的单一冲突帧总数."
+			::= { hwVdslEtherStatsEntry 2 }
+		
+		hwVdslEtherStatsMultipleCollisionFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"A count of successfully transmitted frames for which transmission
+				was inhibited by more than one collision.
+				
+				成功发送的多重冲突帧总数."
+			::= { hwVdslEtherStatsEntry 3 }
+		
+		hwVdslEtherStatsDeferredTransmissions OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"A count of frames for which the first transmission
+				attempt was delayed because the Ethernet media was
+				busy.
+				
+				由于线路忙而延期发送的帧的总数."
+			::= { hwVdslEtherStatsEntry 4 }
+		
+		hwVdslEtherStatsLateCollisionFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of times that a collision was detected
+				on a particular interface later than 512 bit-times into
+				the transmission of a packet.
+				
+				迟延冲突帧次数."
+			::= { hwVdslEtherStatsEntry 5 }
+		
+		hwVdslEtherStatsExcessiveCollisionFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"A count of frames for which transmission failed due to 
+				excessive collisions.
+				
+				额外冲突帧次数."
+			::= { hwVdslEtherStatsEntry 6 }
+		
+		hwVdslEtherStatsReceiveErrors OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of frames received with less than 64 bytes.
+				
+				接收到的错误帧（长度小于64字节）总数."
+			::= { hwVdslEtherStatsEntry 7 }
+		
+		hwVdslEtherStatsCarrierErrors OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of times that the carrier sense condition was
+				lost or never asserted when attempting to transmit a frame on 
+				a particular interface.
+				
+				载波错误次数."
+			::= { hwVdslEtherStatsEntry 8 }
+		
+		hwVdslEtherStatsTooLongErrors OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of frames received with more than maximum length.
+				
+				接收到的过长（超过最大长度）的错误帧总数."
+			::= { hwVdslEtherStatsEntry 9 }
+		
+		hwVdslEtherStatsSequenceErrors OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of frames received that had a bad Frame Check
+				Sequence (FCS).
+				
+				接收到的次序校验错误帧总数.	"
+			::= { hwVdslEtherStatsEntry 10 }
+		
+		hwVdslEtherStatsTransmitOctets OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"A count of data and padding octets of frames that are successfully
+				transmitted.
+				
+				成功发送的字节数"
+			::= { hwVdslEtherStatsEntry 11 }
+		
+		hwVdslEtherStatsReceiveOctets OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"A count of data and padding octets of frames that are successfully
+				received.
+				
+				成功接收的字节数"
+			::= { hwVdslEtherStatsEntry 12 }
+		
+		hwVdslEtherStatsReceiveBroadcastFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"A count of frames that are successfully received and are directed
+				to the broadcast group address.
+				
+				成功接收的广播帧总数. "
+			::= { hwVdslEtherStatsEntry 13 }
+		
+		hwVdslEtherStatsReceivePauseFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of PAUSE packets received.
+				
+				接收Pause帧数. "
+			::= { hwVdslEtherStatsEntry 14 }
+		
+		hwVdslEtherStatsTransmitPauseFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of PAUSE packets transmitted.
+				
+				发送Pause帧数. "
+			::= { hwVdslEtherStatsEntry 15 }
+		
+		hwVdslEtherStatsTransmitFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of valid data frames that have been transferred
+				over the transmit channel.
+				
+				成功发送的帧数. "
+			::= { hwVdslEtherStatsEntry 16 }
+		
+		hwVdslEtherStatsReceiveFrames OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The total number of valid data frames that have been transferred
+				over the receive channel.
+				
+				成功接收的帧数. "
+			::= { hwVdslEtherStatsEntry 17 }
+		
+	
+	END
+

@@ -1,0 +1,1145 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINKSW-AAA-COMMON-MIB": [
+      "dAaaMIBObjects"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "Counter32",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "OBJECT-IDENTITY",
+      "TimeTicks",
+      "Gauge32",
+      "Unsigned32",
+      "IpAddress",
+      "Counter64",
+      "OBJECT-TYPE",
+      "Integer32",
+      "Bits",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "RowStatus",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "dlinkSwAAAServerMIB": {
+    "name": "dlinkSwAAAServerMIB",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-07-18 00:00",
+        "description": "This is the first version of the MIB file. "
+      }
+    ],
+    "lastupdated": "201307180000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": "D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "This MIB provides configuration and statistics reflecting the state of AAA Server operation within the device and AAA communications with external servers. AAA stands for authentication, authorization, and accounting The AAA Server MIB provides the following information: 1) A Table for configuring AAA servers 2) Identities of external AAA servers 3) Distinct statistics for each AAA function 4) Status of servers providing AAA functions A server is defined as a logical entity which provides any of the three AAA functions. A TACACS+ server consists of all three functions with a single IP address and single TCP port. A RADIUS server consists of the authentication/accounting pair with a single IP address but distinct UDP ports, or it may be just one of authentication or accounting. It is possible to have two distinct RADIUS servers at the same IP address, one providing authentication only, the other accounting only. Note: Regarding RADIUS server statistics please refer to RADIUS-AUTH-CLIENT-MIB (RFC2618) and RADIUS-ACCT-CLIENT-MIB (RFC2620) "
+  },
+  "DlinkAAAProtocol": {
+    "name": "DlinkAAAProtocol",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "tacacsplus": 1,
+          "radius": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Protocol used with this server. none(0) - No protocol specified, this value is read-only. tacacsplus(1) - TACACS+ radius(2) - RADIUS ",
+    "reference": " RFC 2865 Remote Authentication Dial In User Service (RADIUS) RFC 2866 RADIUS Accounting The TACACS+ Protocol Version 1.78, Internet Draft "
+  },
+  "DlinkAAAGroupName": {
+    "name": "DlinkAAAGroupName",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "displayhint": "32a",
+    "status": "current",
+    "description": "Represents group name. The following name are reserved and cannot be created by user: enable, none, local, tacacs, xtacacs, tacacs+, radius "
+  },
+  "VrfName": {
+    "name": "VrfName",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Represents VRF name. "
+  },
+  "dAaaSrvMIBNotifications": {
+    "name": "dAaaSrvMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.0",
+    "class": "objectidentity"
+  },
+  "dAaaSrvMIBObjects": {
+    "name": "dAaaSrvMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1",
+    "class": "objectidentity"
+  },
+  "dAaaSrvMIBConformance": {
+    "name": "dAaaSrvMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2",
+    "class": "objectidentity"
+  },
+  "dasConfig": {
+    "name": "dasConfig",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1",
+    "class": "objectidentity"
+  },
+  "dasServerConfigTable": {
+    "name": "dasServerConfigTable",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of configurations for each AAA server. An entry is created/removed when a new server is created/removed. The following table describes examples of AAA servers. Protocol Index AddressType IPv6Address AuthenPort AcctPort Key Priority ---------- ----- ----------- ------------- ---------- -------- ------ -------- tacacsplus 1 ipv6 2000::2 49 0 1 tacacsplus 2 ipv4 10.0.0.1 49 0 3 tacacsplus 3 ipv4 192.168.1.254 49 0 2 radius 1 ipv4 192.168.1.254 1812 1813 1 radius 2 ipv4 20.0.0.12 1812 1813 2 "
+  },
+  "dasServerConfigEntry": {
+    "name": "dasServerConfigEntry",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerProtocol",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry consists of an AAA server configuration. An entry is created/removed when a server is defined or undefined with configuration commands via CLI or by issuing appropriate SNMP sets. A management station wishing to create an entry should first generate a random number to be used as the index to this sparse table. The station should then create the associated instance of the row status and row index objects. dasServerPriority is automatically assigned once the entry is made active and reflects the relative priority of the defined server with respect to already configured servers. Newly-created servers will be assigned the lowest priority. To reassign server priorities to existing server entries, it may be necessary to destroy and recreate entries in order of priority. Upon reload, dasServerIndex values may be changed, but the priorities that were saved before reload will be retained, with lowest priority number corresponding to the higher priority servers. "
+  },
+  "dasServerProtocol": {
+    "name": "dasServerProtocol",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAAAProtocol",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The variable indicates the protocol of the corresponding AAA server. "
+  },
+  "dasServerIndex": {
+    "name": "dasServerIndex",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A management station wishing to initiate a new AAA server configuration should use a random value for this object when creating an instance of dasServerConfigEntry. "
+  },
+  "dasServerAddrType": {
+    "name": "dasServerAddrType",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the address type of the AAA server. "
+  },
+  "dasServerAddress": {
+    "name": "dasServerAddress",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The address of the server. "
+  },
+  "dasServerAuthenPort": {
+    "name": "dasServerAuthenPort",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1812,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "UDP/TCP port used for authentication in the configuration For TACACS+, this object should be explicitly set. Default value is 1812 for RADIUS. "
+  },
+  "dasServerAcctPort": {
+    "name": "dasServerAcctPort",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1813,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "UDP/TCP port used for accounting service in the configuration For TACACS+, the value of dasServerAcctPort is ignored. dasServerAuthenPort will be used instead. Default value is 1813 for RADIUS. "
+  },
+  "dasServerKey": {
+    "name": "dasServerKey",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 254
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The server key to be used with this server. The maximum length for RADIUS is 32 characters. The maximum length for TACACS+ is 254 characters. When read, a zero length string will be returned for security reasons. "
+  },
+  "dasServerTimeout": {
+    "name": "dasServerTimeout",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The time in seconds for waiting server reply. Default value is 5 seconds. "
+  },
+  "dasServerRetransmit": {
+    "name": "dasServerRetransmit",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 20
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The retransmit times of requests to the server when no response is received. For TACACS+, the value of dasServerRetransmit is ignored. Default value is 2 for RADIUS. "
+  },
+  "dasServerPriority": {
+    "name": "dasServerPriority",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A number that indicates the priority of the server in this entry. Lower numbers indicate higher priority. "
+  },
+  "dasServerRowStatus": {
+    "name": "dasServerRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.1.1.99",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this entry. "
+  },
+  "dasRadiusServerDeadTime": {
+    "name": "dasRadiusServerDeadTime",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 1440
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable controls the default duration of time to skip the unresponsive server. The valid range is 0 to 1440 (24 hours). When setting to 0, the unresponsive server will not be marked as dead. The default value is 0. "
+  },
+  "dasStatistics": {
+    "name": "dasStatistics",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2",
+    "class": "objectidentity"
+  },
+  "dasTacplusStatisticsTable": {
+    "name": "dasTacplusStatisticsTable",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of statistics for each TACACS+ server. The following table describes examples of TACACS+ servers statistics. Protocol Index SocketOpens SocketCloses TotalPktSend TotalPktRecv ReferenceCount ---------- ----- ----------- ------------ ------------ ------------ -------------- tacacsplus 1 1 1 0 0 0 tacacsplus 2 5 5 20 20 5 tacacsplus 3 10 10 25 25 10 "
+  },
+  "dasTacplusStatisticsEntry": {
+    "name": "dasTacplusStatisticsEntry",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "dasTacplusStatisticsEntry",
+      "module": "DLINKSW-AAA-SERVER-MIB",
+      "object": "dasServerConfigEntry"
+    },
+    "status": "current",
+    "description": "An entry consists of statistical information about a particular server. Objects in this table are read-only and appear automatically whenever a TACACS+ server in the dasServerConfigTable is made active. "
+  },
+  "dasTacplusSocketOpens": {
+    "name": "dasTacplusSocketOpens",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of successful TCP socket connections to the TACACS+ server. "
+  },
+  "dasTacplusSocketCloses": {
+    "name": "dasTacplusSocketCloses",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of successfully closed TCP socket attempts. "
+  },
+  "dasTacplusTotalPktSent": {
+    "name": "dasTacplusTotalPktSent",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets sent to the TACACS+ server "
+  },
+  "dasTacplusTotalPktRecv": {
+    "name": "dasTacplusTotalPktRecv",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets received from the TACACS+ server. "
+  },
+  "dasTacplusReferenceCount": {
+    "name": "dasTacplusReferenceCount",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets received from the TACACS+ server. "
+  },
+  "dasGroup": {
+    "name": "dasGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3",
+    "class": "objectidentity"
+  },
+  "dasGroupTable": {
+    "name": "dasGroupTable",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of configurations for each AAA server group. An entry is created/removed when a new server group is created/removed. The following table describes examples of AAA groups. Protocol Name ---------- ---------- tacacsplus tac_con tacacsplus tac_telnet radius rad_acct radius rad_ssh "
+  },
+  "dasGroupEntry": {
+    "name": "dasGroupEntry",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupProtocol",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An AAA server group configuration identified by its protocol, and its name. An entry is created/removed when a server group is defined or undefined with configuration commands via CLI or by issuing appropriate sets to this table using snmp. "
+  },
+  "dasGroupProtocol": {
+    "name": "dasGroupProtocol",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAAAProtocol",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The variable denotes the protocol used by the managed device with the AAA group corresponding to this entry in the table. "
+  },
+  "dasGroupName": {
+    "name": "dasGroupName",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAAAGroupName",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The server group name. "
+  },
+  "dasGroupRowStatus": {
+    "name": "dasGroupRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this table entry. Once the entry status is set to active, the associated entry cannot be modified except destroyed by setting this object to destroy(6). "
+  },
+  "dasGroupServerTable": {
+    "name": "dasGroupServerTable",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of configurations for each AAA server group. An entry is created/removed when a new server group is created/removed. The following table describes examples of AAA server groups. Protocol Name SrvIndex AddressType IPv6Address Priority ---------- ---------- -------- ------------- ------------- -------- tacacsplus tac_con 1 ipv6 2000::2 1 tacacsplus tac_telnet 2 ipv4 10.0.0.1 2 tacacsplus tac_telnet 3 ipv4 192.168.1.254 3 radius rad_ssh 1 ipv4 20.0.0.12 1 radius rad_ssh 2 ipv4 20.0.0.13 2 radius rad_ssh 3 ipv4 20.0.0.14 3 radius rad_ssh 4 ipv4 20.0.0.15 4 "
+  },
+  "dasGroupServerEntry": {
+    "name": "dasGroupServerEntry",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupProtocol",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupSrvIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An AAA server group configuration identified by its protocol, its name and its index. An entry is created/removed when a server group is defined or undefined with configuration commands via CLI or by issuing appropriate sets to this table using snmp. A management station wishing to create an entry should first generate a random number to be used as the index to this sparse table. dasGroupSrvPriority is automatically assigned once the entry is made active and reflects the relative priority of the defined server with respect to already configured servers. Newly-created servers will be assigned the lowest priority. To reassign server priorities to existing server entries, it may be necessary to destroy and recreate entries in order of priority. Upon reload, dasGroupSrvIndex values may be changed, but the priorities that were saved before reload will be retained, with lowest priority number corresponding to the higher priority servers. "
+  },
+  "dasGroupSrvIndex": {
+    "name": "dasGroupSrvIndex",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A management station wishing to initiate a new AAA server group configuration should use a random value for this object when creating an instance of dasGroupEntry. The RowStatus semantics of the dasGroupConfigRowStatus object will prevent access conflicts. "
+  },
+  "dasGroupSrvAddrType": {
+    "name": "dasGroupSrvAddrType",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the type of network address denoted in dasGroupSrvAddress object. "
+  },
+  "dasGroupSrvAddress": {
+    "name": "dasGroupSrvAddress",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The address of the server of the entry. "
+  },
+  "dasGroupSrvPriority": {
+    "name": "dasGroupSrvPriority",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A number that indicates the priority of the server in this group. Lower numbers indicate higher priority. "
+  },
+  "dasGroupServerRowStatus": {
+    "name": "dasGroupServerRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.3.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this table entry. Once the entry status is set to active, the associated entry cannot be modified except destroyed by setting this object to destroy(6). "
+  },
+  "dasVrf": {
+    "name": "dasVrf",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.4",
+    "class": "objectidentity"
+  },
+  "dasGroupVrfTable": {
+    "name": "dasGroupVrfTable",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.4.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table shows current VRF configurations for each AAA server group, allows existing VRF to be removed and new ones to be created. The following table describes the examples of VRF setting for AAA server groups. Protocol group Name VRF name ---------- ---------- ---------- tacacsplus tac_con vrf1 tacacsplus tac_telnet vrf_taplus radius rad_acct vrf_radius radius rad_ssh vrf_100 "
+  },
+  "dasGroupVrfEntry": {
+    "name": "dasGroupVrfEntry",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.4.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupProtocol",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An AAA group VRF configuration identified by its protocol and its group name. An entry is created/removed when a VRF setting is defined or undefined with configuration commands via CLI or by issuing appropriate sets to this table using snmp. When a group VRF configuration is deleted, indicates the server group will use the global (default) routing table. "
+  },
+  "dasGroupVrfName": {
+    "name": "dasGroupVrfName",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.4.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VrfName",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The VRF name of the entry. "
+  },
+  "dasGroupVrfConfigRowStatus": {
+    "name": "dasGroupVrfConfigRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.4.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this table entry. "
+  },
+  "dasSrcIf": {
+    "name": "dasSrcIf",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.5",
+    "class": "objectidentity"
+  },
+  "dasGroupSrcIfTable": {
+    "name": "dasGroupSrcIfTable",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.5.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of source interface configurations for each AAA server group. "
+  },
+  "dasGroupSrcIfEntry": {
+    "name": "dasGroupSrcIfEntry",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.5.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupProtocol",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupSrcAddrType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An AAA group source interface configuration identified by its protocol and its group name. An entry is created/removed when a source interface setting is defined or undefined with configuration commands via CLI or by issuing appropriate sets to this table using snmp. Note: The group name of radius and tacacs+ are reserved group names and its corresponding source interface is global setting for RADIUS and TACACS+ servers respectively. If both global and group-specific have the source interface settings, the setting of group-specific takes precedence. "
+  },
+  "dasGroupSrcAddrType": {
+    "name": "dasGroupSrcAddrType",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.5.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the type of the address which will be used as source address for sending RADIUS packets. "
+  },
+  "dasGroupSrcIfIndex": {
+    "name": "dasGroupSrcIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.5.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the ifIndex of the interface whose IP/IPv6 address will be used as source IP/IPv6 address for sending RADIUS packets. "
+  },
+  "dasGroupSrcIfConfigRowStatus": {
+    "name": "dasGroupSrcIfConfigRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.5.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this table entry. "
+  },
+  "dasClear": {
+    "name": "dasClear",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.6",
+    "class": "objectidentity"
+  },
+  "dasClearServerStatTable": {
+    "name": "dasClearServerStatTable",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table is used to clear statistics of the AAA servers. "
+  },
+  "dasClearServerStatEntry": {
+    "name": "dasClearServerStatEntry",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerProtocol",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry which can be used to clear the statistics of the AAA server. "
+  },
+  "dasClearServerStatAction": {
+    "name": "dasClearServerStatAction",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to clear statistics of an AAA server when set to 'clear'. No action is taken if this object is set to 'noOp'. When read, the value 'noOp' is returned."
+  },
+  "dasClearServerStatByGroup": {
+    "name": "dasClearServerStatByGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.6.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAAAGroupName",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to clear AAA server statistics based on group name. Setting this object to the group name which you want to clear. When read, a zero length string is returned."
+  },
+  "dasClearServerStatByProtocol": {
+    "name": "dasClearServerStatByProtocol",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.6.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAAAProtocol",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to clear AAA server statistics based on protocol. Setting this object to the protocol which you want to clear. When read, none(0) is returned."
+  },
+  "dasClearAllServerStat": {
+    "name": "dasClearAllServerStat",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.1.6.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to clear all AAA server statistics when set to 'clear'. No action is taken if this object is set to 'noOp'. When read, the value 'noOp' is returned."
+  },
+  "dasMIBCompliances": {
+    "name": "dasMIBCompliances",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.1",
+    "class": "objectidentity"
+  },
+  "dasMIBCompliance": {
+    "name": "dasMIBCompliance",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dasConfigGroup",
+        "module": "DLINKSW-AAA-SERVER-MIB"
+      },
+      {
+        "object": "dasTacplusStatisticsGroup",
+        "module": "DLINKSW-AAA-SERVER-MIB"
+      },
+      {
+        "object": "dasSrvGroupGroup",
+        "module": "DLINKSW-AAA-SERVER-MIB"
+      },
+      {
+        "object": "dasVrfGroup",
+        "module": "DLINKSW-AAA-SERVER-MIB"
+      },
+      {
+        "object": "dasSrcIfGroup",
+        "module": "DLINKSW-AAA-SERVER-MIB"
+      },
+      {
+        "object": "dasClearStatGroup",
+        "module": "DLINKSW-AAA-SERVER-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-AAA-SERVER-MIB."
+  },
+  "dasMIBGroups": {
+    "name": "dasMIBGroups",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.2",
+    "class": "objectidentity"
+  },
+  "dasTacplusStatisticsGroup": {
+    "name": "dasTacplusStatisticsGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasTacplusSocketOpens"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasTacplusSocketCloses"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasTacplusTotalPktSent"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasTacplusTotalPktRecv"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasTacplusReferenceCount"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for providing AAA tacacs+ server statistics and status. "
+  },
+  "dasConfigGroup": {
+    "name": "dasConfigGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasRadiusServerDeadTime"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerAddrType"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerAddress"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerAuthenPort"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerAcctPort"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerTimeout"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerRetransmit"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerKey"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerPriority"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasServerRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for configuring the AAA servers. "
+  },
+  "dasSrvGroupGroup": {
+    "name": "dasSrvGroupGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupRowStatus"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupSrvAddrType"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupSrvAddress"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupSrvPriority"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupServerRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for configuring the AAA server groups. "
+  },
+  "dasVrfGroup": {
+    "name": "dasVrfGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupVrfName"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupVrfConfigRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for configuring the AAA VRF setting. "
+  },
+  "dasSrcIfGroup": {
+    "name": "dasSrcIfGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupSrcIfIndex"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasGroupSrcIfConfigRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for configuring the AAA source interface setting. "
+  },
+  "dasClearStatGroup": {
+    "name": "dasClearStatGroup",
+    "oid": "1.3.6.1.4.1.171.14.150.1.2.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasClearServerStatAction"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasClearServerStatByGroup"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasClearServerStatByProtocol"
+      },
+      {
+        "module": "DLINKSW-AAA-SERVER-MIB",
+        "object": "dasClearAllServerStat"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for clear the AAA server statistics. "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-AAA-SERVER-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:53:24 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-AAA-SERVER-MIB"
+  }
+}

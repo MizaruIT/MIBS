@@ -1,0 +1,2031 @@
+{
+  "imports": {
+    "class": "imports",
+    "IEEE8021-CFM-MIB": [
+      "Dot1agCfmMDLevelOrNone",
+      "Dot1agCfmMepIdOrZero"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "PRVT-SWITCH-MIB": [
+      "switch"
+    ],
+    "Q-BRIDGE-MIB": [
+      "VlanIdOrNone"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Bits",
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY",
+      "Counter32",
+      "MibIdentifier",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "Counter64",
+      "IpAddress",
+      "iso",
+      "Gauge32",
+      "NOTIFICATION-TYPE",
+      "TimeTicks",
+      "Integer32"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "DisplayString",
+      "RowStatus",
+      "TEXTUAL-CONVENTION",
+      "MacAddress"
+    ]
+  },
+  "prvtRingEpsMib": {
+    "name": "prvtRingEpsMib",
+    "oid": "1.3.6.1.4.1.738.1.5.134",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-02-22 00:00",
+        "description": "Added raps monitoring methods for rings and subrings"
+      },
+      {
+        "revision": "2011-03-11 00:00",
+        "description": "Added ring ID for rings and subrings"
+      },
+      {
+        "revision": "2010-12-17 00:00",
+        "description": "Added descriptions for rings and subrings"
+      },
+      {
+        "revision": "2010-03-16 00:00",
+        "description": "Added support for subrings"
+      },
+      {
+        "revision": "2010-02-02 00:00",
+        "description": "Added prvtRingEpsWaitToBlockTimer, changed values order for PrvtRingEpsPortStatusType "
+      },
+      {
+        "revision": "2009-11-04 00:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "201003160000Z",
+    "organization": "BATM Advanced Communication",
+    "contactinfo": "BATM/Telco Systems Support team Email: For North America: techsupport@telco.com For North Europe: support@batm.de, info@batm.de For the rest of the world: techsupport@telco.com",
+    "description": "This private MIB provides capability of controlling the automatic Ring Ethernet Protection Switching (ITU-T G.8032)"
+  },
+  "prvtRingEpsNotifications": {
+    "name": "prvtRingEpsNotifications",
+    "oid": "1.3.6.1.4.1.738.1.5.134.0",
+    "class": "objectidentity"
+  },
+  "prvtRingEpsObjects": {
+    "name": "prvtRingEpsObjects",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1",
+    "class": "objectidentity"
+  },
+  "prvtRingEpsConformance": {
+    "name": "prvtRingEpsConformance",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2",
+    "class": "objectidentity"
+  },
+  "prvtRingEpsInstances": {
+    "name": "prvtRingEpsInstances",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1",
+    "class": "objectidentity"
+  },
+  "prvtRingEpsVlans": {
+    "name": "prvtRingEpsVlans",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.2",
+    "class": "objectidentity"
+  },
+  "prvtRingEpsSubRings": {
+    "name": "prvtRingEpsSubRings",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3",
+    "class": "objectidentity"
+  },
+  "PrvtRingEpsModeType": {
+    "name": "PrvtRingEpsModeType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rapsMode8032v1": 1,
+          "rapsMode8032v2": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Version of the protocol the instance will use",
+    "reference": "G.8032v2 clause 10.1.13"
+  },
+  "PrvtRingEpsStateType": {
+    "name": "PrvtRingEpsStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rapsInit": 0,
+          "rapsIdle": 1,
+          "rapsProtection": 2,
+          "rapsManualSwitch": 3,
+          "rapsForcedSwitch": 4,
+          "rapsPending": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": "State of the R-APS request processing logic",
+    "reference": "G.8032v2 clause 10.1.2"
+  },
+  "PrvtRingEpsLocalCommandType": {
+    "name": "PrvtRingEpsLocalCommandType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rapsLcNoRequest": 0,
+          "rapsLcExercise": 1,
+          "rapsLcManualSwitch": 2,
+          "rapsLcSignalDegrade": 3,
+          "rapsLcSignalFail": 4,
+          "rapsLcForcedSwitch": 5,
+          "rapsLcClear": 6,
+          "rapsLcLockoutOfProtection": 7
+        }
+      }
+    },
+    "status": "current",
+    "description": "Local system state given by the top priority command received",
+    "reference": "G.8032v2 clause 8"
+  },
+  "PrvtRingEpsRemoteRequestType": {
+    "name": "PrvtRingEpsRemoteRequestType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rapsRsNone": -1,
+          "rapsRsNoRequest": 0,
+          "rapsRsManualSwitch": 7,
+          "rapsRsSignalFail": 11,
+          "rapsRsForcedSwitch": 13,
+          "rapsRsEvent": 14
+        }
+      }
+    },
+    "status": "current",
+    "description": "Remote command received via RAPS packets",
+    "reference": "G.8032v2 clause 10.3"
+  },
+  "PrvtRingEpsNodeRoleType": {
+    "name": "PrvtRingEpsNodeRoleType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rapsNrSimpleNode": 0,
+          "rapsNrRplNeighborNode": 1,
+          "rapsNrRplOwner": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Role of the defined node inside the protected ring",
+    "reference": "G.8032v2"
+  },
+  "PrvtRingEpsRplPortType": {
+    "name": "PrvtRingEpsRplPortType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "port0": 0,
+          "port1": 1,
+          "none": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Ring port designated as RPL (only valid if prvtRingEpsNodeRole is rapsNrRplOwner or rapsNrRplNeighborNode",
+    "reference": "G.8032v2"
+  },
+  "PrvtRingEpsDefectType": {
+    "name": "PrvtRingEpsDefectType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "rapsDprovisioningMismatch": 0
+      }
+    },
+    "status": "current",
+    "description": "Ring port designated as RPL (only valid if prvtRingEpsNodeRole is rapsNrRplOwner or rapsNrRplNeighborNode",
+    "reference": "G.8032v2 10.4"
+  },
+  "PrvtRingEpsPortStatusType": {
+    "name": "PrvtRingEpsPortStatusType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rapsPsOk": 0,
+          "rapsPsBlocked": 1,
+          "rapsPsFailed": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Status of the port link"
+  },
+  "PrvtRingEpsPeerStatusType": {
+    "name": "PrvtRingEpsPeerStatusType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "bRplBlocked": 0,
+        "bDoNotFlush": 1,
+        "bBlockedPortReference": 2
+      }
+    },
+    "status": "current",
+    "description": "Status bits set in the received RAPS packet. The meanings are: bRplBlocked(0) The RPL link is blocked by the RPL owner. bDoNotFlush(1) RAPS sender requests that we do don flush our FDB. bBlockedPortReference(2) The port that is blocked by the sender of the RAPS packet. ",
+    "reference": "ITU-T G.8032v2 clause 10.3"
+  },
+  "prvtRingEpsInstanceTable": {
+    "name": "prvtRingEpsInstanceTable",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table includes information about the ring instances defined on this node."
+  },
+  "prvtRingEpsInstanceEntry": {
+    "name": "prvtRingEpsInstanceEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsInstanceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "NONE"
+  },
+  "prvtRingEpsInstanceIndex": {
+    "name": "prvtRingEpsInstanceIndex",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "RAPS instance index"
+  },
+  "prvtRingEpsMode": {
+    "name": "prvtRingEpsMode",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsModeType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsMode8032v2",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Version of the protocol the instance will use"
+  },
+  "prvtRingEpsNodeRole": {
+    "name": "prvtRingEpsNodeRole",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsNodeRoleType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsNrSimpleNode",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable identifies the role that the node will play inside the ring. The node can have two special roles, RPL owner or RPL neighbor, when one of its ports is designated as RPL. The ring can have a single RPL owner and a single RPL neighbor, connected between eachother via the RPL. If neither of the node ports are designated as RPL, then the node should have the role of a Simple node"
+  },
+  "prvtRingEpsState": {
+    "name": "prvtRingEpsState",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsStateType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsInit",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable identifies the state of the ring node according to the standard state machine."
+  },
+  "prvtRingEpsLocalCommand": {
+    "name": "prvtRingEpsLocalCommand",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsLocalCommandType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsLcNoRequest",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The user can control the ring using a set of commands allowing blocking and unblocking of ports. These commands are rapsLcManualSwitch, rapsLcForcedSwitch and rapsLcClear. The others are either read-only values or not yet defined by the standard."
+  },
+  "prvtRingEpsControlVlan": {
+    "name": "prvtRingEpsControlVlan",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The vlan ID used for RAPS & CFM traffic."
+  },
+  "prvtRingEpsPort0Ifindex": {
+    "name": "prvtRingEpsPort0Ifindex",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is the interface index of the interface either a bridge port, or an aggregated IEEE 802.1 link within a bridge port, attached to the ring as port 0."
+  },
+  "prvtRingEpsPort1Ifindex": {
+    "name": "prvtRingEpsPort1Ifindex",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is the interface index of the interface either a bridge port, or an aggregated IEEE 802.1 link within a bridge port, attached to the ring as port 1."
+  },
+  "prvtRingEpsRplPort": {
+    "name": "prvtRingEpsRplPort",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRplPortType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object controls whether the one of the ring ports is designated as RPL for the ring or not."
+  },
+  "prvtRingEpsManualSwitchPort": {
+    "name": "prvtRingEpsManualSwitchPort",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRplPortType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The port blocked by the Manual Switch command"
+  },
+  "prvtRingEpsCfmMdLevel": {
+    "name": "prvtRingEpsCfmMdLevel",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMDLevelOrNone",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Value of the CFM MD level where the protected domain is situated"
+  },
+  "prvtRingEpsPort0Mep": {
+    "name": "prvtRingEpsPort0Mep",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMepIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is the peer MEP ID that should send CCMs towards port 0."
+  },
+  "prvtRingEpsPort1Mep": {
+    "name": "prvtRingEpsPort1Mep",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMepIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is the peer MEP ID that should send CCMs towards port 1."
+  },
+  "prvtRingEpsRevertive": {
+    "name": "prvtRingEpsRevertive",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 9.1",
+    "status": "current",
+    "description": "This is the MI_RAPS_Revertive variable defined in the standard. It controls whether the RPL is blocked again after a failure of some ring link recovers."
+  },
+  "prvtRingEpsNoVirtualChannel": {
+    "name": "prvtRingEpsNoVirtualChannel",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 10.1.14",
+    "status": "current",
+    "description": "Node is part of a subring that doesn't use RAPS virtual channel"
+  },
+  "prvtRingEpsHoldOffTimer": {
+    "name": "prvtRingEpsHoldOffTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 10.1.8",
+    "status": "current",
+    "description": "Range is from 0 to 10 seconds in 100msec intervals"
+  },
+  "prvtRingEpsWaitToRestoreTimer": {
+    "name": "prvtRingEpsWaitToRestoreTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 12
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 10.1.4",
+    "status": "current",
+    "description": "Range is from 1 to 12 minutes"
+  },
+  "prvtRingEpsGuardTimer": {
+    "name": "prvtRingEpsGuardTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 2000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 500,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 10.1.5",
+    "status": "current",
+    "description": "Range is from 10msec to 2 seconds in 10msec intervals"
+  },
+  "prvtRingEpsWaitToBlockTimer": {
+    "name": "prvtRingEpsWaitToBlockTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 5010,
+            "max": 7000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5500,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "G.8032v2 clause 10.1.5",
+    "status": "current",
+    "description": "Range is from 5010msec to 7 seconds in 10msec intervals. This time is actulally the Guard Timer + 5 seconds"
+  },
+  "prvtRingEpsDefectFop": {
+    "name": "prvtRingEpsDefectFop",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsDefectType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "G.8032v2 clause 10.4",
+    "status": "current",
+    "description": "So far only the situation when two or more RPL-owners are defined in the ring is identified as a defect. This scenario is noticed when the instance with the RPL-Owner role receives a RAPS packet with the RB bit set in its status field from a different NodeID than its own."
+  },
+  "prvtRingEpsPort0Status": {
+    "name": "prvtRingEpsPort0Status",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsPortStatusType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsPsFailed",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the state of port 0. It can be either Ok (unblocked), Blocked or Failed."
+  },
+  "prvtRingEpsPort1Status": {
+    "name": "prvtRingEpsPort1Status",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsPortStatusType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsPsFailed",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the state of port 1. It can be either Ok (unblocked), Blocked or Failed."
+  },
+  "prvtRingEpsPort0PeerNodeId": {
+    "name": "prvtRingEpsPort0PeerNodeId",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Node ID from the RAPS packet received via port 0."
+  },
+  "prvtRingEpsPort1PeerNodeId": {
+    "name": "prvtRingEpsPort1PeerNodeId",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Node ID from the RAPS packet received via port 1."
+  },
+  "prvtRingEpsPort0PeerCommand": {
+    "name": "prvtRingEpsPort0PeerCommand",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRemoteRequestType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsRsNone",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Request/State of the RAPS packet received via port 0."
+  },
+  "prvtRingEpsPort1PeerCommand": {
+    "name": "prvtRingEpsPort1PeerCommand",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRemoteRequestType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsRsNone",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Request/State of the RAPS packet received via port 1."
+  },
+  "prvtRingEpsPort0PeerStatus": {
+    "name": "prvtRingEpsPort0PeerStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsPeerStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the status field of the RAPS packet received via port 0."
+  },
+  "prvtRingEpsPort1PeerStatus": {
+    "name": "prvtRingEpsPort1PeerStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsPeerStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the status field of the RAPS packet received via port 1."
+  },
+  "prvtRingEpsOperationalStatus": {
+    "name": "prvtRingEpsOperationalStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The purpose of this status is to identify to the user whether this instance is ready for running. The operational status can be up or down. When creating the instance the operational status will be down. Receiving CCMs from the expected peer MEPs on both ring ports will bring the operational status to up. If any needed CFM configuration is removed the operational status will go back to down"
+  },
+  "prvtRingEpsAdminStatus": {
+    "name": "prvtRingEpsAdminStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Administrative status of the instance"
+  },
+  "prvtRingEpsRowStatus": {
+    "name": "prvtRingEpsRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.31",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of the row."
+  },
+  "prvtRingEpsForcedSwitchPort": {
+    "name": "prvtRingEpsForcedSwitchPort",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.32",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRplPortType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The port blocked by the Forced Switch command"
+  },
+  "prvtRingEpsInstanceDescription": {
+    "name": "prvtRingEpsInstanceDescription",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.33",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "RAPS instance description."
+  },
+  "prvtRingEpsRingId": {
+    "name": "prvtRingEpsRingId",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.34",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 Appendix VII",
+    "status": "current",
+    "description": "The last octet of the RAPS destination MAC address is designated as Ring ID (01-19-A7-00-00-[Ring ID]). As of G.8032v2 the destination MAC address '01-19-A7-00-00-01' is used. The usage of other MAC addresses is for further study."
+  },
+  "prvtRingEpsPort0MonitoringMethod": {
+    "name": "prvtRingEpsPort0MonitoringMethod",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.35",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ccm": 1,
+          "link-status": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Raps monitoring methods for port 0: ccm - CCM messages and link status will be used for raps monitoring, link-status -Link status will be used for raps monitoring"
+  },
+  "prvtRingEpsPort1MonitoringMethod": {
+    "name": "prvtRingEpsPort1MonitoringMethod",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.1.1.1.36",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ccm": 1,
+          "link-status": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Raps monitoring methods for port 1: ccm - CCM messages and link status will be used for raps monitoring, link-status - Link status will be used for raps monitoring"
+  },
+  "prvtRingEpsVlanTable": {
+    "name": "prvtRingEpsVlanTable",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table includes information about protected vlans and the ring instances that monitor them."
+  },
+  "prvtRingEpsVlanEntry": {
+    "name": "prvtRingEpsVlanEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsVlanIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Connection between vlan IDs and the RAPS instance that monitors them"
+  },
+  "prvtRingEpsVlanIndex": {
+    "name": "prvtRingEpsVlanIndex",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4094
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The vlan ID."
+  },
+  "prvtRingEpsInstance": {
+    "name": "prvtRingEpsInstance",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "RAPS instance that will monitor this vlan"
+  },
+  "prvtRingEpsVlanRowStatus": {
+    "name": "prvtRingEpsVlanRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of the row."
+  },
+  "prvtRingEpsSubRingTable": {
+    "name": "prvtRingEpsSubRingTable",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table containing information about the subring instances defined on this node."
+  },
+  "prvtRingEpsSubRingEntry": {
+    "name": "prvtRingEpsSubRingEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Configuration of a subring that is interconnected to the main ring in an interconnection node"
+  },
+  "prvtRingEpsSubRingIndex": {
+    "name": "prvtRingEpsSubRingIndex",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A subring ID"
+  },
+  "prvtRingEpsSubRingNodeRole": {
+    "name": "prvtRingEpsSubRingNodeRole",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsNodeRoleType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsNrSimpleNode",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable identifies the role that the node will play inside the subring. The node can have two special roles, RPL owner or RPL neighbor, when the subring port is designated as RPL. The subring can have a single RPL owner and a single RPL neighbor, connected between eachother via the RPL. If the subring port is not designated as RPL, then the node should have the role of a Simple node"
+  },
+  "prvtRingEpsSubRingState": {
+    "name": "prvtRingEpsSubRingState",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsStateType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsInit",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "G.8032v2 clause 10.1.2",
+    "status": "current",
+    "description": "This variable identifies the state of the subring node according to the standard state machine."
+  },
+  "prvtRingEpsSubRingLocalCommand": {
+    "name": "prvtRingEpsSubRingLocalCommand",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsLocalCommandType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsLcNoRequest",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The user can control the ring using a set of commands allowing blocking and unblocking of ports. These commands are rapsLcManualSwitch, rapsLcForcedSwitch and rapsLcClear. The others are either read-only values or not yet defined by the standard."
+  },
+  "prvtRingEpsSubRingPortIfindex": {
+    "name": "prvtRingEpsSubRingPortIfindex",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is the interface index of the interface either a bridge port, or an aggregated IEEE 802.1 link within a bridge port, attached to the subring."
+  },
+  "prvtRingEpsSubRingPortMep": {
+    "name": "prvtRingEpsSubRingPortMep",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMepIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable is the peer MEP ID that should send CCMs towards the subring port."
+  },
+  "prvtRingEpsSubRingRplPort": {
+    "name": "prvtRingEpsSubRingRplPort",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRplPortType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object controls whether the subring port is designated as RPL for the subring or not."
+  },
+  "prvtRingEpsSubRingVirtualChannelVlan": {
+    "name": "prvtRingEpsSubRingVirtualChannelVlan",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The vlan ID used for Virtual Channel encapsulation"
+  },
+  "prvtRingEpsSubRingRevertive": {
+    "name": "prvtRingEpsSubRingRevertive",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 9.1",
+    "status": "current",
+    "description": "This is the MI_RAPS_Revertive variable defined in the standard. It controls whether the RPL is blocked again after a failure of some subring link recovers."
+  },
+  "prvtRingEpsSubRingHoldOffTimer": {
+    "name": "prvtRingEpsSubRingHoldOffTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 10.1.8",
+    "status": "current",
+    "description": "Range is from 0 to 10 seconds in 100msec intervals"
+  },
+  "prvtRingEpsSubRingWaitToRestoreTimer": {
+    "name": "prvtRingEpsSubRingWaitToRestoreTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 12
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 10.1.4",
+    "status": "current",
+    "description": "Range is from 1 to 12 minutes"
+  },
+  "prvtRingEpsSubRingGuardTimer": {
+    "name": "prvtRingEpsSubRingGuardTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 2000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 500,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 clause 10.1.5",
+    "status": "current",
+    "description": "Range is from 10msec to 2 seconds in 10msec intervals"
+  },
+  "prvtRingEpsSubRingWaitToBlockTimer": {
+    "name": "prvtRingEpsSubRingWaitToBlockTimer",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 5010,
+            "max": 7000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5500,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "G.8032v2 clause 10.1.5",
+    "status": "current",
+    "description": "Range is from 5010msec to 7 seconds in 10msec intervals. This time is actulally the Guard Timer + 5 seconds"
+  },
+  "prvtRingEpsSubRingDefectFop": {
+    "name": "prvtRingEpsSubRingDefectFop",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsDefectType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "G.8032v2 clause 10.4",
+    "status": "current",
+    "description": "So far only the situation when two or more RPL-owners are defined in the ring is identified as a defect. This scenario is noticed when the instance with the RPL-Owner role receives a RAPS packet with the RB bit set in its status field from a different NodeID than its own."
+  },
+  "prvtRingEpsSubRingPortStatus": {
+    "name": "prvtRingEpsSubRingPortStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsPortStatusType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsPsFailed",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the state of the subring port. It can be either Ok (unblocked), Blocked or Failed."
+  },
+  "prvtRingEpsSubRingPortPeerNodeId": {
+    "name": "prvtRingEpsSubRingPortPeerNodeId",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Node ID from the RAPS packet received via the subring port."
+  },
+  "prvtRingEpsSubRingPeerCommand": {
+    "name": "prvtRingEpsSubRingPeerCommand",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRemoteRequestType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsRsNone",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Request/State of the RAPS packet received via the subring port."
+  },
+  "prvtRingEpsSubRingPeerStatus": {
+    "name": "prvtRingEpsSubRingPeerStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsPeerStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the status field of the RAPS packet received via the subring port."
+  },
+  "prvtRingEpsSubRingVcPeerNodeId": {
+    "name": "prvtRingEpsSubRingVcPeerNodeId",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Node ID from the RAPS packet received via the virtual channel."
+  },
+  "prvtRingEpsSubRingVcPeerCommand": {
+    "name": "prvtRingEpsSubRingVcPeerCommand",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsRemoteRequestType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "rapsRsNone",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the Request/State of the RAPS packet received via the virtual channel."
+  },
+  "prvtRingEpsSubRingVcPeerStatus": {
+    "name": "prvtRingEpsSubRingVcPeerStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrvtRingEpsPeerStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable reflects the status field of the RAPS packet received via the virtual channel."
+  },
+  "prvtRingEpsSubRingPropagateTC": {
+    "name": "prvtRingEpsSubRingPropagateTC",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 10.1.11",
+    "status": "current",
+    "description": "This is the MI_RAPS_Propagate_TC variable mentioned in the standard. If this is enabled a flush in the subring will be followed by a flush in the main instance."
+  },
+  "prvtRingEpsSubRingOperationalStatus": {
+    "name": "prvtRingEpsSubRingOperationalStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The purpose of this status is to identify to the user whether this instance is ready for running. The operational status can be up or down. When creating the instance the operational status will be down. Receiving CCMs from the expected peer MEP on the subring port will bring the operational status to up. If any needed CFM configuration is removed the operational status will go back to down"
+  },
+  "prvtRingEpsSubRingAdminStatus": {
+    "name": "prvtRingEpsSubRingAdminStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Administrative status of the subring instance"
+  },
+  "prvtRingEpsSubRingRowStatus": {
+    "name": "prvtRingEpsSubRingRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of the row."
+  },
+  "prvtRingEpsSubRingControlVlan": {
+    "name": "prvtRingEpsSubRingControlVlan",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The vlan ID used for RAPS & CFM traffic."
+  },
+  "prvtRingEpsSubRingDescription": {
+    "name": "prvtRingEpsSubRingDescription",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "RAPS instance sub-ring description."
+  },
+  "prvtRingEpsSubRingRingId": {
+    "name": "prvtRingEpsSubRingRingId",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "G.8032v2 Appendix VII",
+    "status": "current",
+    "description": "The last octet of the RAPS destination MAC address is designated as Ring ID (01-19-A7-00-00-[Ring ID]). As of G.8032v2 the destination MAC address '01-19-A7-00-00-01' is used. The usage of other MAC addresses is for further study."
+  },
+  "prvtRingEpsSubRingMonitoringMethod": {
+    "name": "prvtRingEpsSubRingMonitoringMethod",
+    "oid": "1.3.6.1.4.1.738.1.5.134.1.3.1.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ccm": 1,
+          "link-status": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Raps monitoring methods for subring port: ccm - CCM messags and link status will be used for raps monitoring, link-status -Link status will be used for raps monitoring"
+  },
+  "prvtRingEpsDefectAlarm": {
+    "name": "prvtRingEpsDefectAlarm",
+    "oid": "1.3.6.1.4.1.738.1.5.134.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsOperationalStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsDefectFop"
+      }
+    ],
+    "status": "current",
+    "description": "This trap will be sent by any instance when it notices a defect. So far only the situation when two or more RPL-owners are defined in the ring is identified as a defect. This scenario is noticed when the instance with the RPL-Owner role receives a RAPS packet with the RB bit set in its status field from a different NodeID than its own. The management entity receiving the notification can identify the system from the network source address of the notification, and can identify the instance reporting the change by the indices in the OID of the prvtRingEpsDefectFop variable in the notification."
+  },
+  "prvtRingEpsSwitchoverAlarm": {
+    "name": "prvtRingEpsSwitchoverAlarm",
+    "oid": "1.3.6.1.4.1.738.1.5.134.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsState"
+      }
+    ],
+    "status": "current",
+    "description": "This trap will be sent by any instance when it changes state. The management entity receiving the notification can identify the system from the network source address of the notification, and can identify the instance reporting the change by the indices in the OID of the prvtRingEpsState variable in the notification."
+  },
+  "prvtRingEpsSubRingDefectAlarm": {
+    "name": "prvtRingEpsSubRingDefectAlarm",
+    "oid": "1.3.6.1.4.1.738.1.5.134.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingOperationalStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingDefectFop"
+      }
+    ],
+    "status": "current",
+    "description": "This trap will be sent by any subring instance when it notices a defect. So far only the situation when two or more RPL-owners are defined in the ring is identified as a defect. This scenario is noticed when the instance with the RPL-Owner role receives a RAPS packet with the RB bit set in its status field from a different NodeID than its own. The management entity receiving the notification can identify the system from the network source address of the notification, and can identify the instance reporting the change by the indices in the OID of the prvtRingEpsDefectFop variable in the notification."
+  },
+  "prvtRingEpsSubRingSwitchoverAlarm": {
+    "name": "prvtRingEpsSubRingSwitchoverAlarm",
+    "oid": "1.3.6.1.4.1.738.1.5.134.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingState"
+      }
+    ],
+    "status": "current",
+    "description": "This trap will be sent by any subring instance when it changes state. The management entity receiving the notification can identify the system from the network source address of the notification, and can identify the instance reporting the change by the indices in the OID of the prvtRingEpsSubRingState variable in the notification."
+  },
+  "prvtRingEpsCompliances": {
+    "name": "prvtRingEpsCompliances",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2.1",
+    "class": "objectidentity"
+  },
+  "prvtRingEpsGroups": {
+    "name": "prvtRingEpsGroups",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2.2",
+    "class": "objectidentity"
+  },
+  "prvtRingEpsGroup": {
+    "name": "prvtRingEpsGroup",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsMode"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsNodeRole"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsState"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsLocalCommand"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsControlVlan"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort0Ifindex"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort1Ifindex"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsRplPort"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsManualSwitchPort"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsCfmMdLevel"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort0Mep"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort1Mep"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsRevertive"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsNoVirtualChannel"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsHoldOffTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsWaitToRestoreTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsGuardTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsWaitToBlockTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsDefectFop"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort0Status"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort1Status"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort0PeerNodeId"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort1PeerNodeId"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort0PeerCommand"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort1PeerCommand"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort0PeerStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort1PeerStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsOperationalStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsAdminStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsRowStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsForcedSwitchPort"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsInstanceDescription"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsRingId"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort0MonitoringMethod"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsPort1MonitoringMethod"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for the RAPS instances group."
+  },
+  "prvtRingEpsVlanGroup": {
+    "name": "prvtRingEpsVlanGroup",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsInstance"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsVlanRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for the RAPS monitored vlans group."
+  },
+  "prvtRingEpsSubRingGroup": {
+    "name": "prvtRingEpsSubRingGroup",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingNodeRole"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingState"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingLocalCommand"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingPortIfindex"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingPortMep"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingRplPort"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingVirtualChannelVlan"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingRevertive"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingHoldOffTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingWaitToRestoreTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingGuardTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingWaitToBlockTimer"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingDefectFop"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingPortStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingPortPeerNodeId"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingPeerCommand"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingPeerStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingVcPeerNodeId"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingVcPeerCommand"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingVcPeerStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingPropagateTC"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingOperationalStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingAdminStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingRowStatus"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingControlVlan"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingDescription"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingRingId"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingMonitoringMethod"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for the RAPS subring group."
+  },
+  "prvtRingEpsNotificationsGroup": {
+    "name": "prvtRingEpsNotificationsGroup",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSwitchoverAlarm"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsDefectAlarm"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingSwitchoverAlarm"
+      },
+      {
+        "module": "PRVT-RING-EPS-MIB",
+        "object": "prvtRingEpsSubRingDefectAlarm"
+      }
+    ],
+    "status": "current",
+    "description": "Objects for the Notifications group."
+  },
+  "prvtRingEpsCompliance": {
+    "name": "prvtRingEpsCompliance",
+    "oid": "1.3.6.1.4.1.738.1.5.134.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "prvtRingEpsGroup",
+        "module": "PRVT-RING-EPS-MIB"
+      },
+      {
+        "object": "prvtRingEpsVlanGroup",
+        "module": "PRVT-RING-EPS-MIB"
+      },
+      {
+        "object": "prvtRingEpsSubRingGroup",
+        "module": "PRVT-RING-EPS-MIB"
+      },
+      {
+        "object": "prvtRingEpsNotificationsGroup",
+        "module": "PRVT-RING-EPS-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for support of the Ring EPS MIB module."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PRVT-RING-EPS-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:45:16 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PRVT-RING-EPS-MIB"
+  }
+}

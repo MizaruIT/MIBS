@@ -1,0 +1,551 @@
+{
+  "imports": {
+    "class": "imports",
+    "NSCRTV-EPONEOC-EPON-MIB": [
+      "EponDeviceIndex",
+      "EponPortIndex",
+      "EponAlarmCode",
+      "EponAlarmInstance",
+      "EponStats24HourRecordType",
+      "qosManagementObjects",
+      "EponSeverityType",
+      "AutoNegotiationTechAbility",
+      "EponStatsThresholdType",
+      "TAddress",
+      "EponCardIndex",
+      "EponStats15MinRecordType"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "Gauge32",
+      "Integer32",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "OBJECT-IDENTITY",
+      "Counter32",
+      "MibIdentifier",
+      "iso",
+      "Unsigned32",
+      "IpAddress",
+      "OBJECT-TYPE",
+      "TimeTicks"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "DisplayString",
+      "RowStatus",
+      "DateAndTime",
+      "TimeStamp",
+      "TEXTUAL-CONVENTION",
+      "MacAddress"
+    ]
+  },
+  "qosGlobalSetTable": {
+    "name": "qosGlobalSetTable",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Global QoS parameters."
+  },
+  "qosGlobalSetEntry": {
+    "name": "qosGlobalSetEntry",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "qosGlobalSetDeviceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "qosGlobalSetDeviceIndex": {
+    "name": "qosGlobalSetDeviceIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponDeviceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " Device index For OLT - Set to corresponding device For ONU - Set to 0 "
+  },
+  "qosGlobalSetMaxQueueCount": {
+    "name": "qosGlobalSetMaxQueueCount",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "qosGlobalSetMode": {
+    "name": "qosGlobalSetMode",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "deviceBased": 1,
+          "portBased": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "deviceBased",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " Define how to set QoS parameter deviceBased(1) - When set, only the table started with deviceBase is applicable portBased(2) - When set, only the table started with portBase is applicable "
+  },
+  "deviceBaseQosMapTable": {
+    "name": "deviceBaseQosMapTable",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Deviced based setting. It is used to define how to map QoS options to queue"
+  },
+  "deviceBaseQosMapEntry": {
+    "name": "deviceBaseQosMapEntry",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "deviceBaseQosMapDeviceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "deviceBaseQosMapRuleIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "deviceBaseQosMapDeviceIndex": {
+    "name": "deviceBaseQosMapDeviceIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponDeviceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " Device index For OLT - Set to corresponding device/slot/port For ONU - Set to 0 "
+  },
+  "deviceBaseQosMapRuleIndex": {
+    "name": "deviceBaseQosMapRuleIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cos": 1,
+          "tos": 2,
+          "diffserv": 3
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "deviceBaseQosMapOctet": {
+    "name": "deviceBaseQosMapOctet",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          },
+          {
+            "min": 64,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": ": cos 0 -> queue 0 cos 1 -> queue 0 cos 2 -> queue 1 cos 3 -> queue 2 cos 4 -> queue 3 cos 5 -> queue 3 cos 6 -> queue 4 cos 7 -> queue 4 "
+  },
+  "deviceBaseQosPolicyTable": {
+    "name": "deviceBaseQosPolicyTable",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Deviced based setting It is used to define QoS specification"
+  },
+  "deviceBaseQosPolicyEntry": {
+    "name": "deviceBaseQosPolicyEntry",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "deviceBaseQosPolicyDeviceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "deviceBaseQosPolicyDeviceIndex": {
+    "name": "deviceBaseQosPolicyDeviceIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponDeviceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " Device index For OLT - Set to corresponding device/slot/port For ONU - Set to 0 "
+  },
+  "deviceBaseQosPolicyMode": {
+    "name": "deviceBaseQosPolicyMode",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "sp": 1,
+          "wrr": 2,
+          "spWrr": 3,
+          "wfp": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current"
+  },
+  "deviceBaseQosPolicyWeightOctet": {
+    "name": "deviceBaseQosPolicyWeightOctet",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current"
+  },
+  "deviceBaseQosPolicySpBandwidthRange": {
+    "name": "deviceBaseQosPolicySpBandwidthRange",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " Define SP assured bandwidth for each queue. The size of this object is 4*(number of queue). For each queue, use 4 octets to represend the assured bandwidth for the queue. The four-octet could be mapped to an unsigned integer, in units of kbps. The sequence of the map is from queue 0 to queue max (for example, 7). For example, 00 00 00 10 00 00 01 00 00 00 00 00 00 00 00 00 00 00 10 00 00 00 00 01 00 01 01 00 00 00 11 11 It means, 8 queues and the assured bandwidth for each queue as: queue 0 16kbps queue 1 256kbps queue 2 0 queue 3 0 queue 4 4096kbps queue 5 1kbps queue 6 65792kbps queue 7 65535kbps "
+  },
+  "portBaseQosMapTable": {
+    "name": "portBaseQosMapTable",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "portBaseQosMapEntry": {
+    "name": "portBaseQosMapEntry",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "deviceBaseQosMapDeviceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "portBaseQosMapCardIndex",
+        "implied": 0
+      },
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "portBaseQosMapPortIndex",
+        "implied": 0
+      },
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "deviceBaseQosMapRuleIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "portBaseQosMapDeviceIndex": {
+    "name": "portBaseQosMapDeviceIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponDeviceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " Device index For OLT, set to corresponding SNI port or PON port For ONU, set to 0 "
+  },
+  "portBaseQosMapCardIndex": {
+    "name": "portBaseQosMapCardIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponPortIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " For OLT, set to 0 For ONU, set to corresponding slot "
+  },
+  "portBaseQosMapPortIndex": {
+    "name": "portBaseQosMapPortIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponPortIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " For OLT, set to 0 For ONU, set to corresponding port "
+  },
+  "portBaseQosMapRuleIndex": {
+    "name": "portBaseQosMapRuleIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cos": 1,
+          "tos": 2,
+          "diffserv": 3
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " "
+  },
+  "portBaseQosMapOctet": {
+    "name": "portBaseQosMapOctet",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": ": cos 0 -> queue 0 cos 1 -> queue 0 cos 2 -> queue 1 cos 3 -> queue 2 cos 4 -> queue 3 cos 5 -> queue 3 cos 6 -> queue 4 cos 7 -> queue 4 "
+  },
+  "portBaseQosPolicyTable": {
+    "name": "portBaseQosPolicyTable",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "portBaseQosPolicyEntry": {
+    "name": "portBaseQosPolicyEntry",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "deviceBaseQosPolicyDeviceIndex",
+        "implied": 0
+      },
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "portBaseQosPolicyCardIndex",
+        "implied": 0
+      },
+      {
+        "module": "NSCRTV-EPON-QOS-MGM-MIB",
+        "object": "portBaseQosPolicyPortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "portBaseQosPolicyDeviceIndex": {
+    "name": "portBaseQosPolicyDeviceIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponDeviceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " Device index For OLT, set to corresponding SNI port or PON port For ONU, set to 0 "
+  },
+  "portBaseQosPolicyCardIndex": {
+    "name": "portBaseQosPolicyCardIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponPortIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " For OLT, set to 0 For ONU, set to corresponding slot "
+  },
+  "portBaseQosPolicyPortIndex": {
+    "name": "portBaseQosPolicyPortIndex",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EponPortIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " For OLT, set to 0 For ONU, set to corresponding port "
+  },
+  "portBaseQosPolicyMode": {
+    "name": "portBaseQosPolicyMode",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "sp": 1,
+          "wrr": 2,
+          "spWrr": 3,
+          "wfp": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current"
+  },
+  "portBaseQosPolicyWeightOctet": {
+    "name": "portBaseQosPolicyWeightOctet",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current"
+  },
+  "portBaseQosPolicySpBandwidthRange": {
+    "name": "portBaseQosPolicySpBandwidthRange",
+    "oid": "1.3.6.1.4.1.17409.2.3.8.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " Define SP assured bandwidth for each queue. The size of this object is 4*(number of queue). For each queue, use 4 octets to represend the assured bandwidth for the queue. The four-octet could be mapped to an unsigned integer, in units of kbps. The sequence of the map is from queue 0 to queue max (for example, 7). For example, 00 00 00 10 00 00 01 00 00 00 00 00 00 00 00 00 00 00 10 00 00 00 00 01 00 01 01 00 00 00 11 11 It means, 8 queues and the assured bandwidth for each queue as: queue 0 16kbps queue 1 256kbps queue 2 0 queue 3 0 queue 4 4096kbps queue 5 1kbps queue 6 65792kbps queue 7 65535kbps "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/NSCRTV-EPON-QOS-MGM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:49:50 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "NSCRTV-EPON-QOS-MGM-MIB"
+  }
+}

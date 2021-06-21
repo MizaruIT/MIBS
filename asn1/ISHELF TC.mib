@@ -1,0 +1,2406 @@
+
+ISHELF-TC DEFINITIONS ::= BEGIN
+
+IMPORTS
+    TEXTUAL-CONVENTION
+        FROM SNMPv2-TC
+
+    MODULE-IDENTITY,
+    Gauge32,
+    Integer32,
+    Unsigned32
+        FROM SNMPv2-SMI
+
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+    ;
+
+iShelfTcMib MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION "The MIB module for IShelf System Textual Conventions."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 1 }
+
+IShelfNode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Node
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION
+        "Identifies the node. The system supports 32 nodes.
+         The first node is always the CDT (Central Digital Terminal).
+         All other nodes are RDTs (Remote Digital Terminals)."
+    SYNTAX      INTEGER {
+                    cdt(1),
+                    rdt1(2),
+                    rdt2(3),
+                    rdt3(4),
+                    rdt4(5),
+                    rdt5(6),
+                    rdt6(7),
+                    rdt7(8),
+                    rdt8(9),
+                    rdt9(10),
+                    rdt10(11),
+                    rdt11(12),
+                    rdt12(13),
+                    rdt13(14),
+                    rdt14(15),
+                    rdt15(16),
+                    rdt16(17),
+                    rdt17(18),
+                    rdt18(19),
+                    rdt19(20),
+                    rdt20(21),
+                    rdt21(22),
+                    rdt22(23),
+                    rdt23(24),
+                    rdt24(25),
+                    rdt25(26),
+                    rdt26(27),
+                    rdt27(28),
+                    rdt28(29),
+                    rdt29(30),
+                    rdt30(31),
+                    rdt31(32)
+                }
+
+IShelfShelf ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Shelf
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "Identifies the shelf number (0 indicate N/A)"
+    SYNTAX      INTEGER (0..16)
+
+IShelfCardType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL CardType
+    -- %CLIWIDTH 9
+    STATUS      current
+    DESCRIPTION "This enumeration identifies the type of card.  Only enums with access type r/w can be provisioned."
+    SYNTAX      INTEGER {
+                    unknown(0),     -- r/o - Card type is unknown.
+                    cpu(1),         -- r/o - CPU card
+                    dualGpon(6),    -- r/w - OLT card supporting 2 PONs
+                    quadGpon(7),    -- r/w - OLT card supporting 4 PONs
+                    emgmt(8),       -- r/w - SNMP/EMS management interface card
+                    mdsl2(9),       -- r/w - Multi Rate Digital Subscriber Line 2 card (transport between nodes)
+                    mdsl2PwrO(10),  -- r/o - MDSL2 with originating power module daughter card
+                    mdsl2PwrT(11),  -- r/o - MDSL2 with terminating power module daughter card
+                    t1Xcvr(12),     -- r/w - T1 card supporting 1 T1 port (transport between nodes or uplink)
+                    t1XcvrPwr(13),  -- r/o - T1 card with power module daughter card
+                    t1XcvrComp(14), -- r/o - T1 card with compression module daughter card
+                    quadt1(15),     -- r/w - T1 card supporting 4 T1 ports (uplink)
+                    asyncT1(16),    -- r/w - Asynchronous T1 card
+                    fo155(17),      -- r/w - Fiber Optic 155 card (transport between nodes)
+                    b3(18),         -- r/w - Broadband Bridge card (bridge between ATM bus and TDM bus)
+                    b3Ima(19),      -- r/o - B3 card supporting quad IMA (inverse multiplex over ATM) groups
+                    oc3(20),        -- r/w - SONET compliant Optical Carrier Level 3 card (STS-1/STS-3c) (uplink)
+                    oc12(21),       -- r/w - SONET compliant Optical Carrier Level 12 card
+                                    --       (STS-1/STS-3c/STS-12c) (transport between nodes or uplink)
+                    enet(22),       -- r/w - B3 card with 10/100 Ethernet port (uplink)
+                                    --       only supports IEEE 802.1D bridging
+                    gige(24),       -- r/w - B3 card with a Gig-Ethernet port (uplink)
+                    spc(25),        -- r/o - Switched Power Supply card (1st generation)
+                    spcR(26),       -- r/o - SPC with Ringer (1st generation)
+                    spc2(27),       -- r/o - 2nd generation SPC
+                    spc2R(28),      -- r/o - 2nd generation SPCR
+                    sec(29),        -- r/o - rShelf Expansion CPU card (link between shelves) (CPU slot)
+                    seu(30),        -- r/w - Shelf Expansion Unit card (link between shelves) (GPS slot)
+                    potsC8(31),     -- r/w - Central Office POTS card supporting 8 circuits
+                    potsR8(32),     -- r/w - Remote Node POTS card supporting 8 circuits
+                    potsR4E(33),    -- r/w - Remote Node POTS card supporting 4 extended range circuits
+                    to24w(34),      -- r/w - 2/4 Wire Transmit Only card support 4 circuits
+                    ds0Pots(35),    -- r/w - Central Office DDS card supporting 2 DDS circuits and 4 POTS circuits
+                    ocuPots(36),    -- r/w - Remote Node DDS card supporting 2 DDS circuits and 4 POTS circuits
+                    uvgC8(37),      -- r/w - Central Office UVG card supporting 8 circuits
+                    uvgR8(38),      -- r/w - Remote Node UVG card supporting 8 circuits
+                    coinC8(39),     -- r/w - Central Office Coin card supporting 8 circuits
+                    coinR8(40),     -- r/w - Remote Node Coin card supporting 8 circuits
+                    isdlIsdnC(41),  -- r/w - Central Office ISDN card supporting 4 BRI circuits and 4 POTS circuits
+                    isdlIsdnR(42),  -- r/w - Remote Node ISDN card supporting 4 BRI circuits and 4 POTS circuits
+                    adslR4(43),     -- r/w - Remote Node ADSL card supporting 4 ADSL circuits and 4 POTS circuits
+                    adslR8(44),     -- r/w - Remote Node ADSL card supporting 8 ADSL circuits and 8 POTS circuits
+                    upm(45),        -- r/w - Universal Processing Module card
+                    rtu(46),        -- r/w - Remote Test Unit card
+                    esac(47),       -- r/w - Emergency Stand Alone card, esac2000
+                    ont(48),        -- r/o - ONT
+                    ontT1(49),      -- r/o - ONT T1
+                    ontPots(50),    -- r/o - ONT POTS
+                    ontEnet(51),    -- r/o - ONT ENET
+                    ontRfVideo(52), -- r/o - ONT RF VIDEO
+                    olt2GigE(53),   -- r/o - OLT 2 GIGE
+                    olt4GigE(54),   -- r/o - OLT 4 GIGE
+                    olt2Cba(55),    -- r/o - OLT 2 CBA
+                    olt4Cba(56),    -- r/o - OLT 4 CBA
+                    olt2Cbb(57),    -- r/o - OLT 2 CBB
+                    olt4Cbb(58),    -- r/o - OLT 4 CBB
+                    olt2Pon(59),    -- r/o - OLT 2 PON
+                    olt4Pon(60),    -- r/o - OLT 4 PON
+                    oc48(61),       -- r/w - SONET compliant Optical Carrier Level 48 card
+                                    --       (STS-1/STS-3c/STS-12c/STS-48c) (transport between nodes or uplink)
+                    ds3(62),
+                    oc48s(63),      -- r/w - new 0c48 single wide card
+                    cpu2000(64),    -- r/w - new cpu2000 card
+                    tsiGpon2(65),   -- r/w - new telstrat dual Gpon card
+                    tsiGpon4(66),   -- r/w - new telstart quad Gpon card
+                    ontPots4(67),   -- r/w - ONT 4 port POTS
+                    ontPots8(68),   -- r/w - ONT 8 port POTS
+                    ontEnet4(69),   -- r/w - ONT 4 port ETH
+                    ontRf4(70),     -- r/w - ONT 4 port RF
+                    ontEnet2(71)    -- r/w - ONT 2 port ETH
+			}
+
+IShelfShelfCellBusClockRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ClockRate
+    -- %CLIWIDTH 9
+    STATUS      current
+    DESCRIPTION "The system Cell Bus Clock Rate."
+    SYNTAX      INTEGER {
+                    speed32M(1),
+                    speed50M(2)
+                }
+
+IShelfAdminState ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL AdmnSt
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION
+        "The administrative state identifies the desired state
+         of a managed entity.  When the administrative state is set to lock,
+         the functions and alarm generation of the managed entity are blocked.
+
+         Locking a managed entity is service affecting.
+         Unlocking a managed entity is the normal operating state."
+    SYNTAX      INTEGER {
+                    unlock(1),
+                    lock(2)
+                }
+
+IShelfOperState ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL OperSt
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "The operational state indicates if the managed entity
+         is capable of performing its task."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    enabled(1),
+                    disabled(2)
+                }
+
+IShelfSysLastErrorCode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Code
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION
+        "Listing of error codes in the system."
+    SYNTAX      INTEGER {
+                    noerror(1),
+                    snmpverifyinstancefailed(2),
+                    snmpverifynodefailed(3),
+                    snmptestsetfailed(4),
+                    snmpcpusetfailed(5),
+                    snmpautocreatefailed(6),
+                    snmpautodeletefailed(7),
+                    genericerror(8)
+                }
+
+-- %CLIIGNORE
+IShelfEventBitmap ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION "This type defines the 64-bit event bitmap."
+    SYNTAX      OCTET STRING (SIZE(8))
+
+IShelfAlarmBitmap ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Alarms
+    -- %CLIWIDTH 16
+    STATUS      current
+    DESCRIPTION "This type defines the 64-bit alarm/status bitmap."
+    SYNTAX      OCTET STRING (SIZE(8))
+
+IShelfSoftwareRevision ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL swRev
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "Format Major(0..255)/Minor(0..255)/Patch(0..65535)"
+    SYNTAX      Unsigned32
+
+IShelfCardSoftwareRevision ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL SoftwareRev
+    -- %CLIWIDTH 14
+    DISPLAY-HINT "14a"
+    STATUS      current
+    DESCRIPTION "Format MM.mm.PPbuild where MM is the major number,
+                 mm is the minor number, PP is the patch number and
+                 build is a build notation. The numbers are decimal
+                 with leading 0, e.g. 01 for 1. The build notation can
+                 be non-numeric. If the string is shorter than the full
+                 14 characters the remainder will be padded with blanks."
+    SYNTAX      OCTET STRING  (SIZE(14))
+
+IShelfDateTime ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL DateTime
+    DISPLAY-HINT "2d-1d-1d,1d:1d:1d"
+    STATUS       current
+    DESCRIPTION
+            "A date-time specification.
+
+            field  octets  contents                  range
+            -----  ------  --------                  -----
+              1      1-2   year*                     0..65536
+              2       3    month                     1..12
+              3       4    day                       1..31
+              4       5    hour                      0..23
+              5       6    minutes                   0..59
+              6       7    seconds                   0..59
+
+            For example, Tuesday May 26, 1992 at 1:30:15 PM EDT would be
+            displayed as:
+
+                             1992-5-26,13:30:15"
+    SYNTAX       OCTET STRING (SIZE (7))
+
+IShelfLabel ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Label
+    -- %CLIWIDTH 32
+    DISPLAY-HINT "32a"
+    STATUS      current
+    DESCRIPTION
+        "A user defined label for a managed entity. This string can consist of all
+         printable ASCII characters and a space, with a few exceptions. The following
+         characters are not allowed:
+                '&', '<', '>', comma, single quote, double quote"
+    SYNTAX      OCTET STRING (SIZE (0..32))
+
+IShelfOntCustomerLabel ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL OntCustomerLabel
+    -- %CLIWIDTH 48
+    DISPLAY-HINT "48a"
+    STATUS      current
+    DESCRIPTION
+        "A user defined label for an ONT. This string can consist of all
+         printable ASCII characters and a space, with a few exceptions. The following
+         characters are not allowed:
+                '&', '<', '>', comma, single quote, double quote"
+    SYNTAX      OCTET STRING (SIZE (0..48))
+
+IShelfBroadbandLabel ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL BBLabel
+    -- %CLIWIDTH 20
+    DISPLAY-HINT "20a"
+    STATUS      current
+    DESCRIPTION
+        "A user defined label for a managed entity. This string can consist of all
+         printable ASCII characters and a space, with a few exceptions. The following
+         characters are not allowed:
+                '&', '<', '>', comma, single quote, double quote"
+    SYNTAX      OCTET STRING (SIZE (0..20))
+
+IShelfCircuit ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Circuit
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "This defines a specific circuit within the system based on context.
+         Examples of circuits are POTS ports, T1 or OC12 facilities, or DS0s. The
+         circuit object is represented in decimal format as follows:
+
+         SSCCUU
+
+         The fields above have the following interpretation:
+            SS = slot: Used for cases where sub-cards are applicable (eg. ONT expansion cards).
+               0 - Does not apply
+               1..5 - See IShelfOntSubscriberLineCardIndex
+            CC = circuit number:  Used to indicate the circuit/facility number on its host.
+               0 - Does not apply
+               1..48 - Circuit/Facility/Port number.
+            UU = unit:  The sub-unit for the circuit/facility (eg. DS0).
+               For DS0s
+               0 - Does not apply and/or all DS0s
+               1..24 - DS0 number
+
+         SSCCUU = (SS * 10000) + (CC * 100) + UU
+
+         If IShelfLocation is idlc then this object is the CRV of the switch interface (1-2048)."
+    SYNTAX      Unsigned32
+
+IShelfFeatureKey ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "8a"
+    STATUS      current
+    DESCRIPTION "Unique key to enable a given feature. 1..8 alphanumeric characters."
+    SYNTAX      OCTET STRING (SIZE(0..8))
+
+IShelfAlarmIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL AlmIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION
+        "This is a rolling counter indicating the order of alarm
+         detection."
+    SYNTAX      INTEGER (0..65535)
+
+IShelfAlarmId ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Alarm
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION
+        "The enumerated list of system alarms/events that can result in
+         a trap notification."
+    SYNTAX      INTEGER {
+                    none(0),                    -- not a valid alarm ID
+                    los(1),                     -- Loss of Signal
+                    lof(2),                     -- Loss of Frame
+                    openDoor(3),                -- Open Door
+                    highTemp(4),                -- High Temperature
+                    user1(5),                   -- User defined external alarm 1
+                    user2(6),                   -- User defined external alarm 2
+                    user3(7),                   -- User defined external alarm 3
+                    user4(8),                   -- User defined external alarm 4
+                    user5(9),                   -- User defined external alarm 5
+                    lossConn(10),               -- Loss of Connection
+                    noComm(11),                 -- No Communication
+                    unequip(12),                -- Equipment not present
+                    lostClkSync(13),            -- Lost Clock Synchronization
+                    lostPriSecClkSync(14),      -- Lost Primary and Secondary Clock Synchronization
+                    lostPriClkSync(15),         -- Lost Primary Clock Synchronization
+                    lostSecClkSync(16),         -- Lost Secondary Clock Synchronization
+                    tmcFail(17),                -- TMC Channel Failure
+                    crc6Error(18),              -- Frame CRC Error
+                    fuseFail(19),               -- Fuse Failure
+                    acFail(20),                 -- AC Power Failure (could be operating on battery power)
+                    facMapError(21),            -- Facility Mapping Error
+                    allTrunksBusy(22),          -- All Trunks are Busy
+                    noCdtLink(23),              -- No CDT Link is Mapped
+                    badProvisioning(24),        -- Incorrect Provisioning
+                    oldProvisioning(25),        -- Provisioning is out of date
+                    shelfSwitchError(26),       -- Shelf Switch Error
+                    noExtRinger(27),            -- External Ringer not present
+                    noOtherRinger(28),          -- Other Ringer not present
+                    noIntRinger(29),            -- Internal Ringer not present
+                    yellow(30),                 -- Yellow Alarm
+                    ais(31),                    -- Alarm Indication Signal
+                    ber(32),                    -- Bit Error Rate
+                    dryupDone(33),              -- Dryup operation is complete (traffic removed from a link)
+                    pwrModGnd(34),              -- Power Module Grounding Error
+                    pwrModNotCurLim(35),        -- Power Module not Current Limited
+                    noStbyIntRing(36),          -- Standby Internal Ring not present
+                    equipMismatch(37),          -- Actual vs Provisioned Equipment don't match
+                    equipNotProvisioned(38),    -- Equipment is present but Not Provisioned
+                    provisioningChanged(39),    -- Provisioning has been modified
+                    provisioningFault(40),      -- Fault occurred trying to apply provisioning
+                    lowVoltage(41),             -- Low 48 Voltage
+                    chargerDisabled(42),        -- Battery Charger is Disabled
+                    loopback(43),               -- Loopback is active
+                    signalFailBer(44),          -- Signal Failed due to high BER
+                    signalDegradeBer(45),       -- Signal is Degraded due to high BER
+                    remoteFail(46),             -- Remote Failure
+                    ses(47),                    -- Severely Errored Second
+                    nodeAllTrunksBusy(48),      -- All Trunks are Busy on a Node
+                    idlcNotInstalled(49),       -- No IDLC communication with the switch
+                    noPriIdlcDs1(50),           -- IDLC Group Primary DS1 (primary TMC/EOC) not in the system
+                    noSecIdlcDs1(51),           -- IDLC Group Secondary DS1 (secondary TMC/EOC) not in the system
+                    extendedShelfFail(52),      -- Extended Shelf (intra-node) Failure
+                    downShelfColl(53),          -- Downstream Shelf Collision
+                    permConnFail(54),           -- Permanent Cross Connect Failure
+                    vcxo(55),                   -- VCXO (clocking) Failure
+                    nidLoopback(56),            -- NID is in Loopback
+                    stbyNotReady(57),           -- Standby CPU is not ready for takeover
+                    mppAcFail(58),              -- External I2C Device AC Failure
+                    mppFuseFail(59),            -- External I2C Device Fuse Failure
+                    mppRectFail(60),            -- External I2C Device Rectifier Failure
+                    mppRectChgrFail(61),        -- External I2C Device Rectifier Charger Failure
+                    mppRectHiTemp(62),          -- External I2C Device Rectifier High Temperature
+                    fanHighTemp(63),            -- High Temperature in the Fan Tray
+                    fan1Fail(64),               -- Fan 1 Failure
+                    fan2Fail(65),               -- Fan 2 Failure
+                    fan3Fail(66),               -- Fan 3 Failure
+                    fan4Fail(67),               -- Fan 4 Failure
+                    fan5Fail(68),               -- Fan 5 Failure
+                    fan6Fail(69),               -- Fan 6 Failure
+                    undefined(70),              -- Unknown alarm
+                    stbyCpuMismatch(71),        -- Standby CPU type Mismatch with the active CPU
+                    provClk(72),                -- Clock Provisioning error
+                    losmf(73),                  -- Loss of Multi-Frame
+                    rmtLosmf(74),               -- Remote Loss of Multi-Frame
+                    adslTrainFail(75),          -- ADSL failed to Train up
+                    localCktPwrLoss(76),        -- Local Loss of Power
+                    rmtCktPwrLoss(77),          -- Remote Loss of Power
+                    rmtLos(78),                 -- Remote Loss of Signal
+                    rmtLof(79),                 -- Remote Loss of Frame
+                    localCrcI(80),              -- Local CRC error Interleave buffer
+                    localCrcF(81),              -- Local CRC error Fast buffer
+                    rmtCrcI(82),                -- Remote CRC error Interleave buffer
+                    rmtCrcF(83),                -- Remote CRC eror Fast buffer
+                    localNcdI(84),              -- Local No Cell Delineation Interleave buffer
+                    localNcdF(85),              -- Local No Cell Delineation Fast buffer
+                    rmtNcdI(86),                -- Remote No Cell Delineation Interleave buffer
+                    rmtNcdF(87),                -- Remote No Cell Delineation Fast buffer
+                    localLcdI(88),              -- Local Loss of Cell Delineation Interleave buffer
+                    localLcdF(89),              -- Local Loss of Cell Delineation Fast buffer
+                    rmtLcdI(90),                -- Remote Loss of Cell Delineation Interleave buffer
+                    rmtLcdF(91),                -- Remote Loss of Cell Delineation Fast buffer
+                    atmLaConnFail(92),          -- ATM/Broadband Line Association Connect Failure
+                    atmSppConnFail(93),         -- ATM/Broadband SPP Connect Failure
+                    notBroadbandComp(94),       -- CPU/SEC is not Broadband Compatible
+                    localLcd(95),               -- Local Loss of Cell Delineation
+                    cellBusAFail(96),           -- Backplane Cell Bus A Failure
+                    cellBusBFail(97),           -- Backplane Cell Bus B Failure
+                    oos(98),                    -- Out Of Service
+                    intFuse(99),                -- Internal Card Fuse Failure
+                    equipFail(100),             -- Equipment Failure
+                    lineTrIdMismatch(101),      -- Line Trace ID Mismatch
+                    lop(102),                   -- Loss of Pointer
+                    pathAis(103),               -- Path AIS
+                    pathPayloadMismatch(104),   -- Path Payload Mismatch
+                    pathTrIdMismatch(105),      -- Path Trace ID Mismatch
+                    pathUnequip(106),           -- Path Unequipped
+                    pathRfi(107),               -- Path Remote Failure Indication
+                    pathFailInd(108),           -- Path Failure Indication
+                    pathConcatMismatch(109),    -- Path Concatenation Mismatch
+                    pathSignalFailBer(110),     -- Path Signal Failure due to high BER
+                    protSwitchFail(111),        -- Protection Switch Failure
+                    manSwitch(112),             -- Manual Protection Switch
+                    autoSwitch(113),            -- Automatic Protection Switch
+                    forcedSwitch(114),          -- Forced Protection Switch
+                    protLockout(115),           -- Locked out of Protection
+                    switchReqWrk(116),          -- Switch Request on Working
+                    switchReqProt(117),         -- Switch Request on Protection
+                    switchToProt(118),          -- Switch To Protection (to standby)
+                    switchBack(119),            -- Switch Back (revert)
+                    cbLossComm(120),            -- Cell Bus Loss of Communication
+                    swMismatch(121),            -- Software Mismatch (software versions are incompatible)
+                    lnTca(122),                 -- SONET Line Threshold Crossing
+                    ptTca(123),                 -- SONET Path Threshold Crossing
+                    pcTca(124),                 -- SONET Packet Threshold Crossing
+                    linkDown(125),              -- Ethernet Link Carrier Loss
+                    excessCollisions(126),      -- Ethernet Excessive Collisions
+                    bridgeFwdTblFull(127),      -- Bridge Forward Table Full
+                    bridgeFwdHashFull(128),     -- Bridge Forware Hash Table Full
+                    nodeIdChange(129),          -- Node ID has Changed
+                    aeFail(130),                -- Aspen Express Failure
+                    atmHecErr(131),             -- ATM HEC Error
+                    stbySyncBusy(132),          -- Standby Sync between OC-x protection cards is Busy
+                    switchToAct(133),           -- Protection Switched to the Active card
+                    switchToStby(134),          -- Protection Switched to the Standby card
+                    postFail(135),              -- Power On Self Test diagnostic Failure
+                    bridgeFwdPortFull(136),     -- Bridge Forward table Port limit has been reached
+                    reserve1(137),              -- reserved for future use
+                    reserve2(138),              -- reserved for future use
+                    reserve3(139),              -- reserved for future use
+                    reserve4(140),              -- reserved for future use
+                    reserve5(141),              -- reserved for future use
+                    reserve6(142),              -- reserved for future use
+                    reserve7(143),              -- reserved for future use
+                    reserve8(144),              -- reserved for future use
+                    reserve9(145),              -- reserved for future use
+                    reserve10(146),             -- reserved for future use
+                    reserve11(147),             -- reserved for future use
+                    reserve12(148),             -- reserved for future use
+                    reserve13(149),             -- reserved for future use
+                    reserve14(150),             -- reserved for future use
+                    reserve15(151),             -- reserved for future use
+                    riFailure(152),             -- Remote Inventory is not valid
+                    ontPonBwExc(153),           -- Bandwidth provisioning for ONT/PON was Exceeded
+                    pwrFail(154),               -- ONT AC power failure (operating on battery)
+                    battMissing(155),           -- ONT battery is missing
+                    battFailure(156),           -- ONT battery has failed
+                    battLow(157),               -- ONT battery charge is low
+                    upsMissing(158),            -- ONT UPS is missing
+                    txLaserOOR(159),            -- ONT Transmit Laser power is out of range
+                    vidRxPwrLow(160),           -- ONT video receiver laser power is low
+                    dsLaserSigBad(161),         -- ONT is detecting a bad downstream laser signal
+                    ontMissing(162),            -- ONT is missing from the PON (no communication with the ONT)
+                    ontLocMismatch(163),        -- ONT location Mismatch (discovered in a different location than previous)
+                    oltLaserFail(164),          -- OLT laser failure (laser end of life)
+                    rai(165),                   -- Remote Alarm Indication
+                    pDumpAvail(166),            -- Panic Dump is Available on the OLT
+                    ontDiscovery(167),          -- ONT has been discovered (communication has been established with the ONT)
+                    ifShutdown(168),            -- Interface (GigE or Eth) shutdown due to overrun condition or DOS attack
+                    aal2SigErr(169),            -- ONT POTS signaling error
+                    pmThresholdXing(170),       -- generic PM threshold crossing
+                    cardUnplug(171),            -- Card/Equipment Inserted
+                    cardPlugin(172),            -- Card/Equipment Removed
+                    ontExpMismatch(173),        -- ONT expansion module actual vs provisioned type mismatch
+                    ontMismatch(174),           -- ONT actual vs provisioned type mismatch
+                    t1FdlFail(175),             -- ONT T1 Facility Data Link missing
+                    ontCommLoss(176),           -- Unprovisioned ONT missing event
+					ontExpModMissing(177),      -- ONT expansion module missing event
+                    ontMissingEvent(178),       -- Provisioned ONT missing event
+					swDownloadFail(179),        -- Software Download Failure
+                    swDownloadCmplt(180),       -- Software Download Complete
+                    dbBackupFail(181),          -- Database Backup Failure
+                    dbBackupCmplt(182),         -- Database Backup Complete
+                    dbRestoreFail(183),         -- Database Restore Failure
+                    provPropagationFail(184),   -- Provisioning Propagation Failure
+                    swDownloadContinuation(185),-- Interim Software Download Status Update (partially complete)
+                    dbRestoreCmplt(186),        -- Database Restore Complete
+                    sdvStrmThresholdXing(187),  -- SDV Stream Threshold Crossing
+                    sdvBwThresholdXing(188),    -- SDV Bandwidth Threshold Crossing
+                    esaActivated(189),          -- ESA Activated
+                    esaCallServerUnavailable(190),-- ESA Call Server Unavailable
+                    unsupportedOnt(191),         -- Unsupported ONT
+                    fpResourceFail(192),         -- FieldProcessor Resource Failure
+                    gwConnect(193),              -- Gateway Connect
+                    gponGemFrameStarvation(194), -- GPON GEM Frame Starvation Alarm
+                    -- new alarms are added here and then update LAST accordingly
+                    idLAST(195),			
+                    trapQOverflow(200)          -- Interal EMGMT card trap queue has overflown.
+                }
+
+IShelfAlarmName ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL AlarmName
+    -- %CLIWIDTH 22
+    DISPLAY-HINT "22a"
+    STATUS      current
+    DESCRIPTION "A text label for an alarm or event."
+    SYNTAX      OCTET STRING (SIZE(0..22))
+
+IShelfAlarmLevel ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Level
+    -- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION
+        "The severity of an alarm. Critical, major, and minor are standing
+         conditions that trigger alarm relays and LEDs. Warning is a standing
+         condition but does not trigger a relay or LED. Event is not a
+         standing condition."
+    SYNTAX      INTEGER {
+                    critical(1),
+                    major(2),
+                    minor(3),
+                    warning(4),
+                    event(5),
+                    clear(6)
+                }
+
+IShelfAlarmState ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL state
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Alarm state determines if the condition is reported."
+    SYNTAX      INTEGER {
+                    enable(1),
+                    disable(2)
+                }
+
+IShelfAlarmCondition ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL cond
+    -- %CLIWIDTH 6
+    DISPLAY-HINT "6a"
+    STATUS      current
+    DESCRIPTION "A description of the condition causing this alarm."
+    SYNTAX      OCTET STRING (SIZE(0..7))
+
+IShelfAlarmConditionString ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL condstr
+    -- %CLIWIDTH 100
+    DISPLAY-HINT "100a"
+    STATUS      current
+    DESCRIPTION "A textual description of the condition causing this alarm."
+    SYNTAX      OCTET STRING (SIZE(0..100))
+
+IShelfAlarmDescription ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Description
+    -- %CLIWIDTH 20
+    DISPLAY-HINT "20a"
+    STATUS      current
+    DESCRIPTION "A short description of the alarm."
+    SYNTAX      OCTET STRING (SIZE(0..21))
+
+IShelfSysConsoleErrorCode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ConsoleErrorCode
+    -- %CLIWIDTH 4
+    STATUS      current
+    DESCRIPTION
+        "The enumerated list of the console error codes used for error
+         code responses."
+    SYNTAX      INTEGER {
+                    ciFirst(0),
+                    ciContinue(1),
+                    ciComplete(2),
+                    ciCompleteNoOutput(3),
+                    ciWait(4),
+                    ciPrintNow(5),
+                    ciFailed(6),
+                    ciResourceError(7),
+                    ciSystemBusy(8),
+                    ciDuplicateEntry(9),
+                    ciNoCardFound(10),
+                    ciInventoryNotAvail(11),
+                    ciUnableToReachNode(12),
+                    ciAlreadyProvisioned(13),
+                    ciNoCard(14),
+                    ciWrongCardType(15),
+                    ciParameterError(16),
+                    ciResourcePreassigned(17),
+                    ciNotAssigned(18),
+                    ciRsourceBusy(19),
+                    ciUpdateNotReq(20),
+                    ciWrongCardTypeInFlash(21),
+                    ciExceedLimit(22),
+                    ciNoPreviousValidEntry(23),
+                    ciRangeError(24),
+                    ciProvisioning(25),
+                    ciDisabled(26),
+                    ciNotSupported(27),
+                    ciCommandTimeout(28),
+                    ciEnabled(29),
+                    ciResourceIdle(30),
+                    ciTestBusInUse(31),
+                    ciVpError(32),
+                    ciVpiVciError(33),
+                    ciNetworkVpError(34),
+                    ciNetworkVpiVciError(35),
+                    ciLocationConflict(36),
+                    ciOcCardContinue(37),
+                    ciRingNodeContinue(38),
+                    ciMoreEntries(39),
+                    ciMcastDuplicateIpAddr(40),
+                    ciInvalidStsType(41),
+                    ciCardTypeMismatch(42),
+                    ciTestTimeout(43),
+                    ciInitTest(44),
+                    ciTestAbort(45),
+                    ciResetTimer(46),
+                    ciRetryExpired(47),
+                    ciMcastExportVci(48),
+                    ciMultiVideoLas(49),
+                    ciVlanPortProfileNonSingular(50),
+                    ciNetworkLocationBad(51),
+                    ciLineLocationBad(52),
+                    ciNetworkConflict(53),
+                    ciLineConflict(54),
+                    ciNetworkPortInvalid(55),
+                    ciLinePortInvalid(56),
+                    ciRfvideoNotAllowed(57),
+                    ciSppNotExist(58),
+                    ciScpNotExist(59),
+                    ciLcpNotExist(60),
+                    ciDeprecated(61),
+                    ciVpiInUseByUnicast(62),
+                    ciVpiInUseByMcast(63),
+                    ciEportChOverlap(64),
+                    ciEthModeNotSupported(65),
+                    ciWrongPortType(66),
+                    ciPortNotProvisioned(67),
+                    ciInconsistentvalue(68),
+                    ciSppInUseByExport(69),
+                    ciNewRdtInvldForCrntShr(70),
+                    ciProvisionOwnerNm(71),
+                    ciProvisionOwnerAtm(72),
+                    ciProvisionOwnerLm(73),
+                    ciProvisionOwnerTest(74),
+                    ciProvisionOwnerLan(75),
+                    ciProvisionOwnerMr(76),
+                    ciProvisionOwnerIdlc(77),
+                    ciProvisionOwnerOlt(78),
+                    ciDwcLocError(79),
+                    ciDwcSlotProvisioned(80),
+                    ciMatePortNotProvisioned(81),
+                    ciNetworkNotProvisioned(82),
+                    ciLineNotProvisioned(83),
+                    ciVpiMergeError(84),
+                    ciVciSnoopError(85),
+                    ciDeviceNotResponding(86),
+                    ciOntNotExist(87),
+                    ciOntReleaseError(88),
+                    ciIncompatibleSoftwareVersion(89),
+                    ciEvcInvalidLaSubtype(90),
+                    ciEvcLoop(91),
+                    ciVlanConfigProfileNotExist(92),
+                    ciVlanConfigProfileTypeChanged(93),
+                    ciVlanConfigProfileDefaultChanged(94),
+                    ciVlanConfigProfileNotVideoEnabled(95),
+                    ciSppUnsupportedContentType(96),
+                    ciLaUnsupportedContentType(97),
+                    ciResourceInUse(98),
+                    ciVlanConfigProfileUnsupportedContentType(99),
+                    ciVlanConfigProfileNotDataEvcEnabled(100),
+                    ciVlanConfigProfileNoPerFlowBundle(101),
+                    ciVlanConfigProfileRecursiveTunnel(102),
+                    ciSlaNotExist(103),
+                    ciCannotEditSppLocation(104),
+                    ciEvcPointToPointFull(105),
+                    ciEvcMultipointToLarge(106),
+                    ciSppEsaAlreadyExist(107),
+                    ciTestcircuitLaNotExist(108),
+                    ciSelfLoop(109),
+                    ciShapingRequired(110),
+                    ciVlanPortProfileNotExist(111),
+                    ciVpiInUseByExport(112),
+                    ciUnknownSpp(113),
+                    ciEditNotSprtedForThisSppType(114),
+                    ciProvisionOwnerMgmt(115),
+                    ciAddNewHere(116),
+                    ciEnableEthernetComplete(117),
+                    ciCardRemovalStandbyFailure(118),
+                    ciResourceTestBusInUse(119),
+                    ciRequestedTapBusy(120),
+                    ciVpMustBeUnique(121),
+                    ciVpL2l3SppError(122),
+                    ciDuplicateEthernetAddress(123),
+                    ciDuplicateIpaddressError(124),
+                    ciCircuitNumberNotSupported(125),
+                    ciNodeDeleteStsError(126),
+                    ciCardRemoveStsError(127),
+                    ciCardRestoreStsError(128),
+                    ciVlanPortProfileLaError(129),
+                    ciLayer3LocationError(130),
+                    ciOntNotFound(131),
+                    ciPortInUse(132),
+                    ciVpiInUseByLa(133),
+                    ciFiberRingError(134),
+                    ciIpaddressMaskError(135),
+                    ciIpaddressInconsistent(136),
+                    ciLineAssocIdInUse(137),
+                    ciVlanConfigProfileEvcError(138),
+                    ciCardEnableError(139),
+                    ciDefaultVlanDeleteError(140),
+                    ciVideoVlanConfigError(141),
+                    ciIpInterfaceError(142),
+                    ciVlanConfigProfileReferenceError(143),
+                    ciVlanSlaReferenceError(144),
+                    ciVlanConfigProfileError(145),
+                    ciInvalidVlanConfigProfileCombo(146),
+                    ciLastResponseCode(147)
+                }
+
+IShelfRedundancy ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Redundancy
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "The method of redundancy for node maps (connections between nodes)."
+    SYNTAX      INTEGER {
+                    none(1),
+                    linear1to1(2),
+                    upsr(3),
+                    blsrc(4),
+                    equip(5),
+                    shr(6)
+                }
+
+IShelfFiberRingId ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Ring
+    -- %CLIWIDTH 4
+    STATUS      current
+    DESCRIPTION
+        "If the node map is a FO155 ring, this identifies the ring that this
+         node belongs to."
+    SYNTAX      INTEGER (0..16)
+
+IShelfStsCircuitType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL STSType
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION
+        "If the node map is an OC12, this identifies the circuit type.
+         STS = Synchronous Transport Signal level
+            STS1   - 51.84 Mbps
+            STS3c  - 155 Mbps concatenated
+            STS12c - 622 Mbps concatenated
+            STS48c - 2488 Mbps concatonated"
+    SYNTAX      INTEGER {
+                    none(0),
+                    sts1(1),
+                    sts3c(2),
+                    sts12c(3),
+                    sts48c(4)     
+                }
+                
+IShelfCircuitType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL CktType
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION
+        "This identifies the circuit type for Line Associations.
+         POTS(0), DS0(1), IDLC Interface Group (8)"
+    SYNTAX      INTEGER {
+                    pots(0),
+                    ds0(1),
+                    idlcIG(8)
+                }
+                
+IShelfPermCCCircuitType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL PermCktType
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION
+        "This identifies the circuit type for Permanent CrossConnects."
+    SYNTAX      INTEGER {
+                    pots(0),
+                    ds0(1),
+                    ds1(2),
+                    to(3),
+                    dds(4),
+                    isdn(5)
+                }
+
+IShelfTdmBandwidth ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL TDMBw
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "The number of 96 DS0 bundles the node map supports."
+    SYNTAX      INTEGER (0..15)
+
+IShelfAlarmIO ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL AlrmIO
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "Indicates whether alarms are INPUT or OUTPUT"
+    SYNTAX      INTEGER {
+                    output(1),
+                    input(2)
+                }
+
+IShelfPartNumber ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL PartNumber
+    -- %CLIWIDTH 12
+    DISPLAY-HINT "12a"
+    STATUS      current
+    DESCRIPTION
+        "The number used to identify the card, options, and its
+         revision number.
+         It is a 12 character ASCII string (space padded).  Currently,
+         only the first 10 characters are used.  The first 6 characters
+         identify the part number and the last 4 characters identify tab
+         number (or spin).  E.g., 3001780003."
+    SYNTAX      OCTET STRING (SIZE(12))
+
+IShelfHardwareRevision ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL hw
+    -- %CLIWIDTH 4
+    DISPLAY-HINT "4a"
+    STATUS      current
+    DESCRIPTION
+        "The number used to identify the card, options, and its
+         revision number."
+    SYNTAX      OCTET STRING (SIZE(4))
+
+IShelfSerialNumber ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL serialNo
+    -- %CLIWIDTH 12
+    DISPLAY-HINT "12a"
+    STATUS      current
+    DESCRIPTION "A card serial number string. Telstrat format."
+    SYNTAX      OCTET STRING (SIZE(12))
+
+IShelfFpga ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL fpga
+    -- %CLIWIDTH 6
+    DISPLAY-HINT "6a"
+    STATUS      current
+    DESCRIPTION "The revision number for an FPGA."
+    SYNTAX      OCTET STRING (SIZE(6))
+
+IShelfModule ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL module
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION
+        "The type of module the image record applies to.
+         The module type of downloaded(11) indicates that the card
+         has been downloaded with a new version of software but not
+         yet switched. Following the next reset of this card, the
+         downloaded version will be the running version."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    aApp(1),
+                    aBoot(2),
+                    app(3),
+                    boot(4),
+                    coeff(5),
+                    cpld(6),
+                    cpld2(7),
+                    dsp(8),
+                    fpga1(9),
+                    fpga2(10),
+                    downloaded(11)
+                }
+
+IShelfOntType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL OntType
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION
+        "This enumeration identifies the ONT Type.
+                Voice Ports  Ethernet Ports  RF Video Ports  Expansion Slots
+                -----------  --------------  --------------  ---------------
+         fp502      2               1               0               0
+         fp504      4               1               0               0
+         fp522      2               1               1               0
+         fp524      4               1               1               0
+         fp560      4               4               1               2
+         ont1200    2               1               0               1
+         ont1210    2               1               1               1
+         ont1400    4               1               0               1
+         ont1410    4               1               1               1"
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    fp502(1),
+                    fp504(2),
+                    fp522(3),
+                    fp524(4),
+                    fp560(5),
+                    ont1200(6),
+                    ont1210(7),
+                    ont1400(8),
+                    ont1410(9),
+                    generic(10)
+                }
+
+IShelfOntRegistrationId ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL RegId
+    -- %CLIWIDTH 16
+    DISPLAY-HINT "16a"
+    STATUS      current
+    DESCRIPTION
+        "The ONT registration identifier.  It is a 16 character
+         ASCII string (zero padded)."
+    SYNTAX      OCTET STRING (SIZE(16))
+
+IShelfOntSerialNumber ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL SerialNo
+    -- %CLIWIDTH 16
+    DISPLAY-HINT "16a"
+    STATUS      current
+    DESCRIPTION
+        "The OSI serial number.  It is a 16 character
+         ASCII string (zero padded).  Currently, only the first 10
+         characters are used.  E.g., S030011492."
+    SYNTAX      OCTET STRING (SIZE(16))
+
+IShelfOntFlashLed ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Led
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION
+        "Override behavior of CPU LED on ONT to give indication
+         to personnel installing ONTs in the field."
+    SYNTAX      INTEGER {
+                    off(0),
+                    solid(1),
+                    normal(2),  -- normal flash
+                    slow(3),    -- slow flash
+                    wink1(4),   -- one flash, long pause
+                    wink2(5),   -- two flashes, long pause
+                    wink3(6),   -- three flashes, long pause
+                    wink4(7),   -- four flashes, long pause
+                    wink5(8)    -- five flashes, long pause
+                }
+
+IShelfOntVoiceMessagePlayback ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL play
+    -- %CLIWIDTH 4
+    STATUS      current
+    DESCRIPTION
+        "Defines the set of voice messages that can be played
+         on port 1 of the integrated POTS subscriber line card."
+    SYNTAX      INTEGER {
+                    off(0),
+                    msg1(1),
+                    msg2(2),
+                    msg3(3)
+                }
+
+IShelfOntLogicalId ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL LogicalId
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "This type identifies the range of ONT logical ID
+         values.  ONTs are provisioned based on logical ID.
+         Zero (0) is an invalid logical ID."
+    SYNTAX      Unsigned32 (1..4294967295)
+
+IShelfOntDiscLogicalId ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL LogicalId
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "This type identifies the range of ONT logical ID
+         values used in the Discovery table.  ONTs are
+         provisioned based on logical ID. Zero (0) is
+         valid for unprovisioning an ONT via the Discovery
+         Table."
+    SYNTAX      Unsigned32 (0..4294967295)
+
+IShelfOntOperState ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL OntState
+    -- %CLIWIDTH 12
+    STATUS      current
+    DESCRIPTION
+        "The ONT operational state indicates if the state of the ONT managed
+         entity."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    provisioned(1),
+                    present(2),
+                    active(3),
+                    disabled(4),
+                    missing(5),
+                    pending(6)
+                }
+
+IShelfIdlcSwitchManufacturer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL SwitchType
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "Identifies the type of switch supporting the IDLC group."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    dms10(1),
+                    nortelNetworks(2),
+                    lucent(3),
+                    ewsd(4),
+                    gtd5(5)
+                }
+
+IShelfBer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL BER
+    -- %CLIWIDTH 9
+    STATUS      current
+    DESCRIPTION "Bit Error Rate level."
+    SYNTAX      INTEGER {
+		    unset(0),
+                    ber10neg3(3),
+                    ber10neg4(4),
+                    ber10neg5(5),
+                    ber10neg6(6),
+                    ber10neg7(7),
+                    ber10neg8(8),
+                    ber10neg9(9)
+                }
+
+IShelfT1FrameFormat ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Frame
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "Type of T1 framing."
+    SYNTAX      INTEGER {
+                    esf(1),     -- Extended Super Frame
+                    sf(2)       -- Super Frame
+                }
+
+IShelfT1LineCoding ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Code
+    -- %CLIWIDTH 4
+    STATUS      current
+    DESCRIPTION "Type of T1 line encoding."
+    SYNTAX      INTEGER {
+                    b8zs(1),    -- Bipolar 8 Zero Substitution
+                    ami(2)      -- Alternate Mark Inversion
+                }
+
+IShelfT1Lbo ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Lbo
+    -- %CLIWIDTH 14
+    STATUS      current
+    DESCRIPTION "Type of T1 line buildout."
+    SYNTAX      INTEGER {
+                    shorthaul110(1),   -- 0-110 feet
+                    shorthaul220(2),   -- 110-220 feet
+                    shorthaul330(3),   -- 220-330 feet
+                    shorthaul440(4),   -- 330-440 feet
+                    shorthaul550(5),   -- 440-550 feet
+                    shorthaul660(6),   -- 550-660 feet
+                    longhaul0(7),      -- 0 dB
+                    longhaul7dot5(8),  -- -7.5 dB
+                    longhaul15(9),     -- -15 dB
+                    longhaul22dot5(10) -- -22.5 dB
+                }
+
+IShelfLoopback ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Loopback
+    -- %CLIWIDTH 13
+    STATUS      current
+    DESCRIPTION "Type of T1 loopback."
+    SYNTAX      INTEGER {
+                    none(0),
+                    localLine(1),
+                    localPayload(2),
+                    localDiag(3),
+                    localFpga(4),
+                    remoteLine(5),
+                    remotePayload(6),
+                    other(7)
+                }
+
+IShelfDs3FrameFormat ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Ds3Frame
+    -- %CLIWIDTH 12
+    STATUS      current
+    DESCRIPTION "Determines selection of DS3 Frame Format."
+    SYNTAX      INTEGER {
+                    m23(1),
+                    cBit(2)
+                }
+
+IShelfDs3LBO ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Ds3LBO
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "Determines selection of DS3 Line Build Out."
+    SYNTAX      INTEGER {
+                    shorthaul(1),   --  < 225 feet
+                    longhaul(2)     --  225 - 450 feet
+                }
+
+IShelfDs3Timing ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Ds3Timing
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "Determines selection of DS3 Timing."
+    SYNTAX      INTEGER {
+                    local(1),
+                    recovered(2)
+                }
+
+IShelfDs3FERFAlarms ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Ds3FERF
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "Determines selection of the DS3 automatic FERF Alarms."
+    SYNTAX      INTEGER {
+                    disabled(1),
+                    enabled(2)
+                }
+
+IShelfDs3ATMMode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Ds3ATM
+    -- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Determines selection of the DS3 ATM Mode."
+    SYNTAX      INTEGER {
+                    plcp(1),
+                    adm(2)
+                }
+
+IShelfDs3CellPayloadScramble ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Ds3Scramble
+    -- %CLIWIDTH 12
+    STATUS      current
+    DESCRIPTION "Determines selection of the DS3 Cell Payload Scrambling."
+    SYNTAX      INTEGER {
+                    disabled(1),
+                    enabled(2)
+                }
+
+IShelfOntSubscriberLineCardIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL SlcIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "ONT subscriber line card slot."
+    SYNTAX      INTEGER {
+                    iEth(1),   -- integrated ethernet
+                    iPots(2),  -- integrated POTS
+                    iRf(3),    -- integrated RF
+                    nExp1(4),  -- expansion slot 1
+                    nExp2(5)   -- expansion slot 2
+                }
+
+IShelfSystemGain ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL gain
+    -- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "POTS gain."
+    SYNTAX      INTEGER {
+                    enhanced(-2),
+                    normal(0)
+                }
+
+IShelfImpedance ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL imp
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "POTS impedance."
+    SYNTAX      INTEGER {
+                    imp600(1),
+                    imp900(2)
+                }
+
+IShelfBlockedCallTreatment ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL blkdCallTrt
+    -- %CLIWIDTH 11
+    STATUS      current
+    DESCRIPTION "How to respond to a blocked call."
+    SYNTAX      INTEGER {
+                    ringingTone(1),
+                    busyTone(2)
+                }
+
+IShelfOntSubscriberLineCardType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL slcType
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Type of ONT subscriber line card."
+    SYNTAX      INTEGER {
+                    empty(0),
+                    eth1(1),
+                    eth4(2),
+                    pots2(3),
+                    pots4(4),
+                    pots8(5),
+                    rf1(6),
+                    rf4(7),
+                    t1four(8),
+                    t1one(9),
+                    hpna1(10),
+                    hpna4(11),
+                    moca1(12),
+                    moca4(13)
+                }
+
+IShelfTransmissionMode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL txMode
+    -- %CLIWIDTH 11
+    STATUS      current
+    DESCRIPTION "POTS On-Hook Transmission mode."
+    SYNTAX      INTEGER {
+                    fullTimeOht(1),
+                    partTimeOht(2)
+                }
+
+IShelfSupervisoryMode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL sprvMode
+    -- %CLIWIDTH 11
+    STATUS      current
+    DESCRIPTION "POTS Supervisory mode."
+    SYNTAX      INTEGER {
+                    loopStart(1),
+                    groundStart(2)
+                }
+
+IShelfLocationType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL locType
+    -- %CLIWIDTH 15
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of addressing
+         used for a IShelfLocation and/or IShelfCircuitAddress
+         object.
+
+         physicalAddress - IShelfLocation is Node/Shelf/Slot
+             IShelfCircuitAddress if present describes a circuit on the slot.
+         logicalOntId - IShelfLocation is IShelfOntLogicalId
+             IShelfCircuitAddress if present describes a circuit on the ONT.
+         idlc - indicates an IDLC switch interface. The IShelfLocation will
+                indicate the IDLC group and the IShelfCircuit will 
+                indicate the CRV of the interface."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    physicalAddress(1),
+                    logicalAddress(2),
+                    physicalOntAddress(3),
+                    idlc(4)
+                }
+
+IShelfLocation ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL location
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "This defines a specific physical location (node-shelf-slot) or
+         logical location (logicalId) within the system based on context.
+
+         For logical addresses this is a non-zero 32-bit number. Any number 1..4294967296 is
+         a valid logical address.
+
+         For physical addresses, this object is represented in decimal format as follows:
+
+         NNSSss
+
+         The fields above have the following interpretation:
+            NN = The node address.
+               0 - Does not apply
+               1..32 - Node address
+            SS = The shelf address.
+               0 - Does not apply
+               1..16 - Shelf address
+            ss = The slot within a shelf.
+               0 - Does not apply
+               1..24 - Slot address
+
+         NNSSss = (NN * 10000) + (SS * 100) + ss
+         
+         For ONT physical addresses, this object is represented in decimal format as follows:
+
+         NNSSssPOO
+
+         The fields above have the following interpretation:
+            NN = The node address.
+               0 - Does not apply
+               1..32 - Node address
+            SS = The shelf address.
+               0 - Does not apply
+               1..16 - Shelf address
+            ss = The slot within a shelf.
+               0 - Does not apply
+               1..24 - Slot address
+            P  = The OLT PON.
+               0 - Does not apply
+               1..4 - OLT PON
+            OO = ONT id.
+               0 - Does not apply
+               1..64 - ONT Id
+               
+         NNSSssPOO = (NN * 100000000) + (SS * 1000000) + (ss * 10000) + (P * 100) + OO
+
+         Notes regarding the slot (ss) portion of the physical addresses:
+            ss = 1..20 are the General Purpose Slots in the shelf
+               = 21 = CPUA Slot
+               = 22 = CPUB Slot
+               = 23 = SPCA Slot
+               = 24 = SPCB Slot
+
+         For IDLC switch interface this object represents the IDLC group number (1-4)."
+    SYNTAX      Unsigned32
+
+IShelfCircuitAddress ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL circuit
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "Based on an associated IShelfLocationType this field
+         describes a circuit on a slot or ONT."
+    SYNTAX      Unsigned32
+
+IShelfEthernetPortMode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ethMode
+    -- %CLIWIDTH 9
+    STATUS      current
+    DESCRIPTION
+        "These values represent the operating modes of an
+         ethernet port."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    auto(1),       -- auto negotiation
+                    m10Half(2),    -- 10Mbps Half Duplex
+                    m10Full(3),    -- 10Mbps Full Duplex
+                    m100Half(4),   -- 100Mbps Half Duplex
+                    m100Full(5),   -- 100Mbps Full Duplex
+                    m1000Full(6)   -- 1000Mbps Full Duplex
+            }
+
+IShelfOltBandwidthPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL bwPtr
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION
+        "The value represents a pointer link into the
+         iShelfOltBandwidthTable.  A value of zero indicates an
+         invalid or unused bandwidth table pointer."
+    SYNTAX      INTEGER (0..64)
+
+IShelfOltBandwidthIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL bwIdx
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION
+        "The value represents an index into the
+         iShelfOltBandwidthTable."
+    SYNTAX      INTEGER (1..64)
+
+IShelfEthernetTrafficMode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL trafMode
+    -- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the form of the traffic handled
+         by the port.  The options provide the acceptable formats handled
+         by the system.
+
+         utisp - only ISP related traffic (Layer-3 Data/PPPoE)
+             traffic is supported by the interface.  This
+             traffic is received and transmitted without VLAN
+             tags.  layer2VlanProfilePointer and subscriberIspVlanTag are
+             ignored in this case.
+
+         tl2tisp - both ISP and Layer-2 traffic are supported on
+             the interface.  Additionally, all frames received are
+             expected to include a VLAN tag.  Both layer2VlanProfilePointer
+             and subscriberIspVlanTag must be populated with non-zero values.
+
+         tl2utisp - both ISP and Layer-2 traffic are supported on the
+             interface.  Layer-2 frames are expected to be tagged and ISP
+             related traffic is untagged.  layer2VlanProfilePointer must
+             be populated with a non-zero value.  subscriberIspVlanTag
+             is ignored in this case.
+
+         l2only - only Layer-2 traffic is supported on the interface.
+             Frames do not include the carrier VLAN tags.
+             layer2VlanProfilePointer must be populated with a non-zero
+             value.  subscriberIspVlanTag is ignored in this case."
+    SYNTAX      INTEGER {
+                    utisp(0),
+                    tl2tisp(1),
+                    tl2utisp(2),
+                    l2only(3)
+                }
+
+IShelfOltPonBandwidthProfileRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ponBw
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "Bandwidth rate is specified in units of kilobits per
+         second.  E.g. a 64kbps rate is specified as 64,
+         and a 2mb rate is specified as 2000.
+         The valid range is 0 kbps to 100000 kbps (100 Mbps)."
+    SYNTAX      INTEGER (0..100000)
+
+IShelfOltPonBandwidthRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ponBw
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "Bandwidth rate is specified in units of kilobits per
+         second.  E.g. a 64kbps rate is specified as 64,
+         and a 2mb rate is specified as 2000.
+         The valid range is 0 kbps to 40000 kbps (40 Mbps)."
+    SYNTAX      INTEGER (0..40000)
+
+IShelfOltSdvPonBandwidthRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ponBw
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION
+        "Bandwidth rate is specified in units of kilobits per
+         second.  E.g. a 64kbps rate is specified as 64,
+         and a 2mb rate is specified as 2000.
+         The valid range is 0 kbps to 1000000 kbps (1 Gbps)."
+    SYNTAX      INTEGER (0..1000000)
+
+IShelfOltPonLocalGigE ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL localGigE
+    -- %CLIWIDTH 9
+    STATUS      current
+    DESCRIPTION
+        "The value indicates whether this card utilizes a Local GigE." 
+    SYNTAX      INTEGER {
+                    no(0),
+                    yes(1)
+                }
+
+IShelfOltPonSdvStreams ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL SdvStreams
+    -- %CLIWIDTH 1
+    STATUS      current
+    DESCRIPTION
+        "SDV Streams count.  The valid range is 0 to 512."
+    SYNTAX      INTEGER (0..512)
+
+IShelfFacilityType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL facType
+    -- %CLIWIDTH 11
+    STATUS      current
+    DESCRIPTION "Enumerated facility types."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    dacsflex(1),
+                    modemRouter(2),
+                    t1(3),
+                    ontT1(4),           -- T1 facility on an ONT
+                    mdsl(5),
+                    fo155(6),
+                    oc12(7),
+                    oc48(8),
+                    ten100(16),
+                    ontTen100(17),      -- 10/100 baseT Ethernet facility on an ONT
+                    gige(18),
+                    oltGige(19)         -- Gig-Ethernet facility on an OLT
+                }
+
+IShelfSppFacilityType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL facType
+    -- %CLIWIDTH 11
+    STATUS      current
+    DESCRIPTION "Enumerated SPP/uplink facility types."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    ds1(1),
+                    ds1Ima(2),
+                    sonet(3),
+                    ethernet(4),
+                    oltGigEthernet(5),  -- Gig-Ethernet facility on an OLT
+                    ds3(6)
+                }
+
+IShelfPortType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL portType
+    -- %CLIWIDTH 9
+    STATUS      current
+    DESCRIPTION "Enumerated port types."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    pots(1),
+                    dds(2),
+                    to(3),
+                    potsR4e(4),
+                    uvgc(5),
+                    uvgr(6),
+                    ontPots(7),         -- voice port on an ONT
+                    ontTen100(16),      -- 10/100 baseT Ethernet port on an ONT
+                    ontRf(32)           -- RF video port on an ONT
+                }
+
+IShelfOltTrafficShaperIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL shIdx
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the OltTrafficShaperTable."
+    SYNTAX      INTEGER (1..30)
+
+IShelfOltTrafficShaperPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL shPtr
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "A pointer to an OltTrafficShaperTable row if non-zero."
+    SYNTAX      INTEGER (0..30)
+
+IShelfOltQosIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL qosIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the OltQosProfileTable."
+    SYNTAX      INTEGER (1..1)
+
+IShelfOltQosPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL qosPtr
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "A pointer to an OltQosProfileTable row if non-zero."
+    SYNTAX      INTEGER (0..1)
+
+IShelfOltQosFilterIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL fltIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION
+        "An index into the OltQosFilterTable for a given
+         IShelfQosIndex."
+    SYNTAX      INTEGER (1..40)
+
+IShelfOltQosPriority ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL prior
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "The priority to be applied to the associated filter."
+    SYNTAX      INTEGER {
+                    none(0),  -- cannot be set by manager;
+                    -- only used when entry status is inactive.
+                    low(1),
+                    medium(2),
+                    high(3)
+                }
+        
+IShelfOltQosStatus ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL status
+    -- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "How packets matching this QoS filter are handled."
+    SYNTAX      INTEGER {
+                    inactive(0),   -- entry is not used
+                    discard(1),    -- discard the packet
+                    forward(3)     -- normal packet processing
+            }
+
+IShelfVlanListIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vlIdx
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the VLAN list table."
+    SYNTAX      INTEGER (1..64)
+
+IShelfVlanListPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vlPtr
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the VLAN list table, if non-zero."
+    SYNTAX      INTEGER (0..64)
+    
+IShelfVlanPortProfilePointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vlPtr
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the VLAN Port Profile table, if non-zero."
+    SYNTAX      INTEGER (0..128)
+
+IShelfVlanProfileIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vpIdx
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the VLAN profile table."
+    SYNTAX      INTEGER (1..128)
+
+IShelfVlanTag ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vtag
+    -- %CLIWIDTH 4
+    STATUS      current
+    DESCRIPTION "The VLAN tag value, if non-zero."
+    SYNTAX      INTEGER (0..4094)
+    
+IShelfVlanXgressTag ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL inOutTag
+    -- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "The VLAN ingress/egress tag value."
+    SYNTAX      INTEGER {
+                    untagged(0),
+                    tagged(1),
+                    both(2)
+                }
+
+
+IShelfFilterProfileType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL fltrType
+    -- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION ""
+    SYNTAX      INTEGER {
+                    none(0),
+                    l2filter(1),
+                    l3filter(2)
+                }
+
+IShelfFilterProfileIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL fpIdx
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the QoS filter profile table."
+    SYNTAX      INTEGER (1..64)
+
+IShelfFilterProfilePointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL fpPtr
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the QoS filter profile table, if non-zero."
+    SYNTAX      INTEGER (0..64)
+
+IShelfDhcpProfileIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL dhcpIdx
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "An index into the DHCP profile table."
+    SYNTAX      INTEGER (1..64)
+
+IShelfDhcpProfilePointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL dhcpPtr
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "An index into the DHCP profile table, if non-zero."
+    SYNTAX      INTEGER (0..64)
+
+IShelfOntEthernetServiceType ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL srvType
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION
+        "The type of service this record applies to. Currently only
+         data and sdv service types are supported."
+    SYNTAX      INTEGER {
+                    data(1),   -- Default Data Service
+                    sdv(2)     -- Service requiring SDV processing
+            }
+
+IShelfOltSdvPackageIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL pkgIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the SDV Package table."
+    SYNTAX      INTEGER (1..32)
+
+IShelfOltSdvPackagePointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL pkgPtr
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the SDV Package table, if non-zero."
+    SYNTAX      INTEGER (0..32)
+
+IShelfOltSdvMapIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL mapIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the SDV Map table."
+    SYNTAX      INTEGER (1..20)
+
+IShelfThresholdCrossingIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL tcIdx
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the Threshold Crossing table."
+    SYNTAX      INTEGER (1..64)
+
+IShelfThresholdCrossingPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL tcPtr
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "An index into the Threshold Crossing table, if non-zero."
+    SYNTAX      INTEGER (0..64)
+
+PerfCurrentCount ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL count
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "Generic PM count."
+    SYNTAX      Gauge32
+
+IShelfIdlcInterfaceState ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL intfSt
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "The current state of the GR303 IDLC Interface."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    stopping(1),        -- in the process of being stopped
+                    stopped(2),         -- in the stopped state
+                    provisioning(3),    -- in the process of being provisioned
+                    provisioned(4),     -- in a stopped and provisioned state
+                    starting(5),        -- in the process of being started
+                    started(6),         -- in the operational state
+                    fault(7)            -- in a faulted state
+                }
+
+IShelfIdlcPathStatus ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL pathSt
+    -- %CLIWIDTH 14
+    STATUS      current
+    DESCRIPTION "The current status the IDLC TMC/EOC path."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    established(1),
+                    notEstablished(2)
+                }
+
+IShelfIdlcActivePath ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL actPath
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "The current IDLC link that is active."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    primary(1),
+                    secondary(2)
+                }
+
+IShelfIdlcLinkState ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL linkSt
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "The current state of the primary or secondary TMC/EOC."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    los(1),         -- the DS1 carrying this link is in LOS
+                    clear(2),       -- normal operating state
+                    ber(3),         -- the DS1 carrying this link has a high BER
+                    fault(4)        -- the link (TMC/EOC) is faulted
+                }
+
+IShelfOltPonIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL pon
+    -- %CLIWIDTH 3
+    STATUS      current
+    DESCRIPTION "A PON identifier."
+    SYNTAX      INTEGER (1..4)
+
+IShelfOltOntId ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ont
+    -- %CLIWIDTH 3
+    STATUS      current
+    DESCRIPTION "An ONT identifier for an ONT on a particular PON."
+    SYNTAX      INTEGER (1..64)
+
+IShelfPerfInvalidFlag ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL Valid
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Status of a particular portion of PM data."
+    SYNTAX      INTEGER {
+                    ok(0),
+                    invalid(1),
+                    pending(2)
+                }
+
+IShelfSysTrapOid ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION "Object identifier that the alarm or event is associated with."
+    SYNTAX      OBJECT IDENTIFIER
+
+IShelfProductId ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ProductId
+    -- %CLIWIDTH 10
+    DISPLAY-HINT "10a"
+    STATUS      current
+    DESCRIPTION
+        "The product identifier.  It is a 10 character
+         ASCII string (space padded).  The following product ID values
+         are currently in use:
+
+         -- OLT
+         TOLT-232 - 2-PON 32 ONTs per PON Telstrat OLT
+         TOLT-432 - 4-PON 32 ONTs per PON Telstrat OLT
+         TOLT-264 - 2-PON 64 ONTs per PON Telstrat OLT
+         TOLT-464 - 4-PON 64 ONTs per PON Telstrat OLT
+
+         -- ONT product IDs
+         FP-502
+         FP-504
+         FP-522
+         FP-524
+         FP-560
+
+         -- Expansion Card product IDs
+         VID-560 - 4-port RF Video (FP-560)
+         T1-560 - 4-port T1 expansion (FP-560)
+         UVG-560 - 4-port UVG (POTS) expansion (FP-560)
+
+         Please note, these product IDs are subject to change."
+    SYNTAX      OCTET STRING (SIZE(10))
+
+IShelfCleiCode ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL CLEICode
+    -- %CLIWIDTH 10
+    DISPLAY-HINT "10a"
+    STATUS      current
+    DESCRIPTION "CLEI code."
+    SYNTAX      OCTET STRING (SIZE(10))
+
+IShelfHookState ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL hookSt
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Values for POTS hook state."
+    SYNTAX      INTEGER {
+                    onHook(0),
+                    offHook(1)
+                }
+
+IShelfVciRelayProfileIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vciIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the VCI Relay Profile table."
+    SYNTAX      INTEGER (1..64)
+
+IShelfVciRelayProfilePointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vciPtr
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the VCI Relay Profile table, if non-zero."
+    SYNTAX      INTEGER (0..64)
+
+IShelfFilename ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL filename
+    -- %CLIWIDTH 64
+    DISPLAY-HINT "64a"
+    STATUS      current
+    DESCRIPTION "Pathname for a file in the system. i.e., pathname for a crash dump."
+    SYNTAX      OCTET STRING (SIZE(0..64))
+
+IShelfDownloadFilename ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL filename
+    -- %CLIWIDTH 128
+    DISPLAY-HINT "128a"
+    STATUS      current
+    DESCRIPTION "Pathname for a file in the system. i.e., pathname for a crash dump."
+    SYNTAX      OCTET STRING (SIZE(0..128))
+
+IShelfGenericString ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL string
+    -- %CLIWIDTH 128
+    DISPLAY-HINT "128a"
+    STATUS      current
+    DESCRIPTION "Generic string convention."
+    SYNTAX      OCTET STRING (SIZE(0..128))
+
+IShelfDdsDataRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL ddsRate
+    -- %CLIWIDTH 10
+    STATUS      current
+    DESCRIPTION "Defines the Dataphone Digital Service data rates."
+    SYNTAX      INTEGER {
+                    kbps4dot8(1),
+                    kbps9dot6(2),
+                    kbps19dot2(3),
+                    kbps56(4),
+                    kbps64(5)
+                }
+
+IShelfSppIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL sppIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the SPP table."
+    SYNTAX      INTEGER (1..64)
+
+IShelfSppPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL sppPtr
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the SPP table, if non-zero."
+    SYNTAX      INTEGER (0..64)
+
+IShelfVpi ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vpi
+    -- %CLIWIDTH 3
+    STATUS      current
+    DESCRIPTION "Virtual Path Identifier"
+    SYNTAX      INTEGER (0..255)
+
+IShelfVci ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL vci
+    -- %CLIWIDTH 5
+    STATUS      current
+    DESCRIPTION "Virtual Circuit Identifier"
+    SYNTAX      INTEGER (0..65535)
+
+IShelfScpIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the SCP table."
+    SYNTAX      INTEGER (1..256)
+
+IShelfScpPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpPtr
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the SCP table, if non-zero."
+    SYNTAX      INTEGER (0..256)
+
+IShelfScpQos ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpQos
+    -- %CLIWIDTH 20
+    STATUS      current
+    DESCRIPTION "The level of QoS for the SCP."
+    SYNTAX      INTEGER {
+                    businessVbrNrt(1),
+                    residentialUbrNoPolicing(2)
+                }
+
+IShelfScpDsBandwidth ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpDsBw
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Downstream data rate in Kbps. 1 to 500 Mbps.   A value of 0 means not used (residential)."
+    SYNTAX      INTEGER (0..500000)
+
+IShelfScpUsBandwidth ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpUsBw
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Upstream data rate in Kbps. 1 to 500 Mbps.  A value of 0 means not used (residential)."
+    SYNTAX      INTEGER (0..500000)
+    
+IShelfScpCLPC ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpclpc
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "CLP conformance level.  A value of 0 means not used (residential)."
+    SYNTAX      INTEGER (0..3)
+    
+IShelfScpCellRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scprate
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Data rate in cells/sec.  A value of 0 means not used (residential)."
+    SYNTAX      INTEGER (0..353000)
+    
+IShelfScpMBS ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpmbs
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Max Burst Size in cells.  A value of 0 means not used (residential)."
+    SYNTAX      INTEGER (0..255)
+    
+IShelfScpCDVT ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL scpcdvt
+    -- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Cell Delay Variance Tolerance in microseconds. 
+                 A value of 0 means not used (residential)."
+    SYNTAX      INTEGER (0..100000)
+
+IShelfLcpIndex ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL lcpIdx
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the LCP table."
+    SYNTAX      INTEGER (1..256)
+
+IShelfLcpPointer ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL lcpPtr
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "An index into the LCP table, if non-zero."
+    SYNTAX      INTEGER (0..256)
+
+IShelfLcpDsRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL dsRate
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "Downstream data rate in Kbps"
+    SYNTAX      INTEGER (32..24000)
+
+IShelfLcpUsRate ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL usRate
+    -- %CLIWIDTH 6
+    STATUS      current
+    DESCRIPTION "Upstream data rate in Kbps"
+    SYNTAX      INTEGER (32..1024)
+
+IShelfLcpSnr ::= TEXTUAL-CONVENTION
+    -- %CLICOLLABEL SNR
+    -- %CLIWIDTH 4
+    STATUS      current
+    DESCRIPTION "SNR in DB"
+    SYNTAX      INTEGER (0..15)
+    
+IShelfOntPotsCircuitAndDropString ::= TEXTUAL-CONVENTION
+    -- %CLIWIDTH 10
+    DISPLAY-HINT "10a"
+    STATUS      current
+    DESCRIPTION ""
+    SYNTAX      OCTET STRING (SIZE (0..10))
+
+IShelfOntPotsCircuitAndDropTests ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The following bits are defined to allow requests for
+         specific tests:
+
+         vddRead(1)     return Vdd voltage at CODEC
+         vTipRing(2)    TIP to RING voltage
+         vRinging(3)    voltage during ring
+         dialTone(4)    high level test to see if can draw dial tone
+         ringTrip(5)    high level test to see if can stop ringing by
+                        going off hook
+         vacFEMF(6)
+         vdcFEMF(7)
+         tipGndResFault(8)   see if short btwn tip and ground
+         ringGndResFault(9)  see if short btwn ring and ground
+         tipRingResFault(10) see if short btwn tip and ring
+         offHook(11)         see if off hook
+         renLoad(12)         calc REN load on drop
+         loopCurrent(13)
+         vBatr(14)           battery feed for ring
+         vBath(15)           battery feed for active high
+         vBatl(15)           battery feed for active low"
+    SYNTAX      Unsigned32
+
+IShelfNodeMapCompression ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "Voice traffic compression characteristics of a node map
+         entry (connections between nodes). Only applies to voice traffic
+         because data traffic cannot be compressed. The valid settings are:
+
+         none(0)
+         comp64k(1)          uncompressed
+         comp32k(2)
+         comp16k(3)"
+    SYNTAX      INTEGER {
+                    none(0),
+                    comp64k(1),
+                    comp32k(2),
+                    comp16k(3)
+                }
+
+IShelfCardRedundancy ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "For cards that support redundancy, this identifies whether the card
+         is the active card or the standby card. The noRedundancy value applies
+         to cards that do not support redundancy.
+
+            unknown(0)
+            noRedundancy(1)
+            active(2)
+            standby(3)"
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    noRedundancy(1),
+                    active(2),
+                    standby(3)
+                }
+
+IShelfCallStatus ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "Identifies if the CRV or line currently has an active call or if the
+         CRV/line is idle.
+
+            idle(0)
+            active(1)"
+    SYNTAX      INTEGER {
+                    idle(0),
+                    active(1)
+                }
+
+IShelfDisableTableIndex ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "Index of ONT Disabled table"
+    SYNTAX      INTEGER (1..64)
+
+IShelfBroadbandNextIndex ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "A table index that is internally managed by the system. The value of the
+         index for tables utilizing this convention is determined by getting/reading
+         the value of the iShelfBroadBandServiceNextIndex scalar in the Broadband MIB.
+         For example to create a new row in a table, the value of the scalar is used
+         as the index for the new row."
+    SYNTAX      INTEGER
+
+IShelfServiceType ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The type of service to be provisioned for a subscriber.
+         Voice service is full or fractional and includes some form of signaling
+            such as Robbed Bit Signaling. Voice service is supported on both T1 and POTS
+            ports.
+         Data service is full or fractional clear channel. Data service is supported on
+            both T1 and POTS ports.
+         Unstructured service is full T1 service including the 193rd bit. T1 framing
+            is passed through.
+         Asynchronous service is full T1 service and is not currently supported."
+    SYNTAX      INTEGER {
+                    voice(1),           -- GR303 CRVs and PermCCs, T1 and POTS
+                    data(2),            -- PermCCs, T1 and POTS
+                    unstructured(3),    -- PermCCs, T1
+                    asynchronous(4)     -- PermCCs, T1
+                }
+
+IShelfDbSyncStatus ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "An indication of the synchronization status between the CPU database
+         and the EMGMT database (i.e., MIBs)."
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    ok(1),          -- databases are synchronized   
+                    oos(2)          -- databases are out of synchronization
+                }
+
+IShelfOntSoftwareImageVersion ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL Version
+	-- %CLIWIDTH 10
+    DISPLAY-HINT "16a"
+    STATUS      current
+    DESCRIPTION
+        "This type defines the software version format. It is
+         an ASCII character string. The following format is
+         used:
+
+             major.minor.sub.build
+
+         where,
+
+             major:     0..15
+             minor:     0..15
+             sub:       0..15, a..z
+             build:     0..255
+
+         All ranges are inclusive.
+
+         The rules for lexical ordering of version strings is
+         as follows. Given two version strings V1 and V2,
+         V1 > V2 if:
+
+         V1.major > V2.major, OR
+         V1.minor > V2.minor, OR
+         V1.sub > V2.sub (where 'z' > 'a' > 15 > 0), OR
+         V1.build > V2.build"
+    SYNTAX      OCTET STRING (SIZE(0..16))
+
+IShelfOntSoftwareImageIndex ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL Index
+    STATUS      current
+    DESCRIPTION "This type identifies the software image (a or b)."
+    SYNTAX      INTEGER {
+                    aimage(1),
+                    bimage(2)
+                }
+
+IShelfOntSoftwareImageStatus ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL Status
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Status of current/last software retrofit actions"
+    SYNTAX      INTEGER {
+		    unknown(0),
+                    idle(1),
+                    dldinprogress(2),
+                    dldsuccess(3),
+                    dldfailure(4),
+                    actinprogress(5),
+                    actsuccess(6),
+                    actfailure(7),
+                    cmtinprogress(8),
+                    cmtsuccess(9),
+                    cmtfailure(10)
+                }
+
+IShelfSppContentType ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL ConType
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the broadband SPP content type."
+    SYNTAX      INTEGER {
+		    both(0),
+                    data(1),
+                    video(2)
+                }
+                
+IShelfSppOltSARPort ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL SARPort
+	-- %CLIWIDTH 7
+    STATUS      current
+    DESCRIPTION "Identifies the OLT SAR port number for this SPP."
+    SYNTAX      INTEGER (1..4)
+                
+IShelfVcpContentType ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL ConType
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the VLAN content type."
+    SYNTAX      INTEGER {
+		    data(0),
+                    video(1),
+                    evc(2),
+                    olt(3)
+                }
+                
+IShelfEvcType ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL evcType
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the EVC type."
+    SYNTAX      INTEGER {
+		    std(0),
+                    bundled(1)
+                }
+                                    
+IShelfLASubType ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL SubType
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the Line Association subtype."
+    SYNTAX      INTEGER {
+		    std(0),
+                    trunk(1),
+                    mesh(2)
+                }
+                
+IShelfSLAIndex ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL SLAIdx
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the Service Level Agreement index."
+    SYNTAX      INTEGER (1..64)
+                                    
+IShelfSLAType ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL SLAType
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the SLA type."
+    SYNTAX      INTEGER {
+		    bestEffort(0),
+                    committed(1)
+                }
+                                
+IShelfSLACir ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL CIR
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the committed information rate in Mbps."
+    SYNTAX      INTEGER (1..100)
+                                    
+IShelfSLACbs ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL CBS
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the committed burst size in Mb."
+    SYNTAX      INTEGER (0..16)
+                                    
+IShelfSLAEir ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL EIR
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the excess information rate in Mbps."
+    SYNTAX      INTEGER (1..100)
+                                    
+IShelfSLAEbs ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL EBS
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the excess burst size in Mb."
+    SYNTAX      INTEGER (0..12)
+    
+IShelfATMCCType ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL CCType
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the broadband ATM CrossConnect type:
+                 Single, IMA, or Shelf."
+    SYNTAX      INTEGER {
+                    single(0),
+                    ima(1),
+                    shelf(2)
+                }
+                
+IShelfImaMode ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL IMAMode
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Identifies the IMA mode:
+                 Standard or non-standard."
+    SYNTAX      INTEGER {
+                    standard(0),
+                    nonstandard(1)
+                }
+
+IShelfFacMode ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL FacMode
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Describes the master/slave mode of a facility."
+    SYNTAX      INTEGER {
+                    master(0),
+                    slave(1),
+                    none(2)
+                }
+                
+IShelfFacService ::= TEXTUAL-CONVENTION
+	-- %CLICOLLABEL FacSrvc
+	-- %CLIWIDTH 8
+    STATUS      current
+    DESCRIPTION "Describes service type of a facility."
+    SYNTAX      INTEGER {
+                    noService(0),
+                    udlcComp16(4),
+                    udlcComp32(5),
+                    udlcCompNone(6),
+                    singleFiber(11),
+                    redundFiber(12),
+                    ringSlaveFiber(13),
+                    ringMasterFiber(14),
+                    unkService(20)
+                }
+
+
+
+
+END

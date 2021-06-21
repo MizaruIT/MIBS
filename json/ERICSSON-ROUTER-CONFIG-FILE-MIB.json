@@ -1,0 +1,652 @@
+{
+  "imports": {
+    "class": "imports",
+    "ERICSSON-ROUTER-SMI": [
+      "eriRouterMgmt"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "RMON-MIB": [
+      "OwnerString"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "Counter64",
+      "Integer32",
+      "IpAddress",
+      "iso",
+      "Gauge32",
+      "MODULE-IDENTITY",
+      "TimeTicks",
+      "Bits",
+      "MibIdentifier",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "Unsigned32"
+    ],
+    "SNMPv2-TC": [
+      "RowStatus",
+      "TruthValue",
+      "TestAndIncr",
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TimeStamp"
+    ]
+  },
+  "eriRouterConfigFileMib": {
+    "name": "eriRouterConfigFileMib",
+    "oid": "1.3.6.1.4.1.193.218.2.13",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-01-14 18:00",
+        "description": "Updated RBN/rbn/Rbn as ERICSSON-ROUTER/eriRouter/EriRouter to migrate RBN MIB to ERICSSON MIB."
+      },
+      {
+        "revision": "2011-01-19 18:00",
+        "description": "Update CONTACT-INFO & ORGANIZATION. "
+      },
+      {
+        "revision": "2002-05-29 00:00",
+        "description": "Add NOTIFICATION-TYPE to imports. Update/correct CONTACT-INFO. Needed to import OwnerString from RMON-MIB because TC is obsoleted in RFC 2863 (IF-MIB)."
+      },
+      {
+        "revision": "2001-10-10 00:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "201501141800Z",
+    "organization": "Ericsson AB.",
+    "contactinfo": " Ericsson AB. Postal: 100 Headquarters Dr San Jose, CA 95134 USA Phone: +1 408 750 5000 Fax: +1 408 750 5599 ",
+    "description": "Defines the objects necessary to support loading system configuration files and saving the contents of the current system configuration. For security reasons, all mib objects defined in this module are only accessible via SNMP community strings (v1/v2c) or SNMP contextNames (v3) that map to the system's 'local' context. Note well: due to these security reasons, it is highly encouraged to only allow access to this MIB via the more secure protocols supported by SNMPv3."
+  },
+  "eriRouterConfigFileMIBNotifications": {
+    "name": "eriRouterConfigFileMIBNotifications",
+    "oid": "1.3.6.1.4.1.193.218.2.13.0",
+    "class": "objectidentity"
+  },
+  "eriRouterConfigFileMIBObjects": {
+    "name": "eriRouterConfigFileMIBObjects",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1",
+    "class": "objectidentity"
+  },
+  "eriRouterConfigFileMIBConformance": {
+    "name": "eriRouterConfigFileMIBConformance",
+    "oid": "1.3.6.1.4.1.193.218.2.13.2",
+    "class": "objectidentity"
+  },
+  "eriRouterCfJobs": {
+    "name": "eriRouterCfJobs",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1",
+    "class": "objectidentity"
+  },
+  "eriRouterCfJobSpinLock": {
+    "name": "eriRouterCfJobSpinLock",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TestAndIncr",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "An advisory lock used to allow several cooperating Command Generator Applications to coordinate their use of facilities to create/modify entries in the eriRouterCfJobTable."
+  },
+  "eriRouterCfJobNextIndex": {
+    "name": "eriRouterCfJobNextIndex",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The next available index which can be used to create a eriRouterCfJobEntry."
+  },
+  "eriRouterCfJobTable": {
+    "name": "eriRouterCfJobTable",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table which is used to start and monitor a process which loads a configuration file, or saves the current configuration out to a file. The suggested method to create a new entry is: 1. GET(eriRouterCfJobSpinLock.0, eriRouterCfJobNextIndex.0) and save in slValue, niValue respectively 2. SET(eriRouterCfJobSpinLock.0 = slValue, eriRouterCfJobXxx.niValue = ... eriRouterCfJobYyy.niValue = ... ... eriRouterCfJobRowStatus.niValue = 'createAndGo') Entries whose state is 'completed' may be automatically deleted by the system after some system dependant time."
+  },
+  "eriRouterCfJobEntry": {
+    "name": "eriRouterCfJobEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry created by a Command Generator application which starts and monitors a process which loads a system configuration file or saves the current system configuration out to a file. When eriRouterCfJobRowStatus becomes active, eriRouterCfJobState is set to 'pending' and is queued for processing. Only one job may be processed at a time. When the job reaches the head of the queue, eriRouterCfJobState is set to 'inProgress' and the configuration operation will be performed. When the operation completes, eriRouterCfJobState will be set to 'completed'. Also at this time the objects eriRouterCfJobResult and eriRouterCfJobErrorMsgs will be instantiated and will provide the success/failure status of the operation. A job in the 'pending' state may be aborted by setting eriRouterCfJobRowStatus to 'notInService' or 'destroy'. An entry for a job which has completed (eriRouterCfJobState is 'completed') may be reset to the 'pending' state by setting eriRouterCfRowStatus to 'notInService' and then back to 'active' to initiate another configuration operation. Note: while eriRouterCfRowStatus equals 'active', the only object instance that can be modified in the entry is eriRouterCfRowStatus. To alter any other object instance, eriRouterCfRowStatus must be set to 'notInService'."
+  },
+  "eriRouterCfJobIndex": {
+    "name": "eriRouterCfJobIndex",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A unique identifier for an entry in this table."
+  },
+  "eriRouterCfJobOp": {
+    "name": "eriRouterCfJobOp",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "load": 0,
+          "save": 1
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The configuration operation to perform. If 'load', the file specified in eriRouterCfJobFilename is retrieved, parsed and loaded into the system configuration. If 'save', the current system configuration is written to the file specified in eriRouterCfJobFilename."
+  },
+  "eriRouterCfJobProtocol": {
+    "name": "eriRouterCfJobProtocol",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "local": 0,
+          "tftp": 1,
+          "ftp": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "local",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "RFC 1350 (TFTP), RFC 959 (FTP)",
+    "status": "current",
+    "description": "The file transfer protocol to use. If 'local', the filename specified in eriRouterCfJobFilename exists locally on the system (eg in /flash). If 'tftp', the filename specified in eriRouterCfJobFilename will be read/written from/to the system identified by eriRouterCfJobIpAddress via the TFTP file transfer protocol. If 'ftp', the filename specified in eriRouterCfJobFilename will be read/written from/to the system identified by eriRouterCfJobIpAddress via the FTP file transfer protocol. The values in eriRouterCfJobUsername and eriRouterCfJobPassword will be used for authentication. eriRouterCfJobPassiveMode can be used to enable/disable FTP's passive mode."
+  },
+  "eriRouterCfJobFilename": {
+    "name": "eriRouterCfJobFilename",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of the source file (loads) or destination file (saves)."
+  },
+  "eriRouterCfJobIpAddressType": {
+    "name": "eriRouterCfJobIpAddressType",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The address type for eriRouterCfJobIpAddress. This object is only relevant for non-local filenames. If eriRouterCfJobProtocol equals 'local', any value for this object will effectively be ignored."
+  },
+  "eriRouterCfJobIpAddress": {
+    "name": "eriRouterCfJobIpAddress",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The IP address for the file server which contains the source file (loads) or destination file (saves). This object is only relevant for non-local filenames. If eriRouterCfJobProtocol equals 'local', any value for this object will effectively be ignored."
+  },
+  "eriRouterCfJobUsername": {
+    "name": "eriRouterCfJobUsername",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The username to use for authentication with the file server. This object is only relevant for the FTP protocol. If eriRouterCfJobProtocol does not equal 'ftp', any value for this object will effectively be ignored. For security reasons, all SNMP gets on this object will return a zero-length string."
+  },
+  "eriRouterCfJobPassword": {
+    "name": "eriRouterCfJobPassword",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The password to use for authentication with the file server. A zero-length string value would be used for usernames that do not require a password. This object is only relevant for the FTP protocol. If eriRouterCfJobProtocol does not equal 'ftp', any value for this object will effectively be ignored. For security reasons, all SNMP gets on this object will return a zero-length string."
+  },
+  "eriRouterCfJobPassiveMode": {
+    "name": "eriRouterCfJobPassiveMode",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "RFC 959",
+    "status": "current",
+    "description": "Enables/disables passive mode on FTP connections. This object is only relevant for the FTP protocol. If eriRouterCfJobProtocol does not equal 'ftp', any value for this object will effectively be ignored."
+  },
+  "eriRouterCfJobStopAtLine": {
+    "name": "eriRouterCfJobStopAtLine",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "If this object instance has a non-zero value, parsing and loading of the configuration file will terminate after the specified line number. This object is only relevant for 'load' operations. If eriRouterCfJobOp does not equal 'load', any value for this object will effectively be ignored."
+  },
+  "eriRouterCfJobSaveDefaults": {
+    "name": "eriRouterCfJobSaveDefaults",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "If 'true', default values for all configuration values are saved. If 'false', only the values which have been explicitly configured are saved. This object is only relevant for 'save' operations. If eriRouterCfJobOp does not equal 'save', any value for this object will effectively be ignored."
+  },
+  "eriRouterCfJobState": {
+    "name": "eriRouterCfJobState",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "pending": 0,
+          "inProgress": 1,
+          "completed": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current state of the configuration job. pending -- The initial state of all jobs. Jobs are queued and processed in order of creation. inProgress -- The job is actively being performed. completed -- The job has completed."
+  },
+  "eriRouterCfJobResult": {
+    "name": "eriRouterCfJobResult",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "success": 0,
+          "other": 1,
+          "noMemory": 2,
+          "parse": 3,
+          "io": 4,
+          "access": 5
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A generic result code. This object is instantiated only when eriRouterCfJobStatus equals 'completed'. success -- The job completed successfully. other -- An error that doesn't fall into one of the categories below. noMemory -- Insufficient system resources to perform the operation. parse -- A parse failure occurred. ie- there was a syntax error in the source configuration file. io -- An i/o error occurred. access -- A file access error occurred. This could be caused by a non-existant source file, or insufficient access/permission to create/modify the destination file. More detailed error descriptions can be found in the eriRouterCfJobErrorMsgs object."
+  },
+  "eriRouterCfJobErrorMsgs": {
+    "name": "eriRouterCfJobErrorMsgs",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Detailed error messages generated during the configuration operation. This object is instantiated only when eriRouterCfJobState equals 'completed'. Note: the amount of error messages produced by a configuration operation may exceed the max size of this object (255 bytes). If this happens, the last character in the eriRouterCfJobErrorMsgs value will be '$' to indicate that a truncation occurred. Note: there may be some types of messages that one will see when performing a configuration operation via the CLI. However these messages will not be seen in the values for this object. A specific example on the SMS platform is the messages the CLI will display when there is a parse failure. These messages will not be captured in this object."
+  },
+  "eriRouterCfJobCreateTime": {
+    "name": "eriRouterCfJobCreateTime",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when this job entry was created."
+  },
+  "eriRouterCfJobStartTime": {
+    "name": "eriRouterCfJobStartTime",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when eriRouterCfJobState moved from 'pending' to 'inProgress'. This object will not be instantiated until eriRouterCfJobState moves to 'inProgress'. The object will be un-instantiated if eriRouterCfJobRowStatus is set to 'notInService'."
+  },
+  "eriRouterCfJobStopTime": {
+    "name": "eriRouterCfJobStopTime",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when the job completed. This object will not be instantiated until eriRouterCfJobState moves to 'completed'. The object will be un-instantiated if eriRouterCfJobRowStatus is set to 'notInService'."
+  },
+  "eriRouterCfJobNotifyOnCompletion": {
+    "name": "eriRouterCfJobNotifyOnCompletion",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "If 'true', an eriRouterCfJobCompleted notification will be generated when the job completes."
+  },
+  "eriRouterCfJobOwner": {
+    "name": "eriRouterCfJobOwner",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OwnerString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object can be used to identify who/what/where created this job entry."
+  },
+  "eriRouterCfJobRowStatus": {
+    "name": "eriRouterCfJobRowStatus",
+    "oid": "1.3.6.1.4.1.193.218.2.13.1.1.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status for creating, modifying, or deleting an entry in the table. Note that 'active' entries cannot be modified. Any attempt to modify an object in this entry while eriRouterCfJobRowStatus equals 'active' will result in an inconsistentValue error. To modify objects in an active entry, eriRouterCfJobRowStatus must first be set to 'notInService'. All entries will be automatically deleted by the agent after some system dependent time."
+  },
+  "eriRouterCfJobCompleted": {
+    "name": "eriRouterCfJobCompleted",
+    "oid": "1.3.6.1.4.1.193.218.2.13.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobResult"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobErrorMsgs"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that a configuration job has completed."
+  },
+  "eriRouterConfigFileCompliances": {
+    "name": "eriRouterConfigFileCompliances",
+    "oid": "1.3.6.1.4.1.193.218.2.13.2.1",
+    "class": "objectidentity"
+  },
+  "eriRouterConfigFileGroups": {
+    "name": "eriRouterConfigFileGroups",
+    "oid": "1.3.6.1.4.1.193.218.2.13.2.2",
+    "class": "objectidentity"
+  },
+  "eriRouterCfJobGroup": {
+    "name": "eriRouterCfJobGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.13.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobSpinLock"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobNextIndex"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobOp"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobProtocol"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobFilename"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobIpAddressType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobIpAddress"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobUsername"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobPassword"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobPassiveMode"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobStopAtLine"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobSaveDefaults"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobResult"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobCreateTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobStartTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobStopTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobErrorMsgs"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobNotifyOnCompletion"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobOwner"
+      },
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects which represent a configuration job."
+  },
+  "eriRouterCfJobNotifyGroup": {
+    "name": "eriRouterCfJobNotifyGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.13.2.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB",
+        "object": "eriRouterCfJobCompleted"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of notifications related to configuration jobs."
+  },
+  "eriRouterConfigFileCompliance": {
+    "name": "eriRouterConfigFileCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.13.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterCfJobGroup",
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB"
+      },
+      {
+        "object": "eriRouterCfJobNotifyGroup",
+        "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this Configuration File MIB."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ERICSSON-ROUTER-CONFIG-FILE-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:51:37 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ERICSSON-ROUTER-CONFIG-FILE-MIB"
+  }
+}

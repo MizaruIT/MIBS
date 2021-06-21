@@ -1,0 +1,359 @@
+{
+  "imports": {
+    "class": "imports",
+    "CISCO-SMI": [
+      "ciscoMgmt"
+    ],
+    "CISCO-TAP2-MIB": [
+      "cTap2StreamIndex",
+      "cTap2MediationContentId"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "iso",
+      "OBJECT-IDENTITY",
+      "Counter64",
+      "OBJECT-TYPE",
+      "IpAddress",
+      "MibIdentifier",
+      "Unsigned32",
+      "Integer32",
+      "Counter32",
+      "MODULE-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "TimeTicks",
+      "Bits",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ],
+    "SNMPv2-TC-v1": [
+      "TruthValue",
+      "RowStatus",
+      "StorageType"
+    ]
+  },
+  "ciscoMobilityTapMIB": {
+    "name": "ciscoMobilityTapMIB",
+    "oid": "1.3.6.1.4.1.9.9.672",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapMIBNotifs": {
+    "name": "ciscoMobilityTapMIBNotifs",
+    "oid": "1.3.6.1.4.1.9.9.672.0",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapMIBObjects": {
+    "name": "ciscoMobilityTapMIBObjects",
+    "oid": "1.3.6.1.4.1.9.9.672.1",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapMIBConform": {
+    "name": "ciscoMobilityTapMIBConform",
+    "oid": "1.3.6.1.4.1.9.9.672.2",
+    "class": "objectidentity"
+  },
+  "cmtapStreamGroup": {
+    "name": "cmtapStreamGroup",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapMIBCompliances": {
+    "name": "ciscoMobilityTapMIBCompliances",
+    "oid": "1.3.6.1.4.1.9.9.672.2.1",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapMIBGroups": {
+    "name": "ciscoMobilityTapMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.672.2.2",
+    "class": "objectidentity"
+  },
+  "CmtapLawfulInterceptID": {
+    "name": "CmtapLawfulInterceptID",
+    "class": "type",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 3,
+            "max": 256
+          }
+        ]
+      }
+    }
+  },
+  "CmtapSubscriberIDType": {
+    "name": "CmtapSubscriberIDType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unknown": 1,
+          "msid": 2,
+          "imsi": 3,
+          "nai": 4,
+          "esn": 5,
+          "servedMdn": 6
+        }
+      }
+    }
+  },
+  "CmtapSubscriberID": {
+    "name": "CmtapSubscriberID",
+    "class": "type",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 3,
+            "max": 256
+          }
+        ]
+      }
+    }
+  },
+  "cmtapStreamCapabilities": {
+    "name": "cmtapStreamCapabilities",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object indicates the Mobility Gateway intercept features that are implemented by this device and are manageable through this MIB. tapEnable: set if table entries with cTap2StreamInterceptEnable set to 'false' are used to pre-screen packets for intercept; otherwise these entries are ignored. interface: SNMP ifIndex Value may be used to select interception of all data crossing an interface or set of interfaces. nonvolatileStorage: The cmTapStreamTable supports the ability to store rows in nonvolatile memory. calledSubscriberID: The cmtapStreamCalledSubscriberID can be used to specify intercepts. Otherwise, this field is disabled. msid: A Mobile Subscriber Identity (MSID) can be used in the ID strings to specify intercepts. imsi: An International Mobile Subscriber Identity (IMSI) number can be used ID strings to specify intercepts. nai: A Network Access Identifier (NAI) can be used in the ID strings to specify intercepts. esn: An Electronic Serial Number (ESN) can be used in the ID strings to specify intercepts. servedMdn: Vendor specific attribute Served-Mobile Directory Number(MDN) can be used in the ID strings to specify intercepts."
+  },
+  "cmtapStreamTable": {
+    "name": "cmtapStreamTable",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "The Mobility Stream Table lists the data streams to be intercepted. The same data stream may be required by multiple taps. This essentially provides options for packet selection, only some of which might be used. For example, if all the traffic to or from a subscriber is to be intercepted, one would configure an entry listing SubscriberID along with the SubscriberIDType corresponding to the stream that one wishes to intercept. The first index indicates which Mediation Device the intercepted traffic will be diverted to. The second index, which indicates the specific intercept stream, permits multiple classifiers to be used together. For example, an IP stream and a Mobility stream could both be listed in their respective tables, yet still correspond to the same Mediation Device entry. Entries are added to this table via cmtapStreamStatus in accordance with the RowStatus convention."
+  },
+  "cmtapStreamEntry": {
+    "name": "cmtapStreamEntry",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-TAP2-MIB",
+        "object": "cTap2MediationContentId",
+        "implied": 0
+      },
+      {
+        "module": "CISCO-TAP2-MIB",
+        "object": "cTap2StreamIndex",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "A stream entry indicates a single data stream to be intercepted to a Mediation Device. Many selected data streams may go to the same application interface and many application interfaces are supported."
+  },
+  "cmtapStreamCalledSubscriberIDType": {
+    "name": "cmtapStreamCalledSubscriberIDType",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmtapSubscriberIDType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "Identifies the type of address that is stored in the cmtapStreamCalledSubscriberID string."
+  },
+  "cmtapStreamCalledSubscriberID": {
+    "name": "cmtapStreamCalledSubscriberID",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmtapSubscriberID",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "A string used to identify the party being contacted. The type of this identification is determined by the cmtapStreamCalledSubscriberIDType object."
+  },
+  "cmtapStreamSubscriberIDType": {
+    "name": "cmtapStreamSubscriberIDType",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmtapSubscriberIDType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "Identifies the type of address that is stored in the cmtapStreamSubscriberID string."
+  },
+  "cmtapStreamSubscriberID": {
+    "name": "cmtapStreamSubscriberID",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmtapSubscriberID",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "A string used to identify the subscriber to tap. The type of this indentification is determined by the cmtapStreamSubscriberIDType object."
+  },
+  "cmtapStreamStorageType": {
+    "name": "cmtapStreamStorageType",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "volatile",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the storage type of this conceptual row. If it is set to 'nonVolatile', this entry can be saved into non-volatile memory."
+  },
+  "cmtapStreamStatus": {
+    "name": "cmtapStreamStatus",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The status of this conceptual row. This object manages creation, modification, and deletion of rows in this table. When any field must be changed, cmtapStreamStatus must be first set to 'notInService'."
+  },
+  "cmtapStreamLIIdentifier": {
+    "name": "cmtapStreamLIIdentifier",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmtapLawfulInterceptID",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "not set",
+        "format": "string"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object is an identifier assigned by a Law Enforcement Agency (LEA) to facilitate LI operations as defined in 3GPP TS 33.108 v8.7.0 standards document."
+  },
+  "cmtapStreamLocationInfo": {
+    "name": "cmtapStreamLocationInfo",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object indicates, if the userLocationInfo object should be included in the Intercept Related Information (IRI) messages sent by the gateway to mediation gateway(s) for interception taps. The userLocationInfo is defined as part of the IRI messages in 3GPP 33.108 v8.7.0 standards document."
+  },
+  "cmtapStreamInterceptType": {
+    "name": "cmtapStreamInterceptType",
+    "oid": "1.3.6.1.4.1.9.9.672.1.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ccOnly": 1,
+          "iriOnly": 2,
+          "both": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "both",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object indicates the intercept type of the tapped stream. The tap can be provisioned to intercept control messages (IRI) from the tapped stream, the payload (CC) messages from the tapped stream or both. The format of these messages in defined in 3GPP TS 33.108 v8.7.0 standards document. ccOnly(1) - Content of communication interception only. iriOnly(2) - Intercept Related Information only. both(3) - Intercept both: CC and IRI."
+  },
+  "ciscoMobilityTapCapabilityGroup": {
+    "name": "ciscoMobilityTapCapabilityGroup",
+    "oid": "1.3.6.1.4.1.9.9.672.2.2.1",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapStreamGroup": {
+    "name": "ciscoMobilityTapStreamGroup",
+    "oid": "1.3.6.1.4.1.9.9.672.2.2.2",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapStreamGroupSup1": {
+    "name": "ciscoMobilityTapStreamGroupSup1",
+    "oid": "1.3.6.1.4.1.9.9.672.2.2.3",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapMIBCompliance": {
+    "name": "ciscoMobilityTapMIBCompliance",
+    "oid": "1.3.6.1.4.1.9.9.672.2.1.1",
+    "class": "objectidentity"
+  },
+  "ciscoMobilityTapMIBComplianceRev01": {
+    "name": "ciscoMobilityTapMIBComplianceRev01",
+    "oid": "1.3.6.1.4.1.9.9.672.2.1.2",
+    "class": "objectidentity"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CISCO-MOBILITY-TAP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:45:18 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CISCO-MOBILITY-TAP-MIB"
+  }
+}

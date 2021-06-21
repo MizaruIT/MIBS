@@ -1,0 +1,1015 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "ifIndex"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "Integer32",
+      "iso",
+      "Bits",
+      "TimeTicks",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "Counter64",
+      "mib-2",
+      "MibIdentifier",
+      "Gauge32",
+      "Unsigned32",
+      "NOTIFICATION-TYPE",
+      "IpAddress",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "RowStatus",
+      "DisplayString",
+      "MacAddress",
+      "TruthValue",
+      "TimeStamp"
+    ]
+  },
+  "vrrpMIB": {
+    "name": "vrrpMIB",
+    "oid": "1.3.6.1.2.1.68",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2000-03-03 00:00",
+        "description": "Initial version as published in RFC 2787."
+      }
+    ],
+    "lastupdated": "200003030000Z",
+    "organization": "IETF VRRP Working Group",
+    "contactinfo": "Brian R. Jewell Postal: Copper Mountain Networks, Inc. 2470 Embarcadero Way Palo Alto, California 94303 Tel: +1 650 687 3367 E-Mail: bjewell@coppermountain.com",
+    "description": "This MIB describes objects used for managing Virtual Router Redundancy Protocol (VRRP) routers."
+  },
+  "VrId": {
+    "name": "VrId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "A number which, along with an interface index (ifIndex), serves to uniquely identify a virtual router on a given VRRP router. A set of one or more associated addresses is assigned to a VRID."
+  },
+  "vrrpOperations": {
+    "name": "vrrpOperations",
+    "oid": "1.3.6.1.2.1.68.1",
+    "class": "objectidentity"
+  },
+  "vrrpStatistics": {
+    "name": "vrrpStatistics",
+    "oid": "1.3.6.1.2.1.68.2",
+    "class": "objectidentity"
+  },
+  "vrrpConformance": {
+    "name": "vrrpConformance",
+    "oid": "1.3.6.1.2.1.68.3",
+    "class": "objectidentity"
+  },
+  "vrrpNodeVersion": {
+    "name": "vrrpNodeVersion",
+    "oid": "1.3.6.1.2.1.68.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This value identifies the particular version of the VRRP supported by this node."
+  },
+  "vrrpNotificationCntl": {
+    "name": "vrrpNotificationCntl",
+    "oid": "1.3.6.1.2.1.68.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enabled": 1,
+          "disabled": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "enabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates whether the VRRP-enabled router will generate SNMP traps for events defined in this MIB. 'Enabled' results in SNMP traps; 'disabled', no traps are sent."
+  },
+  "vrrpOperTable": {
+    "name": "vrrpOperTable",
+    "oid": "1.3.6.1.2.1.68.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Operations table for a VRRP router which consists of a sequence (i.e., one or more conceptual rows) of 'vrrpOperEntry' items."
+  },
+  "vrrpOperEntry": {
+    "name": "vrrpOperEntry",
+    "oid": "1.3.6.1.2.1.68.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperVrId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the vrrpOperTable containing the operational characteristics of a virtual router. On a VRRP router, a given virtual router is identified by a combination of the IF index and VRID. Rows in the table cannot be modified unless the value of `vrrpOperAdminState' is `disabled' and the `vrrpOperState' has transitioned to `initialize'."
+  },
+  "vrrpOperVrId": {
+    "name": "vrrpOperVrId",
+    "oid": "1.3.6.1.2.1.68.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VrId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object contains the Virtual Router Identifier (VRID)."
+  },
+  "vrrpOperVirtualMacAddr": {
+    "name": "vrrpOperVirtualMacAddr",
+    "oid": "1.3.6.1.2.1.68.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The virtual MAC address of the virtual router. Although this object can be derived from the 'vrrpOperVrId' object, it is defined so that it is easily obtainable by a management application and can be included in VRRP-related SNMP traps."
+  },
+  "vrrpOperState": {
+    "name": "vrrpOperState",
+    "oid": "1.3.6.1.2.1.68.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "initialize": 1,
+          "backup": 2,
+          "master": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current state of the virtual router. This object has three defined values: - `initialize', which indicates that all the virtual router is waiting for a startup event. - `backup', which indicates the virtual router is monitoring the availability of the master router. - `master', which indicates that the virtual router is forwarding packets for IP addresses that are associated with this router. Setting the `vrrpOperAdminState' object (below) initiates transitions in the value of this object."
+  },
+  "vrrpOperAdminState": {
+    "name": "vrrpOperAdminState",
+    "oid": "1.3.6.1.2.1.68.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "down",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object will enable/disable the virtual router function. Setting the value to `up', will transition the state of the virtual router from `initialize' to `backup' or `master', depending on the value of `vrrpOperPriority'. Setting the value to `down', will transition the router from `master' or `backup' to `initialize'. State transitions may not be immediate; they sometimes depend on other factors, such as the interface (IF) state. The `vrrpOperAdminState' object must be set to `down' prior to modifying the other read-create objects in the conceptual row. The value of the `vrrpOperRowStatus' object (below) must be `active', signifying that the conceptual row is valid (i.e., the objects are correctly set), in order for this object to be set to `up'."
+  },
+  "vrrpOperPriority": {
+    "name": "vrrpOperPriority",
+    "oid": "1.3.6.1.2.1.68.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 100,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies the priority to be used for the virtual router master election process. Higher values imply higher priority. A priority of '0', although not settable, is sent by the master router to indicate that this router has ceased to participate in VRRP and a backup virtual router should transition to become a new master. A priority of 255 is used for the router that owns the associated IP address(es)."
+  },
+  "vrrpOperIpAddrCount": {
+    "name": "vrrpOperIpAddrCount",
+    "oid": "1.3.6.1.2.1.68.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of IP addresses that are associated with this virtual router. This number is equal to the number of rows in the vrrpAssoIpAddrTable that correspond to a given IF index/VRID pair."
+  },
+  "vrrpOperMasterIpAddr": {
+    "name": "vrrpOperMasterIpAddr",
+    "oid": "1.3.6.1.2.1.68.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The master router's real (primary) IP address. This is the IP address listed as the source in VRRP advertisement last received by this virtual router."
+  },
+  "vrrpOperPrimaryIpAddr": {
+    "name": "vrrpOperPrimaryIpAddr",
+    "oid": "1.3.6.1.2.1.68.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "00000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "In the case where there is more than one IP address for a given `ifIndex', this object is used to specify the IP address that will become the `vrrpOperMasterIpAddr', should the virtual router transition from backup to master. If this object is set to 0.0.0.0, the IP address which is numerically lowest will be selected."
+  },
+  "vrrpOperAuthType": {
+    "name": "vrrpOperAuthType",
+    "oid": "1.3.6.1.2.1.68.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noAuthentication": 1,
+          "simpleTextPassword": 2,
+          "ipAuthenticationHeader": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "noAuthentication",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Authentication type used for VRRP protocol exchanges between virtual routers. This value of this object is the same for a given ifIndex. New enumerations to this list can only be added via a new RFC on the standards track."
+  },
+  "vrrpOperAuthKey": {
+    "name": "vrrpOperAuthKey",
+    "oid": "1.3.6.1.2.1.68.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Authentication Key. This object is set according to the value of the 'vrrpOperAuthType' object ('simpleTextPassword' or 'ipAuthenticationHeader'). If the length of the value is less than 16 octets, the agent will left adjust and zero fill to 16 octets. The value of this object is the same for a given ifIndex. When read, vrrpOperAuthKey always returns an Octet String of length zero."
+  },
+  "vrrpOperAdvertisementInterval": {
+    "name": "vrrpOperAdvertisementInterval",
+    "oid": "1.3.6.1.2.1.68.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The time interval, in seconds, between sending advertisement messages. Only the master router sends VRRP advertisements."
+  },
+  "vrrpOperPreemptMode": {
+    "name": "vrrpOperPreemptMode",
+    "oid": "1.3.6.1.2.1.68.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Controls whether a higher priority virtual router will preempt a lower priority master."
+  },
+  "vrrpOperVirtualRouterUpTime": {
+    "name": "vrrpOperVirtualRouterUpTime",
+    "oid": "1.3.6.1.2.1.68.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This is the value of the `sysUpTime' object when this virtual router (i.e., the `vrrpOperState') transitioned out of `initialized'."
+  },
+  "vrrpOperProtocol": {
+    "name": "vrrpOperProtocol",
+    "oid": "1.3.6.1.2.1.68.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ip": 1,
+          "bridge": 2,
+          "decnet": 3,
+          "other": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "ip",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The particular protocol being controlled by this Virtual Router. New enumerations to this list can only be added via a new RFC on the standards track."
+  },
+  "vrrpOperRowStatus": {
+    "name": "vrrpOperRowStatus",
+    "oid": "1.3.6.1.2.1.68.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used in accordance to installation and removal conventions for conceptual rows. The rowstatus of a currently active row in the vrrpOperTable is constrained by the operational state of the corresponding virtual router. When `vrrpOperRowStatus' is set to active(1), no other objects in the conceptual row, with the exception of `vrrpOperAdminState', can be modified. Prior to setting the `vrrpOperRowStatus' object from `active' to a different value, the `vrrpOperAdminState' object must be set to `down' and the `vrrpOperState' object be transitioned to `initialize'. To create a row in this table, a manager sets this object to either createAndGo(4) or createAndWait(5). Until instances of all corresponding columns are appropriately configured, the value of the corresponding instance of the `vrrpOperRowStatus' column will be read as notReady(3). In particular, a newly created row cannot be made active(1) until (minimally) the corresponding instance of `vrrpOperVrId' has been set and there is at least one active row in the `vrrpAssoIpAddrTable' defining an associated IP address for the virtual router."
+  },
+  "vrrpAssoIpAddrTable": {
+    "name": "vrrpAssoIpAddrTable",
+    "oid": "1.3.6.1.2.1.68.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table of addresses associated with this virtual router."
+  },
+  "vrrpAssoIpAddrEntry": {
+    "name": "vrrpAssoIpAddrEntry",
+    "oid": "1.3.6.1.2.1.68.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperVrId",
+        "implied": 0
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpAssoIpAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table contains an IP address that is associated with a virtual router. The number of rows for a given ifIndex and VrId will equal the number of IP addresses associated (e.g., backed up) by the virtual router (equivalent to 'vrrpOperIpAddrCount'). Rows in the table cannot be modified unless the value of `vrrpOperAdminState' is `disabled' and the `vrrpOperState' has transitioned to `initialize'."
+  },
+  "vrrpAssoIpAddr": {
+    "name": "vrrpAssoIpAddr",
+    "oid": "1.3.6.1.2.1.68.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The assigned IP addresses that a virtual router is responsible for backing up."
+  },
+  "vrrpAssoIpAddrRowStatus": {
+    "name": "vrrpAssoIpAddrRowStatus",
+    "oid": "1.3.6.1.2.1.68.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows. Setting this object to active(1) or createAndGo(4) results in the addition of an associated address for a virtual router. Destroying the entry or setting it to notInService(2) removes the associated address from the virtual router. The use of other values is implementation-dependent."
+  },
+  "vrrpRouterChecksumErrors": {
+    "name": "vrrpRouterChecksumErrors",
+    "oid": "1.3.6.1.2.1.68.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP packets received with an invalid VRRP checksum value."
+  },
+  "vrrpRouterVersionErrors": {
+    "name": "vrrpRouterVersionErrors",
+    "oid": "1.3.6.1.2.1.68.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP packets received with an unknown or unsupported version number."
+  },
+  "vrrpRouterVrIdErrors": {
+    "name": "vrrpRouterVrIdErrors",
+    "oid": "1.3.6.1.2.1.68.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP packets received with an invalid VRID for this virtual router."
+  },
+  "vrrpRouterStatsTable": {
+    "name": "vrrpRouterStatsTable",
+    "oid": "1.3.6.1.2.1.68.2.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of virtual router statistics."
+  },
+  "vrrpRouterStatsEntry": {
+    "name": "vrrpRouterStatsEntry",
+    "oid": "1.3.6.1.2.1.68.2.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "vrrpRouterStatsEntry",
+      "module": "VRRP-MIB",
+      "object": "vrrpOperEntry"
+    },
+    "status": "current",
+    "description": "An entry in the table, containing statistics information about a given virtual router."
+  },
+  "vrrpStatsBecomeMaster": {
+    "name": "vrrpStatsBecomeMaster",
+    "oid": "1.3.6.1.2.1.68.2.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of times that this virtual router's state has transitioned to MASTER."
+  },
+  "vrrpStatsAdvertiseRcvd": {
+    "name": "vrrpStatsAdvertiseRcvd",
+    "oid": "1.3.6.1.2.1.68.2.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP advertisements received by this virtual router."
+  },
+  "vrrpStatsAdvertiseIntervalErrors": {
+    "name": "vrrpStatsAdvertiseIntervalErrors",
+    "oid": "1.3.6.1.2.1.68.2.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP advertisement packets received for which the advertisement interval is different than the one configured for the local virtual router."
+  },
+  "vrrpStatsAuthFailures": {
+    "name": "vrrpStatsAuthFailures",
+    "oid": "1.3.6.1.2.1.68.2.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP packets received that do not pass the authentication check."
+  },
+  "vrrpStatsIpTtlErrors": {
+    "name": "vrrpStatsIpTtlErrors",
+    "oid": "1.3.6.1.2.1.68.2.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP packets received by the virtual router with IP TTL (Time-To-Live) not equal to 255."
+  },
+  "vrrpStatsPriorityZeroPktsRcvd": {
+    "name": "vrrpStatsPriorityZeroPktsRcvd",
+    "oid": "1.3.6.1.2.1.68.2.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP packets received by the virtual router with a priority of '0'."
+  },
+  "vrrpStatsPriorityZeroPktsSent": {
+    "name": "vrrpStatsPriorityZeroPktsSent",
+    "oid": "1.3.6.1.2.1.68.2.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of VRRP packets sent by the virtual router with a priority of '0'."
+  },
+  "vrrpStatsInvalidTypePktsRcvd": {
+    "name": "vrrpStatsInvalidTypePktsRcvd",
+    "oid": "1.3.6.1.2.1.68.2.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of VRRP packets received by the virtual router with an invalid value in the 'type' field."
+  },
+  "vrrpStatsAddressListErrors": {
+    "name": "vrrpStatsAddressListErrors",
+    "oid": "1.3.6.1.2.1.68.2.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received for which the address list does not match the locally configured list for the virtual router."
+  },
+  "vrrpStatsInvalidAuthType": {
+    "name": "vrrpStatsInvalidAuthType",
+    "oid": "1.3.6.1.2.1.68.2.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received with an unknown authentication type."
+  },
+  "vrrpStatsAuthTypeMismatch": {
+    "name": "vrrpStatsAuthTypeMismatch",
+    "oid": "1.3.6.1.2.1.68.2.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received with 'Auth Type' not equal to the locally configured authentication method (`vrrpOperAuthType')."
+  },
+  "vrrpStatsPacketLengthErrors": {
+    "name": "vrrpStatsPacketLengthErrors",
+    "oid": "1.3.6.1.2.1.68.2.4.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received with a packet length less than the length of the VRRP header."
+  },
+  "vrrpNotifications": {
+    "name": "vrrpNotifications",
+    "oid": "1.3.6.1.2.1.68.0",
+    "class": "objectidentity"
+  },
+  "vrrpTrapPacketSrc": {
+    "name": "vrrpTrapPacketSrc",
+    "oid": "1.3.6.1.2.1.68.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The IP address of an inbound VRRP packet. Used by vrrpTrapAuthFailure trap."
+  },
+  "vrrpTrapAuthErrorType": {
+    "name": "vrrpTrapAuthErrorType",
+    "oid": "1.3.6.1.2.1.68.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "invalidAuthType": 1,
+          "authTypeMismatch": 2,
+          "authFailure": 3
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Potential types of configuration conflicts. Used by vrrpAuthFailure trap."
+  },
+  "vrrpTrapNewMaster": {
+    "name": "vrrpTrapNewMaster",
+    "oid": "1.3.6.1.2.1.68.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperMasterIpAddr"
+      }
+    ],
+    "status": "current",
+    "description": "The newMaster trap indicates that the sending agent has transitioned to 'Master' state."
+  },
+  "vrrpTrapAuthFailure": {
+    "name": "vrrpTrapAuthFailure",
+    "oid": "1.3.6.1.2.1.68.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpTrapPacketSrc"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpTrapAuthErrorType"
+      }
+    ],
+    "status": "current",
+    "description": "A vrrpAuthFailure trap signifies that a packet has been received from a router whose authentication key or authentication type conflicts with this router's authentication key or authentication type. Implementation of this trap is optional."
+  },
+  "vrrpMIBCompliances": {
+    "name": "vrrpMIBCompliances",
+    "oid": "1.3.6.1.2.1.68.3.1",
+    "class": "objectidentity"
+  },
+  "vrrpMIBGroups": {
+    "name": "vrrpMIBGroups",
+    "oid": "1.3.6.1.2.1.68.3.2",
+    "class": "objectidentity"
+  },
+  "vrrpMIBCompliance": {
+    "name": "vrrpMIBCompliance",
+    "oid": "1.3.6.1.2.1.68.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "vrrpOperGroup",
+        "module": "VRRP-MIB"
+      },
+      {
+        "object": "vrrpStatsGroup",
+        "module": "VRRP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The core compliance statement for all VRRP implementations."
+  },
+  "vrrpOperGroup": {
+    "name": "vrrpOperGroup",
+    "oid": "1.3.6.1.2.1.68.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpNodeVersion"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpNotificationCntl"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperVirtualMacAddr"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperState"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperAdminState"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperPriority"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperIpAddrCount"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperMasterIpAddr"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperPrimaryIpAddr"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperAuthType"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperAuthKey"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperAdvertisementInterval"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperPreemptMode"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperVirtualRouterUpTime"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperProtocol"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpOperRowStatus"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpAssoIpAddrRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "Conformance group for VRRP operations."
+  },
+  "vrrpStatsGroup": {
+    "name": "vrrpStatsGroup",
+    "oid": "1.3.6.1.2.1.68.3.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpRouterChecksumErrors"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpRouterVersionErrors"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpRouterVrIdErrors"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsBecomeMaster"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsAdvertiseRcvd"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsAdvertiseIntervalErrors"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsAuthFailures"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsIpTtlErrors"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsPriorityZeroPktsRcvd"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsPriorityZeroPktsSent"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsInvalidTypePktsRcvd"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsAddressListErrors"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsInvalidAuthType"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsAuthTypeMismatch"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpStatsPacketLengthErrors"
+      }
+    ],
+    "status": "current",
+    "description": "Conformance group for VRRP statistics."
+  },
+  "vrrpTrapGroup": {
+    "name": "vrrpTrapGroup",
+    "oid": "1.3.6.1.2.1.68.3.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpTrapPacketSrc"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpTrapAuthErrorType"
+      }
+    ],
+    "status": "current",
+    "description": "Conformance group for objects contained in VRRP notifications."
+  },
+  "vrrpNotificationGroup": {
+    "name": "vrrpNotificationGroup",
+    "oid": "1.3.6.1.2.1.68.3.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpTrapNewMaster"
+      },
+      {
+        "module": "VRRP-MIB",
+        "object": "vrrpTrapAuthFailure"
+      }
+    ],
+    "status": "current",
+    "description": "The VRRP MIB Notification Group."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/VRRP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 14:58:59 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "VRRP-MIB"
+  }
+}

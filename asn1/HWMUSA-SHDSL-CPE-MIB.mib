@@ -1,0 +1,2152 @@
+--  ------------------------------------------------------------------
+-- Description £º HWMUSA-SHDSL-CPE-MIB
+-- Author      £º  
+-- Create Date £º 2002-04
+-- Modify Date £º 2002-07-20
+-- Version     £º 1.02
+-- Copyright 1985 - 2004 HuaWei Tech, Inc.
+--           ALL RIGHTS RESERVED 
+-- ------------------------------------------------------------------
+
+	HWMUSA-SHDSL-CPE-MIB DEFINITIONS ::= BEGIN
+ 
+		IMPORTS
+			hwProducts			
+				FROM HUAWEI-MIB			
+			ifIndex			
+				FROM IF-MIB			
+			DisplayString			
+				FROM RFC1213-MIB			
+			IpAddress, Unsigned32, Gauge32, OBJECT-TYPE			
+				FROM SNMPv2-SMI			
+			TruthValue			
+				FROM SNMPv2-TC;
+	
+	
+
+		musa OBJECT IDENTIFIER ::= { hwProducts 6 }
+		
+		ias OBJECT IDENTIFIER ::= { musa 7 }
+		
+		hwIasService OBJECT IDENTIFIER ::= { ias 4 }
+		
+		hwMusaShdsl OBJECT IDENTIFIER ::= { hwIasService 4 }
+		
+		hwShdslCPE OBJECT IDENTIFIER ::= { hwMusaShdsl 2 }
+		
+		hwShdslCPECommon OBJECT IDENTIFIER ::= { hwShdslCPE 1 }
+		
+		umCommonInventoryTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmCommonInventoryEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A table containing common inventory information."
+			::= { hwShdslCPECommon 1 }
+		
+		umCommonInventoryEntry OBJECT-TYPE
+			SYNTAX UmCommonInventoryEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in umCommonInventoryTable."
+			INDEX { ifIndex }
+			::= { umCommonInventoryTable 1 }
+		
+		UmCommonInventoryEntry ::=
+			SEQUENCE { 
+				umCommonInventoryModel
+					INTEGER,
+				umCommonInventorySwVer
+					DisplayString,
+				umCommonInventoryHwVer
+					DisplayString,
+				umCommonInventoryDevName
+					DisplayString
+			 }
+
+		umCommonInventoryModel OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable indicates the model number. "
+			::= { umCommonInventoryEntry 1 }
+		
+		umCommonInventorySwVer OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (5))
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable indicates the software version.
+				format: a.bcd
+				(a, b, c, d: 0 ~ 9)
+				"
+			::= { umCommonInventoryEntry 2 }
+		
+		umCommonInventoryHwVer OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (5))
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable indicates the hardware version.
+				format: a.bcd
+				(a, b, c, d: 0 ~ 9)
+				"
+			::= { umCommonInventoryEntry 3 }
+		
+		umCommonInventoryDevName OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (8))
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"<write-operation is not provided for remote-side>
+				This variable indicates the device name. "
+			::= { umCommonInventoryEntry 4 }
+		
+		umCommonConfigTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmCommonConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A table containing common config information."
+			::= { hwShdslCPECommon 2 }
+		
+		umCommonConfigEntry OBJECT-TYPE
+			SYNTAX UmCommonConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in umCommonConfigTable."
+			INDEX { ifIndex }
+			::= { umCommonConfigTable 1 }
+		
+		UmCommonConfigEntry ::=
+			SEQUENCE { 
+				umCommonConfigDate
+					DisplayString,
+				umCommonConfigTime
+					DisplayString
+			 }
+
+		umCommonConfigDate OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (10))
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is used to define date information of the device.
+				The format is MM/DD/YYYY. MM means month, DD is day, and YYYY stands for year.
+				The range is from 01/01/1990 to 12/31/2100.
+				"
+			::= { umCommonConfigEntry 1 }
+		
+		umCommonConfigTime OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (8))
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is used to define time information of the device.
+				The format is HH:MM:SS. HH means hour, MM is to indicate minute and SS is for second.
+				"
+			::= { umCommonConfigEntry 2 }
+		
+		umCommonActionTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmCommonActionEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A table containing actions to CPE."
+			::= { hwShdslCPECommon 3 }
+		
+		umCommonActionEntry OBJECT-TYPE
+			SYNTAX UmCommonActionEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in umCommonActionTable."
+			INDEX { ifIndex }
+			::= { umCommonActionTable 1 }
+		
+		UmCommonActionEntry ::=
+			SEQUENCE { 
+				umCommonActionDbSave
+					INTEGER,
+				umCommonActionWarmStart
+					INTEGER
+			 }
+
+		umCommonActionDbSave OBJECT-TYPE
+			SYNTAX INTEGER { save(1) }
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is to initiate the VCDB command.
+				1: save
+				"
+			::= { umCommonActionEntry 1 }
+		
+		umCommonActionWarmStart OBJECT-TYPE
+			SYNTAX INTEGER { restart(1) }
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to restart the device.
+				TRUE (1): warm start
+				"
+			::= { umCommonActionEntry 2 }
+		
+		umCommonSnmpConfigTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmCommonSnmpConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS deprecated
+			DESCRIPTION
+				"A table containing SNMP configuration information."
+			::= { hwShdslCPECommon 4 }
+		
+		umCommonSnmpConfigEntry OBJECT-TYPE
+			SYNTAX UmCommonSnmpConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS deprecated
+			DESCRIPTION
+				"An entry in umCommonSnmpConfigTable."
+			INDEX { ifIndex }
+			::= { umCommonSnmpConfigTable 1 }
+		
+		UmCommonSnmpConfigEntry ::=
+			SEQUENCE { 
+				umCommonSnmpConfigIpAddress
+					IpAddress,
+				umCommonSnmpConfigIpSubnetMask
+					IpAddress,
+				umCommonSnmpConfigIpGatewayIp
+					IpAddress,
+				umCommonSnmpConfigTrapIpAddress1
+					IpAddress,
+				umCommonSnmpConfigTrapIpPortNum1
+					INTEGER,
+				umCommonSnmpConfigTrapIpAddress2
+					IpAddress,
+				umCommonSnmpConfigTrapIpPortNum2
+					INTEGER
+			 }
+
+		umCommonSnmpConfigIpAddress OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to indicate IP address of the device. "
+			::= { umCommonSnmpConfigEntry 1 }
+		
+		umCommonSnmpConfigIpSubnetMask OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to define the subnet mask of the IP address of the device. "
+			::= { umCommonSnmpConfigEntry 2 }
+		
+		umCommonSnmpConfigIpGatewayIp OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to define the gateway IP address of the device. "
+			::= { umCommonSnmpConfigEntry 3 }
+		
+		umCommonSnmpConfigTrapIpAddress1 OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to define the IP address where the manager receives trap. "
+			::= { umCommonSnmpConfigEntry 4 }
+		
+		umCommonSnmpConfigTrapIpPortNum1 OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to define the UDP port number where the manager receives trap.
+				The possible values are:
+				 162 (default)
+				 62000
+				 62001
+				 62002
+				"
+			::= { umCommonSnmpConfigEntry 5 }
+		
+		umCommonSnmpConfigTrapIpAddress2 OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to define the IP address where the manager receives trap. "
+			::= { umCommonSnmpConfigEntry 6 }
+		
+		umCommonSnmpConfigTrapIpPortNum2 OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to define the UDP port number where the manager receives trap.
+				The possible values are:
+				 162 (default)
+				 62000
+				 62001
+				 62002
+				"
+			::= { umCommonSnmpConfigEntry 7 }
+		
+		hwShdslCPESdsl OBJECT IDENTIFIER ::= { hwShdslCPE 2 }
+		
+		umSdslConfigTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A table containing Sdsl configuration information."
+			::= { hwShdslCPESdsl 1 }
+		
+		umSdslConfigEntry OBJECT-TYPE
+			SYNTAX UmSdslConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in umSdslConfigTable."
+			INDEX { ifIndex }
+			::= { umSdslConfigTable 1 }
+		
+		UmSdslConfigEntry ::=
+			SEQUENCE { 
+				umSdslConfigNEType
+					INTEGER,
+				umSdslConfigRateAdaptive
+					INTEGER,
+				umSdslConfigDataRate
+					INTEGER,
+				umSdslResetPerformance
+					INTEGER,
+				umSdslTimeElapsed
+					INTEGER,
+				umSdslValidIntervals
+					INTEGER
+			 }
+
+		umSdslConfigNEType OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to set this STU-C or STU-R configuration.
+				(0): STU-C (LT mode)
+				(1): STU-R (NT mode)
+				"
+			::= { umSdslConfigEntry 1 }
+		
+		umSdslConfigRateAdaptive OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is to enable/disable the rate adaptive configuration.
+				(0): Fixed
+				(1): Adaptive
+				"
+			::= { umSdslConfigEntry 2 }
+		
+		umSdslConfigDataRate OBJECT-TYPE
+			SYNTAX INTEGER (3..32)
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable is to set data rate (N*64k) of Sdsl. 
+				If Rate Adaptive is TRUE, the value is invalid
+				till Rate Adaptive is FALSE.
+				"
+			::= { umSdslConfigEntry 3 }
+		
+		umSdslResetPerformance OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to reset performance register. 
+				1: reset all current performance data
+				2: reset current ES
+				3: reset current SES
+				4: reset current UAS
+				5: reset all history performance data
+				6: reset history ES
+				7: reset history SES
+				8: reset history UAS
+				"
+			::= { umSdslConfigEntry 4 }
+		
+		umSdslTimeElapsed OBJECT-TYPE
+			SYNTAX INTEGER (0..899)
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" The number of seconds that have elapsed since
+				the  beginning of the current error-measurement
+				period."
+			::= { umSdslConfigEntry 5 }
+		
+		umSdslValidIntervals OBJECT-TYPE
+			SYNTAX INTEGER (0..96)
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" The number of previous intervals for which
+				valid data was collected. The value will be 96
+				unless the interface was brought on-line within
+				the last 24 hours, in which case the value will
+				be the number of complete 15 minute intervals
+				the since interface has been online. "
+			::= { umSdslConfigEntry 6 }
+		
+		umSdslThresholdTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslThresholdEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A table containing MSDSL configuration information."
+			::= { hwShdslCPESdsl 2 }
+		
+		umSdslThresholdEntry OBJECT-TYPE
+			SYNTAX UmSdslThresholdEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in umSdslThresholdTable."
+			INDEX { ifIndex }
+			::= { umSdslThresholdTable 1 }
+		
+		UmSdslThresholdEntry ::=
+			SEQUENCE { 
+				umSdslThreshold15mES
+					Gauge32,
+				umSdslThreshold15mSES
+					Gauge32,
+				umSdslThreshold15mUAS
+					Gauge32,
+				umSdslThreshold24hES
+					Gauge32,
+				umSdslThreshold24hSES
+					Gauge32,
+				umSdslThreshold24hUAS
+					Gauge32,
+				umSdslThresholdSNRMargin
+					Gauge32,
+				umSdslThresholdLoopAttenuation
+					Gauge32
+			 }
+
+		umSdslThreshold15mES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the 15-minute threshold of ES. "
+			::= { umSdslThresholdEntry 1 }
+		
+		umSdslThreshold15mSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the 15-minute threshold of SES. "
+			::= { umSdslThresholdEntry 2 }
+		
+		umSdslThreshold15mUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the 15-minute threshold of UAS. "
+			::= { umSdslThresholdEntry 3 }
+		
+		umSdslThreshold24hES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the 24-hour threshold of ES. "
+			::= { umSdslThresholdEntry 4 }
+		
+		umSdslThreshold24hSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the 24-hour threshold of SES. "
+			::= { umSdslThresholdEntry 5 }
+		
+		umSdslThreshold24hUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the 24-hour threshold of UAS. "
+			::= { umSdslThresholdEntry 6 }
+		
+		umSdslThresholdSNRMargin OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable indicates the SNR margin threshold of the Sdsl line. 
+				1~15: valid value
+				"
+			::= { umSdslThresholdEntry 7 }
+		
+		umSdslThresholdLoopAttenuation OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable indicates the Loop Attenuation threshold of the Sdsl line. 
+				1~127: 
+				"
+			::= { umSdslThresholdEntry 8 }
+		
+		umSdslPmCurrentTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslPmCurrentEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Sdsl PM Current table."
+			::= { hwShdslCPESdsl 3 }
+		
+		umSdslPmCurrentEntry OBJECT-TYPE
+			SYNTAX UmSdslPmCurrentEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Sdsl Pm Current table."
+			INDEX { ifIndex }
+			::= { umSdslPmCurrentTable 1 }
+		
+		UmSdslPmCurrentEntry ::=
+			SEQUENCE { 
+				umSdslPmCurrentES
+					Gauge32,
+				umSdslPmCurrentSES
+					Gauge32,
+				umSdslPmCurrentUAS
+					Gauge32
+			 }
+
+		umSdslPmCurrentES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by an Sdsl
+				during the current interval."
+			::= { umSdslPmCurrentEntry 1 }
+		
+		umSdslPmCurrentSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by an Sdsl
+				during the current interval."
+			::= { umSdslPmCurrentEntry 2 }
+		
+		umSdslPmCurrentUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds encountered by an Sdsl
+				during the current interval."
+			::= { umSdslPmCurrentEntry 3 }
+		
+		umSdslPmIntervalTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslPmIntervalEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Sdsl Interval table."
+			::= { hwShdslCPESdsl 4 }
+		
+		umSdslPmIntervalEntry OBJECT-TYPE
+			SYNTAX UmSdslPmIntervalEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Sdsl Interval table."
+			INDEX { ifIndex, umSdslPmIntervalIndex }
+			::= { umSdslPmIntervalTable 1 }
+		
+		UmSdslPmIntervalEntry ::=
+			SEQUENCE { 
+				umSdslPmIntervalIndex
+					INTEGER,
+				umSdslPmIntervalES
+					Gauge32,
+				umSdslPmIntervalSES
+					Gauge32,
+				umSdslPmIntervalUAS
+					Gauge32
+			 }
+
+		umSdslPmIntervalIndex OBJECT-TYPE
+			SYNTAX INTEGER (1..96)
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A number between 1 and 96, where 1 is the most recently completed 15 minute interval and
+				96 is the least recently completed 15 minutes interval. "
+			::= { umSdslPmIntervalEntry 1 }
+		
+		umSdslPmIntervalES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by an Sdsl in one interval."
+			::= { umSdslPmIntervalEntry 2 }
+		
+		umSdslPmIntervalSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by an Sdsl in one interval."
+			::= { umSdslPmIntervalEntry 3 }
+		
+		umSdslPmIntervalUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds encountered by an Sdsl in one interval."
+			::= { umSdslPmIntervalEntry 4 }
+		
+		umSdslPmCurrentDayTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslPmCurrentDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Sdsl PM Current Day table. (0:00AM ~ the last completed quarter)"
+			::= { hwShdslCPESdsl 5 }
+		
+		umSdslPmCurrentDayEntry OBJECT-TYPE
+			SYNTAX UmSdslPmCurrentDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Sdsl Pm Current Day table."
+			INDEX { ifIndex }
+			::= { umSdslPmCurrentDayTable 1 }
+		
+		UmSdslPmCurrentDayEntry ::=
+			SEQUENCE { 
+				umSdslPmCurrentDayES
+					Gauge32,
+				umSdslPmCurrentDaySES
+					Gauge32,
+				umSdslPmCurrentDayUAS
+					Gauge32
+			 }
+
+		umSdslPmCurrentDayES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by an Sdsl
+				during the Current Day."
+			::= { umSdslPmCurrentDayEntry 1 }
+		
+		umSdslPmCurrentDaySES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by an Sdsl
+				during the Current Day."
+			::= { umSdslPmCurrentDayEntry 2 }
+		
+		umSdslPmCurrentDayUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds encountered by an Sdsl
+				during the Current Day."
+			::= { umSdslPmCurrentDayEntry 3 }
+		
+		umSdslPmDayTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslPmDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The SDSL Pm Day table."
+			::= { hwShdslCPESdsl 6 }
+		
+		umSdslPmDayEntry OBJECT-TYPE
+			SYNTAX UmSdslPmDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Sdsl Pm Day table."
+			INDEX { ifIndex, umSdslPmDayIndex }
+			::= { umSdslPmDayTable 1 }
+		
+		UmSdslPmDayEntry ::=
+			SEQUENCE { 
+				umSdslPmDayIndex
+					INTEGER,
+				umSdslPmDayES
+					Gauge32,
+				umSdslPmDaySES
+					Gauge32,
+				umSdslPmDayUAS
+					Gauge32
+			 }
+
+		umSdslPmDayIndex OBJECT-TYPE
+			SYNTAX INTEGER (1..7)
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A number between 1 and 7, where 1 is the most recently completed day and
+				7 is the least recently completed day. "
+			::= { umSdslPmDayEntry 1 }
+		
+		umSdslPmDayES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by an Sdsl in one day. "
+			::= { umSdslPmDayEntry 2 }
+		
+		umSdslPmDaySES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by an Sdsl in one day."
+			::= { umSdslPmDayEntry 3 }
+		
+		umSdslPmDayUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds  encountered by an Sdsl in one day."
+			::= { umSdslPmDayEntry 4 }
+		
+		umSdslTestTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslTestEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A table containing SHDSL testing function."
+			::= { hwShdslCPESdsl 7 }
+		
+		umSdslTestEntry OBJECT-TYPE
+			SYNTAX UmSdslTestEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in umSdslTestTable."
+			INDEX { ifIndex }
+			::= { umSdslTestTable 1 }
+		
+		UmSdslTestEntry ::=
+			SEQUENCE { 
+				umSdslTestLoopback
+					INTEGER,
+				umSdslTestPattern
+					INTEGER,
+				umSdslTestPeriod
+					INTEGER,
+				umSdslTestStart
+					TruthValue,
+				umSdslTestInsertOneBitError
+					TruthValue,
+				umSdslTestElapsedTime
+					INTEGER,
+				umSdslTestErrCount
+					DisplayString,
+				umSdslTestErrRate
+					DisplayString
+			 }
+
+		umSdslTestLoopback OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to set loopback.
+				0: Release       
+				2: Loopback toward Network  
+				"
+			::= { umSdslTestEntry 1 }
+		
+		umSdslTestPattern OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is used to set test pattern.
+				1: 511
+				2: 2047
+				3: PRBS
+				Support Eoc Version 1.02 (23/04/2002)
+				"
+			::= { umSdslTestEntry 2 }
+		
+		umSdslTestPeriod OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is used to get/set test period in second.
+				A value of 0 means non-stop testing.
+				"
+			::= { umSdslTestEntry 3 }
+		
+		umSdslTestStart OBJECT-TYPE
+			SYNTAX TruthValue
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to start or stop testing(only local).
+				TRUE (1): Start
+				FALSE (2): Stop
+				"
+			::= { umSdslTestEntry 4 }
+		
+		umSdslTestInsertOneBitError OBJECT-TYPE
+			SYNTAX TruthValue
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is used to initiate pause test pattern.
+				This is used in error insertion application.  
+				(1) Insert error rate(rate= 10E-1)
+				"
+			::= { umSdslTestEntry 5 }
+		
+		umSdslTestElapsedTime OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable is to indicate elapsed time of testing in second."
+			::= { umSdslTestEntry 6 }
+		
+		umSdslTestErrCount OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (1..11))
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable is to indicate error count of testing. "
+			::= { umSdslTestEntry 7 }
+		
+		umSdslTestErrRate OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (12))
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable is to indicate error rate of testing,
+				which is 'a.bcx10E(-d)', a, b, c: 0..9, d: 1..9."
+			::= { umSdslTestEntry 8 }
+		
+		hwShdslCPEV35 OBJECT IDENTIFIER ::= { hwShdslCPE 3 }
+		
+		umSdslV35ConfigTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslV35ConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" The config table contains Ne config items. "
+			::= { hwShdslCPEV35 1 }
+		
+		umSdslV35ConfigEntry OBJECT-TYPE
+			SYNTAX UmSdslV35ConfigEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" An entry in the config table "
+			INDEX { ifIndex }
+			::= { umSdslV35ConfigTable 1 }
+		
+		UmSdslV35ConfigEntry ::=
+			SEQUENCE { 
+				umSdslV35ConfigCurrentDataRate
+					INTEGER,
+				umSdslV35ConfigCurrentTimingSrc
+					INTEGER,
+				umSdslV35ConfigTimingSrc
+					INTEGER
+			 }
+
+		umSdslV35ConfigCurrentDataRate OBJECT-TYPE
+			SYNTAX INTEGER (3..32)
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This variable is to get current data rate (N*64k) of Sdsl V35. "
+			::= { umSdslV35ConfigEntry 1 }
+		
+		umSdslV35ConfigCurrentTimingSrc OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to get the current timing source of the system.
+				0: internal
+				1: from loop (SDSL)
+				2: from DTE  (V.35)
+				"
+			::= { umSdslV35ConfigEntry 2 }
+		
+		umSdslV35ConfigTimingSrc OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS deprecated
+			DESCRIPTION
+				" This variable is to get/set the setted timing source of the system.
+				0: internal
+				1: from loop (SDSL)
+				2: from DTE (V.35)
+				"
+			::= { umSdslV35ConfigEntry 3 }
+		
+		umSdslV35DTETable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslV35DTEEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" The alarm table contains DTE. "
+			::= { hwShdslCPEV35 2 }
+		
+		umSdslV35DTEEntry OBJECT-TYPE
+			SYNTAX UmSdslV35DTEEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" An entry in the alarm table "
+			INDEX { ifIndex }
+			::= { umSdslV35DTETable 1 }
+		
+		UmSdslV35DTEEntry ::=
+			SEQUENCE { 
+				umSdslV35DTEStatus
+					INTEGER,
+				umSdslV35DTERTS
+					INTEGER,
+				umSdslV35TailFunc
+					INTEGER
+			 }
+
+		umSdslV35DTEStatus OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" The variable represents which port reports the DTE Status.
+				(bit)
+				  0 : RTS
+				  1 : CTS
+				  2 : DCD
+				  3 : DSR
+				 "
+			::= { umSdslV35DTEEntry 1 }
+		
+		umSdslV35DTERTS OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" The variable represents which port reports the  RTS Config Status.
+				0 : RTS from DTE
+				1 : RTS  Permanent On
+				"
+			::= { umSdslV35DTEEntry 2 }
+		
+		umSdslV35TailFunc OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" The variable represents tail function switch.
+				0 : Tail off
+				1 : Tail on
+				"
+			::= { umSdslV35DTEEntry 3 }
+		
+		umSdslV35LoopbackTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslV35LoopbackEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The V35 Loopback Table."
+			::= { hwShdslCPEV35 3 }
+		
+		umSdslV35LoopbackEntry OBJECT-TYPE
+			SYNTAX UmSdslV35LoopbackEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" An entry in the Sdsl Testing table."
+			INDEX { ifIndex }
+			::= { umSdslV35LoopbackTable 1 }
+		
+		UmSdslV35LoopbackEntry ::=
+			SEQUENCE { 
+				umSdslV35Loopback
+					INTEGER
+			 }
+
+		umSdslV35Loopback OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to set loopback.
+				0: Release      
+				1: Toward DTE Loop 
+				2: Toward Network Loop
+				3: Initial in-band Loop (V.54) 
+				"
+			::= { umSdslV35LoopbackEntry 1 }
+		
+		umSdslV35AlarmTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UmSdslV35AlarmEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" The alarm table contains alarm event history. "
+			::= { hwShdslCPEV35 4 }
+		
+		umSdslV35AlarmEntry OBJECT-TYPE
+			SYNTAX UmSdslV35AlarmEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" An entry in the alarm table "
+			INDEX { ifIndex }
+			::= { umSdslV35AlarmTable 1 }
+		
+		UmSdslV35AlarmEntry ::=
+			SEQUENCE { 
+				umSdslV35ClearAlarmHistory
+					TruthValue,
+				umSdslV35AlarmStatus
+					INTEGER
+			 }
+
+		umSdslV35ClearAlarmHistory OBJECT-TYPE
+			SYNTAX TruthValue
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" The variable initiate the clear alarm history action(Set 1). "
+			::= { umSdslV35AlarmEntry 1 }
+		
+		umSdslV35AlarmStatus OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" The variable initiate the current alarm status.
+				
+				(bit)
+				bit0:   Loss of SDSL synchronization word (LOSW)
+				bit1:  (SDSL) ES exceed day threshold
+				bit2:  (SDSL) ES exceed quarter threshold
+				bit3:  (SDSL) SES exceed day threshold
+				bit4:  (SDSL) SES exceed quarter threshold
+				bit5:  (SDSL) UAS exceed day threshold
+				bit6:  (SDSL) UAS exceed quarter threshold
+				bit7:  (SDSL) SNR exceed threshold
+				bit8:  (SDSL) Loop Attuattion exceed threshold
+				bit9~31: Reserved
+				
+				DataType = 72 
+				
+				"
+			::= { umSdslV35AlarmEntry 2 }
+		
+		hwCPET1E1 OBJECT IDENTIFIER ::= { hwShdslCPE 4 }
+		
+		umLiuTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMLiuEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The LIU table. The LIU attributes regarding configuration and performance are defined in RFC1406."
+			::= { hwCPET1E1 1 }
+		
+		umLiuEntry OBJECT-TYPE
+			SYNTAX UMLiuEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" An entry in the LIU table."
+			INDEX { ifIndex }
+			::= { umLiuTable 1 }
+		
+		UMLiuEntry ::=
+			SEQUENCE { 
+				umLiuE1Transparent
+					INTEGER,
+				umLiuLineDrive
+					INTEGER,
+				umLiuIdleCodeword
+					INTEGER,
+				umLiuE1SlotMap
+					INTEGER,
+				umLiuResetPerformance
+					INTEGER
+			 }
+
+		umLiuE1Transparent OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value gets/sets the E1 Transparency.
+				Disable(0),
+				Enable (1)
+				"
+			::= { umLiuEntry 1 }
+		
+		umLiuLineDrive OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				drive-75-Ohm(0),
+				drive-120-Ohm(1)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is to define the value of line drive.
+				75_Ohm(0),
+				120_Ohm(1)
+				"
+			::= { umLiuEntry 2 }
+		
+		umLiuIdleCodeword OBJECT-TYPE
+			SYNTAX INTEGER (0..255)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable represents the value of idle code word.
+				But the write-operation is preserved for future use.
+				If you take write-operation, <Generic error> will be returned.
+				"
+			::= { umLiuEntry 3 }
+		
+		umLiuE1SlotMap OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This table defines the corresponding customer equipment interface for each time slot of network interface.
+				Each bit represents one time slot. '1' stands for occupied.
+				
+				The leftmost bit represents time slot 31, and rightmost bit represents time slot 0.
+				"
+			::= { umLiuEntry 4 }
+		
+		umLiuResetPerformance OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to reset performance register for this port.
+				1: reset all current performance data
+				2: reset current LCV
+				3: reset current PCV
+				4: reset current ES
+				5: reset current SES
+				6: reset current SEFS
+				7: reset current UAS
+				8: reset current CSS
+				9: reset current DM
+				10: reset current CS
+				11: reset current FBE
+				
+				51: reset all history performance data
+				52: reset history LCV
+				53: reset history PCV
+				54: reset history ES
+				55: reset history SES
+				56: reset history SEFS
+				57: reset history UAS
+				58: reset history CSS
+				59: reset history DM
+				60: reset history CS
+				61: reset history FBE
+				
+				"
+			::= { umLiuEntry 5 }
+		
+		umLiuTestTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMLiuTestEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The LIU table. The LIU attributes regarding configuration and performance are defined in RFC1406."
+			::= { hwCPET1E1 2 }
+		
+		umLiuTestEntry OBJECT-TYPE
+			SYNTAX UMLiuTestEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" An entry in the LIU Test table."
+			INDEX { ifIndex }
+			::= { umLiuTestTable 1 }
+		
+		UMLiuTestEntry ::=
+			SEQUENCE { 
+				umLiuLoopbackConfig
+					INTEGER,
+				umLiuLoopbackStatus
+					INTEGER,
+				umLiuTestPattern
+					INTEGER,
+				umLiuTestPeriod
+					INTEGER,
+				umLiuTestStart
+					TruthValue,
+				umLiuInsertedErrorRate
+					INTEGER,
+				umLiuElapsedTime
+					INTEGER,
+				umLiuTestErrCount
+					DisplayString,
+				umLiuTestErrRate
+					DisplayString
+			 }
+
+		umLiuLoopbackConfig OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				release(0),
+				payload-loopback(1),
+				line-loopback(2),
+				local-loopback(3)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to set LIU loopback.
+				0: release
+				1: payload loopback
+				2: line loopback
+				3: local loopback
+				"
+			::= { umLiuTestEntry 1 }
+		
+		umLiuLoopbackStatus OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				release(0),
+				payload-loopback(1),
+				line-loopback(2),
+				local-loopback(3)
+				}
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" This value is to indicate the LIU loopback status.
+				0: released
+				1: payload loopback
+				2: line loopback
+				3: local loopback
+				"
+			::= { umLiuTestEntry 2 }
+		
+		umLiuTestPattern OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				pattern-2E15-1-PRBS(1),
+				pattern-2047(3)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is used to set test pattern.
+				1: 2E15-1_PRBS  
+				3: 2047
+				"
+			::= { umLiuTestEntry 3 }
+		
+		umLiuTestPeriod OBJECT-TYPE
+			SYNTAX INTEGER (0..359999)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This variable is used to set test period in second.
+				A value of 0 means non-stop testing. "
+			::= { umLiuTestEntry 4 }
+		
+		umLiuTestStart OBJECT-TYPE
+			SYNTAX TruthValue
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is to start or stop testing.
+				1: Start
+				2: Stop  "
+			::= { umLiuTestEntry 5 }
+		
+		umLiuInsertedErrorRate OBJECT-TYPE
+			SYNTAX INTEGER (0..7)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" This value is used to set inserted error rate.
+				Inserted error rate = 1*10E(-n), where n is the set value.
+				Set 0 to stop insertting errors.
+				"
+			::= { umLiuTestEntry 6 }
+		
+		umLiuElapsedTime OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"This variable is to indicate elapsed time of testing. "
+			::= { umLiuTestEntry 7 }
+		
+		umLiuTestErrCount OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (1..13))
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"This variable is to indicate error count of testing. "
+			::= { umLiuTestEntry 8 }
+		
+		umLiuTestErrRate OBJECT-TYPE
+			SYNTAX DisplayString (SIZE (13))
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"This variable is to indicate error rate of testing, which is 'a.bcx10E(-d)', a, b, c: 0..9, d: 1..9."
+			::= { umLiuTestEntry 9 }
+		
+		umLiuThresholdTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMLiuThresholdEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Performance threshold table."
+			::= { hwCPET1E1 3 }
+		
+		umLiuThresholdEntry OBJECT-TYPE
+			SYNTAX UMLiuThresholdEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				" An entry in Performance threshold table."
+			INDEX { ifIndex }
+			::= { umLiuThresholdTable 1 }
+		
+		UMLiuThresholdEntry ::=
+			SEQUENCE { 
+				umLiuThreshold15mLCV
+					Gauge32,
+				umLiuThreshold15mPCV
+					Gauge32,
+				umLiuThreshold15mES
+					Gauge32,
+				umLiuThreshold15mSES
+					Gauge32,
+				umLiuThreshold15mSEFS
+					Gauge32,
+				umLiuThreshold15mUAS
+					Gauge32,
+				umLiuThreshold15mCSS
+					Gauge32,
+				umLiuThreshold15mDM
+					Gauge32,
+				umLiuThreshold24hLCV
+					Gauge32,
+				umLiuThreshold24hPCV
+					Gauge32,
+				umLiuThreshold24hES
+					Gauge32,
+				umLiuThreshold24hSES
+					Gauge32,
+				umLiuThreshold24hSEFS
+					Gauge32,
+				umLiuThreshold24hUAS
+					Gauge32,
+				umLiuThreshold24hCSS
+					Gauge32,
+				umLiuThreshold24hDM
+					Gauge32
+			 }
+
+		umLiuThreshold15mLCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of LCV.  This variable is valid for near end UM."
+			::= { umLiuThresholdEntry 1 }
+		
+		umLiuThreshold15mPCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of PCV. "
+			::= { umLiuThresholdEntry 2 }
+		
+		umLiuThreshold15mES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of ES. "
+			::= { umLiuThresholdEntry 3 }
+		
+		umLiuThreshold15mSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of SES. "
+			::= { umLiuThresholdEntry 4 }
+		
+		umLiuThreshold15mSEFS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of SEFS. "
+			::= { umLiuThresholdEntry 5 }
+		
+		umLiuThreshold15mUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of UAS. "
+			::= { umLiuThresholdEntry 6 }
+		
+		umLiuThreshold15mCSS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of CSS. "
+			::= { umLiuThresholdEntry 7 }
+		
+		umLiuThreshold15mDM OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of DM. "
+			::= { umLiuThresholdEntry 8 }
+		
+		umLiuThreshold24hLCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of LCV.  This variable is valid for near end UM."
+			::= { umLiuThresholdEntry 9 }
+		
+		umLiuThreshold24hPCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of PCV. "
+			::= { umLiuThresholdEntry 10 }
+		
+		umLiuThreshold24hES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of ES. "
+			::= { umLiuThresholdEntry 11 }
+		
+		umLiuThreshold24hSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of SES. "
+			::= { umLiuThresholdEntry 12 }
+		
+		umLiuThreshold24hSEFS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of SEFS. "
+			::= { umLiuThresholdEntry 13 }
+		
+		umLiuThreshold24hUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of UAS. "
+			::= { umLiuThresholdEntry 14 }
+		
+		umLiuThreshold24hCSS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of CSS. "
+			::= { umLiuThresholdEntry 15 }
+		
+		umLiuThreshold24hDM OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable defines the threshold of DM. "
+			::= { umLiuThresholdEntry 16 }
+		
+		umLiuPmData OBJECT IDENTIFIER ::= { hwCPET1E1 4 }
+		
+		umLiuPmCurrent15mTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMLiuPmCurrent15mEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Liu PM Current table."
+			::= { umLiuPmData 1 }
+		
+		umLiuPmCurrent15mEntry OBJECT-TYPE
+			SYNTAX UMLiuPmCurrent15mEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Liu Pm Current 15 minutes table."
+			INDEX { ifIndex }
+			::= { umLiuPmCurrent15mTable 1 }
+		
+		UMLiuPmCurrent15mEntry ::=
+			SEQUENCE { 
+				umLiuPmCurrent15mLCV
+					Gauge32,
+				umLiuPmCurrent15mPCV
+					Gauge32,
+				umLiuPmCurrent15mES
+					Gauge32,
+				umLiuPmCurrent15mSES
+					Gauge32,
+				umLiuPmCurrent15mSEFS
+					Gauge32,
+				umLiuPmCurrent15mUAS
+					Gauge32,
+				umLiuPmCurrent15mCSS
+					Gauge32,
+				umLiuPmCurrent15mDM
+					Gauge32,
+				umLiuPmCurrent15mCS
+					Gauge32,
+				umLiuPmCurrent15mFBE
+					Gauge32
+			 }
+
+		umLiuPmCurrent15mLCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Line Code Violations encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 1 }
+		
+		umLiuPmCurrent15mPCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Path Coding Violations encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 2 }
+		
+		umLiuPmCurrent15mES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 3 }
+		
+		umLiuPmCurrent15mSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 4 }
+		
+		umLiuPmCurrent15mSEFS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Framing Seconds encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 5 }
+		
+		umLiuPmCurrent15mUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 6 }
+		
+		umLiuPmCurrent15mCSS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip Seconds encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 7 }
+		
+		umLiuPmCurrent15mDM OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Degraded Minutes encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 8 }
+		
+		umLiuPmCurrent15mCS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip encountered by an LIU interface in the current quarter."
+			::= { umLiuPmCurrent15mEntry 9 }
+		
+		umLiuPmCurrent15mFBE OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Loss Of Frame encountered by an LIU interface in current quarter."
+			::= { umLiuPmCurrent15mEntry 10 }
+		
+		umLiuPm15mTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMLiuPm15mEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Liu PM 15 minutes Interval table."
+			::= { umLiuPmData 2 }
+		
+		umLiuPm15mEntry OBJECT-TYPE
+			SYNTAX UMLiuPm15mEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Liu Pm Interval table."
+			INDEX { ifIndex, umLiuPm15mIndex }
+			::= { umLiuPm15mTable 1 }
+		
+		UMLiuPm15mEntry ::=
+			SEQUENCE { 
+				umLiuPm15mIndex
+					INTEGER,
+				umLiuPm15mLCV
+					Gauge32,
+				umLiuPm15mPCV
+					Gauge32,
+				umLiuPm15mES
+					Gauge32,
+				umLiuPm15mSES
+					Gauge32,
+				umLiuPm15mSEFS
+					Gauge32,
+				umLiuPm15mUAS
+					Gauge32,
+				umLiuPm15mCSS
+					Gauge32,
+				umLiuPm15mDM
+					Gauge32,
+				umLiuPm15mCS
+					Gauge32,
+				umLiuPm15mFBE
+					Gauge32
+			 }
+
+		umLiuPm15mIndex OBJECT-TYPE
+			SYNTAX INTEGER (1..96)
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A number between 1 and 96, where 1 is the most
+				recently completed 15 minute interval and 96 is
+				the least recently completed 15 minutes interval
+				(assuming that all 96 intervals are valid)."
+			::= { umLiuPm15mEntry 1 }
+		
+		umLiuPm15mLCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Line Code Violations encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 2 }
+		
+		umLiuPm15mPCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Path Coding Violations encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 3 }
+		
+		umLiuPm15mES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 4 }
+		
+		umLiuPm15mSES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 5 }
+		
+		umLiuPm15mSEFS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Framing Seconds encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 6 }
+		
+		umLiuPm15mUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 7 }
+		
+		umLiuPm15mCSS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip Seconds encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 8 }
+		
+		umLiuPm15mDM OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Degraded Minutes encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 9 }
+		
+		umLiuPm15mCS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 10 }
+		
+		umLiuPm15mFBE OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Loss Of Frame encountered by a
+				LIU interface in one of the previous 96,
+				individual 15 minute, intervals. "
+			::= { umLiuPm15mEntry 11 }
+		
+		umLiuPmCurrentDayTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMLiuPmCurrentDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Liu PM Current Day table."
+			::= { umLiuPmData 3 }
+		
+		umLiuPmCurrentDayEntry OBJECT-TYPE
+			SYNTAX UMLiuPmCurrentDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Liu Pm Current Day table."
+			INDEX { ifIndex }
+			::= { umLiuPmCurrentDayTable 1 }
+		
+		UMLiuPmCurrentDayEntry ::=
+			SEQUENCE { 
+				umLiuPmCurrentDayLCV
+					Gauge32,
+				umLiuPmCurrentDayPCV
+					Gauge32,
+				umLiuPmCurrentDayES
+					Gauge32,
+				umLiuPmCurrentDaySES
+					Gauge32,
+				umLiuPmCurrentDaySEFS
+					Gauge32,
+				umLiuPmCurrentDayUAS
+					Gauge32,
+				umLiuPmCurrentDayCSS
+					Gauge32,
+				umLiuPmCurrentDayDM
+					Gauge32,
+				umLiuPmCurrentDayCS
+					Gauge32,
+				umLiuPmCurrentDayFBE
+					Gauge32
+			 }
+
+		umLiuPmCurrentDayLCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Line Code Violations encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 1 }
+		
+		umLiuPmCurrentDayPCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Path Coding Violations encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 2 }
+		
+		umLiuPmCurrentDayES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 3 }
+		
+		umLiuPmCurrentDaySES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 4 }
+		
+		umLiuPmCurrentDaySEFS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Framing Seconds encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 5 }
+		
+		umLiuPmCurrentDayUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 6 }
+		
+		umLiuPmCurrentDayCSS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip Seconds encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 7 }
+		
+		umLiuPmCurrentDayDM OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Degraded Minutes encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 8 }
+		
+		umLiuPmCurrentDayCS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 9 }
+		
+		umLiuPmCurrentDayFBE OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Loss Of Frame encountered by an LIU interface in current day."
+			::= { umLiuPmCurrentDayEntry 10 }
+		
+		umLiuPmDayTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMLiuPmDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The Liu PM Day table."
+			::= { umLiuPmData 4 }
+		
+		umLiuPmDayEntry OBJECT-TYPE
+			SYNTAX UMLiuPmDayEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the Liu Pm Day table."
+			INDEX { ifIndex, umLiuPmDayIndex }
+			::= { umLiuPmDayTable 1 }
+		
+		UMLiuPmDayEntry ::=
+			SEQUENCE { 
+				umLiuPmDayIndex
+					INTEGER,
+				umLiuPmDayLCV
+					Gauge32,
+				umLiuPmDayPCV
+					Gauge32,
+				umLiuPmDayES
+					Gauge32,
+				umLiuPmDaySES
+					Gauge32,
+				umLiuPmDaySEFS
+					Gauge32,
+				umLiuPmDayUAS
+					Gauge32,
+				umLiuPmDayCSS
+					Gauge32,
+				umLiuPmDayDM
+					Gauge32,
+				umLiuPmDayCS
+					Gauge32,
+				umLiuPmDayFBE
+					Gauge32
+			 }
+
+		umLiuPmDayIndex OBJECT-TYPE
+			SYNTAX INTEGER (1..7)
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"A number between 1 and 7, where 1 is PM data of the most recently completed day and
+				7 is PM data of the least completed recently day.
+				"
+			::= { umLiuPmDayEntry 1 }
+		
+		umLiuPmDayLCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Line Code Violations encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 2 }
+		
+		umLiuPmDayPCV OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Path Coding Violations encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 3 }
+		
+		umLiuPmDayES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Errored Seconds encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 4 }
+		
+		umLiuPmDaySES OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Seconds encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 5 }
+		
+		umLiuPmDaySEFS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Severely Errored Framing Seconds encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 6 }
+		
+		umLiuPmDayUAS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Unavailable Seconds encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 7 }
+		
+		umLiuPmDayCSS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip Seconds encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 8 }
+		
+		umLiuPmDayDM OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Degraded Minutes encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 9 }
+		
+		umLiuPmDayCS OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Controlled Slip encountered by an LIU interface in one day."
+			::= { umLiuPmDayEntry 10 }
+		
+		umLiuPmDayFBE OBJECT-TYPE
+			SYNTAX Gauge32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The number of Loss Of Frame by an LIU interface in one day."
+			::= { umLiuPmDayEntry 11 }
+		
+		umSdslE1T1AlarmTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF UMSdslE1T1AlarmEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The SDSL E1T1 alarm table."
+			::= { hwCPET1E1 5 }
+		
+		umSdslE1T1AlarmEntry OBJECT-TYPE
+			SYNTAX UMSdslE1T1AlarmEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the SDSL alarm table."
+			INDEX { ifIndex }
+			::= { umSdslE1T1AlarmTable 1 }
+		
+		UMSdslE1T1AlarmEntry ::=
+			SEQUENCE { 
+				umSdslE1T1ClearAlarmHistory
+					TruthValue,
+				umSdslE1T1LocalAlarmStatus
+					Unsigned32,
+				umSdslE1T1SdslAlarmStatus
+					Unsigned32
+			 }
+
+		umSdslE1T1ClearAlarmHistory OBJECT-TYPE
+			SYNTAX TruthValue
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				" The variable initiate the clear alarm history action(Set 1). "
+			::= { umSdslE1T1AlarmEntry 1 }
+		
+		umSdslE1T1LocalAlarmStatus OBJECT-TYPE
+			SYNTAX Unsigned32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" The variable initiate the local current alarm status.
+				(bit)
+				 0:   (E1T1) E1 LOS Failure (Loss of signal)
+				 1:   (E1T1) Loss of Frame Alignment
+				 2:   (E1T1) Loss of E1T1 Multiframe Alignment
+				 3:   (E1T1) AIS received
+				 4:   (E1T1) AIS received in TS16
+				 5:   (E1T1) RAI received
+				 6:   (E1T1) RAI received in TS16
+				 7:   (E1T1) Bit errors exceed error ratio
+				 8:   (E1T1) LCV exceed day threshold
+				 9:   (E1T1) LCV exceed quarter threshold
+				 10:  (E1T1) PCV exceed day threshold
+				 11:  (E1T1) PCV exceed quarter threshold
+				 12:  (E1T1) ES exceed day threshold
+				 13:  (E1T1) ES exceed quarter threshold
+				 14:  (E1T1) SES exceed day threshold
+				 15:  (E1T1) SES exceed quarter threshold
+				 16:  (E1T1) SEFS exceed day threshold
+				 17:  (E1T1) SEFS exceed quarter threshold
+				 18:  (E1T1) UAS exceed day threshold
+				 19:  (E1T1) UAS exceed quarter threshold
+				 20:  (E1T1) CSS exceed day threshold
+				 21:  (E1T1) CSS exceed quarter threshold
+				 22:  (E1T1) DM exceed day threshold
+				 23:  (E1T1) DM exceed quarter threshold
+				 24~31 Reserved 
+				   
+				 DataType 103
+				 
+				
+				"
+			::= { umSdslE1T1AlarmEntry 2 }
+		
+		umSdslE1T1SdslAlarmStatus OBJECT-TYPE
+			SYNTAX Unsigned32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" The variable initiate the E1T1 SHDSL current alarm status.
+				(bit)
+				 0:  (SDSL) LOSW Failure  (Loss of SDSL synchronization word)
+				 1:  (SDSL) ES exceed day threshold 
+				 2:  (SDSL) ES exceed quarter threshold 
+				 3:  (SDSL) SES exceed day threshold 
+				 4:  (SDSL) SES exceed quarter threshold 
+				 5:  (SDSL) UAS exceed day threshold 
+				 6:  (SDSL) UAS exceed quarter threshold 
+				 7:  (SDSL) SNR exceed threshold
+				 8:  (SDSL) Loop Attuattion exceed threshold
+				 9~31 Reserved
+				    
+				 DataType 103
+				
+				"
+			::= { umSdslE1T1AlarmEntry 3 }
+		
+	
+	END

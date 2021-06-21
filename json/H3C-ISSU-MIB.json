@@ -1,0 +1,843 @@
+{
+  "imports": {
+    "class": "imports",
+    "HUAWEI-3COM-OID-MIB": [
+      "h3cCommon"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "Bits",
+      "iso",
+      "MODULE-IDENTITY",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "MibIdentifier",
+      "Gauge32",
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "Counter64"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "RowStatus"
+    ]
+  },
+  "h3cIssuUpgrade": {
+    "name": "h3cIssuUpgrade",
+    "oid": "1.3.6.1.4.1.2011.10.2.133",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-01-15 15:36",
+        "description": "Initial version of this MIB module. Added h3cIssuUpgradeImageTable h3cIssuOp h3cIssuCompatibleResult h3cIssuTestResultTable h3cIssuUpgradeResultTable"
+      }
+    ],
+    "lastupdated": "201301151536Z",
+    "organization": "Hangzhou H3C Tech. Co., Ltd.",
+    "contactinfo": "Platform Team Hangzhou H3C Tech. Co., Ltd. Haidian District Beijing P.R. China http://www.h3c.com Zip:_100085",
+    "description": "This MIB provides objects for upgrading images on modules in the system, objects for showing the result of an upgrade operation, and objects for showing the result of a test operation. To perform an upgrade operation, a management application must first read the h3cIssuUpgradeImageTable table and use the information in other tables, as explained below. You can configure a new image name for each image type as listed in h3cIssuUpgradeImageTable. The system will use this image on the particular module at the next reboot. The management application used to perform an upgrade operation must first check if an upgrade operation is already in progress in the system. This is done by reading the h3cIssuOpType ('none' indicates that no other upgrade operation is in progress. Any other value indicates that an upgrade is already in progress and a new upgrade operation is not allowed. To start an 'install' operation, the user must first perform a 'test' operation to examine the version compatibility between the given set of images and the running images. Only if the result of the 'test' operation is 'success' can the user proceed to do an install operation. The table h3cIssuTestResultTable provides the result of the 'test' operation performed by using h3cIssuOpType. The table h3cIssuUpgradeResultTable provides the result of the 'install' operation performed by using h3cIssuOpType. "
+  },
+  "h3cIssuUpgradeMibObjects": {
+    "name": "h3cIssuUpgradeMibObjects",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1",
+    "class": "objectidentity"
+  },
+  "h3cIssuUpgradeGroup": {
+    "name": "h3cIssuUpgradeGroup",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1",
+    "class": "objectidentity"
+  },
+  "h3cIssuUpgradeImageTable": {
+    "name": "h3cIssuUpgradeImageTable",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table listing the image variable types that exist in the device."
+  },
+  "h3cIssuUpgradeImageEntry": {
+    "name": "h3cIssuUpgradeImageEntry",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "H3C-ISSU-MIB",
+        "object": "h3cIssuUpgradeImageIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An h3cIssuUpgradeImageEntry entry. Each entry provides an image variable type that exists in the device."
+  },
+  "h3cIssuUpgradeImageIndex": {
+    "name": "h3cIssuUpgradeImageIndex",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index of each image."
+  },
+  "h3cIssuUpgradeImageType": {
+    "name": "h3cIssuUpgradeImageType",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "boot": 1,
+          "system": 2,
+          "feature": 3,
+          "ipe": 4
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Types of images that the system can run. The value of this object has four image variables names - 'boot', 'system', 'feature' and 'ipe'. This table will then list these four strings as follows: h3cIssuUpgradeImageType boot system feature IPE The user can assign images (using h3cIssuUpgradeImageURL) to these variables and the system will use the assigned images to boot."
+  },
+  "h3cIssuUpgradeImageURL": {
+    "name": "h3cIssuUpgradeImageURL",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object contains the path of the image of this entity."
+  },
+  "h3cIssuUpgradeImageRowStatus": {
+    "name": "h3cIssuUpgradeImageRowStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Row-status of image table."
+  },
+  "h3cIssuOp": {
+    "name": "h3cIssuOp",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2",
+    "class": "objectidentity"
+  },
+  "h3cIssuOpType": {
+    "name": "h3cIssuOpType",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "done": 2,
+          "test": 3,
+          "install": 4,
+          "rollback": 5
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Command to be executed. The 'test' command must be performed before the 'install' command can be executed. The 'install' command is allowed only if a read of this object returns 'test' and the value of object h3cIssuOpStatus is 'success'. Command Remarks none If the user sets this object to 'none', the agent will return a success without performing an upgrade operation. done If this object returns any value other than 'none', setting this to 'done' will do the required cleanup of the previous upgrade operation and get the system ready for a new upgrade operation. test Check the version compatibility and upgrade method for the given set of image files. install For all the image entities listed in the h3cIssuUpgradeImageTable, perform the required upgrade operation listed in that table. rollback Abort the current 'install' operation and roll back to the previous version. "
+  },
+  "h3cIssuImageFileOverwrite": {
+    "name": "h3cIssuImageFileOverwrite",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If you want to overwrite the existing file, set the value of this object to enable. Otherwise, set the value of this object to disable."
+  },
+  "h3cIssuOpTrapEnable": {
+    "name": "h3cIssuOpTrapEnable",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If you want to enable the trap, set the value of this object to enable. Otherwise, set the value of this object to disable."
+  },
+  "h3cIssuOpStatus": {
+    "name": "h3cIssuOpStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "failure": 2,
+          "inProgress": 3,
+          "success": 4,
+          "rollbackInProgress": 5,
+          "rollbackSuccess": 6
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Status of the specified operation. none - No operation was performed. failure - Specified operation has failed. inProgress - Specified operation is in progress. success - Specified operation completed successfully. rollbackInProgress - Rollback operation is in progress. rollbackSuccess - Rollback operation completed successfully. "
+  },
+  "h3cIssuFailedReason": {
+    "name": "h3cIssuFailedReason",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the the cause of 'failure' state of the object 'h3cIssuOpStatus'. This object would be a null string if the value of 'h3cIssuOpStatus' is not 'failure'."
+  },
+  "h3cIssuOpTimeCompleted": {
+    "name": "h3cIssuOpTimeCompleted",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the time when the upgrade operation was completed. This object would be a null string if h3cIssuOpType is 'none'. "
+  },
+  "h3cIssuLastOpType": {
+    "name": "h3cIssuLastOpType",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "done": 2,
+          "test": 3,
+          "install": 4,
+          "rollback": 5
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the previous h3cIssuOp value. It will be updated after a new h3cIssuOp is set and delivered to the upgrade process. Command Remarks none If the user sets this object to 'none', agent will return a success without performing an upgrade operation. done If this object returns any value other than 'none', setting this to 'done' will do the required cleanup of the previous upgrade operation and get the system ready for a new upgrade operation. test Check the version compatibility and upgrade method for the given set of image files. install For all the image entities listed in the h3cIssuUpgradeImageTable, perform the required upgrade operation listed in that table. rollback Abort the current install operation and roll back to the previous version. "
+  },
+  "h3cIssuLastOpStatus": {
+    "name": "h3cIssuLastOpStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "failure": 2,
+          "inProgress": 3,
+          "success": 4,
+          "rollbackInProgress": 5,
+          "rollbackSuccess": 6
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates previous h3cIssuOpStatus value. It will be updated after new h3cIssuOp is set and delivered to upgrade process. none - No operation was performed. failure - Specified operation has failed. inProgress - Specified operation is active. success - Specified operation completed successfully. rollbackInProgress - Rollback operation is in progress. rollbackSuccess - Rollback operation completed successfully. "
+  },
+  "h3cIssuLastOpFailedReason": {
+    "name": "h3cIssuLastOpFailedReason",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the cause of 'failure' state of the object 'h3cIssuOpStatus'. This object would be a null string if the value of 'h3cIssuOpStatus' is not 'failure'. The value will be updated when new h3cIssuOp is set and delivered to the upgrade process."
+  },
+  "h3cIssuLastOpTimeCompleted": {
+    "name": "h3cIssuLastOpTimeCompleted",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.1.2.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the previous h3cIssuOpTimeCompleted value. The value will be updated when new h3cIssuOp is set and delivered to the upgrade process."
+  },
+  "h3cIssuUpgradeResultGroup": {
+    "name": "h3cIssuUpgradeResultGroup",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2",
+    "class": "objectidentity"
+  },
+  "h3cIssuCompatibleResult": {
+    "name": "h3cIssuCompatibleResult",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.1",
+    "class": "objectidentity"
+  },
+  "h3cIssuCompatibleResultStatus": {
+    "name": "h3cIssuCompatibleResultStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "inCompatible": 2,
+          "compatible": 3,
+          "failure": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies whether the images provided in h3cIssuUpgradeImageTable are compatible with each other as far as this module is concerned. none - No operation was performed. inCompatible - The images provided are compatible and can be run on this module. compatible - The images provided are incompatible and can be run on this module. failure - Failed to get the compatibility. "
+  },
+  "h3cIssuCompatibleResultFailedReason": {
+    "name": "h3cIssuCompatibleResultFailedReason",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the cause of 'failure' state of the object 'h3cIssuCompatibleResultStatus'. This object would be a null string if the value of 'h3cIssuCompatibleResultStatus' is not 'failure'."
+  },
+  "h3cIssuTestResultTable": {
+    "name": "h3cIssuTestResultTable",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Shows the result of the test operation, from which you can see the upgrade method."
+  },
+  "h3cIssuTestResultEntry": {
+    "name": "h3cIssuTestResultEntry",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "H3C-ISSU-MIB",
+        "object": "h3cIssuTestResultIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An h3cIssuTestResultEntry entry. Each entry provides the test result of a card in the device."
+  },
+  "h3cIssuTestResultIndex": {
+    "name": "h3cIssuTestResultIndex",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Internal index, not accessible."
+  },
+  "h3cIssuTestDeviceChassisID": {
+    "name": "h3cIssuTestDeviceChassisID",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Chassis ID of the card."
+  },
+  "h3cIssuTestDeviceSlotID": {
+    "name": "h3cIssuTestDeviceSlotID",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Slot ID of the card."
+  },
+  "h3cIssuTestDeviceCpuID": {
+    "name": "h3cIssuTestDeviceCpuID",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "CPU ID of the card."
+  },
+  "h3cIssuTestDeviceUpgradeWay": {
+    "name": "h3cIssuTestDeviceUpgradeWay",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "reboot": 2,
+          "sequenceReboot": 3,
+          "issuReboot": 4,
+          "serviceUpgrade": 5,
+          "fileUpgrade": 6,
+          "incompatibleUpgrade": 7
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Upgrade method of the device. none - No operation was performed. reboot - The upgrade method of this device is Reboot. sequenceReboot - The upgrade method of this device is SequenceReboot. issuReboot - The upgrade method of this device is IssuReboot. serviceUpgrade - The upgrade method of this device is ServiceReboot. fileUpgrade - The upgrade method of this device is FileReboot. incompatibleUpgrade - The upgrade method of this device is IncompatibleUpgrade. "
+  },
+  "h3cIssuUpgradeResultTable": {
+    "name": "h3cIssuUpgradeResultTable",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Shows the result of the install operation."
+  },
+  "h3cIssuUpgradeResultEntry": {
+    "name": "h3cIssuUpgradeResultEntry",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "H3C-ISSU-MIB",
+        "object": "h3cIssuUpgradeResultIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An h3cIssuUpgradeResultEntry entry. Each entry provides the upgrade result of a card in the device."
+  },
+  "h3cIssuUpgradeResultIndex": {
+    "name": "h3cIssuUpgradeResultIndex",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Internal Index, not accessible."
+  },
+  "h3cIssuUpgradeDeviceChassisID": {
+    "name": "h3cIssuUpgradeDeviceChassisID",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Chassis ID of the card."
+  },
+  "h3cIssuUpgradeDeviceSlotID": {
+    "name": "h3cIssuUpgradeDeviceSlotID",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Slot ID of the card."
+  },
+  "h3cIssuUpgradeDeviceCpuID": {
+    "name": "h3cIssuUpgradeDeviceCpuID",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "CPU ID of the card."
+  },
+  "h3cIssuUpgradeState": {
+    "name": "h3cIssuUpgradeState",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "init": 1,
+          "loading": 2,
+          "loaded": 3,
+          "switching": 4,
+          "switchover": 5,
+          "committing": 6,
+          "committed": 7,
+          "rollbacking": 8,
+          "rollbacked": 9
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Upgrade status of the device. init -The current status of the device is Init. loading -The current status of the device is Loading. loaded -The current status of the device is Loaded. switching -The current status of the device is Switching. switchover -The current status of the device is Switchover. committing -The current status of the device is Committing. committed -The current status of the device is Committed. rollbacking -The current status of the device is Rollbacking. rollbacked -The current status of the device is Rollbacked. "
+  },
+  "h3cIssuDeviceUpgradeWay": {
+    "name": "h3cIssuDeviceUpgradeWay",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "reboot": 2,
+          "sequenceReboot": 3,
+          "issuReboot": 4,
+          "serviceUpgrade": 5,
+          "fileUpgrade": 6,
+          "incompatibleUpgrade": 7
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Upgrade method of the card. none - No operation was performed. reboot - The upgrade method of this device is Reboot. sequenceReboot - The upgrade method of this device is SequenceReboot. issuReboot - The upgrade method of this device is IssuReboot. serviceUpgrade - The upgrade method of this device is ServiceReboot. fileUpgrade - The upgrade method of this device is FileReboot. incompatibleUpgrade - The upgrade method of this device is IncompatibleUpgrade. "
+  },
+  "h3cIssuUpgradeDeviceStatus": {
+    "name": "h3cIssuUpgradeDeviceStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "waitingUpgrade": 1,
+          "inProcess": 2,
+          "success": 3,
+          "failure": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Upgrade status of the device."
+  },
+  "h3cIssuUpgradeFailedReason": {
+    "name": "h3cIssuUpgradeFailedReason",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.1.2.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the cause of 'failure' state of the object 'h3cIssuUpgradeDeviceStatus'. This object would be a null string if the value of 'h3cIssuCompatibleResultStatus' is not 'failure'."
+  },
+  "h3cIssuUpgradeNotify": {
+    "name": "h3cIssuUpgradeNotify",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.2",
+    "class": "objectidentity"
+  },
+  "h3cIssuUpgradeTrapPrefix": {
+    "name": "h3cIssuUpgradeTrapPrefix",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.2.0",
+    "class": "objectidentity"
+  },
+  "h3cIssuUpgradeOpCompletionNotify": {
+    "name": "h3cIssuUpgradeOpCompletionNotify",
+    "oid": "1.3.6.1.4.1.2011.10.2.133.2.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "H3C-ISSU-MIB",
+        "object": "h3cIssuOpType"
+      },
+      {
+        "module": "H3C-ISSU-MIB",
+        "object": "h3cIssuOpStatus"
+      },
+      {
+        "module": "H3C-ISSU-MIB",
+        "object": "h3cIssuFailedReason"
+      },
+      {
+        "module": "H3C-ISSU-MIB",
+        "object": "h3cIssuOpTimeCompleted"
+      }
+    ],
+    "status": "current",
+    "description": "An h3cIssuUpgradeOpCompletionNotify is sent at the completion of upgrade operation denoted by h3cIssuOp object, if such a notification was requested when the operation was initiated. h3cIssuOpType indicates the type of the operation. h3cIssuOpStatus indicates the result of the operation. h3cIssuFailedReason indicates the operation failure reason. h3cIssuOpTimeCompleted indicates the time when the operation was completed."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/H3C-ISSU-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:41:25 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "H3C-ISSU-MIB"
+  }
+}

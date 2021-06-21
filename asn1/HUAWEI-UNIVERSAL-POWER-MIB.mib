@@ -1,0 +1,282 @@
+	HUAWEI-UNIVERSAL-POWER-MIB DEFINITIONS ::= BEGIN
+
+		IMPORTS 
+			hwEnvEmuIndex			
+				FROM HUAWEI-ENVIRONMENT-MIB		
+			huaweiUtility,hwMd5500Mib			
+				FROM HUAWEI-MIB			
+			Integer32, OBJECT-TYPE, MODULE-IDENTITY			
+				FROM SNMPv2-SMI			
+			RowStatus,DisplayString			
+				FROM SNMPv2-TC;
+	
+	
+		hwUniversalPower MODULE-IDENTITY
+			LAST-UPDATED "200209200900Z"
+			ORGANIZATION
+				"
+				Fix-Net Dept, Huawei Technologies Co.,Ltd."
+			CONTACT-INFO
+				"
+				Floor 5, Block 4, R&D Building,
+				Huawei Longgang Production Base,
+				Shenzhen,  P.R.C.
+				http://www.huawei.com
+				Zip: 518057
+				"
+			DESCRIPTION
+				"constitute according to demand of MD5500 product environment monitoring "			
+						
+			::= { hwMd5500Mib 10 }
+
+			
+
+		
+		hwUniversalPowerInfoTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwUniversalPowerInfoEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Basic information table of universal  power"
+			::= { hwUniversalPower 1 }
+		
+		hwUniversalPowerInfoEntry OBJECT-TYPE
+			SYNTAX HwUniversalPowerInfoEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Basic information table entry of universal  power"
+			INDEX { hwEnvEmuIndex }
+			::= { hwUniversalPowerInfoTable 1 }
+		
+		HwUniversalPowerInfoEntry ::=
+			SEQUENCE { 
+	                            hwUnivProtocolType        
+	                                       Integer32,
+	                            hwUnivPowerName  
+	                                       DisplayString,	                            
+			            hwUnivPowerState   
+			                       INTEGER,
+			            hwUnivInfoRowStatus  
+			                       RowStatus
+			         }
+			       
+                hwUnivProtocolType OBJECT-TYPE
+			SYNTAX    Integer32(0..2)				
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				index of universal power protocol "
+			::= { hwUniversalPowerInfoEntry 1 }	 			 
+			 
+		hwUnivPowerName OBJECT-TYPE
+			SYNTAX DisplayString				
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				name of universal power£¬usually is protocol name"
+			::= { hwUniversalPowerInfoEntry 2 }	 
+		
+		hwUnivPowerState OBJECT-TYPE
+			SYNTAX INTEGER
+			       {
+			         normal(1),
+			         fault(2)
+			       }				
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				state of universal power
+				normal(1),normal
+			         fault(2),fault"
+			::= { hwUniversalPowerInfoEntry 3 }
+			
+		hwUnivInfoRowStatus OBJECT-TYPE
+			SYNTAX RowStatus				
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				RowStatus standard operation"
+			::= { hwUniversalPowerInfoEntry 4 }
+		
+		
+		
+		------------------Analog information table of universal  power----------------	
+		hwUnivPowerAnalogTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwUnivPowerAnalogEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Analog information table of universal  power"
+			::= { hwUniversalPower 2 }
+		
+		hwUnivPowerAnalogEntry OBJECT-TYPE
+			SYNTAX HwUnivPowerAnalogEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Analog information table entry of universal  power"
+			INDEX { hwEnvEmuIndex, hwUnivAnalogIndex }
+			::= { hwUnivPowerAnalogTable 1 }
+		
+		HwUnivPowerAnalogEntry ::=
+			SEQUENCE { 
+				    hwUnivAnalogIndex     
+				              Integer32,				
+			            hwUnivAnalogName      
+			                      DisplayString,				
+			            hwUnivAnalogCurrent     
+			                      Integer32,				
+			            hwUnivAnalogRowStatus
+			                      RowStatus
+			 }
+		
+	         hwUnivAnalogIndex OBJECT-TYPE
+			SYNTAX Integer32(1..255)				
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				index of universal power analog "
+			::= { hwUnivPowerAnalogEntry 1 }	 			 
+			 
+		hwUnivAnalogName OBJECT-TYPE
+			SYNTAX DisplayString				
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				name of universal power analog "
+			::= { hwUnivPowerAnalogEntry 2 }	 
+		
+		hwUnivAnalogCurrent OBJECT-TYPE
+			SYNTAX Integer32		
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				 current value of universal power analog £¬
+				 on in a thousand of basic unit¡£
+				"
+			::= { hwUnivPowerAnalogEntry 3 }
+			
+		hwUnivAnalogRowStatus OBJECT-TYPE
+			SYNTAX RowStatus				
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				RowStatus standard operation"
+			::= { hwUnivPowerAnalogEntry 4 }	         
+			         
+		------------------Alarm information table of universal  power----------------	
+		hwUnivPowerAlarmTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwUnivPowerAlarmEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Alarm information table of universal  power"
+			::= { hwUniversalPower 3 }
+		
+		hwUnivPowerAlarmEntry OBJECT-TYPE
+			SYNTAX HwUnivPowerAlarmEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Alarm information table entry of universal  power"
+			INDEX { 
+			       hwEnvEmuIndex, 
+			       hwUnivAlarmIndex
+			      }
+			::= { hwUnivPowerAlarmTable 1 }
+		
+		HwUnivPowerAlarmEntry ::=
+			SEQUENCE { 
+				    hwUnivAlarmIndex     
+				              Integer32,				
+			            hwUnivAlarmName  
+			                      DisplayString,				
+			            hwUnivAlarmState 
+			                      INTEGER,				
+			            hwUnivAlarmRowStatus
+			                      RowStatus		
+			         }
+	         hwUnivAlarmIndex OBJECT-TYPE
+			SYNTAX Integer32(1..255)				
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Alarm index of universal  power"
+			::= { hwUnivPowerAlarmEntry 1 }	 			 
+			 
+		hwUnivAlarmName OBJECT-TYPE
+			SYNTAX DisplayString				
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				Alarm name  universal  power"
+			::= { hwUnivPowerAlarmEntry 2 }	 
+		
+		hwUnivAlarmState OBJECT-TYPE
+			SYNTAX INTEGER
+			       {
+			         normal(1),			     
+			         connect(2),
+			         disconnect(3),
+			         voltageLack(4),
+			         voltageOver(5),
+			         switchOn(6),
+			         switchOff(7),
+			         charge(8),
+			         discharge(9),
+			         noCharge(10),
+			         allCharge(11),
+			         floatCharge(12),			         
+			         commFailure(13),
+			         protect(14),
+			         fault(15)			         
+			       }		
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				" Alarm state of universal  power£º
+				 normal(1),normal			     
+			         connect(2),connect
+			         disconnect(3),disconnect
+			         voltageLack(4),voltage lack
+			         voltageOver(5),voltage over
+			         switchOn(6),switch on
+			         switchOff(7),switch off
+			         charge(8),charge
+			         discharge(9),discharge
+			         noCharge(10),no charge
+			         allCharge(11),all charge
+			         floatCharge(12),float charge			         
+			         commFailure(13),communication failure
+			         protect(14),commute protect
+			         abnormal(15),commute abnormal
+				"
+			::= { hwUnivPowerAlarmEntry 3 }
+			
+		hwUnivAlarmRowStatus OBJECT-TYPE
+			SYNTAX RowStatus				
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				RowStatus standard operation"
+			::= { hwUnivPowerAlarmEntry 4 }
+			
+END

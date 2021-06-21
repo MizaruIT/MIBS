@@ -1,0 +1,845 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "MPLS-LSR-STD-MIB": [
+      "MplsIndexType"
+    ],
+    "MPLS-TC-STD-MIB": [
+      "MplsTunnelInstanceIndex",
+      "MplsLsrIdentifier",
+      "MplsLdpIdentifier",
+      "MplsTunnelIndex"
+    ],
+    "PW-DRAFT05-MIB": [
+      "pwVcIndex"
+    ],
+    "PW-TC-DRAFT05-MIB": [
+      "pwStdMIB",
+      "PwVcIndexType"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "OBJECT-TYPE",
+      "iso",
+      "Counter64",
+      "MODULE-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "TimeTicks",
+      "Counter32",
+      "MibIdentifier",
+      "Gauge32",
+      "Integer32",
+      "Unsigned32",
+      "OBJECT-IDENTITY",
+      "Bits"
+    ],
+    "SNMPv2-TC": [
+      "StorageType",
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "pwVcMplsMIB": {
+    "name": "pwVcMplsMIB",
+    "oid": "1.3.6.1.2.1.10.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2004-06-13 12:00",
+        "description": "Draft-ietf-pwe3-pw-mpls-mib-06 version. Changes from previous version: 1) Compliance section details. "
+      },
+      {
+        "revision": "2004-02-12 12:00",
+        "description": "Draft-ietf-pwe3-pw-mpls-mib-05 version. Changes from previous version: 1) Add inbound/outbound index for the nonTe mapping table 2) Clarify the pwVcMplsTeMappingTunnelInstance usage in pwVcMplsTeMappingTable. 3) Remove an index from pwVcMplsOutboundTable and adding an indication of Te or non-TE usage. 4) Removing the RowStatus from the outbound tables since it possible to configure a PW to a single TE tunnel head-end and/or a single nonTE tunnel, so the agent can open the Pseudo Wire (PW) Over MPLS June 2004 Management Information Base row automatically. 5) Adding a nonTe inbound table in order to enable a quick search for a PW based on pwVcIndex. "
+      },
+      {
+        "revision": "2003-11-30 12:00",
+        "description": "Draft-ietf-pwe3-pw-mpls-mib-04 version. Changes from previous version: 1) Adapting description to MIB boilerplate. 2) Module OID changed to PWE3 tree. 3) Sync descriptions of various items to table structure and removing unnecessary references. "
+      },
+      {
+        "revision": "2003-07-29 12:00",
+        "description": "Draft-ietf-pwe3-pw-mpls-mib-02 version. Changes from previous version: 1) Removing inbound table (no strict mode and no knowledge of inbound tunnel). 2) Provisioning (i.e. RowCreate) done via mapping tables. Outbound table is now read only for sorted search for pwVcIndex. "
+      },
+      {
+        "revision": "2002-06-02 12:00",
+        "description": "Draft-ietf-pwe3-pw-mpls-mib-00 version. Changes from previous version: 1) Splitting the mapping table into two tables, one for Non TE application and one for TE application. 2) Object types alignment with MPLS MIBs. "
+      },
+      {
+        "revision": "2002-01-29 12:00",
+        "description": "Changes from previous version: 1) Add LDP entity association. 2) Clarify inbound/outbound directions. 3) Simplify indexing of outbound and inbound tables and providing get next variables. "
+      },
+      {
+        "revision": "2001-11-07 12:00",
+        "description": "Changes from previous version: 1) Remove Vc instance from table indexing. 2) Update descriptions of indexing and protection. 3) Remove the need for MPLS-LSR in case of VC only. Pseudo Wire (PW) Over MPLS June 2004 Management Information Base 4) Change pwVcMplsMplsType to BITS in order to enable multiple types of outer tunnel. 5) Add ifindex to outer tunnel tables to support vcOnly option. 6) change naming of outbound, inbound and mapping tables to reflect addition of VC only port ifindexes. 7) Adapt order of items in mapping table to SNMP convention. "
+      },
+      {
+        "revision": "2001-07-11 12:00",
+        "description": "draft-zelig-pw-mib-00.txt - initial version"
+      }
+    ],
+    "lastupdated": "200406131200Z",
+    "organization": "Pseudo Wire Edge to Edge Emulation (PWE3) Working Group",
+    "contactinfo": " David Zelig Postal: Corrigent Systems 126, Yigal Alon St. Tel Aviv, ISRAEL Phone: +972-3-6945273 E-mail: davidz@corrigent.com Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Pseudo Wire (PW) Over MPLS June 2004 Management Information Base Tel: +1-978-497-3051 Email: tnadeau@cisco.com Dave Danenberg Email: dave_danenberg@yahoo.com Sharon Mantin Postal: AxONLink (Israel) Ltd 9 Bareket St. Petah Tikva 49517, Israel Tel: +972-3-9263972 Email: sharon.mantin@axonlink.com The PWE3 Working Group (email distribution pwe3@ietf.org, http://www.ietf.org/html.charters/pwe3-charter.html) ",
+    "description": "This MIB module complements the PW MIB module for PW operation over MPLS. Copyright (C) The Internet Society (date). This version of this MIB module is part of RFC yyyy; see the RFC itself for full legal notices. -- RFC Ed.: replace yyyy with actual RFC number & remove this note "
+  },
+  "pwVcMplsObjects": {
+    "name": "pwVcMplsObjects",
+    "oid": "1.3.6.1.2.1.10.1.1.1",
+    "class": "objectidentity"
+  },
+  "pwVcMplsConformance": {
+    "name": "pwVcMplsConformance",
+    "oid": "1.3.6.1.2.1.10.1.1.2",
+    "class": "objectidentity"
+  },
+  "pwVcMplsTable": {
+    "name": "pwVcMplsTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table controls MPLS specific parameters when the PW is going to be carried over MPLS PSN."
+  },
+  "pwVcMplsEntry": {
+    "name": "pwVcMplsEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-DRAFT05-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents parameters specific to MPLS PSN for a pseudo wire (PW). The row is created automatically by the local agent if the pwVcPsnType is MPLS. It is indexed by pwVcIndex, which uniquely identifying a singular PW. "
+  },
+  "pwVcMplsMplsType": {
+    "name": "pwVcMplsMplsType",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "mplsTe": 0,
+        "mplsNonTe": 1,
+        "vcOnly": 2
+      }
+    },
+    "default": {
+      "value": {
+        "type": "Bits",
+        "class": "type",
+        "bits": {
+          "mplsNonTe": 1
+        }
+      },
+      "format": "bits"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set by the operator to indicate the outer tunnel types, if exists. mplsTe(0) is used if the outer tunnel was set-up by MPLS-TE, and mplsNonTe(1) is used the outer tunnel was set up by LDP or manually. Combination of mplsTe(0) and mplsNonTe(1) may exist together. vcOnly(2) is used if there is no outer tunnel label, i.e. in static provisioning without MPLS tunnel. vcOnly(2) cannot be combined with mplsNonTe(1) or mplsTe(0)."
+  },
+  "pwVcMplsExpBitsMode": {
+    "name": "pwVcMplsExpBitsMode",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "outerTunnel": 1,
+          "specifiedValue": 2,
+          "serviceDependant": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "outerTunnel",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set by the operator to indicate the way the PW shim label EXP bits are to be determined. The value of outerTunnel(1) is used where there is an outer tunnel - pwVcMplsMplsType is mplsTe(0) or mplsNonTe(1). Note that in this case there is no need to mark the PW label with the EXP bits since the PW label is not visible to the intermediate nodes. If there is no outer tunnel, specifiedValue(2) indicates that the value is specified by pwVcMplsExpBits, and serviceDependant(3) indicates that the EXP bits are setup based on a rule specified in the emulated service specific tables, for example when the EXP bits are a function of 802.1p marking for Ethernet emulated service."
+  },
+  "pwVcMplsExpBits": {
+    "name": "pwVcMplsExpBits",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set by the operator to indicate the MPLS EXP bits to be used on the PW shim label if pwVcMplsExpBitsMode is specifiedValue(2), zero otherwise."
+  },
+  "pwVcMplsTtl": {
+    "name": "pwVcMplsTtl",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set by the operator to indicate the PW TTL value to be used on the PW shim label."
+  },
+  "pwVcMplsLocalLdpID": {
+    "name": "pwVcMplsLocalLdpID",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLdpIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "reference": "'LDP specifications', RFC 3036 section 2.2.2.",
+    "status": "current",
+    "description": "The local LDP identifier of the LDP entity creating this PW in the local node. As the PW labels are always set from the per platform label space, the last two octets in the LDP ID MUST be always both zeros."
+  },
+  "pwVcMplsLocalLdpEntityID": {
+    "name": "pwVcMplsLocalLdpEntityID",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The local node LDP Entity ID of the LDP entity creating this PW. Should return the value of all zeros if not used."
+  },
+  "pwVcMplsPeerLdpID": {
+    "name": "pwVcMplsPeerLdpID",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLdpIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The peer LDP identifier as identified from the LDP session. Should return the value of zero if not applicable or not known yet."
+  },
+  "pwVcMplsStorageType": {
+    "name": "pwVcMplsStorageType",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable indicates the storage type for this row."
+  },
+  "pwVcMplsOutboundTable": {
+    "name": "pwVcMplsOutboundTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table reports and configure the current outbound MPLS tunnels (i.e. toward the PSN) or the physical interface in case of PW label only that carry the PW traffic. It also reports the current outer tunnel and LSP which forward the PW traffic."
+  },
+  "pwVcMplsOutboundEntry": {
+    "name": "pwVcMplsOutboundEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "pwVcMplsOutboundEntry",
+      "module": "PW-MPLS-DRAFT06-MIB",
+      "object": "pwVcMplsEntry"
+    },
+    "status": "current",
+    "description": "A row in this table configured the outer tunnel used for carrying the PW traffic toward the PSN. In the case of PW label only, it configures the interface that will carry the PW traffic. An entry in this table augments the pwVcMplsEntry, and is created automatically when the corresponding row has been created by the agent in the pwVcMplsEntry. This table points to the appropriate MPLS MIB module. In the MPLS-TE case, the 3 variables relevant to the indexing of a TE tunnel head-end are used as in MPLS-TE-STD-MIB are to be configured, and the tunnel instance indicates the LSP that is currently in use for forwarding the traffic. In case of signaled Non-TE MPLS (an outer tunnel label assigned by LDP) the table points to the XC entry in the LSR-STD-MIB. If the Non-TE MPLS tunnel is manually configured, the operator configure the XC pointer to this tunnel. In case of PW label only (no outer tunnel) the ifIndex of the port to carry the PW is configured here. It is possible to associate a PW to one TE tunnel head-end and a non-TE tunnel together. An indication in this table will report the currently active one, In addition, in the TE case the table reports the active tunnel instance (i.e. the specific LSP in use). "
+  },
+  "pwVcMplsOutboundLsrXcIndex": {
+    "name": "pwVcMplsOutboundLsrXcIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is applicable if pwVcMplsMplsType mplsNonTe(1) bit is set, and MUST return a value of zero otherwise. If the outer tunnel is signaled, the object is read-only and indicate the XC index in the MPLS-LSR-STD-MIB of the outer tunnel toward the peer. Otherwise (tunnel is set-up manually) the operator define the XC index of the manually created outer tunnel through this object. "
+  },
+  "pwVcMplsOutboundTunnelIndex": {
+    "name": "pwVcMplsOutboundTunnelIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is applicable if pwVcMplsMplsType mplsTe(0) bit is set, and MUST return a value of zero otherwise. It is Part of set of indexes for outbound tunnel. The operator set this object to represent the desired tunnel head-end toward the peer for carrying the PW traffic. "
+  },
+  "pwVcMplsOutboundTunnelInstance": {
+    "name": "pwVcMplsOutboundTunnelInstance",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelInstanceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is applicable if pwVcMplsMplsType mplsTe(0) bit is set, and MUST return a value of zero otherwise. It indicates the actual tunnel instance that is currently active and carrying the PW traffic - it should return the value of zero until if the information from the MPLS-TE application is not yet known. "
+  },
+  "pwVcMplsOutboundTunnelLclLSR": {
+    "name": "pwVcMplsOutboundTunnelLclLSR",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is applicable if pwVcMplsMplsType mplsTe(0) bit is set, and MUST return a value of all zeros otherwise. It is part of set of indexes for outbound tunnel. The operator set this object to represent the desired tunnel head-end toward the peer for carrying the PW traffic. "
+  },
+  "pwVcMplsOutboundTunnelPeerLSR": {
+    "name": "pwVcMplsOutboundTunnelPeerLSR",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is applicable if pwVcMplsMplsType mplsTe(0) bit is set, and MUST return a value of zero otherwise. It is part of set of indexes for outbound tunnel. It is typically equal to pwVcPeerAddr. "
+  },
+  "pwVcMplsOutboundIfIndex": {
+    "name": "pwVcMplsOutboundIfIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is applicable if pwVcMplsMplsType mplsTe(0) bit is set, and MUST return a value of zero otherwise. The operator configure the ifIndex of the outbound port in this case. "
+  },
+  "pwVcMplsOutboundTunnelTypeInUse": {
+    "name": "pwVcMplsOutboundTunnelTypeInUse",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notYetKnown": 1,
+          "mplsTe": 2,
+          "mplsNonTe": 3,
+          "vcOnly": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current tunnel that is carrying the PW traffic. The value of notYetKnown(1) should be used if the agent is currently unable to determine which tunnel or interface is carrying the PW, for example because both tunnels are in operational status down. "
+  },
+  "pwVcMplsInboundTable": {
+    "name": "pwVcMplsInboundTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table indicates the PW LDP XC entry in the MPLS-LSR-STD-MIB for signaled PWs. "
+  },
+  "pwVcMplsInboundEntry": {
+    "name": "pwVcMplsInboundEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-DRAFT05-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table is created by the agent for each signaled PW, and shows the XC index related to the PW signaling in the inbound direction in the MPLS-LSR-STD-MIB that controls and display the information for all the LDP signaling processes in the local node. "
+  },
+  "pwVcMplsInboundXcIndex": {
+    "name": "pwVcMplsInboundXcIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The XC index representing this PW in the inbound direction. Should return the value of zero if the information is not yet known."
+  },
+  "pwVcMplsNonTeMappingTable": {
+    "name": "pwVcMplsNonTeMappingTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table indicates outbound Tunnel to a PW in non-TE applications, maps the PW to it's (inbound) XC entry, and indicates the PW to physical interface mapping for a PW label to physical interface a PW label is in use without outer tunnel. "
+  },
+  "pwVcMplsNonTeMappingEntry": {
+    "name": "pwVcMplsNonTeMappingEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsNonTeMappingDirection",
+        "implied": 0
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsNonTeMappingXcIndex",
+        "implied": 0
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsNonTeMappingIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsNonTeMappingVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table displays the association between the PW and - it's non-TE MPLS outbound outer Tunnel or, - it's XC entry in the MPLS-LSR-STD-MIB, - it's physical interface if there is no outer tunnel (PW label only) and manual configuration. Rows are created in this table by the by the agent depending on the setting of pwVcMplsMplsType: - If pwVcMplsMplsType mplsNonTe(1) bit is set, the agent creates a row for the outbound direction (pwVcMplsNonTeMappingDirection set to psnBound(1)). The pwVcMplsNonTeMappingXcIndex holds the XC index in the MPLS-LSR-STD-MIB of the PSN bound outer tunnel. pwVcMplsNonTeMappingIfIndex MUST be zero for this row. - If pwVcMplsMplsType vcOnly(2) bit is set, the agent creates a row for the outbound direction (pwVcMplsNonTeMappingDirection set to psnBound(1)). The pwVcMplsNonTeMappingIfIndex holds the ifIndex of the physical port this PW will use in the outbound direction. pwVcMplsNonTeMappingXcIndex MUST be zero for this row. - If the PW has been set-up by signaling protocol (i.e. pwVcOwner equal pwIdFecSignaling(2) or genFecSignaling(3)), the agent creates a row for the inbound direction (pwVcMplsNonTeMappingDirection set to fromPsn(2)). The pwVcMplsNonTeMappingXcIndex holds the XC index in the MPLS-LSR-STD-MIB of the PW LDP generated XC entry. pwVcMplsNonTeMappingIfIndex MUST be zero for this row. An application can use this table to quickly retrieve the PW carried over specific non-TE MPLS outer tunnel or physical interface. "
+  },
+  "pwVcMplsNonTeMappingDirection": {
+    "name": "pwVcMplsNonTeMappingDirection",
+    "oid": "1.3.6.1.2.1.10.1.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "psnBound": 1,
+          "fromPsn": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index for the conceptual XC row identifying Tunnel to PW mappings, indicating the direction of packet flow the entry is related too. psnBound(1) indicates that the entry is related to packets toward the PSN. fromPsn(2) indicates that the entry is related to packets coming from the PSN. "
+  },
+  "pwVcMplsNonTeMappingXcIndex": {
+    "name": "pwVcMplsNonTeMappingXcIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "See the description clause of pwVcMplsNonTeMappingEntry for the usage guidelines of this object."
+  },
+  "pwVcMplsNonTeMappingIfIndex": {
+    "name": "pwVcMplsNonTeMappingIfIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "See the description clause of pwVcMplsNonTeMappingEntry for the usage guidelines of this object."
+  },
+  "pwVcMplsNonTeMappingVcIndex": {
+    "name": "pwVcMplsNonTeMappingVcIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value that represent the PW in the pwVcTable."
+  },
+  "pwVcMplsTeMappingTable": {
+    "name": "pwVcMplsTeMappingTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table enable the retrieval of a PW association to the outbound MPLS tunnel for MPLS-TE applications."
+  },
+  "pwVcMplsTeMappingEntry": {
+    "name": "pwVcMplsTeMappingEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsTeMappingTunnelIndex",
+        "implied": 0
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsTeMappingTunnelInstance",
+        "implied": 0
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsTeMappingTunnelPeerLsrID",
+        "implied": 0
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsTeMappingTunnelLocalLsrID",
+        "implied": 0
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsTeMappingVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents the association between a PW and it's MPLS-TE outer (head-end) Tunnel. An application can use this table to quickly retrieve the list of the PWs that are configured on a specific MPLS TE outer tunnel. The pwVcMplsTeMappingTunnelInstance reports the actual LSP out of the tunnel head-end that is currently forwarding the traffic. The table in indexed by the head-end indexes of a TE tunnel and the PW index. "
+  },
+  "pwVcMplsTeMappingTunnelIndex": {
+    "name": "pwVcMplsTeMappingTunnelIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Primary index for the conceptual row identifying the MPLS-TE tunnel that is carrying the PW traffic."
+  },
+  "pwVcMplsTeMappingTunnelInstance": {
+    "name": "pwVcMplsTeMappingTunnelInstance",
+    "oid": "1.3.6.1.2.1.10.1.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsTunnelInstanceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identify the MPLS-TE LSP that is carrying the PW traffic. Should return the value of zero if the information of the specific LSP is not yet known. Note that based on the recommendation in the MPLS-TC-STD-MIB, instance index 0 should refer to the configured tunnel interface."
+  },
+  "pwVcMplsTeMappingTunnelPeerLsrID": {
+    "name": "pwVcMplsTeMappingTunnelPeerLsrID",
+    "oid": "1.3.6.1.2.1.10.1.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Identifies the Peer LSR when the outer tunnel is MPLS-TE based."
+  },
+  "pwVcMplsTeMappingTunnelLocalLsrID": {
+    "name": "pwVcMplsTeMappingTunnelLocalLsrID",
+    "oid": "1.3.6.1.2.1.10.1.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsLsrIdentifier",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Identifies the local LSR."
+  },
+  "pwVcMplsTeMappingVcIndex": {
+    "name": "pwVcMplsTeMappingVcIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value that represent the PW in the pwVcTable."
+  },
+  "pwVcMplsGroups": {
+    "name": "pwVcMplsGroups",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "pwVcMplsCompliances": {
+    "name": "pwVcMplsCompliances",
+    "oid": "1.3.6.1.2.1.10.1.1.2.2",
+    "class": "objectidentity"
+  },
+  "pwMplsModuleFullCompliance": {
+    "name": "pwMplsModuleFullCompliance",
+    "oid": "1.3.6.1.2.1.10.1.1.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "pwVcMplsGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsOutboundMainGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsInboundGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsMappingGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsOutboundTeGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agents that provide full support for PW-MPLS MIB Module. Such devices can then be monitored and also be configured using this MIB module."
+  },
+  "pwMplsModuleReadOnlyCompliance": {
+    "name": "pwMplsModuleReadOnlyCompliance",
+    "oid": "1.3.6.1.2.1.10.1.1.2.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "pwVcMplsGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsOutboundMainGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsInboundGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsMappingGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      },
+      {
+        "object": "pwVcMplsOutboundTeGroup",
+        "module": "PW-MPLS-DRAFT06-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agents that provide read only support for PW-MPLS MIB Module. Such devices can then be monitored but cannot be configured using this MIB module."
+  },
+  "pwVcMplsGroup": {
+    "name": "pwVcMplsGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsMplsType"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsExpBitsMode"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsExpBits"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsTtl"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsLocalLdpID"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsLocalLdpEntityID"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsPeerLdpID"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for PW over MPLS PSN configuration."
+  },
+  "pwVcMplsOutboundMainGroup": {
+    "name": "pwVcMplsOutboundMainGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsOutboundLsrXcIndex"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsOutboundIfIndex"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsOutboundTunnelTypeInUse"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for outbound association of PW and MPLS tunnel."
+  },
+  "pwVcMplsOutboundTeGroup": {
+    "name": "pwVcMplsOutboundTeGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsOutboundTunnelIndex"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsOutboundTunnelInstance"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsOutboundTunnelLclLSR"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsOutboundTunnelPeerLSR"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for outbound association of PW and MPLS TE tunnel."
+  },
+  "pwVcMplsInboundGroup": {
+    "name": "pwVcMplsInboundGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsInboundXcIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for inbound PW presentation. This group MUST be supported if PW signaling through LDP is used."
+  },
+  "pwVcMplsMappingGroup": {
+    "name": "pwVcMplsMappingGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsNonTeMappingVcIndex"
+      },
+      {
+        "module": "PW-MPLS-DRAFT06-MIB",
+        "object": "pwVcMplsTeMappingVcIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for mapping association of PW and MPLS tunnel."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PW-MPLS-DRAFT06-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:44:25 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PW-MPLS-DRAFT06-MIB"
+  }
+}

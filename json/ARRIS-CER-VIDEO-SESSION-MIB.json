@@ -1,0 +1,2252 @@
+{
+  "imports": {
+    "class": "imports",
+    "ARRIS-CER-VIDEO-MIB": [
+      "CerVirtualEdgeIndexType",
+      "CerMulticastType",
+      "CerProgram"
+    ],
+    "ARRIS-MIB": [
+      "arrisE6Cer"
+    ],
+    "CADANT-CMTS-EQUIPMENT-MIB": [
+      "trapCounter",
+      "trapSeverity"
+    ],
+    "CADANT-TC": [
+      "InetAddressIPv4or6",
+      "AdminState"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero",
+      "InterfaceIndex",
+      "ifIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "OBJECT-TYPE",
+      "MibIdentifier",
+      "Bits",
+      "NOTIFICATION-TYPE",
+      "Integer32",
+      "Counter64",
+      "Counter32",
+      "IpAddress",
+      "iso",
+      "Unsigned32",
+      "MODULE-IDENTITY",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "RowStatus",
+      "TruthValue",
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "cerVideoSessionMib": {
+    "name": "cerVideoSessionMib",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-11-04 00:00",
+        "description": "Remove cervSessionTimeout,cervMulticastProxy, and cervMulticastBackupProxy"
+      },
+      {
+        "revision": "2015-04-07 00:00",
+        "description": "Remove cerErmSessionServerPort. use cerErmSessionRPCServerPort instead of cerErmSessionServerPort in NOTIFICATION-TYPE cerVideoSessionErmConnection"
+      },
+      {
+        "revision": "2015-03-19 00:00",
+        "description": "Remove cervSessionTransportNtwkIfIndex"
+      },
+      {
+        "revision": "2015-03-18 00:00",
+        "description": "Removed cervMulticastAutoSwitchback"
+      },
+      {
+        "revision": "2015-03-05 00:00",
+        "description": "Change the range of ERM session index"
+      },
+      {
+        "revision": "2014-12-12 00:00",
+        "description": "Updated MIB to E6000 IEQ Application PSA v3.2"
+      },
+      {
+        "revision": "2014-12-02 00:00",
+        "description": "Add cerErmSessionAnncMsgEnable"
+      },
+      {
+        "revision": "2014-10-09 00:00",
+        "description": "Additional session multicast changes."
+      },
+      {
+        "revision": "2014-06-25 00:00",
+        "description": "Updated MIB to E6000 IEQ Application PSA v2.1"
+      },
+      {
+        "revision": "2014-03-08 00:00",
+        "description": "E6000 CER Initial revision."
+      }
+    ],
+    "lastupdated": "201511040000Z",
+    "organization": "Arris International",
+    "contactinfo": "Network Management Postal: Arris International. 4300 Cork Airport Business Park Cork Airport, Kinsale Road Cork, Ireland. Tel: +353 21 7305 800 Fax: +353 21 4321 972",
+    "description": "This MIB contains objects to display video sessions and control Switched Digital Video on the ARRIS E6000 CER."
+  },
+  "CerSessionType": {
+    "name": "CerSessionType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "vod": 1,
+          "sdv": 2,
+          "linear": 3,
+          "any": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "A convenient type definition for the type of traffic supported by a session-based ERM. vod - vod-only sdv - sdv-only linear - linear-only any - any type"
+  },
+  "CerErmType": {
+    "name": "CerErmType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cvex": 1,
+          "usrm": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "A convenient type definition for the type of ERM. cvex - ARRIS CVEX ERM usrm - Cisco ERM"
+  },
+  "CerTransportState": {
+    "name": "CerTransportState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "joining": 1,
+          "forwarding": 2,
+          "coldspare": 3,
+          "hotspare": 4,
+          "failed": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": "A convenient type definition for input TS states. These can be as follows joining - Primary stream--waiting for video to arrive forwarding - Primary stream-video is arriving and being forwarded on a QAM coldspare - Backup multicast session that has not been joined yet hotspare - Backup multicast seesion that has been joined, but is not being forwarded failed - Primary stream that either timed out or failed."
+  },
+  "cervSessionGroup": {
+    "name": "cervSessionGroup",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.1",
+    "class": "objectidentity"
+  },
+  "cervMulticastProtocol": {
+    "name": "cervMulticastProtocol",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerMulticastType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The type of multicast signaling for SDV and broadcast."
+  },
+  "cervMulticastTimeoutInterval": {
+    "name": "cervMulticastTimeoutInterval",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The multicast (SDV and linear) TS timeout interval in seconds."
+  },
+  "cervMulticastInterface": {
+    "name": "cervMulticastInterface",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The global interface for IEQ multicast."
+  },
+  "cerErmSessionRPCServerPort": {
+    "name": "cerErmSessionRPCServerPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1024,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 48573,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Contains the local TCP server port value used for ERM sessions."
+  },
+  "cerVideoSessionTable": {
+    "name": "cerVideoSessionTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table lists video sessions. When doing multicast for SDV, there is one row For each replication of the multicast."
+  },
+  "cerVideoSessionEntry": {
+    "name": "cerVideoSessionEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerveSessionVe",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerveSessionId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for the video session table."
+  },
+  "cerveSessionVe": {
+    "name": "cerveSessionVe",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerVirtualEdgeIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The Virtual Edge for this session."
+  },
+  "cerveSessionId": {
+    "name": "cerveSessionId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 33
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Video session identifier. Session ids may not be unique across VEs."
+  },
+  "cerveSessionState": {
+    "name": "cerveSessionState",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inactive": 1,
+          "psi": 2,
+          "data": 3,
+          "active": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Video session state. inactive-the session has not yet been joined, or was Active and failed psi--the session is starting and awaiting PSI tables (used for RPC sessions) data--the session is starting, has seen PSI tables and is awaiting audio/video data (used for RPC sessions) active-the session is forwarding video traffic to this channel"
+  },
+  "cerveSessionChanCont": {
+    "name": "cerveSessionChanCont",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The channel container index. Used for both multicast and unicast sessions for consistency."
+  },
+  "cerveSessionQamIfIndex": {
+    "name": "cerveSessionQamIfIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ifIndex of the output QAM used by this video session."
+  },
+  "cerveSessionTsid": {
+    "name": "cerveSessionTsid",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The TSID of the output QAM channel used by this video session."
+  },
+  "cerveSessionBandwidth": {
+    "name": "cerveSessionBandwidth",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "bps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Configured video session bandwidth in bits per second."
+  },
+  "cerveSessionBitrate": {
+    "name": "cerveSessionBitrate",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "bps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current measured video session bitrate in bits per second."
+  },
+  "cerveSessionTimeActive": {
+    "name": "cerveSessionTimeActive",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The length of time that the input stream has been forwarded since last becoming active is stored in cerveSessionTimeActive. If the cerveSessionState is not set to active, then this value is zero."
+  },
+  "cerveSessionNoPidRemapping": {
+    "name": "cerveSessionNoPidRemapping",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, PIDs are not remapped for this video session."
+  },
+  "cerveSessionGroupId": {
+    "name": "cerveSessionGroupId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 1024
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Identifies the group to which this video session belongs. A value of zero indicates that this session is not part of a group."
+  },
+  "cerveSessionOutProgNumber": {
+    "name": "cerveSessionOutProgNumber",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerProgram",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The output program number of the active transport used by this video session."
+  },
+  "cerveSessionIsMulticast": {
+    "name": "cerveSessionIsMulticast",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, this is a multicast session."
+  },
+  "cerveSessionAssetId": {
+    "name": "cerveSessionAssetId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID tying together all of the transports defined for this video session. Only important when doing Service Level Redundancy (SLR)."
+  },
+  "cerveSessionOnDemandId": {
+    "name": "cerveSessionOnDemandId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 40
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "OnDemand Video session identifier included in an NGOD create session message. Unused if session was not created using NGOD."
+  },
+  "cerveSessionTransportId": {
+    "name": "cerveSessionTransportId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The transport ID currently in use for this session."
+  },
+  "cerVideoIpSessionTable": {
+    "name": "cerVideoIpSessionTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maps a DIP address and UPD dport to a video session ID. It is used for both SDV and session-based VOD. There is only one row in the table for each session, even when there is Service Level Redundancy--the one for the current primary source of the input TS."
+  },
+  "cerVideoIpSessionEntry": {
+    "name": "cerVideoIpSessionEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpSessionDestIpAddr",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpSessionDestUdpPort",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpSessionSrcIpAddr",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpSessionVe",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpSessionId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for the video IP session table."
+  },
+  "cervIpSessionDestIpAddr": {
+    "name": "cervIpSessionDestIpAddr",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4or6",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The destination IP address of this video session."
+  },
+  "cervIpSessionDestUdpPort": {
+    "name": "cervIpSessionDestUdpPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The destination UDP port of this video session."
+  },
+  "cervIpSessionSrcIpAddr": {
+    "name": "cervIpSessionSrcIpAddr",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4or6",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The source IP address of this video session. Zero means not specified."
+  },
+  "cervIpSessionVe": {
+    "name": "cervIpSessionVe",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerVirtualEdgeIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The Virtual Edge for this session."
+  },
+  "cervIpSessionId": {
+    "name": "cervIpSessionId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 33
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Video session identifier."
+  },
+  "cervIpSessionAddrType": {
+    "name": "cervIpSessionAddrType",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of source and desttination IP address."
+  },
+  "cervIpSessionAssetId": {
+    "name": "cervIpSessionAssetId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID tying together all of the transports defined for this video session. Only important when doing Service Level Redundancy (SLR)."
+  },
+  "cerVideoSessionAssetTable": {
+    "name": "cerVideoSessionAssetTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maps a DIP address and UPD dport to a video session ID. It is used for both SDV and session-based VOD. There is only one row in the table for each session, even when there is Service Level Redundancy--the one for the current primary source of the input TS."
+  },
+  "cerVideoSessionAssetEntry": {
+    "name": "cerVideoSessionAssetEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionAssetAssetId",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionAssetTransportId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for the video IP session table."
+  },
+  "cervSessionAssetAssetId": {
+    "name": "cervSessionAssetAssetId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ID tying together all of the transports defined for this video session. Only important when doing Service Level Redundancy (SLR)."
+  },
+  "cervSessionAssetTransportId": {
+    "name": "cervSessionAssetTransportId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The Transport Id for this Video Session."
+  },
+  "cervSessionAssetChanCont": {
+    "name": "cervSessionAssetChanCont",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Contains the channel container index for all sessions."
+  },
+  "cerVideoSessionTransportTable": {
+    "name": "cerVideoSessionTransportTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table lists the transports (active and backup) used by video sessions on the CER."
+  },
+  "cerVideoSessionTransportEntry": {
+    "name": "cerVideoSessionTransportEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for the video session transport table."
+  },
+  "cervSessionTransportId": {
+    "name": "cervSessionTransportId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Video session transport identifier."
+  },
+  "cervSessionTransportAddrType": {
+    "name": "cervSessionTransportAddrType",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of source and desttination IP address."
+  },
+  "cervSessionTransportSrcIpAddress": {
+    "name": "cervSessionTransportSrcIpAddress",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4or6",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Video session transport source IP address."
+  },
+  "cervSessionTransportDestIpAddress": {
+    "name": "cervSessionTransportDestIpAddress",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4or6",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Video session transport destination IP address. For multicast streams, this is the multicast IP address of the stream. For unicast streams, this is the IP address of the gigabit Ethernet port where the stream is received."
+  },
+  "cervSessionTransportDestUdpPort": {
+    "name": "cervSessionTransportDestUdpPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Video session transport destination UDP port."
+  },
+  "cervSessionTransportAssetId": {
+    "name": "cervSessionTransportAssetId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID tying together all of the transports defined for this video session. Only important when doing Service Level Redundancy (SLR)."
+  },
+  "cervSessionTransportBandwidth": {
+    "name": "cervSessionTransportBandwidth",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "bps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The bandwidth of the SDV or VOD session. Zero means not specified."
+  },
+  "cervSessionTransportInProgNumber": {
+    "name": "cervSessionTransportInProgNumber",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerProgram",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The incoming program number of the TS. Zero means the first program in the TS."
+  },
+  "cervSessionTransportState": {
+    "name": "cervSessionTransportState",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.5.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerTransportState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The state of this incoming session."
+  },
+  "cerVideoIpTransportTable": {
+    "name": "cerVideoIpTransportTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maps multicast IP address and UPD port to transport ID."
+  },
+  "cerVideoIpTransportEntry": {
+    "name": "cerVideoIpTransportEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpTransportDestIpAddr",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpTransportSrcIpAddr",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervIpTransportUdpPort",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for the video session multicast transport table."
+  },
+  "cervIpTransportDestIpAddr": {
+    "name": "cervIpTransportDestIpAddr",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4or6",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Video session transport destination IP address."
+  },
+  "cervIpTransportSrcIpAddr": {
+    "name": "cervIpTransportSrcIpAddr",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4or6",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Video session transport source IP address. Zero if not set."
+  },
+  "cervIpTransportUdpPort": {
+    "name": "cervIpTransportUdpPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Video session transport destination UDP port."
+  },
+  "cervIpTransportId": {
+    "name": "cervIpTransportId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Video multicast transport identifier."
+  },
+  "cervIpTransportAssetId": {
+    "name": "cervIpTransportAssetId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID tying together all of the transports defined for this video session. Only important when doing Service Level Redundancy (SLR)."
+  },
+  "cervIpTransportAddrType": {
+    "name": "cervIpTransportAddrType",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of source and desttination IP address."
+  },
+  "cerveErmSessionTable": {
+    "name": "cerveErmSessionTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table stores parameters for each Virtual Edge video ERM object, if defined."
+  },
+  "cerveErmSessionEntry": {
+    "name": "cerveErmSessionEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerveErmSessionVeIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Virtual Edge ERM configuration parameter table"
+  },
+  "cerveErmSessionVeIndex": {
+    "name": "cerveErmSessionVeIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerVirtualEdgeIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is the VE controlled by this ERM."
+  },
+  "cerveErmSessionErmIndex": {
+    "name": "cerveErmSessionErmIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the ERM used for this Virtual Edge. Multiple VEs may use same ERM."
+  },
+  "cerveErmSessionAdminState": {
+    "name": "cerveErmSessionAdminState",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AdminState",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "down",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Whether or not the VE session-base ERM interface is enabled. Not used if cerveErmSessionIndex is zero."
+  },
+  "cerveErmSessionAddrType": {
+    "name": "cerveErmSessionAddrType",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "ipv4",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Type of control IP address."
+  },
+  "cerveErmSessionControlIpAddr": {
+    "name": "cerveErmSessionControlIpAddr",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv4or6",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "0.0.0.0",
+        "format": "string"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the source loopback address used when communicating with the ERM and for receiving messages from the ERM."
+  },
+  "cerveErmSessionControlIfIndex": {
+    "name": "cerveErmSessionControlIfIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ifIndex of the loopback interface for communicating with an ERM."
+  },
+  "cerveErmSessionRowStatus": {
+    "name": "cerveErmSessionRowStatus",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The RowStatus for controlling entries in this table. Allowed values are createAndGo, destroy, and active."
+  },
+  "cerveErmSessionStatusTable": {
+    "name": "cerveErmSessionStatusTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table lists video session statistics for a session-based ERM."
+  },
+  "cerveErmSessionStatusEntry": {
+    "name": "cerveErmSessionStatusEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerveSessionVe",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for the video session qam table."
+  },
+  "cerveErmSessionStatusConnected": {
+    "name": "cerveErmSessionStatusConnected",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "True if this VE is connected to the session ERM, false otherwise."
+  },
+  "cerveErmSessionStatusAddrType": {
+    "name": "cerveErmSessionStatusAddrType",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of IP Address for session-based ERM. Comes from cerveErmSessionAddrType."
+  },
+  "cerveErmSessionStatusRemoteIp": {
+    "name": "cerveErmSessionStatusRemoteIp",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "IP Address of session-based ERM."
+  },
+  "cerveErmSessionStatusCreateSessions": {
+    "name": "cerveErmSessionStatusCreateSessions",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of sessions created for this VE."
+  },
+  "cerveErmSessionStatusCreateSessionFails": {
+    "name": "cerveErmSessionStatusCreateSessionFails",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of failures to creaate a session for this VE."
+  },
+  "cerveErmSessionStatusDeleteSessions": {
+    "name": "cerveErmSessionStatusDeleteSessions",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of sessions deleted for this VE."
+  },
+  "cerveErmSessionStatusDeleteSessionFails": {
+    "name": "cerveErmSessionStatusDeleteSessionFails",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of delete sessions failures for the VE."
+  },
+  "cerveErmSessionStatusAnnounces": {
+    "name": "cerveErmSessionStatusAnnounces",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of announce messages for this VE."
+  },
+  "cerveErmSessionStatusAnnounceFails": {
+    "name": "cerveErmSessionStatusAnnounceFails",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of failed announce messages for this VE."
+  },
+  "cerveErmSessionStatusQuerySessions": {
+    "name": "cerveErmSessionStatusQuerySessions",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of query session requests for this VE."
+  },
+  "cerveErmSessionStatusQuerySessionFails": {
+    "name": "cerveErmSessionStatusQuerySessionFails",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of failed session queries for this VE."
+  },
+  "cerveErmSessionStatusQuerySessionInfo": {
+    "name": "cerveErmSessionStatusQuerySessionInfo",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of query session Info requests for this VE."
+  },
+  "cerveErmSessionStatusQuerySessionInfoFails": {
+    "name": "cerveErmSessionStatusQuerySessionInfoFails",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.8.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of failed session Info queries for this VE."
+  },
+  "cerErmSessionTable": {
+    "name": "cerErmSessionTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table stores parameters for each Virtual Edge video ERM object, if defined."
+  },
+  "cerErmSessionEntry": {
+    "name": "cerErmSessionEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerErmSessionErmIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Virtual Edge ERM configuration parameter table"
+  },
+  "cerErmSessionErmIndex": {
+    "name": "cerErmSessionErmIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This is the ERM used for this Virtual Edge. Multiple VEs may use same ERM."
+  },
+  "cerErmSessionErmVendorBrand": {
+    "name": "cerErmSessionErmVendorBrand",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerErmType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "cvex",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ERM vendor brand."
+  },
+  "cerErmSessionSessionType": {
+    "name": "cerErmSessionSessionType",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerSessionType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "any",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of sessions controlled by this ERM."
+  },
+  "cerErmSessionDescription": {
+    "name": "cerErmSessionDescription",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Contains a text description of the ERM configuration."
+  },
+  "cerErmSessionVendorId": {
+    "name": "cerErmSessionVendorId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ERM configuration file vendor ID."
+  },
+  "cerErmSessionConnTimeout": {
+    "name": "cerErmSessionConnTimeout",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 25,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Contains the control plane timeout for a session ERM."
+  },
+  "cerErmSessionRowStatus": {
+    "name": "cerErmSessionRowStatus",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The RowStatus for controlling entries in this table. Allowed values are createAndGo, destroy, and active."
+  },
+  "cerErmSessionAnncMsgEnable": {
+    "name": "cerErmSessionAnncMsgEnable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.9.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Whether or not to do Announce RPC messages to this ERM."
+  },
+  "cerVideoChanContTable": {
+    "name": "cerVideoChanContTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.10",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the list of QAM channel-container memberships. All members of a given CC are transmitting the same multicast stream. A single QAM can be a member of multiple channel containers, meaning that it is transmitting multiple session-based streams."
+  },
+  "cerVideoChanContEntry": {
+    "name": "cerVideoChanContEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.10.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervChanContIndex",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervChanContQamIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Channel Container row"
+  },
+  "cervChanContIndex": {
+    "name": "cervChanContIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.10.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "For multicast sessions, the channel container index."
+  },
+  "cervChanContQamIfIndex": {
+    "name": "cervChanContQamIfIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.10.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ifIndex of the QAM channel."
+  },
+  "cervChanContOutProgNumber": {
+    "name": "cervChanContOutProgNumber",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.10.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerProgram",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The output program number associated with this session."
+  },
+  "cervChanContVe": {
+    "name": "cervChanContVe",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.10.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerVirtualEdgeIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ID tying together all of the transports defined for this video session. Only important when doing Service Level Redundancy (SLR). Zero is reserved for future use when the channel container might be manually configured."
+  },
+  "cervChanContSessionId": {
+    "name": "cervChanContSessionId",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.10.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 33
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Video session identifier. Session ids may not be unique across VEs. The null string is reserved for manually configured CC in the future."
+  },
+  "cervLookupOutPortToIfIndexTable": {
+    "name": "cervLookupOutPortToIfIndexTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.11",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maps the session ERM output port number in, for example, a create session message to the IfIndex of a QAM channel."
+  },
+  "cervLookupOutPortToIfIndexEntry": {
+    "name": "cervLookupOutPortToIfIndexEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.11.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervLookupOutPortVeIndex",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervLookupOutPortOutPort",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The ERM output port number (channel) to ifIndex mapping table"
+  },
+  "cervLookupOutPortVeIndex": {
+    "name": "cervLookupOutPortVeIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.11.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerVirtualEdgeIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index of Session-based VE using this virtual port number."
+  },
+  "cervLookupOutPortOutPort": {
+    "name": "cervLookupOutPortOutPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.11.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Session ERM output port number for this channel."
+  },
+  "cervLookupOutPortIfIndex": {
+    "name": "cervLookupOutPortIfIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.11.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ifIndex for the QAM channel corresponding to this ERM output Port number. Zero means that this output port number is not yet assigned."
+  },
+  "cervLookupConnToVirtPortTable": {
+    "name": "cervLookupConnToVirtPortTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.12",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maps the physical RF port number to the virtual RF port number used in the exported session ERM configuration file."
+  },
+  "cervLookupConnToVirtPortEntry": {
+    "name": "cervLookupConnToVirtPortEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.12.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervLookupConnVeIndex",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervLookupConnSlot",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervLookupConnRfPort",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Physical RF port to ERM virtual RF port number mapping table"
+  },
+  "cervLookupConnVeIndex": {
+    "name": "cervLookupConnVeIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.12.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerVirtualEdgeIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index of Session-based VE using this virtual port number."
+  },
+  "cervLookupConnSlot": {
+    "name": "cervLookupConnSlot",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.12.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 14
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The DCAM slot number."
+  },
+  "cervLookupConnRfPort": {
+    "name": "cervLookupConnRfPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.12.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The DCAM RF port number."
+  },
+  "cervLookupConnVirtRfPort": {
+    "name": "cervLookupConnVirtRfPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.12.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Session ERM virtual RF port number."
+  },
+  "cervLookupIfIndexToOutPortTable": {
+    "name": "cervLookupIfIndexToOutPortTable",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maps the ifIndex of a QAM channel to the session ERM output port number in, for example, a create session message."
+  },
+  "cervLookupIfIndexToOutPortEntry": {
+    "name": "cervLookupIfIndexToOutPortEntry",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervLookupIfIndexChan",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Channel ifIndex to ERM output port number to mapping table"
+  },
+  "cervLookupIfIndexChan": {
+    "name": "cervLookupIfIndexChan",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ifIndex for the QAM channel corresponding to this ERM output Port number."
+  },
+  "cervLookupIfIndexVeIndex": {
+    "name": "cervLookupIfIndexVeIndex",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CerVirtualEdgeIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Index of Session-based VE using this virtual port number."
+  },
+  "cervLookupIfIndexOutPort": {
+    "name": "cervLookupIfIndexOutPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Session ERM output port number for this channel."
+  },
+  "cervLookupIfIndexVirtChan": {
+    "name": "cervLookupIfIndexVirtChan",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Session ERM virtual channel number. CVEX allows 64 channels per virtual RF port. USRM allows 36."
+  },
+  "cervLookupIfIndexVirtRfPort": {
+    "name": "cervLookupIfIndexVirtRfPort",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Session ERM virtual RF port number. CVEX allows a total of 60 virtual RF ports. USRM allows 24 total."
+  },
+  "cervLookupIfIndexChanPerConn": {
+    "name": "cervLookupIfIndexChanPerConn",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 16,
+            "max": 16
+          },
+          {
+            "min": 32,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 16,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "There are 16 channels per Virtual port for a vod-only ERM and 32 otherwise."
+  },
+  "cervLookupIfIndexRowStatus": {
+    "name": "cervLookupIfIndexRowStatus",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.13.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The RowStatus for controlling entries in this table. Allowed values are createAndGo, destroy, and active."
+  },
+  "cerVideoSessTrapsInfo": {
+    "name": "cerVideoSessTrapsInfo",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.14",
+    "class": "objectidentity"
+  },
+  "cerVideoSessErrorStr": {
+    "name": "cerVideoSessErrorStr",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.14.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Description of error encountered on the ERM interface. "
+  },
+  "cerVideoSessNotifs": {
+    "name": "cerVideoSessNotifs",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.15",
+    "class": "objectidentity"
+  },
+  "cerVideoSessTraps": {
+    "name": "cerVideoSessTraps",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.15.0",
+    "class": "objectidentity"
+  },
+  "cerVideoSessionErmConnection": {
+    "name": "cerVideoSessionErmConnection",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.15.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapCounter"
+      },
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapSeverity"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerErmSessionErmIndex"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerErmSessionRPCServerPort"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerVideoSessErrorStr"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the session ERM connection fails."
+  },
+  "cerVideoSessionNoStart": {
+    "name": "cerVideoSessionNoStart",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.15.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapCounter"
+      },
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapSeverity"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerErmSessionErmIndex"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportId"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportDestIpAddress"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportSrcIpAddress"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportDestUdpPort"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent a Session-based input stream never starts."
+  },
+  "cerVideoSessionStreamFail": {
+    "name": "cerVideoSessionStreamFail",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.15.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapCounter"
+      },
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapSeverity"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerErmSessionErmIndex"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportId"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportDestIpAddress"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportSrcIpAddress"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cervSessionTransportDestUdpPort"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent a session-based input stream was being received has failed."
+  },
+  "cerVideoSessionMsgError": {
+    "name": "cerVideoSessionMsgError",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.15.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapCounter"
+      },
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapSeverity"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerErmSessionErmIndex"
+      },
+      {
+        "module": "ARRIS-CER-VIDEO-SESSION-MIB",
+        "object": "cerVideoSessErrorStr"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the E6000 rejects a request from an SRM."
+  },
+  "cerVideoSessionMcLinkFail": {
+    "name": "cerVideoSessionMcLinkFail",
+    "oid": "1.3.6.1.4.1.4115.1.9.1.2.15.0.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapCounter"
+      },
+      {
+        "module": "CADANT-CMTS-EQUIPMENT-MIB",
+        "object": "trapSeverity"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the NSI link that was being used for multicast Joins/Leaves fails."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ARRIS-CER-VIDEO-SESSION-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:32:44 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ARRIS-CER-VIDEO-SESSION-MIB"
+  }
+}

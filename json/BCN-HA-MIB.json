@@ -1,0 +1,411 @@
+{
+  "imports": {
+    "class": "imports",
+    "BCN-SMI-MIB": [
+      "bcnServices"
+    ],
+    "BCN-TC-MIB": [
+      "BcnAlarmSeverity"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddress",
+      "InetAddressType"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "Counter32",
+      "NOTIFICATION-TYPE",
+      "MODULE-IDENTITY",
+      "iso",
+      "IpAddress",
+      "MibIdentifier",
+      "Integer32",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "Gauge32",
+      "Counter64",
+      "Bits"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "bcnHaMIB": {
+    "name": "bcnHaMIB",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2010-12-15 00:00",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "201012150000Z",
+    "organization": "BlueCat Networks",
+    "contactinfo": "BlueCat Networks. Customer Care. North America Call: +1.866.491.2228 Europe Call: +44.8081.011.306 Other Call: +1.416.646.8433 Email: support@bluecatnetworks.com",
+    "description": "This module provides status as well as statistical information about the HA service."
+  },
+  "bcnHa": {
+    "name": "bcnHa",
+    "oid": "1.3.6.1.4.1.13315.3.1.5",
+    "class": "objectidentity"
+  },
+  "bcnHaObjects": {
+    "name": "bcnHaObjects",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2",
+    "class": "objectidentity"
+  },
+  "bcnHaNotification": {
+    "name": "bcnHaNotification",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.3",
+    "class": "objectidentity"
+  },
+  "bcnHaConformance": {
+    "name": "bcnHaConformance",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.4",
+    "class": "objectidentity"
+  },
+  "bcnHaServiceStatus": {
+    "name": "bcnHaServiceStatus",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "General state of the HA Service."
+  },
+  "bcnHaSerOperState": {
+    "name": "bcnHaSerOperState",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "standalone": 1,
+          "active": 2,
+          "passive": 3,
+          "stopped": 4,
+          "stopping": 5,
+          "becomingActive": 6,
+          "becomingPassive": 7,
+          "fault": 8
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Operational state of the Service. The possible states are: standalone(1) The node is not configured to provide clustering services. active(2) The system is operational and the node is providing clustering services. passive(3) The system is operational and the node is active as a passive standby for the cluster. stopped(4) The service is stopped either intentionally (i.e.: the service is not supposed to run on this node) or unintentionally (a problem has occurred). This state might apply to both standalong and clustered nodes. stopping(5) The service is in the process of stopping. Stopping a service might be necessary after a configuration change. becomingActive (6) The node is becoming active, either as a result of a switchover or by initial start. becomingPassive (7) The node is failing over. Another node is taking charge of the services. fault(8) An error has been detected and the state is undefined. "
+  },
+  "bcnHaSerReplicationState": {
+    "name": "bcnHaSerReplicationState",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notConfigured": 1,
+          "replicating": 2,
+          "synchronized": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current state of the replication. All nodes in a cluster must be in synch in order for HA to work correctly. The nodes might be temporarily out of synch during cluster creation or when one of the nodes has been down for a while."
+  },
+  "bcnHaSerAddressTable": {
+    "name": "bcnHaSerAddressTable",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table keeps the information about the network addresses for the clustered nodes. Most of the time this table will contain one or two rows, depending on the type of IPs configured for clustering."
+  },
+  "bcnHaSerAddressEntry": {
+    "name": "bcnHaSerAddressEntry",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerAddrTableIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A logical row in the bcnHaSerAddressTable."
+  },
+  "bcnHaSerAddrTableIndex": {
+    "name": "bcnHaSerAddrTableIndex",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This index will normally be 0 or 1"
+  },
+  "bcnHaSerVirtualAddressType": {
+    "name": "bcnHaSerVirtualAddressType",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of address stored in bcnHaSerVirtualAddress."
+  },
+  "bcnHaSerVirtualAddress": {
+    "name": "bcnHaSerVirtualAddress",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The virtual IP address configured for this node. The type of this mib variable is defined in bcnHaSerVirtualAddressType. This address binds to the active node at all times."
+  },
+  "bcnHaSerPhysicalAddressType": {
+    "name": "bcnHaSerPhysicalAddressType",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of address stored in bcnHaSerPhysicalAddress."
+  },
+  "bcnHaSerPhysicalAddress": {
+    "name": "bcnHaSerPhysicalAddress",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The physical IP address configured for this node. The type of this mib variable is defined in bcnHaSerPhisicalAddressType. This address is not affected by switchover events."
+  },
+  "bcnHaSerPeerAddressType": {
+    "name": "bcnHaSerPeerAddressType",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of address stored in bcnHaSerPeerAddress."
+  },
+  "bcnHaSerPeerAddress": {
+    "name": "bcnHaSerPeerAddress",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.2.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The physical IP address configured for the peer node. The type of this mib variable is defined in bcnHaSerPeerAddressType. This address is not affected by switchover events."
+  },
+  "bcnHaNotificationEvents": {
+    "name": "bcnHaNotificationEvents",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.3.0",
+    "class": "objectidentity"
+  },
+  "bcnHaNotificationData": {
+    "name": "bcnHaNotificationData",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.3.1",
+    "class": "objectidentity"
+  },
+  "bcnHaAlarmSeverity": {
+    "name": "bcnHaAlarmSeverity",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.3.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "BcnAlarmSeverity",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Severity classification for the alarm."
+  },
+  "bcnHaAlarmInfo": {
+    "name": "bcnHaAlarmInfo",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.3.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Descriptive information about the alarm event."
+  },
+  "bcnHaAlarmNotif": {
+    "name": "bcnHaAlarmNotif",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.3.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerOperState"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaAlarmSeverity"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaAlarmInfo"
+      }
+    ],
+    "status": "current",
+    "description": "A bcnHaAlarmNotif signifies that the HA service has transitioned state or a particular event has been detected on the service."
+  },
+  "bcnHaServiceCompliances": {
+    "name": "bcnHaServiceCompliances",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.4.1",
+    "class": "objectidentity"
+  },
+  "bcnHaServiceGroups": {
+    "name": "bcnHaServiceGroups",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.4.2",
+    "class": "objectidentity"
+  },
+  "bcnHaServiceStatusGroup": {
+    "name": "bcnHaServiceStatusGroup",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.4.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerOperState"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerReplicationState"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerVirtualAddressType"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerVirtualAddress"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerPhysicalAddressType"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerPhysicalAddress"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerPeerAddressType"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaSerPeerAddress"
+      }
+    ],
+    "status": "current",
+    "description": "Status conformance."
+  },
+  "bcnHaNotificationEventGroup": {
+    "name": "bcnHaNotificationEventGroup",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.4.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaAlarmNotif"
+      }
+    ],
+    "status": "current",
+    "description": "Server statistics conformance."
+  },
+  "bcnHaNotificationDataGroup": {
+    "name": "bcnHaNotificationDataGroup",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.4.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaAlarmSeverity"
+      },
+      {
+        "module": "BCN-HA-MIB",
+        "object": "bcnHaAlarmInfo"
+      }
+    ],
+    "status": "current",
+    "description": "Server statistics conformance."
+  },
+  "bcnHaStatusCompliance": {
+    "name": "bcnHaStatusCompliance",
+    "oid": "1.3.6.1.4.1.13315.3.1.5.4.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "bcnHaServiceStatusGroup",
+        "module": "BCN-HA-MIB"
+      },
+      {
+        "object": "bcnHaNotificationEventGroup",
+        "module": "BCN-HA-MIB"
+      },
+      {
+        "object": "bcnHaNotificationDataGroup",
+        "module": "BCN-HA-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Basic conformance"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/BCN-HA-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:25:04 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "BCN-HA-MIB"
+  }
+}

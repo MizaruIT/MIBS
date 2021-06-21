@@ -1,0 +1,2697 @@
+{
+  "imports": {
+    "class": "imports",
+    "ERICSSON-ROUTER-SMI": [
+      "eriRouterMgmt"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddress",
+      "InetAddressType"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "Integer32",
+      "Counter64",
+      "Counter32",
+      "iso",
+      "Bits",
+      "OBJECT-IDENTITY",
+      "TimeTicks",
+      "MibIdentifier",
+      "MODULE-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "IpAddress",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "DateAndTime",
+      "TEXTUAL-CONVENTION",
+      "TruthValue"
+    ]
+  },
+  "eriRouterL2tpMib": {
+    "name": "eriRouterL2tpMib",
+    "oid": "1.3.6.1.4.1.193.218.2.28",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-01-14 18:00",
+        "description": "Updated RBN/rbn/Rbn as ERICSSON-ROUTER/eriRouter/EriRouter to migrate RBN MIB to ERICSSON MIB."
+      },
+      {
+        "revision": "2011-01-19 18:00",
+        "description": "Update CONTACT-INFO & ORGANIZATION. "
+      },
+      {
+        "revision": "2009-04-20 00:00",
+        "description": "Added waitRouteUp in TunStateType. "
+      },
+      {
+        "revision": "2005-02-28 00:00",
+        "description": "Added new table eriRouterL2tpPeerTunCfgTable. Updated the compliance statements and groups to reflect the change."
+      },
+      {
+        "revision": "2004-02-04 00:00",
+        "description": "Added new objects eriRouterL2tpTCfgRemoteTunnelID and eriRouterL2tpTCfgTunnelContext to eriRouterL2tpTunnelCfgEntry. Added new NOTIFICATION-TYPE eriRouterL2tpMibTunnelStateChange2. Deprecated eriRouterL2tpMibTunnelTrapContext, eriRouterL2tpMibTunnelTrapState, and eriRouterL2tpMibTunnelStateChange. Updated the compliance statements and groups to reflect the changes."
+      },
+      {
+        "revision": "2003-04-25 00:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "201501141800Z",
+    "organization": "Ericsson AB.",
+    "contactinfo": " Ericsson AB. Postal: 100 Headquarters Dr San Jose, CA 95134 USA Phone: +1 408 750 5000 Fax: +1 408 750 5599 ",
+    "description": "Defines the objects necessary to monitor L2TP configuration information, counters and the state changes of an L2TP tunnel. All mib objects defined in the module are viewed within the context identified in the SNMP protocol (i.e. the community string in the v1/v2 or the contextName in v3)."
+  },
+  "eriRouterL2tpMibNotifications": {
+    "name": "eriRouterL2tpMibNotifications",
+    "oid": "1.3.6.1.4.1.193.218.2.28.0",
+    "class": "objectidentity"
+  },
+  "eriRouterL2tpMibObjects": {
+    "name": "eriRouterL2tpMibObjects",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1",
+    "class": "objectidentity"
+  },
+  "eriRouterL2tpMibConformance": {
+    "name": "eriRouterL2tpMibConformance",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2",
+    "class": "objectidentity"
+  },
+  "AuthType": {
+    "name": "AuthType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 0,
+          "pap": 1,
+          "chap": 2,
+          "chapPap": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Common authentication types."
+  },
+  "LacLnsType": {
+    "name": "LacLnsType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "lac": 2,
+          "lns": 3,
+          "lacLns": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "Peer operational mode types."
+  },
+  "TunStateType": {
+    "name": "TunStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "invalid": 0,
+          "deleted": 1,
+          "idle": 2,
+          "created": 3,
+          "waitAAA": 4,
+          "waitCtlReply": 5,
+          "waitCtlConn": 6,
+          "established": 7,
+          "waitRouteUp": 8
+        }
+      }
+    },
+    "status": "current",
+    "description": "Tunnel operational states."
+  },
+  "CtlErrType": {
+    "name": "CtlErrType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ctlrunt": 0,
+          "hdr2long": 1,
+          "dupSCCRQ": 2,
+          "duppkt": 3,
+          "droppkt": 4,
+          "badCmType": 5,
+          "avp2long": 6,
+          "avpUnknown": 7,
+          "typeNot1st": 8,
+          "mtype000": 9,
+          "cantUnhide": 10,
+          "avpLen": 11,
+          "missAvp": 12,
+          "invalidAvp": 13,
+          "avp2big": 14,
+          "badAvpLen": 15,
+          "rexmt": 16,
+          "scksnderr": 17,
+          "remWndoful": 18,
+          "maxRexmts": 19,
+          "sccrqColide": 20,
+          "badVers": 21,
+          "noChapRsp": 22,
+          "authFailed": 23,
+          "sesExists": 24,
+          "badcrpsesi": 25,
+          "cdnBadid": 26,
+          "iccnBadid": 27,
+          "dataRunt": 28,
+          "badSCCRQna": 29,
+          "badSCCRP": 30,
+          "dupIcrq": 31,
+          "badSCCCN": 32,
+          "badMsgType": 33,
+          "sccrqSteal": 34,
+          "remXmtState": 35,
+          "cdnThrottle": 36,
+          "none": 255
+        }
+      }
+    },
+    "status": "current",
+    "description": "Tunnel control errors."
+  },
+  "EthEncapType": {
+    "name": "EthEncapType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 0,
+          "ethPpoe": 1,
+          "ethMulti": 2,
+          "ethernet": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Ethernet encapsulation types."
+  },
+  "DNISType": {
+    "name": "DNISType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 0,
+          "dnis": 1,
+          "dnisonly": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Tunnel switch DNIS type."
+  },
+  "eriRouterL2tpPeerCfgTable": {
+    "name": "eriRouterL2tpPeerCfgTable",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The L2TP Peer Information Table."
+  },
+  "eriRouterL2tpPeerCfgEntry": {
+    "name": "eriRouterL2tpPeerCfgEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibPeerName",
+        "implied": 1
+      }
+    ],
+    "status": "current",
+    "description": "An L2TP Peer Information entry. An entry in this table corresponds to the resources assigned to a single peer configuration. This configuration will be inherited by all of the tunnels that are assigned to the peer group. Entries are added to the table once communication is established with the peer. Entries are removed if communication is lost."
+  },
+  "eriRouterL2tpMibPeerName": {
+    "name": "eriRouterL2tpMibPeerName",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the name of the Peer on the local system. This peer is the name of an identifier for a tunnel configuration and each tunnel that is assigned to this peer will take on the peer's configuration parameters."
+  },
+  "eriRouterL2tpPCfgMedia": {
+    "name": "eriRouterL2tpPCfgMedia",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object identifies the transport media utilized between communicating peers. A media length of 0 means that no transport media type was set."
+  },
+  "eriRouterL2tpPCfgVendor": {
+    "name": "eriRouterL2tpPCfgVendor",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the vendor of L2TP stack running on the remote peer. The length of the string will be zero if no vendor name can be obtained from the peer."
+  },
+  "eriRouterL2tpPCfgRev": {
+    "name": "eriRouterL2tpPCfgRev",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the firmware revision for the L2TP protocol stack running on the remote peer."
+  },
+  "eriRouterL2tpPCfgHostName": {
+    "name": "eriRouterL2tpPCfgHostName",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the name assigned to this peer on the remote host system. A host name length of 0 means that this information could not be obtained from the remote host."
+  },
+  "eriRouterL2tpPCfgRadius": {
+    "name": "eriRouterL2tpPCfgRadius",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates whether or not a RADIUS server has been configured for this peer group. A value of true (1) indicates that there is a RADIUS server and it will be used for authenticating and authorizing access to a tunnel in this group and accounting information will be sent to the radius server. A value of false (2) indicates that there is no RADIUS server and authentication and authorization will be done locally."
+  },
+  "eriRouterL2tpPCfgRemIPAddType": {
+    "name": "eriRouterL2tpPCfgRemIPAddType",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the address type contained in eriRouterL2tpPCfgRemIPAdd."
+  },
+  "eriRouterL2tpPCfgRemIPAdd": {
+    "name": "eriRouterL2tpPCfgRemIPAdd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object identifies the remote IP address for this tunnel (utilized only with User Datagram Protocol)."
+  },
+  "eriRouterL2tpPCfgStatic": {
+    "name": "eriRouterL2tpPCfgStatic",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This objects indicates whether the tunnel is static or dynamic. A value of true (1) means that it is static. A value of (2) indicates that it is dynamic."
+  },
+  "eriRouterL2tpPCfgLocalIPAddType": {
+    "name": "eriRouterL2tpPCfgLocalIPAddType",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the address type contained in eriRouterL2tpPCfgLocalIPAdd."
+  },
+  "eriRouterL2tpPCfgLocalIPAdd": {
+    "name": "eriRouterL2tpPCfgLocalIPAdd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the local IP address for this tunnel (utilized only with UDP)."
+  },
+  "eriRouterL2tpPCfgMode": {
+    "name": "eriRouterL2tpPCfgMode",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LacLnsType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates whether the peer is operating as an LNS, a LAC, or both."
+  },
+  "eriRouterL2tpPCfgMaxTunnels": {
+    "name": "eriRouterL2tpPCfgMaxTunnels",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the maximum number of tunnels that may be configured on this peer."
+  },
+  "eriRouterL2tpPCfgMaxSesPerTun": {
+    "name": "eriRouterL2tpPCfgMaxSesPerTun",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the maximum number of sessions that may be allocated to one tunnel."
+  },
+  "eriRouterL2tpPCfgCtlRetranCnt": {
+    "name": "eriRouterL2tpPCfgCtlRetranCnt",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates a count of the number of times that a control packet was retransmitted."
+  },
+  "eriRouterL2tpPCfgCtlRetranTO": {
+    "name": "eriRouterL2tpPCfgCtlRetranTO",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the control retransmit timeout in seconds."
+  },
+  "eriRouterL2tpPCfgSessAuth": {
+    "name": "eriRouterL2tpPCfgSessAuth",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AuthType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the session authentication type."
+  },
+  "eriRouterL2tpPCfgCtlWin": {
+    "name": "eriRouterL2tpPCfgCtlWin",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the control window size."
+  },
+  "eriRouterL2tpPCfgDNIS": {
+    "name": "eriRouterL2tpPCfgDNIS",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DNISType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates whether the critera used for a tunnel switch is Dialed Number Identification String first (a value of (1)), DNIS only (a value of (2)) or the no preference has been set (a value of (0))."
+  },
+  "eriRouterL2tpPCfgPoliceRate": {
+    "name": "eriRouterL2tpPCfgPoliceRate",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "kbps",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the received aggregate stream limit, in kilobits per second."
+  },
+  "eriRouterL2tpPCfgPoliceBurst": {
+    "name": "eriRouterL2tpPCfgPoliceBurst",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "kbps",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the packet burst tolerance for tunnels received by this peer group."
+  },
+  "eriRouterL2tpPCfgLimitRate": {
+    "name": "eriRouterL2tpPCfgLimitRate",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "kbps",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the limit of the aggregate packet stream transmitted through a tunnel in kilobits per second (kpbs)."
+  },
+  "eriRouterL2tpPCfgLimitBurst": {
+    "name": "eriRouterL2tpPCfgLimitBurst",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "kbps",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the the packet burst tolerance limit transmitted on a tunnel."
+  },
+  "eriRouterL2tpPCfgGroup": {
+    "name": "eriRouterL2tpPCfgGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the l2tp group which is assigned to this peer. Each peer configuration may be assigned only one tunnel group. A length of 0 means that the group name was not assigned."
+  },
+  "eriRouterL2tpPCfgPref": {
+    "name": "eriRouterL2tpPCfgPref",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the RADIUS based preference number (used by tunnel groups only). A lower number indicates a more favorible preference."
+  },
+  "eriRouterL2tpPCfgPasswd": {
+    "name": "eriRouterL2tpPCfgPasswd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 20
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the password for this account utilized when performing the connection handshake protocol with the remote host. A length of 0 indicates that no password has been assigned."
+  },
+  "eriRouterL2tpPCfgHelloTimer": {
+    "name": "eriRouterL2tpPCfgHelloTimer",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 3600
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the interval (in seconds) in which Hello (or keep-alive) packets are to be sent by local tunnels belonging to this tunnel configuration."
+  },
+  "eriRouterL2tpPCfgRecQue": {
+    "name": "eriRouterL2tpPCfgRecQue",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates whether there is receive queueing of out of sequence messages. A value of true (1) indicates that the messages are queued."
+  },
+  "eriRouterL2tpPCfgSessContext": {
+    "name": "eriRouterL2tpPCfgSessContext",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the name of the session context. A size of 0 indicates that the context could not be determined. Any context name length greater than 80 will be truncated. This will have a value for PPPoE only."
+  },
+  "eriRouterL2tpPCfgSessService": {
+    "name": "eriRouterL2tpPCfgSessService",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.31",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 20
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The service group to which this session belongs. A length of 0 indicates that no service group was assigned."
+  },
+  "eriRouterL2tpPCfgEthEncap": {
+    "name": "eriRouterL2tpPCfgEthEncap",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.32",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EthEncapType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the ethernet encap type."
+  },
+  "eriRouterL2tpPCfgEthSession": {
+    "name": "eriRouterL2tpPCfgEthSession",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.33",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 20
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the ethernet session of which this is a part. This is only set for non PPPoE sessions otherwise it will have a zero length."
+  },
+  "eriRouterL2tpPCfgTunnelCount": {
+    "name": "eriRouterL2tpPCfgTunnelCount",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.34",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of tunnels that are active for this peer configuration."
+  },
+  "eriRouterL2tpPCfgTunCtlErrs": {
+    "name": "eriRouterL2tpPCfgTunCtlErrs",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.35",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the number of tunnel control errors encountered by tunnels connected to this peer."
+  },
+  "eriRouterL2tpPCfgSessionCount": {
+    "name": "eriRouterL2tpPCfgSessionCount",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.1.1.36",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the number of sessions that are part of this peer."
+  },
+  "eriRouterL2tpTunnelCfgTable": {
+    "name": "eriRouterL2tpTunnelCfgTable",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The L2TP Tunnel Information Table."
+  },
+  "eriRouterL2tpTunnelCfgEntry": {
+    "name": "eriRouterL2tpTunnelCfgEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An L2TP Tunnel Information entry. An entry in this table corresponds to a single tunnel. Entries are added to this table as tunnels become connected. Entries are removed from the table if the communication with one or both ends of a tunnel is lost."
+  },
+  "eriRouterL2tpMibTunnelID": {
+    "name": "eriRouterL2tpMibTunnelID",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the ID number of this tunnel."
+  },
+  "eriRouterL2tpTCfgTunnelNm": {
+    "name": "eriRouterL2tpTCfgTunnelNm",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the local name that was given to this tunnel."
+  },
+  "eriRouterL2tpTCfgPeerName": {
+    "name": "eriRouterL2tpTCfgPeerName",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the remote peer to which this tunnel is connected."
+  },
+  "eriRouterL2tpTCfgTunCtlErrs": {
+    "name": "eriRouterL2tpTCfgTunCtlErrs",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the number of tunnel control errors encountered by this tunnel."
+  },
+  "eriRouterL2tpTCfgLastCtlErr": {
+    "name": "eriRouterL2tpTCfgLastCtlErr",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CtlErrType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of the last control error."
+  },
+  "eriRouterL2tpTCfgLastCErrTime": {
+    "name": "eriRouterL2tpTCfgLastCErrTime",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time of the last control error."
+  },
+  "eriRouterL2tpTCfgTunDataErrs": {
+    "name": "eriRouterL2tpTCfgTunDataErrs",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of tunnel data errors."
+  },
+  "eriRouterL2tpTCfgLastDataErr": {
+    "name": "eriRouterL2tpTCfgLastDataErr",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of the last tunnel data error."
+  },
+  "eriRouterL2tpTCfgLastDErrTime": {
+    "name": "eriRouterL2tpTCfgLastDErrTime",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time of the last tunnel data error."
+  },
+  "eriRouterL2tpTCfgSessionCount": {
+    "name": "eriRouterL2tpTCfgSessionCount",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of sessions belonging to this tunnel."
+  },
+  "eriRouterL2tpTCfgTotActSessions": {
+    "name": "eriRouterL2tpTCfgTotActSessions",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of sessions that, at some time, reached the established state."
+  },
+  "eriRouterL2tpTCfgActSessCnt": {
+    "name": "eriRouterL2tpTCfgActSessCnt",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of sessions that are presently in the established state."
+  },
+  "eriRouterL2tpTCfgTotFailSessions": {
+    "name": "eriRouterL2tpTCfgTotFailSessions",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of sessions that failed to reach the established state."
+  },
+  "eriRouterL2tpMibTunnelState": {
+    "name": "eriRouterL2tpMibTunnelState",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TunStateType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is the current state of the tunnel."
+  },
+  "eriRouterL2tpTCfgRemoteTunnelID": {
+    "name": "eriRouterL2tpTCfgRemoteTunnelID",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the remote tunnel ID. A value of zero indicates that the remote tunnel ID could not be determined."
+  },
+  "eriRouterL2tpTCfgTunnelContext": {
+    "name": "eriRouterL2tpTCfgTunnelContext",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the context of this tunnel. The empty context name (zero length) indicates that the context could not be determined. Any context name length greater than 80 will be truncated."
+  },
+  "eriRouterL2tpPeerCntTable": {
+    "name": "eriRouterL2tpPeerCntTable",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The L2TP Peer Statistics Table."
+  },
+  "eriRouterL2tpPeerCntEntry": {
+    "name": "eriRouterL2tpPeerCntEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibPeerName",
+        "implied": 1
+      }
+    ],
+    "status": "current",
+    "description": "An L2TP Peer Statistics entry. An entry in this table corresponds to a single peer. The statistics reported are the totals for all tunnels that are a part of this peer group."
+  },
+  "eriRouterL2tpPCDataPktSent": {
+    "name": "eriRouterL2tpPCDataPktSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of data packets sent through tunnels that are part of this group to the the L2TP peer."
+  },
+  "eriRouterL2tpPCDataPktRx": {
+    "name": "eriRouterL2tpPCDataPktRx",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of data packets received through tunnels that are part of this group from the the L2TP peer."
+  },
+  "eriRouterL2tpPCDataByteSent": {
+    "name": "eriRouterL2tpPCDataByteSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of data bytes sent through tunnels that are part of this group to the the L2TP peer."
+  },
+  "eriRouterL2tpPCDataByteRx": {
+    "name": "eriRouterL2tpPCDataByteRx",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of data bytes received through tunnels that are part of this group from the the L2TP peer."
+  },
+  "eriRouterL2tpPCCtlPktSent": {
+    "name": "eriRouterL2tpPCCtlPktSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of control packets sent through tunnels that are part of this group to the the L2TP peer."
+  },
+  "eriRouterL2tpPCCtlPktRx": {
+    "name": "eriRouterL2tpPCCtlPktRx",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of control packets received through tunnels that are a part of this group from the L2TP peer."
+  },
+  "eriRouterL2tpPCCtlByteSent": {
+    "name": "eriRouterL2tpPCCtlByteSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of control bytes sent through tunnels that are a part of this group to the the L2TP peer."
+  },
+  "eriRouterL2tpPCCtlByteRx": {
+    "name": "eriRouterL2tpPCCtlByteRx",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the total number of control bytes received through tunnels that are a part of this group from the L2TP peer."
+  },
+  "eriRouterL2tpPCPolicePktDrop": {
+    "name": "eriRouterL2tpPCPolicePktDrop",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of packets received from L2TP peers of tunnels that are a part of this group that were dropped."
+  },
+  "eriRouterL2tpPCRatePktDrop": {
+    "name": "eriRouterL2tpPCRatePktDrop",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of packets transmitted to the L2TP peers of tunnels in this group that were dropped."
+  },
+  "eriRouterL2tpPCTxSCCRQCnt": {
+    "name": "eriRouterL2tpPCTxSCCRQCnt",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates a count of the SCCRQ transmits for this group."
+  },
+  "eriRouterL2tpPCRxSCCRQCnt": {
+    "name": "eriRouterL2tpPCRxSCCRQCnt",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is a count of the received SCCRQ's for this group."
+  },
+  "eriRouterL2tpPCActTunnels": {
+    "name": "eriRouterL2tpPCActTunnels",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of the active tunnels for this group."
+  },
+  "eriRouterL2tpPCTunnelCtlErr": {
+    "name": "eriRouterL2tpPCTunnelCtlErr",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of tunnel control errors for all of the tunnels that are a part of this group."
+  },
+  "eriRouterL2tpPCSessionCount": {
+    "name": "eriRouterL2tpPCSessionCount",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of sessions for this group."
+  },
+  "eriRouterL2tpPCTunnelDataErr": {
+    "name": "eriRouterL2tpPCTunnelDataErr",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.4.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of tunnel data errors reported by members of this group."
+  },
+  "eriRouterL2tpTunnelCntTable": {
+    "name": "eriRouterL2tpTunnelCntTable",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The L2TP Tunnel Statistics Table."
+  },
+  "eriRouterL2tpTunnelCntEntry": {
+    "name": "eriRouterL2tpTunnelCntEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An L2TP Tunnel Statistics entry. An entry in this table corresponds to a single tunnel."
+  },
+  "eriRouterL2tpTCDataPktSent": {
+    "name": "eriRouterL2tpTCDataPktSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of data packets sent from this platform through this tunnel to its peer."
+  },
+  "eriRouterL2tpTCDataPktRcvd": {
+    "name": "eriRouterL2tpTCDataPktRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of packets received from the L2TP peer for this tunnel."
+  },
+  "eriRouterL2tpTCDataByteSent": {
+    "name": "eriRouterL2tpTCDataByteSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of data bytes sent from this platform through this tunnel to its peer."
+  },
+  "eriRouterL2tpTCDataByteRcvd": {
+    "name": "eriRouterL2tpTCDataByteRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of data bytes received from the L2TP peer for this tunnel."
+  },
+  "eriRouterL2tpTCCntrlPktSent": {
+    "name": "eriRouterL2tpTCCntrlPktSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of control packets sent from this platform through this tunnel to its L2TP peer."
+  },
+  "eriRouterL2tpTCCntrlPktRcvd": {
+    "name": "eriRouterL2tpTCCntrlPktRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of control packets received from the L2TP peer for this tunnel."
+  },
+  "eriRouterL2tpTCCntrlByteSent": {
+    "name": "eriRouterL2tpTCCntrlByteSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of control bytes sent from this platform through this tunnel to its L2TP peer."
+  },
+  "eriRouterL2tpTCCntrlByteRcvd": {
+    "name": "eriRouterL2tpTCCntrlByteRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "bytes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of control bytes received from the L2TP peer of this tunnel."
+  },
+  "eriRouterL2tpTCPolicePktDrop": {
+    "name": "eriRouterL2tpTCPolicePktDrop",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of packets received from the L2TP peer of this tunnel that were dropped."
+  },
+  "eriRouterL2tpTCRatePktDrop": {
+    "name": "eriRouterL2tpTCRatePktDrop",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of packets transmitted from this platform through this tunnel that were dropped."
+  },
+  "eriRouterL2tpTCCntrlErr": {
+    "name": "eriRouterL2tpTCCntrlErr",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicate the number of control errors that were detected."
+  },
+  "eriRouterL2tpTCLastCtlErr": {
+    "name": "eriRouterL2tpTCLastCtlErr",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CtlErrType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the last control error for this tunnel that was detected."
+  },
+  "eriRouterL2tpTCLastCtlErrTime": {
+    "name": "eriRouterL2tpTCLastCtlErrTime",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the time that the last control error for this tunnel was detected."
+  },
+  "eriRouterL2tpTCMaxResendQ": {
+    "name": "eriRouterL2tpTCMaxResendQ",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the maximum length of the resend queue."
+  },
+  "eriRouterL2tpTCMaxUnsentQ": {
+    "name": "eriRouterL2tpTCMaxUnsentQ",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the maximum length of the unsent queue."
+  },
+  "eriRouterL2tpTCCurResendQ": {
+    "name": "eriRouterL2tpTCCurResendQ",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current length of the resend queue."
+  },
+  "eriRouterL2tpTCCurUnsentQ": {
+    "name": "eriRouterL2tpTCCurUnsentQ",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current length of the unsent queue."
+  },
+  "eriRouterL2tpTCCurWindow": {
+    "name": "eriRouterL2tpTCCurWindow",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.5.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current window size."
+  },
+  "eriRouterL2tpSessionCntTable": {
+    "name": "eriRouterL2tpSessionCntTable",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The L2TP Session Statistics Table."
+  },
+  "eriRouterL2tpSessionCntEntry": {
+    "name": "eriRouterL2tpSessionCntEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelID",
+        "implied": 0
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibSessionID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An L2TP Session Statistics entry. An entry in this table corresponds to a single session."
+  },
+  "eriRouterL2tpMibSessionID": {
+    "name": "eriRouterL2tpMibSessionID",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the Session ID for a given L2TP session."
+  },
+  "eriRouterL2tpSCPktSent": {
+    "name": "eriRouterL2tpSCPktSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of packets sent by this platform in this session."
+  },
+  "eriRouterL2tpSCPktRcvd": {
+    "name": "eriRouterL2tpSCPktRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of packets received by this platform in this session."
+  },
+  "eriRouterL2tpSCByteSent": {
+    "name": "eriRouterL2tpSCByteSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of bytes sent by this platform in this session."
+  },
+  "eriRouterL2tpSCByteRcvd": {
+    "name": "eriRouterL2tpSCByteRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of bytes received by this platform in this session."
+  },
+  "eriRouterL2tpSCMcastPktSent": {
+    "name": "eriRouterL2tpSCMcastPktSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of multicast packets sent by this platform in this session."
+  },
+  "eriRouterL2tpSCMcastPktRcvd": {
+    "name": "eriRouterL2tpSCMcastPktRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of multicast packets received by this platform in this session."
+  },
+  "eriRouterL2tpSCMcastByteSent": {
+    "name": "eriRouterL2tpSCMcastByteSent",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of multicast bytes sent by this platform in this session."
+  },
+  "eriRouterL2tpSCMcastByteRcvd": {
+    "name": "eriRouterL2tpSCMcastByteRcvd",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.6.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of multicast bytes received by this platform in this session."
+  },
+  "eriRouterL2tpPeerTunCfgTable": {
+    "name": "eriRouterL2tpPeerTunCfgTable",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains objects which identify L2TP peers and tunnels."
+  },
+  "eriRouterL2tpPeerTunCfgEntry": {
+    "name": "eriRouterL2tpPeerTunCfgEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibPeerName",
+        "implied": 0
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the eriRouterL2tpPeerTunCfgTable. An entry in this table corresponds to a single tunnel of a L2TP peer. Entries are added to this table as tunnels become connected. Entries are removed from the table if the communication with one or both ends of a tunnel is lost."
+  },
+  "eriRouterL2tpPTCfgTunnelRemoteID": {
+    "name": "eriRouterL2tpPTCfgTunnelRemoteID",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the remote tunnel ID. A value of zero indicates that the remote tunnel ID could not be determined."
+  },
+  "eriRouterL2tpPTCfgTunnelLocalNm": {
+    "name": "eriRouterL2tpPTCfgTunnelLocalNm",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the local name that was given to this tunnel. The length of the string will be zero if no local name assigned to the tunnel."
+  },
+  "eriRouterL2tpPTCfgTunnelRemoteNm": {
+    "name": "eriRouterL2tpPTCfgTunnelRemoteNm",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the name that was given to the remote end of this tunnel. The length of the string will be zero if no tunnel name can be obtained from the peer."
+  },
+  "eriRouterL2tpPTCfgPeerLocalNm": {
+    "name": "eriRouterL2tpPTCfgPeerLocalNm",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the local peer name. The empty peer name (zero length) indicates that the name could not be determined."
+  },
+  "eriRouterL2tpPTCfgTunnelRemoteIPAddrType": {
+    "name": "eriRouterL2tpPTCfgTunnelRemoteIPAddrType",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the address type contained in eriRouterL2tpPTCfgTunnelRemoteIPAddr."
+  },
+  "eriRouterL2tpPTCfgTunnelRemoteIPAddr": {
+    "name": "eriRouterL2tpPTCfgTunnelRemoteIPAddr",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the remote IP address for this tunnel (utilized only with User Datagram Protocol)."
+  },
+  "eriRouterL2tpPTCfgTunnelState": {
+    "name": "eriRouterL2tpPTCfgTunnelState",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TunStateType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is the current state of the tunnel."
+  },
+  "eriRouterL2tpPTCfgTunnelContext": {
+    "name": "eriRouterL2tpPTCfgTunnelContext",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object identifies the context of this tunnel. The empty context name (zero length) indicates that the context could not be determined. Any context name length greater than 80 will be truncated."
+  },
+  "eriRouterL2tpPTCfgSessionCount": {
+    "name": "eriRouterL2tpPTCfgSessionCount",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of sessions belonging to this tunnel."
+  },
+  "eriRouterL2tpPTCfgActSessCnt": {
+    "name": "eriRouterL2tpPTCfgActSessCnt",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of sessions that are presently in the established state."
+  },
+  "eriRouterL2tpPTCfgTotActSessions": {
+    "name": "eriRouterL2tpPTCfgTotActSessions",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of sessions that, at some time, reached the established state."
+  },
+  "eriRouterL2tpPTCfgTotFailSessions": {
+    "name": "eriRouterL2tpPTCfgTotFailSessions",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.8.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of sessions that failed to reach the established state."
+  },
+  "eriRouterL2tpMibTrapObj": {
+    "name": "eriRouterL2tpMibTrapObj",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.7",
+    "class": "objectidentity"
+  },
+  "eriRouterL2tpMibTunnelTrapContext": {
+    "name": "eriRouterL2tpMibTunnelTrapContext",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.7.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "deprecated",
+    "description": "This object contains the context name to which this tunnel belongs."
+  },
+  "eriRouterL2tpMibTunnelTrapState": {
+    "name": "eriRouterL2tpMibTunnelTrapState",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.7.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "deprecated",
+    "description": "The tunnel state. A value of 1 (true) indicates that a the tunnel is up (in the ESTABLISHED state). A value of 2 (false) indicates that the tunnel is down (no longer in the ESTABLISHED state)."
+  },
+  "eriRouterL2tpMibDisableTrap": {
+    "name": "eriRouterL2tpMibDisableTrap",
+    "oid": "1.3.6.1.4.1.193.218.2.28.1.7.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object will provide a mechanism for disabling and enabling tunnel traps. A value of 1 (true) indicates that tunnel traps are disabled. A value of 2 (false) indicates that tunnel traps are enabled."
+  },
+  "eriRouterL2tpMibTunnelStateChange": {
+    "name": "eriRouterL2tpMibTunnelStateChange",
+    "oid": "1.3.6.1.4.1.193.218.2.28.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelTrapContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelTrapState"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A eriRouterL2tpMibTunnelStateChange trap signifies that this particular tunnel has changed state."
+  },
+  "eriRouterL2tpMibTunnelStateChange2": {
+    "name": "eriRouterL2tpMibTunnelStateChange2",
+    "oid": "1.3.6.1.4.1.193.218.2.28.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgTunnelContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgRemoteTunnelID"
+      }
+    ],
+    "status": "current",
+    "description": "This notification signifies that the SNMP entity has detected that the operational state of a tunnel has entered or moved from the established state. The current tunnel operational state is indicated by the included value of eriRouterL2tpMibTunnelState."
+  },
+  "eriRouterL2tpMibGroups": {
+    "name": "eriRouterL2tpMibGroups",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1",
+    "class": "objectidentity"
+  },
+  "eriRouterL2tpMibCompliances": {
+    "name": "eriRouterL2tpMibCompliances",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.2",
+    "class": "objectidentity"
+  },
+  "eriRouterL2tpMibCompliance": {
+    "name": "eriRouterL2tpMibCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterL2tpMibPeerCfgGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibTunnelCfgGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibPeerCntGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibTunnelCntGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibSessionCntGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibNotificationGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The compliance statement for SNMPv2 entities which implement the L2TP MIB."
+  },
+  "eriRouterL2tpMibCompliance2": {
+    "name": "eriRouterL2tpMibCompliance2",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterL2tpMibPeerCfgGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibTunnelCfgGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibPeerCntGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibTunnelCntGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibSessionCntGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibGroup2",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibNotificationGroup2",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      },
+      {
+        "object": "eriRouterL2tpMibPeerTunCfgGroup",
+        "module": "ERICSSON-ROUTER-L2TP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this MIB."
+  },
+  "eriRouterL2tpMibPeerCfgGroup": {
+    "name": "eriRouterL2tpMibPeerCfgGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgMedia"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgVendor"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgRev"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgHostName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgRadius"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgRemIPAddType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgRemIPAdd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgStatic"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgLocalIPAddType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgLocalIPAdd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgMode"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgMaxTunnels"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgMaxSesPerTun"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgCtlRetranCnt"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgCtlRetranTO"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgSessAuth"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgCtlWin"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgDNIS"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgPoliceRate"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgPoliceBurst"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgLimitRate"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgLimitBurst"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgGroup"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgPref"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgPasswd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgHelloTimer"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgRecQue"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgSessContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgSessService"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgEthEncap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgEthSession"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgTunnelCount"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgTunCtlErrs"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCfgSessionCount"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing peer information of the L2TP protocol, tunnels and sessions."
+  },
+  "eriRouterL2tpMibTunnelCfgGroup": {
+    "name": "eriRouterL2tpMibTunnelCfgGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgTunnelNm"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgPeerName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgTunCtlErrs"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgLastCtlErr"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgLastCErrTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgTunDataErrs"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgLastDataErr"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgLastDErrTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgSessionCount"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgTotActSessions"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgActSessCnt"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgTotFailSessions"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgRemoteTunnelID"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCfgTunnelContext"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing status and statistics of the L2TP protocol, tunnels and sessions."
+  },
+  "eriRouterL2tpMibPeerCntGroup": {
+    "name": "eriRouterL2tpMibPeerCntGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCDataPktSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCDataPktRx"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCDataByteSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCDataByteRx"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCCtlPktSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCCtlPktRx"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCCtlByteSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCCtlByteRx"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCPolicePktDrop"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCRatePktDrop"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCTxSCCRQCnt"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCRxSCCRQCnt"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCActTunnels"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCTunnelCtlErr"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCSessionCount"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPCTunnelDataErr"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing peer count statistics."
+  },
+  "eriRouterL2tpMibTunnelCntGroup": {
+    "name": "eriRouterL2tpMibTunnelCntGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCDataPktSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCDataPktRcvd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCDataByteSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCDataByteRcvd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCntrlPktSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCntrlPktRcvd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCntrlByteSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCntrlByteRcvd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCPolicePktDrop"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCRatePktDrop"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCntrlErr"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCLastCtlErr"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCLastCtlErrTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCMaxResendQ"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCMaxUnsentQ"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCurResendQ"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCurUnsentQ"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpTCCurWindow"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing tunnel count statistics."
+  },
+  "eriRouterL2tpMibSessionCntGroup": {
+    "name": "eriRouterL2tpMibSessionCntGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCPktSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCPktRcvd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCByteSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCByteRcvd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCMcastPktSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCMcastPktRcvd"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCMcastByteSent"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpSCMcastByteRcvd"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing session count statistics."
+  },
+  "eriRouterL2tpMibGroup": {
+    "name": "eriRouterL2tpMibGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelTrapContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelTrapState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibDisableTrap"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The collection of groups which represent a tunnel state change or can effect the notification of such change. This group is replaced by eriRouterL2tpMibGroup2."
+  },
+  "eriRouterL2tpMibNotificationGroup": {
+    "name": "eriRouterL2tpMibNotificationGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.8",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelStateChange"
+      }
+    ],
+    "status": "deprecated",
+    "description": "A collection of eriRouterL2tpMib notifications. This group is replaced by eriRouterL2tpMibNotificationGroup2."
+  },
+  "eriRouterL2tpMibGroup2": {
+    "name": "eriRouterL2tpMibGroup2",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibDisableTrap"
+      }
+    ],
+    "status": "current",
+    "description": "Object for managing L2TP notifications."
+  },
+  "eriRouterL2tpMibNotificationGroup2": {
+    "name": "eriRouterL2tpMibNotificationGroup2",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.10",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpMibTunnelStateChange2"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for tracking the status of L2TP tunnels."
+  },
+  "eriRouterL2tpMibPeerTunCfgGroup": {
+    "name": "eriRouterL2tpMibPeerTunCfgGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.28.2.1.11",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTunnelRemoteID"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTunnelLocalNm"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTunnelRemoteNm"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgPeerLocalNm"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTunnelRemoteIPAddrType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTunnelRemoteIPAddr"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTunnelState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTunnelContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgSessionCount"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTotActSessions"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgActSessCnt"
+      },
+      {
+        "module": "ERICSSON-ROUTER-L2TP-MIB",
+        "object": "eriRouterL2tpPTCfgTotFailSessions"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing status and statistics of the L2TP peers and tunnels."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ERICSSON-ROUTER-L2TP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:37:36 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ERICSSON-ROUTER-L2TP-MIB"
+  }
+}

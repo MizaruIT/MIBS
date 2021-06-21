@@ -1,0 +1,1475 @@
+{
+  "imports": {
+    "class": "imports",
+    "ADVA-MIB": [
+      "fsp150cm"
+    ],
+    "CM-COMMON-MIB": [
+      "IpVersion",
+      "UserInterfaceType"
+    ],
+    "IPV6-TC": [
+      "Ipv6Address"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMP-USER-BASED-SM-MIB": [
+      "usmUserEntry"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "Gauge32",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Integer32",
+      "Counter32",
+      "MODULE-IDENTITY",
+      "Bits",
+      "Counter64",
+      "MibIdentifier",
+      "OBJECT-IDENTITY",
+      "iso",
+      "OBJECT-TYPE",
+      "Unsigned32"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "RowStatus",
+      "StorageType",
+      "DisplayString",
+      "DateAndTime",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "cmSecurityMIB": {
+    "name": "cmSecurityMIB",
+    "oid": "1.3.6.1.4.1.2544.1.12.10",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2016-06-14 00:00",
+        "description": " Notes from release 201606140000Z (1) added cmSecurityUserRemoteCryptoUser to cmSecurityUserTable Notes from release 201602080000Z (1)Added literal netconf to CmSecurityPrivLevel Notes from release 201509180000Z (1)Added cmSecurityCryptoPassword attribute to cmSecurityUserTable Note from release 201106270000Z, (1)Added f3TacacsPrivLevelControlEnabled, f3TacacsDefaultPrivLevel Note from release 201104140000Z, (1)Added cmSecurityUserAction to support remove-lockout Note from release 201101050000Z, (1)Added f3UsmUserTable - an augment to UsmUserTable Note from release 201002120000Z, (1)MIBs updated for supported functionality in R4.3CC and R4.1CM (a)cmRemoteAuthServerTable has new objects cmRemoteAuthServerAccountingPort to support RADIUS accounting Notes from release 200903190000Z, (1)MIB version ready for release FSP150CC GE101, GE206 devices (a)Added Textual convention CmSecurityPolicyStrength (b)Added MIB scalar cmSecurityPolicyStrength (2)Following changes are made to the cmSecurityUserTable, (a)cmSecurityUserPassword column to modify security user password (b)cmSecurityUserStorageType and cmSecurityUserRowStatus columns added thereby allowing creation/deletion of Security Users (c)cmSecurityUserComment, cmSecurityUserPrivLevel, cmSecurityUserLoginTimeout, cmSecurityUserNumFailedLoginAttempts, cmSecurityUserCliPagingEnable columns are now read-write to allow write access. Notes from release 200803030000Z, (1)MIB version ready for release FSP150CM 3.1."
+      }
+    ],
+    "lastupdated": "201606140000Z",
+    "organization": "ADVA Optical Networking",
+    "contactinfo": " Raghav Trivedi ADVA Optical Networking, Inc. Tel: +1 972 759-1239 E-mail: rtrivedi@advaoptical.com Postal: 2301 N. Greenville Ave. #300 Richardson, TX USA 75082",
+    "description": "This module defines the Security MIB definitions used by the F3 (FSP150CM/CC) product lines. These are used to manage the user/authentication for CLI/GUI sessions. Copyright (C) ADVA Optical Networking."
+  },
+  "cmSecurityObjects": {
+    "name": "cmSecurityObjects",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1",
+    "class": "objectidentity"
+  },
+  "cmSecurityConformance": {
+    "name": "cmSecurityConformance",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.2",
+    "class": "objectidentity"
+  },
+  "cmSecurityNotifications": {
+    "name": "cmSecurityNotifications",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.3",
+    "class": "objectidentity"
+  },
+  "CmRemoteAuthProtocol": {
+    "name": "CmRemoteAuthProtocol",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "radius": 2,
+          "tacacs": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enumerations for remote authentication protocol. none - No remote authentication protocol, radius - RADIUS (Remote Authentication Dial-In User Service), tacacs - TACACS+(Terminal Access Controller Access Control System)."
+  },
+  "CmSecurityAccessOrder": {
+    "name": "CmSecurityAccessOrder",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "local": 1,
+          "remote": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enumerations for order for security access. local - Local database for user/security validation, remote - Remote protocol for user/security validation."
+  },
+  "CmSecurityAuthType": {
+    "name": "CmSecurityAuthType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "pap": 1,
+          "chap": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enumerations for remote authentication protocol types. pap - Password Authentication Protocol, chap - Challenge-Handshake Authentication Protocol."
+  },
+  "CmSecurityPrivLevel": {
+    "name": "CmSecurityPrivLevel",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "not-applicable": 0,
+          "retrieve": 1,
+          "maintenance": 2,
+          "provisioning": 3,
+          "superuser": 4,
+          "testuser": 5,
+          "cryptouser": 6,
+          "netconf": 7
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enumerations for Security Privilege Level. retrieve - Retrieve Privilege Level (can only VIEW management information), maintenance - Maintenance Privilege Level (can VIEW management, as well as perform maintenance operations such as loopbacks, etherjack diagnosis etc.) provisioning - Provisioning Privilege Level (can perform Provisioning operations) superuser - Super User Privilege Level (can perform all operations) testuser - Retrieve Privilege Level and some maintenance, provisioning operations. cryptouser - Crypto User Privilege Level (can perform security operations) netconf - NETCONF Privilege Level"
+  },
+  "CmRemoteAuthOrder": {
+    "name": "CmRemoteAuthOrder",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "first": 1,
+          "second": 2,
+          "third": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enumerations for order for remote authentication access. first - first to access the remote authentication, second - second to access the remote authentication, third - third to access the remote authentication."
+  },
+  "CmSecurityPolicyStrength": {
+    "name": "CmSecurityPolicyStrength",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "low": 1,
+          "medium": 2,
+          "high": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enumerations for security policy strength low - Low Security Policy, medium - Medium Security Policy, high - High Security Policy."
+  },
+  "UsmUserAccessType": {
+    "name": "UsmUserAccessType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "read-only": 1,
+          "read-write": 2,
+          "trap-only": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enumerations for type of USM User read-only - Read only, read-write - Read write , trap-only - Trap Only."
+  },
+  "SecurityUserAction": {
+    "name": "SecurityUserAction",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "not-applicable": 0,
+          "remove-lockout": 1
+        }
+      }
+    },
+    "status": "current",
+    "description": "Provides ability to manage security users."
+  },
+  "SnmpSecurityTrapType": {
+    "name": "SnmpSecurityTrapType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "all": 1,
+          "loginFailed": 2,
+          "disabled": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Provides ability to manage security traps. all - trap is reported when user logs in, logs out or is locked out loginFailed - trap is reported only when user failed to log in disabled - security traps are disabled."
+  },
+  "PrivilegeRequestAction": {
+    "name": "PrivilegeRequestAction",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "undefined": 0,
+          "none": 1,
+          "approve": 2,
+          "deny": 3,
+          "cancel": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "Privilege request action."
+  },
+  "PrivilegeRequestState": {
+    "name": "PrivilegeRequestState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "requestSent": 2,
+          "requestCanceled": 3,
+          "requestApproved": 4,
+          "requestDenied": 5,
+          "requestTimeout": 6,
+          "accessExpired": 7,
+          "accessCanceled": 8
+        }
+      }
+    },
+    "status": "current",
+    "description": "Privilege request state."
+  },
+  "cmAuthProtocol": {
+    "name": "cmAuthProtocol",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmRemoteAuthProtocol",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Remote user authentication protocol."
+  },
+  "cmAccessOrder": {
+    "name": "cmAccessOrder",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmSecurityAccessOrder",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Order of access for security, i.e. try 'local' first or 'remote' first."
+  },
+  "cmAuthType": {
+    "name": "cmAuthType",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmSecurityAuthType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "In case of remote authentication, the chosen protocol."
+  },
+  "cmNASIpAddress": {
+    "name": "cmNASIpAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "In case of remote authentication RADIUS, the Network Access Server's IP Address."
+  },
+  "cmSecurityPolicyStrength": {
+    "name": "cmSecurityPolicyStrength",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmSecurityPolicyStrength",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object represents the security policy strength of the system. Based on this value, the system puts additional restrictions on the user id and password rules."
+  },
+  "cmRemoteAuthServerAccountingEnabled": {
+    "name": "cmRemoteAuthServerAccountingEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows to enable/disable RADIUS Accounting on all authentication servers."
+  },
+  "f3TacacsPrivLevelControlEnabled": {
+    "name": "f3TacacsPrivLevelControlEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows to enable/disable the use of ENABLE authorization control to determine the Privilege Level configured by the remote authentication server. This object is only valid for TACACS+. Default value of this object is TRUE."
+  },
+  "f3TacacsDefaultPrivLevel": {
+    "name": "f3TacacsDefaultPrivLevel",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmSecurityPrivLevel",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows specification of the default privilege level of the TACACS+ user, when the use of ENABLE authorization control is DISABLED, i.e. f3TacacsPrivLevelControlEnabled is set to FALSE."
+  },
+  "f3NasIpv6Addr": {
+    "name": "f3NasIpv6Addr",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Ipv6Address",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object describe the ipv6 address."
+  },
+  "f3SecurityTrapType": {
+    "name": "f3SecurityTrapType",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpSecurityTrapType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object provides ability to manage whether report security trap."
+  },
+  "f3SecurityTrapInfo": {
+    "name": "f3SecurityTrapInfo",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is used to describe the security trap info. This object is used only in trap and GET operation on this object will return empty string."
+  },
+  "f3UserPrivMgmtControl": {
+    "name": "f3UserPrivMgmtControl",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.16",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to enable/disable User Privilege Management."
+  },
+  "f3UserPrivRspTimeout": {
+    "name": "f3UserPrivRspTimeout",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.17",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 60
+          }
+        ]
+      }
+    },
+    "units": "minutes",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to set response timeout for user privilege upgrade request in minutes."
+  },
+  "cmSecurityUserTable": {
+    "name": "cmSecurityUserTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to the security users. Entries cannot be created in this table by management application action."
+  },
+  "cmSecurityUserEntry": {
+    "name": "cmSecurityUserEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserName",
+        "implied": 0
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserRemoteUser",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing information applicable to a particular security user."
+  },
+  "cmSecurityUserName": {
+    "name": "cmSecurityUserName",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Security User Name."
+  },
+  "cmSecurityUserComment": {
+    "name": "cmSecurityUserComment",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Notes on Security User."
+  },
+  "cmSecurityUserPrivLevel": {
+    "name": "cmSecurityUserPrivLevel",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmSecurityPrivLevel",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Security User Privilege Level."
+  },
+  "cmSecurityUserLoginTimeout": {
+    "name": "cmSecurityUserLoginTimeout",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Security User Login Timeout."
+  },
+  "cmSecurityUserNumFailedLoginAttempts": {
+    "name": "cmSecurityUserNumFailedLoginAttempts",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Security User Number of Failed Login Attempts."
+  },
+  "cmSecurityUserLastLoginTime": {
+    "name": "cmSecurityUserLastLoginTime",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Security User Last Login Time."
+  },
+  "cmSecurityUserLockedout": {
+    "name": "cmSecurityUserLockedout",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Whether the security user has been locked out."
+  },
+  "cmSecurityUserLastLockedoutTime": {
+    "name": "cmSecurityUserLastLockedoutTime",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Security User Last Locked out Time."
+  },
+  "cmSecurityUserCliPagingEnable": {
+    "name": "cmSecurityUserCliPagingEnable",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Whether the security user has CLI paging enabled."
+  },
+  "cmSecurityUserRemoteUser": {
+    "name": "cmSecurityUserRemoteUser",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Whether the security user is a remote user."
+  },
+  "cmSecurityUserPassword": {
+    "name": "cmSecurityUserPassword",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Password of the security user. Note that this attribute is a SET only attribute."
+  },
+  "cmSecurityUserStorageType": {
+    "name": "cmSecurityUserStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of storage configured for this entry."
+  },
+  "cmSecurityUserRowStatus": {
+    "name": "cmSecurityUserRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of cmSecurityUserRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with cmSecurityUserRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The cmSecurityUserRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "cmSecurityUserAction": {
+    "name": "cmSecurityUserAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SecurityUserAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object provides ability to perform specific actions on security user. remove-lockout - this removes the locked out condition on the security user ."
+  },
+  "cmSecurityCryptoPassword": {
+    "name": "cmSecurityCryptoPassword",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Second level password used in connectguard configurations. This applies only to crypto users. Note that this attribute is a SET only attribute."
+  },
+  "cmSecurityUserRemoteCryptoUser": {
+    "name": "cmSecurityUserRemoteCryptoUser",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.5.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates if a security user is a remote crypto user."
+  },
+  "cmRemoteAuthServerTable": {
+    "name": "cmRemoteAuthServerTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to the remote authentication servers. Entries cannot be created in this table by management application action."
+  },
+  "cmRemoteAuthServerEntry": {
+    "name": "cmRemoteAuthServerEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing information applicable to a particular remote authentication server."
+  },
+  "cmRemoteAuthServerIndex": {
+    "name": "cmRemoteAuthServerIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Unique index to address/configure a specific Remote Authentication Server."
+  },
+  "cmRemoteAuthServerEnabled": {
+    "name": "cmRemoteAuthServerEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows enabling/disabling a Remote Authentication Server."
+  },
+  "cmRemoteAuthServerOrder": {
+    "name": "cmRemoteAuthServerOrder",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmRemoteAuthOrder",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object determines the order in which the Remote Authentication Servers are accessed for security information."
+  },
+  "cmRemoteAuthServerIpAddress": {
+    "name": "cmRemoteAuthServerIpAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows to specify an IP Address for the Remote Authentication Server."
+  },
+  "cmRemoteAuthServerPort": {
+    "name": "cmRemoteAuthServerPort",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows to specify a Port for Remote Authentication Server."
+  },
+  "cmRemoteAuthServerNumRetries": {
+    "name": "cmRemoteAuthServerNumRetries",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows to specify the number of retries the Remote Authentication Server must be tried for security access before giving up."
+  },
+  "cmRemoteAuthServerTimeout": {
+    "name": "cmRemoteAuthServerTimeout",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows to specify the timeout period for timing out a security access request to the Remote Authentication Server."
+  },
+  "cmRemoteAuthServerSecret": {
+    "name": "cmRemoteAuthServerSecret",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This allows configuration of secret password for Remote Authentication Server request."
+  },
+  "cmRemoteAuthServerAccountingPort": {
+    "name": "cmRemoteAuthServerAccountingPort",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows to specify a Port for RADIUS Accounting."
+  },
+  "cmRemoteAuthServerIpVersion": {
+    "name": "cmRemoteAuthServerIpVersion",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpVersion",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object describe the Ip Version."
+  },
+  "cmRemoteAuthServerIpv6Addr": {
+    "name": "cmRemoteAuthServerIpv6Addr",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.6.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Ipv6Address",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object describe the Ipv6 Address."
+  },
+  "f3UsmUserTable": {
+    "name": "f3UsmUserTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table is the extension of the F3 USM User Table."
+  },
+  "f3UsmUserEntry": {
+    "name": "f3UsmUserEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "f3UsmUserEntry",
+      "module": "CM-SECURITY-MIB",
+      "object": "usmUserEntry"
+    },
+    "status": "current",
+    "description": "An entry in the F3 USM User Table."
+  },
+  "f3UsmUserAccessType": {
+    "name": "f3UsmUserAccessType",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "UsmUserAccessType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the type of USM User, read-only, read-write, trap-only."
+  },
+  "f3PrivilegeChangeTable": {
+    "name": "f3PrivilegeChangeTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table is used for Restricted User Login via NMS. This is for users with lower privileges to elevate them to higher ones for limited amount of time."
+  },
+  "f3PrivilegeChangeEntry": {
+    "name": "f3PrivilegeChangeEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Column for privilegeChangeTable."
+  },
+  "f3PrivilegeChangeId": {
+    "name": "f3PrivilegeChangeId",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Unique index identifying a request."
+  },
+  "f3PrivilegeChangeUserName": {
+    "name": "f3PrivilegeChangeUserName",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name string for user authentication purposes"
+  },
+  "f3PrivilegeChangeIpv4Address": {
+    "name": "f3PrivilegeChangeIpv4Address",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "IPv4 address of interface to which user's terminal is connected."
+  },
+  "f3PrivilegeChangeIpv6Address": {
+    "name": "f3PrivilegeChangeIpv6Address",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Ipv6Address",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "IPv6 address of interface to which user's terminal is connected."
+  },
+  "f3PrivilegeChangeTerminalIpv4Address": {
+    "name": "f3PrivilegeChangeTerminalIpv4Address",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Source IPv4 address of connected terminal."
+  },
+  "f3PrivilegeChangeTerminalIpv6Address": {
+    "name": "f3PrivilegeChangeTerminalIpv6Address",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Ipv6Address",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Source IPv6 address of connected terminal."
+  },
+  "f3PrivilegeChangeInterface": {
+    "name": "f3PrivilegeChangeInterface",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "UserInterfaceType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Interface used by the user"
+  },
+  "f3PrivilegeChangeCurrentPrivilege": {
+    "name": "f3PrivilegeChangeCurrentPrivilege",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmSecurityPrivLevel",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current privilege level of the user, who is requesting role upgrade."
+  },
+  "f3PrivilegeChangeRequestedPrivilege": {
+    "name": "f3PrivilegeChangeRequestedPrivilege",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmSecurityPrivLevel",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Privilege requested by user for session."
+  },
+  "f3PrivilegeChangeDuration": {
+    "name": "f3PrivilegeChangeDuration",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 480
+          }
+        ]
+      }
+    },
+    "units": "minutes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Requested time period by user (in minutes)."
+  },
+  "f3PrivilegeChangeAction": {
+    "name": "f3PrivilegeChangeAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrivilegeRequestAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Privilege request action."
+  },
+  "f3PrivilegeChangeState": {
+    "name": "f3PrivilegeChangeState",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PrivilegeRequestState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Privilege request state."
+  },
+  "f3PrivilegeChangeRemainingTime": {
+    "name": "f3PrivilegeChangeRemainingTime",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Time remaining in session with upgrade user privilege (in seconds)."
+  },
+  "f3PrivilegeChangeRemoteName": {
+    "name": "f3PrivilegeChangeRemoteName",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.1.15.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name string for Radius/Tacacs authentication purposes."
+  },
+  "f3SecurityTrap": {
+    "name": "f3SecurityTrap",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.3.1",
+    "class": "notificationtype",
+    "status": "current",
+    "description": "This is security trap. Security traps are reported according to value of f3SecurityTrapType object."
+  },
+  "f3PrivilegeChangeTrap": {
+    "name": "f3PrivilegeChangeTrap",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeState"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeUserName"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeIpv4Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeIpv6Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeTerminalIpv4Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeTerminalIpv6Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeInterface"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeCurrentPrivilege"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeRequestedPrivilege"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeDuration"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent every time a privilege change request is changed (added, modified, removed)."
+  },
+  "cmSecurityCompliances": {
+    "name": "cmSecurityCompliances",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.2.1",
+    "class": "objectidentity"
+  },
+  "cmSecurityGroups": {
+    "name": "cmSecurityGroups",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.2.2",
+    "class": "objectidentity"
+  },
+  "cmSecurityCompliance": {
+    "name": "cmSecurityCompliance",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cmSecurityObjectGroup",
+        "module": "CM-SECURITY-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Describes the requirements for conformance to the CM Security group."
+  },
+  "cmSecurityObjectGroup": {
+    "name": "cmSecurityObjectGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmAuthProtocol"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmAccessOrder"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmAuthType"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmNASIpAddress"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityPolicyStrength"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerAccountingEnabled"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3TacacsPrivLevelControlEnabled"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3TacacsDefaultPrivLevel"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3NasIpv6Addr"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3SecurityTrapType"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3SecurityTrapInfo"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserName"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserComment"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserPrivLevel"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserLoginTimeout"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserNumFailedLoginAttempts"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserLastLoginTime"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserLockedout"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserLastLockedoutTime"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserCliPagingEnable"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserRemoteUser"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserPassword"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserStorageType"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserRowStatus"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityUserAction"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmSecurityCryptoPassword"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerIndex"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerEnabled"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerOrder"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerIpAddress"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerPort"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerNumRetries"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerTimeout"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerSecret"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerAccountingPort"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerIpVersion"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "cmRemoteAuthServerIpv6Addr"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3UsmUserAccessType"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeUserName"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeIpv4Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeIpv6Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeTerminalIpv4Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeTerminalIpv6Address"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeInterface"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeCurrentPrivilege"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeRequestedPrivilege"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeDuration"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeAction"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeState"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeRemainingTime"
+      },
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3PrivilegeChangeRemoteName"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the CM Security group."
+  },
+  "cmSecurityNotifGroup": {
+    "name": "cmSecurityNotifGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.10.2.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "CM-SECURITY-MIB",
+        "object": "f3SecurityTrap"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of notifications used in the CM Security group."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CM-SECURITY-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:54:19 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CM-SECURITY-MIB"
+  }
+}

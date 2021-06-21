@@ -1,0 +1,1476 @@
+{
+  "imports": {
+    "class": "imports",
+    "ENTERASYS-MIB-NAMES": [
+      "etsysModules"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex",
+      "InterfaceIndexOrZero",
+      "ifIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "P-BRIDGE-MIB": [
+      "EnabledStatus"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "Bits",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "IpAddress",
+      "Counter32",
+      "MODULE-IDENTITY",
+      "Unsigned32",
+      "Gauge32",
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "Integer32",
+      "Counter64",
+      "iso"
+    ],
+    "SNMPv2-TC": [
+      "MacAddress",
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "TruthValue"
+    ]
+  },
+  "etsysAntiSpoofMIB": {
+    "name": "etsysAntiSpoofMIB",
+    "oid": "1.3.6.1.4.1.5624.1.2.96",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-01-15 16:31",
+        "description": "Updated informational front and back text sections."
+      },
+      {
+        "revision": "2012-10-31 13:55",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "201301151631Z",
+    "organization": "Enterasys Networks, Inc.",
+    "contactinfo": "Postal: Enterasys Networks 50 Minuteman Rd. Andover, MA 01810-1008 USA Phone: +1 978 684 1000 E-mail: support@enterasys.com WWW: http://www.enterasys.com",
+    "description": "This MIB module defines a portion of the SNMP MIB under the Enterasys Networks enterprise OID pertaining to configuration of the anti-spoofing feature."
+  },
+  "AntiSpoofPortAction": {
+    "name": "AntiSpoofPortAction",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "generateSyslog": 0,
+        "generateNotification": 1,
+        "quarantineUser": 2
+      }
+    },
+    "status": "current",
+    "description": "The possible actions that the anti-spoofing feature can take when a user exceeds the associated threshold limits. generateSyslog(0) Generate the appropriate logging message. generateNotification(1) Generate the respective SNMP notification. quarantineUser(2) Assign user traffic to the quarantine profile as determined by the respective profile-index."
+  },
+  "AntiSpoofInspectionType": {
+    "name": "AntiSpoofInspectionType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enabled": 1,
+          "disabled": 2,
+          "inspectionOnly": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The possible type of inspection to use on incoming traffic on a given port. enabled(1) Allows dynamic inspection to occur and will create bindings in the binding database based on the inspection. disabled(2) Disable both dynamic inspection and the creation of bindings. inspectionOnly(3) Allows dynamic inspection of packets to occur but will not create any bindings in the binding database."
+  },
+  "AntiSpoofThresholdType": {
+    "name": "AntiSpoofThresholdType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4Change": 1,
+          "ipv6Change": 2,
+          "portChange": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The mode the threshold entry will operate in. ipv4Change(1) The threshold action will occur when a user's IPv4 address changes a number of times equal to the threshold value. ipv6Change(2) The threshold action will occur when a user's IPv6 address changes a number of times equal to the threshold value. portChange(3) The threshold action will occur when the port that a user resides on changes a number of times equal to the threshold value."
+  },
+  "AntiSpoofPortType": {
+    "name": "AntiSpoofPortType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "trusted": 1,
+          "bypass": 2,
+          "untrusted": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The port type mode determines how DHCP traffic is handled. trusted(1) When a port is set to trusted mode DHCP server traffic is accepted and used to create bindings for the client, with no binding verification for connected clients. bypass(2) When a port is set to bypass mode DHCP server traffic is allowed to pass without any snooping. untrusted(3) When a port is set to untrusted mode client bindings will be verified for all traffic, depending on feature configuration."
+  },
+  "AntiSpoofBindingType": {
+    "name": "AntiSpoofBindingType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "dhcp": 1,
+          "arp": 2,
+          "ip": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The method by which a given client binding was created. dhcp(1) This indicates that a binding was created by DHCP MAC verification. arp(2) This indicates that a binding was created by dynamic ARP inspection. ip(3) This indicates that the binding was created by dynamic IP inspection."
+  },
+  "EtsysInstanceOID": {
+    "name": "EtsysInstanceOID",
+    "class": "textualconvention",
+    "type": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "A partial OBJECT IDENTIFIER suitable for use as instancing for other MIB objects. The definition of an OBJECT IDENTIFIER requires that all OIDs start with zero or one, consequently, the first two sub-ids of a EtsysInstanceOID will always be {0,0}."
+  },
+  "etsysAntiSpoofObjects": {
+    "name": "etsysAntiSpoofObjects",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofSystemBranch": {
+    "name": "etsysAntiSpoofSystemBranch",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofClassBranch": {
+    "name": "etsysAntiSpoofClassBranch",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofPortBranch": {
+    "name": "etsysAntiSpoofPortBranch",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofBindingBranch": {
+    "name": "etsysAntiSpoofBindingBranch",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofNotificationBranch": {
+    "name": "etsysAntiSpoofNotificationBranch",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.0",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofSystemState": {
+    "name": "etsysAntiSpoofSystemState",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "disabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When enabled(1), all objects in this MIB are fully active. When disabled(2), this object overrides all other object settings in this MIB without affecting their values. Maintaining the value of this object across agent reboots is REQUIRED."
+  },
+  "etsysAntiSpoofMaxClassIndex": {
+    "name": "etsysAntiSpoofMaxClassIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum number of class indexes available in the system."
+  },
+  "etsysAntiSpoofMaxClassThresholdIndex": {
+    "name": "etsysAntiSpoofMaxClassThresholdIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum number of threshold indexes able to be associated with a particular class."
+  },
+  "etsysAntiSpoofSystemSnmpNotifications": {
+    "name": "etsysAntiSpoofSystemSnmpNotifications",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "enabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The current state of the SNMP Notification functionality in the Anti Spoofing feature. enabled (1) - Anti-Spoofing will generate SNMP Notifications for user IP address or port changes that exceed the configured limits. The Anti-Spoofing feature MUST be enabled for SNMP Notifications to be generated. disabled (2) - Anti-Spoofing will not generate SNMP Notifications under any conditions. A notification is generated when a value is first detected above its respective configured limit. That notification SHOULD NOT be generated again until the configured notification timeout period has elapsed. Agents are not required to generate SNMP Notifications for conditions that exist when this object is set to enabled. SNMP Notifications MAY only be generated after additional IP address changes are detected that exceed the configured limits for the user. Maintaining the value of this object across agent reboots is REQUIRED."
+  },
+  "etsysAntiSpoofSystemNotificationInterval": {
+    "name": "etsysAntiSpoofSystemNotificationInterval",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 86400
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 60,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds to wait before generating another notification of the same type for the same user. This allows notification generation to be throttled in the case of a user who continually changes IP addresses. A value of zero indicates that the entity SHOULD NOT suppress any notifications related to the Anti-Spoofing feature. Maintaining the value of this object across agent reboots is REQUIRED."
+  },
+  "etsysAntiSpoofDuplicateIpControl": {
+    "name": "etsysAntiSpoofDuplicateIpControl",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "disabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When this is set to enabled(1) any IP changes will be checked across the system to ensure that the newly configured IP address is not already present. If the IP is present in the system then a syslog and or trap will be issued. When set to disabled(2) this check will not occur."
+  },
+  "etsysAntiSpoofSupportedActionTypes": {
+    "name": "etsysAntiSpoofSupportedActionTypes",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AntiSpoofPortAction",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies that anti-spoofing action types that the device supports. A bit will be set for each corresponding type that is supported."
+  },
+  "etsysAntiSpoofSupportedThresholdTypes": {
+    "name": "etsysAntiSpoofSupportedThresholdTypes",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "ipv4Change": 0,
+        "ipv6Change": 1,
+        "portChange": 2
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies that anti-spoofing threshold types that the device supports. A bit will be set for each corresponding type that is supported."
+  },
+  "etsysAntiSpoofSupportedBindingTypes": {
+    "name": "etsysAntiSpoofSupportedBindingTypes",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.1.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "dhcp": 0,
+        "arp": 1,
+        "ip": 2
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies that anti-spoofing binding types that the device supports. A bit will be set for each corresponding type that is supported."
+  },
+  "etsysAntiSpoofClassTable": {
+    "name": "etsysAntiSpoofClassTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Provides for the configuring of each of the classes present in Anti-Spoofing. Maintaining the value of the objects in this table across agent reboots is REQUIRED."
+  },
+  "etsysAntiSpoofClassEntry": {
+    "name": "etsysAntiSpoofClassEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofClassIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing per class properties."
+  },
+  "etsysAntiSpoofClassIndex": {
+    "name": "etsysAntiSpoofClassIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of class that this row represents. This index has a value between one(1) and etsysAntiSpoofMaxClassIndex."
+  },
+  "etsysAntiSpoofClassName": {
+    "name": "etsysAntiSpoofClassName",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Administratively assigned textual description of this class."
+  },
+  "etsysAntiSpoofClassTimeout": {
+    "name": "etsysAntiSpoofClassTimeout",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 600,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds to wait before administratively resetting the counters of the bindings which are based on this class associated with this class. A value of zero indicates that the counters will not be reset automatically."
+  },
+  "etsysAntiSpoofThresholdTable": {
+    "name": "etsysAntiSpoofThresholdTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Provides for the configuration of the Anti-Spoofing feature's various thresholds. Maintaining the value of the objects in this table across agent reboots is REQUIRED."
+  },
+  "etsysAntiSpoofThresholdEntry": {
+    "name": "etsysAntiSpoofThresholdEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofClassIndex",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofThresholdIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry providing per class, per threshold configuration."
+  },
+  "etsysAntiSpoofThresholdIndex": {
+    "name": "etsysAntiSpoofThresholdIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the threshold that this row represents. This index has a value between one(1) and etsysAntiSpoofMaxClassThresholdIndex."
+  },
+  "etsysAntiSpoofThresholdValue": {
+    "name": "etsysAntiSpoofThresholdValue",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The threshold at which the action defined by the class is taken. A value of zero(0) indicates that the threshold actions will never take place."
+  },
+  "etsysAntiSpoofThresholdActionMask": {
+    "name": "etsysAntiSpoofThresholdActionMask",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AntiSpoofPortAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The action(s) that will be taken when the threshold in the class represented by this row is reached."
+  },
+  "etsysAntiSpoofThresholdActionQuarantineValue": {
+    "name": "etsysAntiSpoofThresholdActionQuarantineValue",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A value that delineates the policy quarantine index to which the user will be assigned. This value is only used if the quarantineUser(2) bit is set in the etsysAntiSpoofThresholdActionMask."
+  },
+  "etsysAntiSpoofThresholdType": {
+    "name": "etsysAntiSpoofThresholdType",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AntiSpoofThresholdType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The class type associated with this entry."
+  },
+  "etsysAntiSpoofPortConfigTable": {
+    "name": "etsysAntiSpoofPortConfigTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of per port information and configuration for Anti-Spoofing."
+  },
+  "etsysAntiSpoofPortConfigEntry": {
+    "name": "etsysAntiSpoofPortConfigEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing per port Anti-Spoofing data."
+  },
+  "etsysAntiSpoofDHCPMode": {
+    "name": "etsysAntiSpoofDHCPMode",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "disabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows for the enabling or disabling of DHCP Snooping functionality on a per-port basis."
+  },
+  "etsysAntiSpoofDHCPMacVerify": {
+    "name": "etsysAntiSpoofDHCPMacVerify",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnabledStatus",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "disabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows for the enabling or disabling of DHCP-Snooping to verify the source address MAC with chaddr in DHCP packets on incoming client messages."
+  },
+  "etsysAntiSpoofArpInspection": {
+    "name": "etsysAntiSpoofArpInspection",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AntiSpoofInspectionType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "disabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to enabled(1), dynamic ARP inspection is allowed on this port. When set to disabled(2), dynamic ARP inspection is not allowed on this port. When set to inspectionOnly(3), dynamic ARP inspection will occur but will not be used to create bindings."
+  },
+  "etsysAntiSpoofIpInspection": {
+    "name": "etsysAntiSpoofIpInspection",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AntiSpoofInspectionType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "disabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to enabled(1), dynamic IP inspection is allowed on this port. When set to disabled(2), dynamic IP inspection is not allowed on this port. When set to inspectionOnly(3), dynamic IP inspection will occur but will not be used to create bindings."
+  },
+  "etsysAntiSpoofPortClassIndex": {
+    "name": "etsysAntiSpoofPortClassIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This value represents the class index to be used for the given port. The special case value of zero(0) indicates that no class index will be used for this port."
+  },
+  "etsysAntiSpoofUntrustedTrafficPacketCounter": {
+    "name": "etsysAntiSpoofUntrustedTrafficPacketCounter",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This counter is used to measure the number of DHCP server packets received on this port. This counter will only increment when the etsysAntiSpoofPortType is set to untrusted(3)."
+  },
+  "etsysAntiSpoofPortTypeTable": {
+    "name": "etsysAntiSpoofPortTypeTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing port type information for each port in the system that supports anti-spoofing."
+  },
+  "etsysAntiSpoofPortTypeEntry": {
+    "name": "etsysAntiSpoofPortTypeEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing per port anti-spoofing configuration data."
+  },
+  "etsysAntiSpoofPortType": {
+    "name": "etsysAntiSpoofPortType",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AntiSpoofPortType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "untrusted",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies the port type to be used for this port. The port type indicates how DHCP traffic is handled."
+  },
+  "etsysAntiSpoofStationBindingTable": {
+    "name": "etsysAntiSpoofStationBindingTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing information pertaining to the current active bindings set up through Anti-Spoofing."
+  },
+  "etsysAntiSpoofStationBindingEntry": {
+    "name": "etsysAntiSpoofStationBindingEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing per binding data."
+  },
+  "etsysAntiSpoofStationBindingEntryIndex": {
+    "name": "etsysAntiSpoofStationBindingEntryIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EtsysInstanceOID",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The unique index for this columnar row."
+  },
+  "etsysAntiSpoofStationBindingEntryMacAddr": {
+    "name": "etsysAntiSpoofStationBindingEntryMacAddr",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MAC address of the binding."
+  },
+  "etsysAntiSpoofStationBindingEntryInetAddrType": {
+    "name": "etsysAntiSpoofStationBindingEntryInetAddrType",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address type of the binding."
+  },
+  "etsysAntiSpoofStationBindingEntryInetAddr": {
+    "name": "etsysAntiSpoofStationBindingEntryInetAddr",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address of the binding."
+  },
+  "etsysAntiSpoofStationBindingEntryIfIndex": {
+    "name": "etsysAntiSpoofStationBindingEntryIfIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The port that this binding currently resides on."
+  },
+  "etsysAntiSpoofStationBindingEntryInetCounter": {
+    "name": "etsysAntiSpoofStationBindingEntryInetCounter",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of times the IP address has changed for this binding."
+  },
+  "etsysAntiSpoofStationBindingEntryClearInetCounter": {
+    "name": "etsysAntiSpoofStationBindingEntryClearInetCounter",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to true(1), this object will clear the IP counter associated with this binding. Setting this object to a value of false(2) has no effect. This object MUST always return a value of false(2)."
+  },
+  "etsysAntiSpoofStationBindingEntryPortCounter": {
+    "name": "etsysAntiSpoofStationBindingEntryPortCounter",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of times the port has changed for this binding."
+  },
+  "etsysAntiSpoofStationBindingEntryClearPortCounter": {
+    "name": "etsysAntiSpoofStationBindingEntryClearPortCounter",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to true(1), this object will clear the port counter associated with this binding. Setting this object to a value of false(2) has no effect. This object MUST always return a value of false(2)."
+  },
+  "etsysAntiSpoofStationBindingEntryClearBinding": {
+    "name": "etsysAntiSpoofStationBindingEntryClearBinding",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to true(1), this object will clear the current binding. Allowing a new binding to be created with the same MAC/IP address and clearing all counter information. Setting this object to a value of false(2) has no effect. This object MUST always return a value of false(2)."
+  },
+  "etsysAntiSpoofStationBindingEntryBindingType": {
+    "name": "etsysAntiSpoofStationBindingEntryBindingType",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AntiSpoofBindingType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates which binding type (DHCP, ARP, or IP inspection) was used to create the entry."
+  },
+  "etsysAntiSpoofStationBindingEntryDurationTime": {
+    "name": "etsysAntiSpoofStationBindingEntryDurationTime",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The amount of time, in seconds, that this binding has been operational for."
+  },
+  "etsysAntiSpoofStationBindingEntryExpirationTime": {
+    "name": "etsysAntiSpoofStationBindingEntryExpirationTime",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The amount of time, in seconds, from its creation, that this binding will be operational for before being destroyed. A value of zero(0) indicates that this binding will not expire."
+  },
+  "etsysAntiSpoofMacBindingTable": {
+    "name": "etsysAntiSpoofMacBindingTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table indicating whether a given binding is accessible. This table is indexed first by MAC, then by IP, and finally by port. In this way a user may quickly determine which bindings are active for a given station address and look up those entries in the etsysAntiSpoofStationBindingTable."
+  },
+  "etsysAntiSpoofMacBindingEntry": {
+    "name": "etsysAntiSpoofMacBindingEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryMacAddr",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddrType",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddr",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingInterface",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing per binding data."
+  },
+  "etsysAntiSpoofStationBindingInterface": {
+    "name": "etsysAntiSpoofStationBindingInterface",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The current interface index that the IP/MAC binding resides on."
+  },
+  "etsysAntiSpoofMacStationBindingIndex": {
+    "name": "etsysAntiSpoofMacStationBindingIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EtsysInstanceOID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A unique identifier for this entry to be used as indexing in the etsysAntiSpoofStationBindingTable."
+  },
+  "etsysAntiSpoofMacBindingClearBinding": {
+    "name": "etsysAntiSpoofMacBindingClearBinding",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to true(1), this object will clear the current binding, allowing a new binding to be created with the same MAC/IP address and clearing all counter information. If the etsysAntiSpoofStationBindingInterface index specified in the SET operation is zero (0) it will remove the MAC/IP binding regardless of the current port it is associated with. Specifying an etsysAntiSpoofStationBindingInterface index value between 1..2147483647 will only remove the binding if it currently resides on that specific interface. Setting this object to a value of false(2) has no effect. This object MUST always return a value of false(2)."
+  },
+  "etsysAntiSpoofIpBindingTable": {
+    "name": "etsysAntiSpoofIpBindingTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table indicating whether a given binding is accessible. This table is indexed first by IP, then by MAC, and finally by port. In this way a user may quickly determine which bindings are active for a given station address and look up those entries in the etsysAntiSpoofStationBindingTable."
+  },
+  "etsysAntiSpoofIpBindingEntry": {
+    "name": "etsysAntiSpoofIpBindingEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddrType",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddr",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryMacAddr",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingInterface",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing per binding data."
+  },
+  "etsysAntiSpoofIpStationBindingIndex": {
+    "name": "etsysAntiSpoofIpStationBindingIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EtsysInstanceOID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A unique identifier for this entry to be used as indexing in the etsysAntiSpoofStationBindingTable."
+  },
+  "etsysAntiSpoofIpBindingClearBinding": {
+    "name": "etsysAntiSpoofIpBindingClearBinding",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to true(1), this object will clear the current binding, allowing a new binding to be created with the same MAC/IP address and clearing all counter information. If the etsysAntiSpoofStationBindingInterface index specified in the SET operation is zero (0) it will remove the MAC/IP binding regardless of the current port it is associated with. Specifying an etsysAntiSpoofStationBindingInterface index value between 1..2147483647 will only remove the binding if it currently resides on that specific interface. Setting this object to a value of false(2) has no effect. This object MUST always return a value of false(2)."
+  },
+  "etsysAntiSpoofPortBindingTable": {
+    "name": "etsysAntiSpoofPortBindingTable",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table indicating whether a given binding is accessible. This table is indexed first by port, then by MAC, and finally by IP. In this way a user may quickly determine which bindings are active for a given station address and look up those entries in the etsysAntiSpoofStationBindingTable."
+  },
+  "etsysAntiSpoofPortBindingEntry": {
+    "name": "etsysAntiSpoofPortBindingEntry",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingInterface",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryMacAddr",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddrType",
+        "implied": 0
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing per binding data."
+  },
+  "etsysAntiSpoofPortStationBindingIndex": {
+    "name": "etsysAntiSpoofPortStationBindingIndex",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EtsysInstanceOID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A unique identifier for this entry to be used as indexing in the etsysAntiSpoofStationBindingTable."
+  },
+  "etsysAntiSpoofPortBindingClearBinding": {
+    "name": "etsysAntiSpoofPortBindingClearBinding",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.4.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When set to true(1), this object will clear the current binding, allowing a new binding to be created with the same MAC/IP address and clearing all counter information. If the etsysAntiSpoofStationBindingInterface index specified in the SET operation is zero (0) it will remove the MAC/IP binding regardless of the current port it is associated with. Specifying an etsysAntiSpoofStationBindingInterface index value between 1..2147483647 will only remove the binding if it currently resides on that specific interface. Setting this object to a value of false(2) has no effect. This object MUST always return a value of false(2)."
+  },
+  "etsysAntiSpoofClassNotification": {
+    "name": "etsysAntiSpoofClassNotification",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofThresholdValue"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryMacAddr"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddrType"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddr"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification indicates that a Anti Spoof class has reached a threshold limit."
+  },
+  "etsysAntiSpoofDuplicateIpNotification": {
+    "name": "etsysAntiSpoofDuplicateIpNotification",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.1.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryMacAddr"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryIfIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddrType"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddr"
+      }
+    ],
+    "status": "current",
+    "description": "This notification indicates that a duplicate IP condition has occurred."
+  },
+  "etsysAntiSpoofConformance": {
+    "name": "etsysAntiSpoofConformance",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofGroups": {
+    "name": "etsysAntiSpoofGroups",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofCompliances": {
+    "name": "etsysAntiSpoofCompliances",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.2",
+    "class": "objectidentity"
+  },
+  "etsysAntiSpoofSystemGroup": {
+    "name": "etsysAntiSpoofSystemGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofSystemState"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofMaxClassIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofMaxClassThresholdIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofSystemSnmpNotifications"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofSystemNotificationInterval"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofDuplicateIpControl"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofSupportedActionTypes"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofSupportedThresholdTypes"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofSupportedBindingTypes"
+      }
+    ],
+    "status": "current",
+    "description": "The scalar group for all devices supporting Anti-Spoofing."
+  },
+  "etsysAntiSpoofClassGroup": {
+    "name": "etsysAntiSpoofClassGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofClassName"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofClassTimeout"
+      }
+    ],
+    "status": "current",
+    "description": "The base level class group for all devices supporting Anti-Spoofing."
+  },
+  "etsysAntiSpoofThresholdGroup": {
+    "name": "etsysAntiSpoofThresholdGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofThresholdValue"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofThresholdActionMask"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofThresholdActionQuarantineValue"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofThresholdType"
+      }
+    ],
+    "status": "current",
+    "description": "The base level threshold group for all devices supporting Anti-Spoofing."
+  },
+  "etsysAntiSpoofPortGroup": {
+    "name": "etsysAntiSpoofPortGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofDHCPMode"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofDHCPMacVerify"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofArpInspection"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofIpInspection"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofPortClassIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofUntrustedTrafficPacketCounter"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofPortType"
+      }
+    ],
+    "status": "current",
+    "description": "This group of objects for all devices supporting per interface Anti-Spoofing settings."
+  },
+  "etsysAntiSpoofStationBindingGroup": {
+    "name": "etsysAntiSpoofStationBindingGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryMacAddr"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddrType"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetAddr"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryInetCounter"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryClearInetCounter"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryIfIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryPortCounter"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryClearPortCounter"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryClearBinding"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryBindingType"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryDurationTime"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofStationBindingEntryExpirationTime"
+      }
+    ],
+    "status": "current",
+    "description": "The group for all devices which support bindings for Anti-Spoofing."
+  },
+  "etsysAntiSpoofMacBindingGroup": {
+    "name": "etsysAntiSpoofMacBindingGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofMacStationBindingIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofMacBindingClearBinding"
+      }
+    ],
+    "status": "current",
+    "description": "The group for all devices which support MAC bindings for Anti-Spoofing."
+  },
+  "etsysAntiSpoofIpBindingGroup": {
+    "name": "etsysAntiSpoofIpBindingGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofIpStationBindingIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofIpBindingClearBinding"
+      }
+    ],
+    "status": "current",
+    "description": "The group for all devices which support IP bindings for Anti-Spoofing."
+  },
+  "etsysAntiSpoofPortBindingGroup": {
+    "name": "etsysAntiSpoofPortBindingGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofPortStationBindingIndex"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofPortBindingClearBinding"
+      }
+    ],
+    "status": "current",
+    "description": "The group for all devices which support IP bindings for Anti-Spoofing."
+  },
+  "etsysAntiSpoofNotificationGroup": {
+    "name": "etsysAntiSpoofNotificationGroup",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.1.9",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofClassNotification"
+      },
+      {
+        "module": "ENTERASYS-ANTI-SPOOF-MIB",
+        "object": "etsysAntiSpoofDuplicateIpNotification"
+      }
+    ],
+    "status": "current",
+    "description": "The group of class notifications for Anti-Spoof."
+  },
+  "etsysAntiSpoofCompliance": {
+    "name": "etsysAntiSpoofCompliance",
+    "oid": "1.3.6.1.4.1.5624.1.2.96.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "etsysAntiSpoofSystemGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofClassGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofThresholdGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofPortGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofStationBindingGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofMacBindingGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofPortBindingGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofIpBindingGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      },
+      {
+        "object": "etsysAntiSpoofNotificationGroup",
+        "module": "ENTERASYS-ANTI-SPOOF-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for devices that support Anti-Spoof."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ENTERASYS-ANTI-SPOOF-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:17:44 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ENTERASYS-ANTI-SPOOF-MIB"
+  }
+}

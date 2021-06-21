@@ -1,0 +1,1230 @@
+TLS-MIB DEFINITIONS ::= BEGIN
+
+-- Title:       Nortel Networks Transparent Lan Service (TLS) Enterprise MIB
+-- Date:        25 June 2001
+--
+-- Revision:    v1  :  Genesis
+--            v2/3  :  Added notifications group tlsNotifications
+--                  :  Added tlsTDStateChanged, tlsCraftPortDisabled Traps
+--                  :  Added tlsNotificationObjects group
+--                  :  Added tlsIPAddressConflict trap
+--
+--              v4  :  Added tlsTest group to norteltls 
+--                  :  Added tlsTdcTest group to tlsTest 
+--                  :  Changed DESCRIPTION for tlsTDStateChanged trap
+--
+--              v5  :  Changed MAX-ACCESS of the tlsConflictingMac to
+--                     'accessible-for-notify', rather than 'read-only',
+--                     since there's no need for it to be queryable via
+--                     SNMP directly.
+--
+--		v6  :  Added tlsConflictingIp to the tlsIPAddressConflict
+--		       trap, and updated variable names and comments to
+--		       better explain it. Also mentioned that OPE will
+--                     include its sysName in its implementation of the
+--                     trap.
+--
+--		v7  :  Added the TDC Error and removed the size
+--		       option for the TDC test via SNMP.
+--
+--		v8  :  Added tlsNotificationConfig group to nortel.tls
+--                     to hold enable/disable values for all configurable
+--                     NORTEL_TLS_MIB SNMP traps.
+--                  :  Added tlsIPAddressConflictEnabled to group
+--                     tlsNotificationConfig to allow the IP Address
+--                     Conflict trap to be enabled/disabled.
+--
+--		v9  :	Added error code descriptions for tlsTestTdcErrorMask.
+--              v10 :   Some compilers like Optivity require nortel to be
+--                      explicitly imported rather than being labelled against
+--                      their OIDs. 
+--		v11 :   Added tls trunk group MIB and traps.
+--              v12 :   Defining OID as shown in RFC 1155.. Changing the OID 
+--                      definition by naming only the root.
+--		v13 :   Changed tlsTrunkGroup object identifier from 10 to 12.
+--		v14 :   No change.
+--		v15 :   Changed tls trunk group MIB value's names:
+--                      TlsTrunkGroupOperState: disabled (3) to error (3)
+--                      tlsTrunkGroupGroupType: split(1) to dmlt(1).
+--		v16 :   Added : tlsWanTrunkGroupStats MIB
+--              Added : TlsTrunkGroupLinkOperState constant definition
+--              Changed : tlsWanTrunkGroupTrafficDistrId to tlsWanTrunkGroupOperDistrId
+--              Changed : tlsWanTrunkGroupOperState to tlsWanTrunkGroupLinkOperState
+--              Added : tlsIfIndex as a variable to all trunk group related traps
+--              v17 : Renamed the tlsWanTrunkGroupTable MIB to tlsWanTrunkGroupForwardingInfoTable MIB
+--              v18 : Updated textual descriptions for the tls Trunk Group MIB to indicate which
+--                    values are provisionable in this release and which are not.
+--              v19 : Changed the default Wait to Restore Timer value to 5 seconds.
+--
+--
+
+IMPORTS
+	MODULE-IDENTITY				FROM SNMPv2-SMI
+	OBJECT-TYPE				FROM SNMPv2-SMI
+        IpAddress, Integer32, Counter64,
+        Counter32		                FROM SNMPv2-SMI
+        tlsTDIfTDIndex, tlsTDIfEnabled, 
+        tlsIfIndex, TlsIfType                   FROM TLS
+	MacAddress, RowStatus, TruthValue,
+	DisplayString,
+	TEXTUAL-CONVENTION			FROM SNMPv2-TC
+	TRAP-TYPE				FROM RFC-1215
+        nortel                                  FROM NORTEL-MIB-ARCS-MIB;
+
+tls    MODULE-IDENTITY
+       LAST-UPDATED 	"0111070000Z"
+       ORGANIZATION    "Nortel Networks"
+       CONTACT-INFO    "Global Optical Customer Service
+                        Tel:   1-800 (ASK-TRAN) or
+                               1-800 (ASK-ETAS)"
+       DESCRIPTION 	"Enterprise MIB for Transparent LAN Service
+                         on Nortel Networks Equipment."
+
+       ::= { nortel 62 }
+
+-- Textual conventions used in this MIB
+
+TlsTrunkGroupId ::= TEXTUAL-CONVENTION
+	STATUS	current
+	DESCRIPTION
+		"Indicates the trunk group id range."
+	SYNTAX	INTEGER (1..64)
+	
+TlsTrunkGroupOperState ::= TEXTUAL-CONVENTION
+	STATUS	current
+	DESCRIPTION
+		"Indicates the trunk group state."
+	SYNTAX   INTEGER { up(1),
+                           down(2),
+                           error(3),
+                           unknown(4)
+                         }
+TlsTrunkGroupLinkOperState ::= TEXTUAL-CONVENTION
+	STATUS	current
+	DESCRIPTION
+		"Indicates the trunk group link operating state."
+	SYNTAX   INTEGER { up(1),
+                           down(2)
+                         }
+                                  
+--      tlsNotifications OBJECT-IDENTITY
+--	STATUS		current
+--	DESCRIPTION	"Registration point for TLS notifications."
+--	::= { tls 0 }
+
+tlsQoS			OBJECT IDENTIFIER ::= { tls 6 }
+
+tlsNotificationObjects	OBJECT IDENTIFIER ::= { tls 7 }
+tlsNotificationConfig	OBJECT IDENTIFIER ::= { tls 8 }
+
+-- TD Connectivity
+tlsTest                 OBJECT IDENTIFIER ::= { tls 9 }
+
+-- Trunk Group MIB group
+tlsTrunkGroup           OBJECT IDENTIFIER ::= { tls 12 }
+
+tlsTestTdc      OBJECT IDENTIFIER ::= { tlsTest 1 }
+
+--
+--  TLS QoS Group
+--
+tlsQoSSystem		OBJECT IDENTIFIER ::= { tlsQoS 1 }
+
+-- tlsQoSSystem Group
+--
+tlsQoSSystemCntrlPriority  OBJECT-TYPE
+        SYNTAX          INTEGER (0..7)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The IPLT priority to be assigned to outgoing
+			control frames."
+        ::= { tlsQoSSystem 1 }
+
+tlsQoSSystemOutOAMPriority  OBJECT-TYPE
+        SYNTAX          INTEGER (0..7)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The IPLT priority to be assigned to outgoing
+			OAM frames."
+        ::= { tlsQoSSystem 2 }
+
+
+--
+-- TLS SNMP Notification Objects Group
+--
+tlsRemoteConflictingMac	OBJECT-TYPE
+	SYNTAX		MacAddress
+	MAX-ACCESS	accessible-for-notify
+	STATUS		current
+	DESCRIPTION	"The MAC address of a remote network device that
+			claims prior ownership of one of the IP addresses
+			being used on the local node. See the notification
+			'tlsIpAddressConflict' for more information."
+	::= { tlsNotificationObjects 1 }
+
+tlsConflictingIp	OBJECT-TYPE
+	SYNTAX		IpAddress
+	MAX-ACCESS	accessible-for-notify
+	STATUS		current
+	DESCRIPTION	"The IP address on the local node that has been
+			determined to be in conflict with another device
+			somewhere on the network. See the notification
+			'tlsIpAddressConflict' for more informaiton."
+	::= { tlsNotificationObjects 2 }
+	
+tlsTrunkGroupConfigErrorType OBJECT-TYPE
+        SYNTAX          INTEGER {
+                            trunkGroupIdConflict (1),
+                            distributionIdConflict (2),
+                            portTypeConflict (3)}
+        MAX-ACCESS      accessible-for-notify
+        STATUS          current
+        DESCRIPTION
+                        "Potential types  of  configuration  conflicts.
+                         Used  by the tlsTrunkGroupConfigError trap."
+        ::= { tlsNotificationObjects 3 }
+
+tlsTrunkGroupPacketType OBJECT-TYPE
+        SYNTAX          INTEGER {
+                            hello(1),
+                            linkState(2),
+                            update(3)
+                            }
+        MAX-ACCESS      accessible-for-notify
+        STATUS          current
+        DESCRIPTION
+                        "Control packet types sent between trunk group peers.
+                         Used  by the tlsTrunkGrouErrorEvent trap."
+        ::= { tlsNotificationObjects 4 }
+
+tlsTrunkGroupErrorEventType OBJECT-TYPE
+        SYNTAX          INTEGER {
+                            controlMessageTimeOut(1),
+                            fiveMinHeartbeatMissing(2)
+                            }
+        MAX-ACCESS      accessible-for-notify
+        STATUS          current
+        DESCRIPTION
+                        "Potential types of errors that can occur during various
+                         trunk group protocol stages.
+                         Used  by the tlsTrunkGroupErrorEvent trap."
+        ::= { tlsNotificationObjects 5 }	
+
+--
+-- TLS SNMP Notification Config Group
+--
+tlsIPAddressConflictEnabled	OBJECT-TYPE
+	SYNTAX			TruthValue
+	MAX-ACCESS		read-write
+	STATUS			current
+	DESCRIPTION		"Indicates whether the IP Address Conflict
+				trap is enabled or disabled."
+        DEFVAL			{ false }
+        ::= { tlsNotificationConfig 1 }
+
+--
+-- TLS Trunk Group Notifications
+--
+tlsTrunkGroupStateChangeEnabled        OBJECT-TYPE
+        SYNTAX                  TruthValue
+        MAX-ACCESS              read-write
+        STATUS                  current
+        DESCRIPTION             "Indicates whether the Trunk Group State Change
+                                trap is enabled or disabled."
+        DEFVAL                  { false }
+        ::= { tlsNotificationConfig 2 }
+
+tlsTrunkGroupProvisioningChangeEnabled OBJECT-TYPE
+        SYNTAX                  TruthValue
+        MAX-ACCESS              read-write
+        STATUS                  current
+        DESCRIPTION             "Indicates whether the Trunk Group Provisioning Ch
+ange
+                                trap is enabled or disabled."
+        DEFVAL                  { false }
+        ::= { tlsNotificationConfig 3 }
+
+--
+-- tlsTestTdc - TD Connectivity Test
+--
+tlsTestTdcTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF TlsTestTdcEntry
+        MAX-ACCESS          not-accessible
+        STATUS          current
+        DESCRIPTION     "Provisioning information for all TD Connectivity
+			tests and each tests' results."
+        ::= { tlsTestTdc 1 }
+
+tlsTestTdcEntry OBJECT-TYPE
+        SYNTAX          TlsTestTdcEntry
+        MAX-ACCESS          not-accessible
+        STATUS          current
+        DESCRIPTION     "Provisioning information for a particular TD
+                        Connectivity test and the test results."
+        INDEX       { tlsTestTdcTestId }
+        ::= { tlsTestTdcTable 1 }
+
+TlsTestTdcEntry ::=
+        SEQUENCE {
+                -- index
+                tlsTestTdcTestId        INTEGER,
+
+                -- required and optional parameters
+                tlsTestTdcTDI           INTEGER,
+                tlsTestTdcSrcPortNum    INTEGER,
+                tlsTestTdcDstPortNum    INTEGER,
+                tlsTestTdcSrcPortIP     IpAddress,
+                tlsTestTdcDstPortIP     IpAddress,
+                tlsTestTdcPktPriority   INTEGER,
+                tlsTestTdcPktTimeout    INTEGER,
+                tlsTestTdcProtocol      INTEGER,
+                tlsTestTdcTestType      INTEGER,
+                tlsTestTdcTimeTrace     INTEGER,
+                tlsTestTdcPriority      TruthValue,
+
+                -- test results
+                tlsTestTdcPktsSent      Integer32,
+                tlsTestTdcPktsReceived  Integer32,
+                tlsTestTdcRttBroadcast  Integer32,
+                tlsTestTdcRttUnicast    Integer32,
+                tlsTestTdcPriOpePkt     INTEGER,
+                tlsTestTdcTestDate      OCTET STRING (SIZE (6)),
+                tlsTestTdcTestTime      OCTET STRING (SIZE (9)),
+                tlsTestTdcTraceInfo     TruthValue,
+
+                tlsTestTdcRowStatus     RowStatus,
+                tlsTestTdcAction        INTEGER,
+                tlsTestTdcResult        INTEGER,
+		tlsTestTdcErrorMask	Counter64
+                }
+
+tlsTestTdcTestId OBJECT-TYPE
+        SYNTAX          INTEGER (1..9999)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The unique TDC test ID for this entry."
+        ::= { tlsTestTdcEntry 1 }
+
+tlsTestTdcTDI  OBJECT-TYPE
+        SYNTAX          INTEGER (100..16777215)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The customer TD on which this test is executed."
+        ::= { tlsTestTdcEntry 2 }
+
+tlsTestTdcSrcPortNum  OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "An index value that uniquely identifies the TLS
+                        interface (UNI port) at the source of the test."
+        ::= { tlsTestTdcEntry 3 }
+
+tlsTestTdcDstPortNum  OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "An index value that uniquely identifies the
+                        destination TLS interface (LAN port)."
+        ::= { tlsTestTdcEntry 4 }
+
+tlsTestTdcSrcPortIP OBJECT-TYPE
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The IP address of the source port or CPU."
+        ::= { tlsTestTdcEntry 5 }
+
+tlsTestTdcDstPortIP OBJECT-TYPE
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The IP address of the destination port or CPU."
+        ::= { tlsTestTdcEntry 6 }
+
+tlsTestTdcPktPriority OBJECT-TYPE
+        SYNTAX          INTEGER (0..7)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Optional 802.1 network priority to be used for 
+			this test. If not specified by the user, the port 
+			default priority is assumed."
+        ::= { tlsTestTdcEntry 7 }
+
+tlsTestTdcPktTimeout OBJECT-TYPE
+        SYNTAX          INTEGER (1..10)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Optional timeout period for the TDC test in seconds.
+			If not specified, a default value of 10 seconds will
+			be used."
+        DEFVAL          { 10 }
+        ::= { tlsTestTdcEntry 8 }
+
+tlsTestTdcProtocol OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                  l2(1), -- tls/l2
+                                  oel2(2),  -- oel2
+				  l2forcedOel2(3)  -- l2 port to send oel2
+                        }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The protocol to use for the TDC test. If not
+			specified by the user, the mode (protocol) of the
+			source UNI port will be assumed."
+        ::= { tlsTestTdcEntry 9 }
+
+tlsTestTdcTestType OBJECT-TYPE
+        SYNTAX          INTEGER {
+                           	broadcastandunicast(1), -- both (tlsl2)
+                            	broadcast(2),  -- broadcast only (tlsl2)
+                              	unicast(3),  -- unicast only
+				multicastandunicast(4),	 -- both (oel2)
+				multicast(5)  -- multicast only (oel2)
+                        }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Optional target address of the TDC test. For tlsl2
+                        protocol, the options are broadcast and unicast,
+                        broadcast only and unicast only. For oel2 protocol,
+                        the options are multicast and unicast, multicast only
+                        and unicast only. By default, tlsl2 tests use broadcast
+                        and unicast while oel2 tests use multicast and unicast."
+        ::= { tlsTestTdcEntry 10 }
+
+tlsTestTdcTimeTrace OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                  none(1), -- basic test
+                                  time(2),  -- time info test
+                                  trace(3)  -- trace info test
+                        }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Optional data associated with the TDC test. The
+                        basic test validates the provisioning associated with
+                        the source ports, destination ports and TDs configured 
+			in the test. The time test collects the round-trip-time
+			of the packet between source and destination. The trace
+			test collects the IP address, machine adress and port 
+			information for nodes along the source to destination 
+			path (and back again). If not specified, the basic test
+			is assumed."
+        DEFVAL          { 1 }
+        ::= { tlsTestTdcEntry 11 }
+
+tlsTestTdcPriority      OBJECT-TYPE
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Boolean value indicating whether the user
+                        specified the packet priority or not."
+        ::= { tlsTestTdcEntry 12 }
+
+tlsTestTdcPktsSent      OBJECT-TYPE
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of test packets sent."
+        ::= { tlsTestTdcEntry 13 }
+
+tlsTestTdcPktsReceived  OBJECT-TYPE
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of test packets received."
+        ::= { tlsTestTdcEntry 14 }
+
+tlsTestTdcRttBroadcast  OBJECT-TYPE
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The round-trip-time for a broadcast test packet in
+                        microseconds."
+        ::= { tlsTestTdcEntry 15 }
+
+tlsTestTdcRttUnicast    OBJECT-TYPE
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The round-trip-time for a unicast test packet in
+                        microseconds."
+        ::= { tlsTestTdcEntry 16 }
+
+tlsTestTdcPriOpePkt     OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The OPE network priority. (ie. Customer priority
+                        mapped into an OPE priority. Same as tlsTDPriorityMap.)"
+        ::= { tlsTestTdcEntry 17 }
+
+tlsTestTdcTestDate      OBJECT-TYPE
+        SYNTAX          OCTET STRING (SIZE (6))
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The local date stamp for the test (DD/MM)."
+        ::= { tlsTestTdcEntry 18 }
+
+tlsTestTdcTestTime      OBJECT-TYPE
+        SYNTAX          OCTET STRING (SIZE (9))
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The local time-of-day stamp for the test (HH:MM:SS)."
+        ::= { tlsTestTdcEntry 19 }
+
+tlsTestTdcTraceInfo     OBJECT-TYPE
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Boolean value indicating whether the trace info
+                        exists for this entry."
+        ::= { tlsTestTdcEntry 20 }
+
+tlsTestTdcRowStatus     OBJECT-TYPE
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Used to create/delete an entry in this table"
+        ::= { tlsTestTdcEntry 21 }
+
+tlsTestTdcAction OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                  none(1), -- none of these
+                                  start(2)  -- run this TDC test
+                        }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Initiate this TDC test."
+        DEFVAL          { none }
+        ::= { tlsTestTdcEntry 22 }
+
+tlsTestTdcResult OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                 none(1), -- none of these
+                                 inProgress(2), -- action still in progress
+                                 success(3), -- action successful
+                                 fail(4) -- action failed
+                        }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Result from the last TDC action"
+        DEFVAL          { none }
+        ::= { tlsTestTdcEntry 23 }
+
+tlsTestTdcErrorMask OBJECT-TYPE
+        SYNTAX          Counter64
+	MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The error mask associated with the TDC test. Each bit
+			in the mask represents a specific error. The errors
+			from least significant bit to highest significant bit
+			are:
+			bit  1 - TD nonexistent on destination port
+			bit  2 - TD disabled on destination port
+			bit  3 - TD not assigned to destination port
+			bit  4 - TD filtered on destination NNI port
+			bit  5 - destination port is NNI
+			bit  6 - destination port is craft
+			bit  7 - destination FDB test failed
+			bit  8 - destination administrative state down
+                        bit  9 - destination operational state down
+			bit 10 - destination port connectivity mismatch error
+			bit 11 - destination port type mismatch
+			bit 12 - destination port mode mismatch error
+			bit 13 - destination MIB query failed
+			bit 14 - destination system error
+			bit 15 - invalid destination port
+			bit 16 - destination port is CPU
+			bit 17 - destination port mode mismatch warning
+			bit 18 - destination port connectivity mismatch warning
+			bit 19 - default priority used on destination
+			bit 20 - IP not assigned on destination oel2 port
+			bit 21 - static entry exists on destination port
+			bit 22 - destination FDB table full warning
+			bit 33 - TD nonexistent on source port
+			bit 34 - TD not assigned to source port
+			bit 35 - source FDB test failed
+			bit 36 - source administrative state down
+                        bit 37 - source operational state down
+			bit 38 - source system error
+                        bit 39 - no response
+                        bit 40 - could not get trace information
+                        bit 41 - could not get time information
+                        bit 42 - source MIB query failed
+                        bit 43 - TD disabled on source port
+                        bit 44 - invalid source port
+                        bit 45 - all ports down on the source node
+                        bit 46 - unknown error
+                        bit 47 - source FDB test failed
+                        bit 48 - static entry exists on source port
+			bit 49 - no FDB entry for destination MAC, unicast aborted"
+        ::= { tlsTestTdcEntry 24 }
+
+--
+-- Trace Information related to the TDC Test.
+-- If tlsTestTdcTraceInfo == True, the trace info for the tlsTestTdcTestId
+-- can be found in this table
+--
+tlsTestTdcTraceTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF TlsTestTdcTraceEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Trace information for a TD Connectivity test."
+        ::= { tlsTestTdc 2}
+
+tlsTestTdcTraceEntry OBJECT-TYPE
+        SYNTAX          TlsTestTdcTraceEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Trace information for the last TD Connectivity test
+                        that had the trace functionality enabled."
+        INDEX           { tlsTestTraceTestId,
+			  tlsTestTraceTraceType,
+			  tlsTestTraceTraceSeq }
+        ::= { tlsTestTdcTraceTable 1 }
+
+TlsTestTdcTraceEntry ::=
+        SEQUENCE {
+                -- index
+                tlsTestTraceTestId              INTEGER,
+                tlsTestTraceTraceType           INTEGER,
+                tlsTestTraceTraceSeq            Integer32,
+
+                -- node info
+                tlsTestTraceNodeEthAddr         MacAddress,
+                tlsTestTraceNodeIPAddr          IpAddress,
+                tlsTestTracePortOut             INTEGER,
+                tlsTestTracePortIn              INTEGER
+                }
+
+tlsTestTraceTestId   OBJECT-TYPE
+        SYNTAX          INTEGER (1..9999)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The unique TDC test ID to which these results
+			correspond."
+        ::= { tlsTestTdcTraceEntry 1 }
+
+tlsTestTraceTraceType   OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                broadcast(1),
+                                multicast(2),
+				unicast(3)
+                        }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Type of TDC test packet for which these results
+			apply."
+        ::= { tlsTestTdcTraceEntry 2 }
+
+tlsTestTraceTraceSeq    OBJECT-TYPE
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The trace sequence number associated with this
+			entry."
+        ::= { tlsTestTdcTraceEntry 3 }
+
+tlsTestTraceNodeEthAddr OBJECT-TYPE
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The MAC address of the node by which this sequence
+                        entry was generated."
+        ::= { tlsTestTdcTraceEntry 4 }
+
+tlsTestTraceNodeIPAddr  OBJECT-TYPE
+       SYNTAX          IpAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The IP address of the node by which this sequence
+                        entry was generated."
+        ::= { tlsTestTdcTraceEntry 5 }
+
+tlsTestTracePortOut     OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The port number on which this node sent the outbound
+                        test packet."
+        ::= { tlsTestTdcTraceEntry 6 }
+
+tlsTestTracePortIn      OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The port number on which this node received the
+			inbound test packet."
+        ::= { tlsTestTdcTraceEntry 7 }
+
+--
+-- TLS Trunk Group Definitions
+--
+tlsTrunkGroupNumCardGroups OBJECT-TYPE
+        SYNTAX          INTEGER (0..2)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Number of trunk groups currently defined on the card."
+        DEFVAL          { 0 }
+        ::= {tlsTrunkGroup 1 }
+
+tlsTrunkGroupNumRingGroups OBJECT-TYPE
+        SYNTAX          INTEGER (0..64)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Number of trunk groups currently defined on the ring."
+        DEFVAL          { 0 }
+        ::= {tlsTrunkGroup 2 }
+        
+--
+-- TLS Trunk Group Table Specific Definitions
+--
+
+tlsTrunkGroupTable      OBJECT-TYPE
+        SYNTAX          SEQUENCE OF TlsTrunkGroupEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Table containing provisioning and status information
+                         pertaining to all trunk groups defined on this OPE card."
+        ::= { tlsTrunkGroup 3 }
+
+tlsTrunkGroupEntry OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Provisioning and status information pertaining to
+                         a particular trunk group."
+        INDEX           { tlsTrunkGroupId }
+        ::= { tlsTrunkGroupTable 1 }
+
+TlsTrunkGroupEntry ::=
+        SEQUENCE {
+                tlsTrunkGroupId                      TlsTrunkGroupId,
+                tlsTrunkGroupName                    DisplayString,
+                tlsTrunkGroupAdminTrafficDistrId     INTEGER,
+                tlsTrunkGroupOperTrafficDistrId      INTEGER,
+                tlsTrunkGroupEnabled                 TruthValue,
+                tlsTrunkGroupMacAddr                 MacAddress,
+                tlsTrunkGroupGroupType               INTEGER,
+                tlsTrunkGroupPortType                TlsIfType,
+                tlsTrunkGroupPortList                BITS,
+                tlsTrunkGroupWTRTimer                INTEGER,
+                tlsTrunkGroupOperState               TlsTrunkGroupOperState,
+                tlsTrunkGroupDistrAlgorithm          INTEGER,
+                tlsTrunkGroupRowStatus               RowStatus
+        }
+
+tlsTrunkGroupId OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupId
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "A value that uniquely identifies the trunk group on
+                         the ring."
+        ::= { tlsTrunkGroupEntry 1 }
+
+tlsTrunkGroupName       OBJECT-TYPE
+        SYNTAX          DisplayString (SIZE (0..20))
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A text string providing further information about
+                         the trunk group."
+        DEFVAL           { "Default Trunk Group" }
+        ::= { tlsTrunkGroupEntry 2 }
+
+tlsTrunkGroupAdminTrafficDistrId     OBJECT-TYPE
+        SYNTAX          INTEGER (0..2)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A user assigned identifier that is used to distribute
+                         traffic between the two redundant trunks. The range of 
+                         this identifier comes from a result of a load-sharing 
+                         algorithm applied to all frames forwarded by trunks in 
+                         a trunk group. Frames whose hash result is 0 will be 
+                         forwarded by trunk with traffic ditribution id of 0. 
+                         Frames with result 1 will be forwarded by trunk with 
+                         ditribution id of 1. The value of 0/1 can be provisioned. 
+                         The value of 2 can not be provisioned. Each trunk in a
+                         trunk group must have a unique distribution id."
+        DEFVAL           { 2 }
+        ::= { tlsTrunkGroupEntry 3 }
+        
+tlsTrunkGroupOperTrafficDistrId     OBJECT-TYPE
+        SYNTAX          INTEGER (0..2)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "A system assigned distribution id that is defaulted to
+                         by the system in the case of the user assigned distribution 
+                         ids  mismatch. The distribution ids
+                         of the two trunks are mismatched if both of them 
+                         have the same value. The system then assigns distribution
+                         id of 1 to a trunk with a higher MAC address and 0 to 
+                         trunk with a lower MAC address.
+                         The system assigned distribution ids default to the user 
+                         assigned distribution ids if the user assigned distribution 
+                         ids are unique for both of the trunks in the trunk group."
+        ::= { tlsTrunkGroupEntry 4 }
+
+tlsTrunkGroupEnabled    OBJECT-TYPE
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Enables a specific trunk group on the ring."
+        ::= { tlsTrunkGroupEntry 5 }
+
+
+tlsTrunkGroupMacAddr    OBJECT-TYPE
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The trunk Mac address. The trunk Mac address is not 
+                         provisionable at this time.
+                         The trunk Mac address is the Mac address of the port
+                         that is a member of this trunk."
+        ::= { tlsTrunkGroupEntry 6 }
+
+tlsTrunkGroupGroupType  OBJECT-TYPE
+        SYNTAX          INTEGER { dmlt(1)
+                                }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The type of the trunk group. Only type 'dmlt' is
+                         supported at this time.  This field is not
+                         provisionable at this time."
+        DEFVAL           { 1 }
+        ::= { tlsTrunkGroupEntry 7 }
+
+tlsTrunkGroupPortType   OBJECT-TYPE
+        SYNTAX          TlsIfType
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The type of the port: nni, uni mapped, uni transparent.
+                         Only type nni is supported at this time. This field is not
+                         provisionable at this time."
+        DEFVAL           { 4 }
+        ::= { tlsTrunkGroupEntry 8 }
+
+tlsTrunkGroupPortList   OBJECT-TYPE
+        SYNTAX          BITS { lan1 (0),
+                               lan2 (1),
+                               lan3 (2),
+                               lan4 (3)
+                             }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The list of ports defined on this card that belong to
+                         this trunk. A trunk consists of only one port at this time."
+        DEFVAL          { { } }
+        ::= { tlsTrunkGroupEntry 9 }
+
+tlsTrunkGroupWTRTimer   OBJECT-TYPE
+        SYNTAX          INTEGER (5..60)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The Wait To Restore timer in seconds. Only the value of
+                         5 seconds is supported at this time.  This field is not
+                         provisionable at this time."
+        DEFVAL          { 5 }
+        ::= { tlsTrunkGroupEntry 10 }
+
+tlsTrunkGroupOperState  OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupOperState
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The operational state of the trunk group."
+        ::= { tlsTrunkGroupEntry 11 }
+
+
+tlsTrunkGroupDistrAlgorithm     OBJECT-TYPE
+        SYNTAX          INTEGER { none(0)
+                                }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The type of distribution algorithm used by this trunk
+                         group. To be used in the future.  This field is not
+                         provisionable at this time."
+        DEFVAL          { 0 }
+        ::= { tlsTrunkGroupEntry 12 }
+
+tlsTrunkGroupRowStatus  OBJECT-TYPE
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Used to create/delete an entry."
+        ::= { tlsTrunkGroupEntry 13 }
+
+--
+-- TLS Wan Trunk Group Table Specific Definitions
+--
+
+tlsWanTrunkGroupForwardingInfoTable   OBJECT-TYPE
+        SYNTAX          SEQUENCE OF TlsWanTrunkGroupForwardingInfoEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "This card's trunk group forwarding information table."
+        ::= { tlsTrunkGroup 4 }
+
+tlsWanTrunkGroupForwardingInfoEntry   OBJECT-TYPE
+        SYNTAX          TlsWanTrunkGroupForwardingInfoEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Forwarding information about this particular trunk group."
+        INDEX           { tlsWanTrunkGroupForwardingInfoId, tlsWanTrunkGroupForwardingInfoMacAddr }
+        ::= { tlsWanTrunkGroupForwardingInfoTable 1 }
+
+TlsWanTrunkGroupForwardingInfoEntry ::=
+        SEQUENCE {
+                tlsWanTrunkGroupForwardingInfoId              TlsTrunkGroupId,
+                tlsWanTrunkGroupForwardingInfoMacAddr         MacAddress,
+                tlsWanTrunkGroupForwardingInfoOperDistrId     INTEGER,
+                tlsWanTrunkGroupForwardingInfoWanAddr         MacAddress,
+                tlsWanTrunkGroupForwardingInfoIpAddr          IpAddress,
+                tlsWanTrunkGroupForwardingInfoPathOperState   TlsTrunkGroupLinkOperState
+                }
+
+tlsWanTrunkGroupForwardingInfoId      OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupId
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "A value that uniquely identifies the trunk group on
+                         the ring."
+        ::= { tlsWanTrunkGroupForwardingInfoEntry 1 }
+
+tlsWanTrunkGroupForwardingInfoMacAddr OBJECT-TYPE
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The trunk Mac address referred to by this entry.
+                         The Mac address of the trunk is the trunk
+                         port member Mac address at this time."
+        ::= { tlsWanTrunkGroupForwardingInfoEntry 2 }
+
+tlsWanTrunkGroupForwardingInfoOperDistrId OBJECT-TYPE
+        SYNTAX          INTEGER (0..2)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "A system assigned distribution id that is defaulted to
+                         by the system in the case of the user assigned distribution 
+                         ids  mismatch. The distribution ids
+                         of the two trunks are mismatched if both of them 
+                         have the same value. The system then assigns distribution
+                         id of 1 to a trunk with a higher MAC address and 0 to 
+                         trunk with a lower MAC address."
+        ::= { tlsWanTrunkGroupForwardingInfoEntry 3 }
+
+tlsWanTrunkGroupForwardingInfoWanAddr OBJECT-TYPE
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The OPE MAC address of the node on which the trunk
+                         is defined."
+        ::= { tlsWanTrunkGroupForwardingInfoEntry 4 }
+
+tlsWanTrunkGroupForwardingInfoIpAddr  OBJECT-TYPE
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The OPE Node IP address of the node on which the 
+        		 trunk is defined."
+        ::= { tlsWanTrunkGroupForwardingInfoEntry 5 }
+
+tlsWanTrunkGroupForwardingInfoPathOperState       OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupLinkOperState
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The operational state of the forwarding path to this
+                         trunk."
+        ::= { tlsWanTrunkGroupForwardingInfoEntry 6 }
+
+--
+-- TLS Local Trunk Group Statistics Table Specific Definitions
+--
+
+tlsTrunkGroupStatsTable      OBJECT-TYPE
+        SYNTAX          SEQUENCE OF TlsTrunkGroupStatsEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Table containing statistics pertaining to control 
+        		 messages sent by a trunk defined on the OPE card."
+        ::= { tlsTrunkGroup 5 }
+tlsTrunkGroupStatsEntry      OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupStatsEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Contains statistics of control messages sent by
+                         specific trunk group."
+        INDEX           { tlsTrunkGroupStatsIndex }
+        ::= { tlsTrunkGroupStatsTable 1 }
+
+TlsTrunkGroupStatsEntry ::=
+        SEQUENCE {
+                tlsTrunkGroupStatsIndex              TlsTrunkGroupId,
+                tlsTrunkGroupStatsHelloTxMsg         Counter32,
+                tlsTrunkGroupStatsHelloRxMsg         Counter32,
+                tlsTrunkGroupStatsLinkDownTxMsg      Counter32,
+                tlsTrunkGroupStatsLinkDownRxMsg      Counter32,
+                tlsTrunkGroupStatsLinkUpTxMsg        Counter32,
+                tlsTrunkGroupStatsLinkUpRxMsg        Counter32
+        }
+
+tlsTrunkGroupStatsIndex      OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupId
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "A value that uniquely identifies the trunk group on
+                         the ring."
+        ::= { tlsTrunkGroupStatsEntry 1 }
+
+tlsTrunkGroupStatsHelloTxMsg  OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Hello messages sent by the local
+                       trunk."
+        ::= { tlsTrunkGroupStatsEntry 2}
+
+tlsTrunkGroupStatsHelloRxMsg  OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Hello messages received from the 
+        	       remote trunk."
+        ::= { tlsTrunkGroupStatsEntry 3}
+
+tlsTrunkGroupStatsLinkDownTxMsg  OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Link Down messages sent by the local 
+        	       trunk."
+        ::= { tlsTrunkGroupStatsEntry 4}
+
+tlsTrunkGroupStatsLinkDownRxMsg  OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Link Down messages received from the 
+        	       remote trunk."
+        ::= { tlsTrunkGroupStatsEntry 5}
+
+tlsTrunkGroupStatsLinkUpTxMsg    OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Link Up messages sent by the local 
+        	       trunk."
+        ::= { tlsTrunkGroupStatsEntry 6}
+
+tlsTrunkGroupStatsLinkUpRxMsg    OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Link Up messages received from the
+                       remote trunk."
+        ::= { tlsTrunkGroupStatsEntry 7}
+
+--
+-- TLS Wan Trunk Group Statistics Table Specific Definitions
+--
+
+tlsWanTrunkGroupStatsTable      OBJECT-TYPE
+        SYNTAX          SEQUENCE OF TlsWanTrunkGroupStatsEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Table containing statistics counting Update 
+        		 messages sent by and/or received from trunk groups
+                         defined on the ring."
+        ::= { tlsTrunkGroup 6 }
+
+tlsWanTrunkGroupStatsEntry      OBJECT-TYPE
+        SYNTAX          TlsWanTrunkGroupStatsEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Contains statistics counting Update messages  
+                         received and/or sent by trunk identified
+                         by this Mac address and trunk group identifier."
+        INDEX           {  tlsWanTrunkGroupStatsTrunkGroupId, tlsWanTrunkGroupStatsMacAddr }
+        ::= { tlsWanTrunkGroupStatsTable 1 }
+
+TlsWanTrunkGroupStatsEntry ::=
+        SEQUENCE {
+                tlsWanTrunkGroupStatsTrunkGroupId       TlsTrunkGroupId,
+                tlsWanTrunkGroupStatsMacAddr            MacAddress,
+                tlsWanTrunkGroupStatsUpdateTxMsg        Counter32,
+                tlsWanTrunkGroupStatsUpdateRxMsg        Counter32
+        }
+
+tlsWanTrunkGroupStatsTrunkGroupId      OBJECT-TYPE
+        SYNTAX          TlsTrunkGroupId
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "A value that uniquely identifies the trunk group on
+                         the ring."
+        ::= { tlsWanTrunkGroupStatsEntry 1 }
+
+tlsWanTrunkGroupStatsMacAddr OBJECT-TYPE
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The trunk Mac address referred to by this entry.
+                         The Mac address of the trunk is the trunk
+                         port member Mac address at this time."
+        ::= { tlsWanTrunkGroupStatsEntry 2 }
+
+tlsWanTrunkGroupStatsUpdateTxMsg  OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Update messages sent by the local trunk."
+        ::= { tlsWanTrunkGroupStatsEntry 3 }
+
+tlsWanTrunkGroupStatsUpdateRxMsg  OBJECT-TYPE
+        SYNTAX        Counter32
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   "The number of Update messages received from the  
+        	       remote trunk."
+        ::= { tlsWanTrunkGroupStatsEntry 4 }
+
+--
+--  TLS Specific Trap Definitions
+--
+-- For adding new traps, please, check the trap numbers in the following
+-- files :
+-- IPT_COMMON_MIB
+-- IPT_TLS_MIB
+-- NORTEL_TLS_MIB
+--
+
+tlsTDStateChanged TRAP-TYPE
+     ENTERPRISE tls
+     VARIABLES {
+               tlsTDIfTDIndex,
+               tlsTDIfEnabled
+             }
+     DESCRIPTION
+         "This notification is generated to report the transparent
+          domain services (TDs) that have been enabled or disabled
+          for one or more ports. The pair of variables tlsTDIfTDIndex
+          and tlsTDIfEnabled will be bound for each TD. It is recommended
+          that in order to minimze the number of these notifications,
+          implementations send this notification periodically with the group
+          of TDs that may have changed state rather than sending a
+          notification for each TD as it changes."
+     ::= 60
+
+tlsCraftPortDisabledTrap TRAP-TYPE
+     ENTERPRISE tls
+     VARIABLES     {
+	           tlsIfIndex
+		 }
+     DESCRIPTION
+		 "Craft Port Disabled Trap. This trap is sent whenever
+		  a craft port is disabled."
+     ::= 70
+
+tlsIPAddressConflict TRAP-TYPE
+	ENTERPRISE tls
+	VARIABLES {
+		   tlsConflictingIp,
+		   tlsIfIndex
+,
+		   tlsRemoteConflictingMac
+		   -- iptSysName for OPE
+		   -- iptSysSlot for OPE
+		}
+	DESCRIPTION
+		"IP Address Conflict. This notification is sent whenever
+		an IP address on the local node is changed, and it is
+		discovered (through Gratuitous ARP) that another device on
+		the network is already using the new IP address. The
+		notification contains conflicting IP in question, as well as
+		the ifIndex of the local interface that was configured with
+		the conflicting IP, and the MAC address of the remote network
+		device that claims to already own the IP. Products using this
+		notification should bind in additional product-specific MIB
+		data in order to best identify the specific source of the
+		event."
+	::= 80 
+
+--
+-- TLS Trunk Group Trap Specific Definitions
+--
+
+tlsTrunkGroupStateChange TRAP-TYPE
+         ENTERPRISE tls
+         VARIABLES {
+                    tlsTrunkGroupId,
+                    tlsTrunkGroupEnabled,
+                    tlsTrunkGroupPortList
+                     }
+         DESCRIPTION
+                "This trap is generated to report that a trunk group
+                has been administratively activated or deactivated on
+                a port."
+         ::=120
+
+tlsTrunkGroupConfigError TRAP-TYPE
+         ENTERPRISE tls
+         VARIABLES {
+                        tlsTrunkGroupConfigErrorType,
+                        tlsTrunkGroupId,
+                        tlsTrunkGroupPortList
+                     }
+         DESCRIPTION
+                "This trap is generated when a frame has been
+                 received on a redundant port from a redundant port whose
+                 configuration parameters conflict with this redundant
+                 port's configuration parameters."
+         ::=130
+
+tlsTrunkGroupConfigErrorCleared TRAP-TYPE
+         ENTERPRISE tls
+         VARIABLES {
+                        tlsTrunkGroupConfigErrorType,
+                        tlsTrunkGroupId,
+                        tlsTrunkGroupPortList
+                     }
+         DESCRIPTION
+                "This trap clears the tlsTrunkGroupConfigError trap."
+         ::=140
+
+tlsTrunkGroupErrorEvent  TRAP-TYPE
+         ENTERPRISE tls
+         VARIABLES {
+                    tlsTrunkGroupId,
+                    tlsTrunkGroupErrorEventType,
+                    tlsTrunkGroupPacketType,
+                    tlsTrunkGroupPortList
+                     }
+         DESCRIPTION
+                 "This trap is generated to report various error events for
+                  a trunk group."
+         ::=150
+
+tlsTrunkGroupErrorEventCleared  TRAP-TYPE
+         ENTERPRISE tls
+         VARIABLES {
+                    tlsTrunkGroupId,
+                    tlsTrunkGroupErrorEventType,
+                    tlsTrunkGroupPacketType,
+                    tlsTrunkGroupPortList
+                     }
+         DESCRIPTION
+                 "This trap is generated to clear the
+                 tlsTrunkGroupErrorEvent trap upon resolution of the error or
+                 disabling of the trunk group after an error occurred."
+         ::=160
+         
+tlsTrunkGroupProvisioningChange TRAP-TYPE
+         ENTERPRISE tls
+         VARIABLES {
+                     tlsTrunkGroupId,
+                     tlsTrunkGroupPortList
+                     }
+         DESCRIPTION
+                  "This trap is generated to report that a provisioning
+                  change has occurred that relates to the port being
+                  a member of a trunk group."
+          ::=170
+
+END

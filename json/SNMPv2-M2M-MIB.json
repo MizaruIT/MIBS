@@ -1,0 +1,818 @@
+{
+  "imports": {
+    "class": "imports",
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-PARTY-MIB": [
+      "contextIdentity"
+    ],
+    "SNMPv2-SMI": [
+      "snmpModules",
+      "Unsigned32",
+      "MibIdentifier",
+      "Bits",
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "Counter32",
+      "Integer32",
+      "iso",
+      "Counter64",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "MODULE-IDENTITY",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TimeStamp",
+      "InstancePointer",
+      "TEXTUAL-CONVENTION",
+      "RowStatus"
+    ]
+  },
+  "snmpM2M": {
+    "name": "snmpM2M",
+    "oid": "1.3.6.1.6.3.2",
+    "class": "moduleidentity",
+    "lastupdated": "9304010000Z",
+    "organization": "IETF SNMPv2 Working Group",
+    "contactinfo": " Steven Waldbusser Postal: Carnegie Mellon University 4910 Forbes Ave Pittsburgh, PA 15213 Tel: +1 412 268 6628 Fax: +1 412 268 4987 E-mail: waldbusser@cmu.edu",
+    "description": "The Manager-to-Manager MIB module."
+  },
+  "snmpM2MObjects": {
+    "name": "snmpM2MObjects",
+    "oid": "1.3.6.1.6.3.2.1",
+    "class": "objectidentity"
+  },
+  "snmpAlarm": {
+    "name": "snmpAlarm",
+    "oid": "1.3.6.1.6.3.2.1.1",
+    "class": "objectidentity"
+  },
+  "snmpAlarmNextIndex": {
+    "name": "snmpAlarmNextIndex",
+    "oid": "1.3.6.1.6.3.2.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index number of the next appropriate unassigned entry in the snmpAlarmTable. The value 0 indicates that no unassigned entries are available. A management station should create new entries in the snmpAlarmTable using this algorithm: first, issue a management protocol retrieval operation to determine the value of snmpAlarmNextIndex; and, second, issue a management protocol set operation to create an instance of the snmpAlarmStatus object setting its value to `createAndGo' or `createAndWait' (as specified in the description of the RowStatus textual convention)."
+  },
+  "snmpAlarmTable": {
+    "name": "snmpAlarmTable",
+    "oid": "1.3.6.1.6.3.2.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of snmpAlarm entries."
+  },
+  "snmpAlarmEntry": {
+    "name": "snmpAlarmEntry",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMPv2-PARTY-MIB",
+        "object": "contextIdentity",
+        "implied": 0
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A list of parameters that set up a periodic sampling query to check for alarm conditions. The contextIdentity included in the INDEX clause is the context to which the sampling queries are directed."
+  },
+  "snmpAlarmIndex": {
+    "name": "snmpAlarmIndex",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index that uniquely identifies an entry in the snmpAlarm table for a particular sampling context. Each such entry defines a diagnostic sample at a particular interval for a variable in the particular context's object resources."
+  },
+  "snmpAlarmVariable": {
+    "name": "snmpAlarmVariable",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InstancePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The object identifier of the particular variable to be sampled. Only variables that resolve to an ASN.1 primitive type of INTEGER (Integer32, Counter32, Gauge32, TimeTicks, Counter64, or UInteger32) may be sampled. If it is detected by an error response of authorizationError, noSuchObject, or noSuchInstance that the variable name of an established snmpAlarmEntry is no longer available in the sampling context, a single snmpObjectUnavailableAlarm event is generated and the status of this snmpAlarmEntry is set to `destroy'. Likewise, if the syntax of the variable retrieved by the query is not Integer32, Counter32, Gauge32, TimeTicks, Counter64, or UInteger32, the same actions will be taken. If the SNMPv2 entity acting in a dual role detects that the sampled value can not be obtained due to lack of response to management queries, it should either: 1) Set the status of this snmpAlarmEntry to `destroy', if it is determined that further communication is not possible; or, 2) Delete the associated snmpAlarmValue instance (but not the entire conceptual row), and continue to attempt to sample the variable and recreate the associated snmpAlarmValue instance should communication be reestablished. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmInterval": {
+    "name": "snmpAlarmInterval",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The interval in seconds over which the data is sampled and compared with the rising and falling thresholds. When setting this object and the sampling type is `deltaValue', care should be taken to ensure that the change during this interval of the variable being sampled will not exceed the (-2^31...2^31-1) range of the snmpAlarmValue. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmSampleType": {
+    "name": "snmpAlarmSampleType",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "absoluteValue": 1,
+          "deltaValue": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "deltaValue",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The method of sampling the selected variable and calculating the value to be compared against the thresholds. If the value of this object is `absoluteValue', the value of the selected variable at the end of the sampling interval will be compared directly with both the snmpAlarmRisingThreshold and the snmpAlarmFallingThreshold values. If the value of this object is `deltaValue', the value of the selected variable at the end of the sampling interval will be subtracted from its value at the end of the previous sampling interval, and the difference compared with both the snmpAlarmRisingThreshold and the snmpAlarmFallingThreshold values. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmValue": {
+    "name": "snmpAlarmValue",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of the statistic during the last sampling period. The value during the current sampling period is not made available until the period is completed. If the value of the statistic does not fit in the signed 32 bit representation of this object, it should be truncated in an implementation specific manner. Note that if the associated snmpAlarmSampleType is set to `deltaValue', the value of this object is the difference in the sampled variable since the last sample. This object will be created by the SNMPv2 entity acting in a dual role when this entry is set to `active', and the first sampling period has completed. It may be created and deleted at other times by the SNMPv2 entity acting in a dual role when the sampled value can not be obtained, as specified in the snmpAlarmVariable object."
+  },
+  "snmpAlarmStartupAlarm": {
+    "name": "snmpAlarmStartupAlarm",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "risingAlarm": 1,
+          "fallingAlarm": 2,
+          "risingOrFallingAlarm": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "risingOrFallingAlarm",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The alarm that may be sent when this entry is first set to `active'. If the first sample after this entry becomes active is greater than or equal to the risingThreshold and snmpAlarmStartupAlarm is equal to `risingAlarm' or `risingOrFallingAlarm', then a single rising alarm will be generated. If the first sample after this entry becomes active is less than or equal to the fallingThreshold and snmpAlarmStartupAlarm is equal to `fallingAlarm' or `risingOrFallingAlarm', then a single falling alarm will be generated. Note that a snmpObjectUnavailableAlarm is sent upon startup whenever it is applicable, independent of the setting of snmpAlarmStartupAlarm. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmRisingThreshold": {
+    "name": "snmpAlarmRisingThreshold",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A threshold for the sampled statistic. When the current sampled value is greater than or equal to this threshold, and the value at the last sampling interval was less than this threshold, a single event will be generated. A single event will also be generated if the first sample after this entry becomes active is greater than or equal to this threshold and the associated snmpAlarmStartupAlarm is equal to `risingAlarm' or `risingOrFallingAlarm'. After a rising event is generated, another such event will not be generated until the sampled value falls below this threshold and reaches the snmpAlarmFallingThreshold. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmFallingThreshold": {
+    "name": "snmpAlarmFallingThreshold",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A threshold for the sampled statistic. When the current sampled value is less than or equal to this threshold, and the value at the last sampling interval was greater than this threshold, a single event will be generated. A single event will also be generated if the first sample after this entry becomes active is less than or equal to this threshold and the associated snmpAlarmStartupAlarm is equal to `fallingAlarm' or `risingOrFallingAlarm'. After a falling event is generated, another such event will not be generated until the sampled value rises above this threshold and reaches the snmpAlarmRisingThreshold. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmRisingEventIndex": {
+    "name": "snmpAlarmRisingEventIndex",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index of the snmpEventEntry that is used when a rising threshold is crossed. The snmpEventEntry identified by a particular value of this index is the same as identified by the same value of the snmpEventIndex object. If there is no corresponding entry in the snmpEventTable, then no association exists. In particular, if this value is zero, no associated event will be generated, as zero is not a valid snmpEventIndex. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmFallingEventIndex": {
+    "name": "snmpAlarmFallingEventIndex",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index of the snmpEventEntry that is used when a falling threshold is crossed. The snmpEventEntry identified by a particular value of this index is the same as identified by the same value of the snmpEventIndex object. If there is no corresponding entry in the snmpEventTable, then no association exists. In particular, if this value is zero, no associated event will be generated, as zero is not a valid snmpEventIndex. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmUnavailableEventIndex": {
+    "name": "snmpAlarmUnavailableEventIndex",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The index of the snmpEventEntry that is used when a variable becomes unavailable. The snmpEventEntry identified by a particular value of this index is the same as identified by the same value of the snmpEventIndex object. If there is no corresponding entry in the snmpEventTable, then no association exists. In particular, if this value is zero, no associated event will be generated, as zero is not a valid snmpEventIndex. An attempt to modify this object will fail with an `inconsistentValue' error if the associated snmpAlarmStatus object would be equal to `active' both before and after the modification attempt."
+  },
+  "snmpAlarmStatus": {
+    "name": "snmpAlarmStatus",
+    "oid": "1.3.6.1.6.3.2.1.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this snmpAlarm entry. This object may not be set to `active' unless the following columnar objects exist in this row: snmpAlarmVariable, snmpAlarmInterval, snmpAlarmSampleType, snmpAlarmStartupAlarm, snmpAlarmRisingThreshold, snmpAlarmFallingThreshold, snmpAlarmRisingEventIndex, snmpAlarmFallingEventIndex, and snmpAlarmUnavailableEventIndex."
+  },
+  "snmpAlarmNotifications": {
+    "name": "snmpAlarmNotifications",
+    "oid": "1.3.6.1.6.3.2.1.1.3",
+    "class": "objectidentity"
+  },
+  "snmpRisingAlarm": {
+    "name": "snmpRisingAlarm",
+    "oid": "1.3.6.1.6.3.2.1.1.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmVariable"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmSampleType"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmValue"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmRisingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "An event that is generated when an alarm entry crosses its rising threshold. The instances of those objects contained within the varbind list are those of the alarm entry which generated this event."
+  },
+  "snmpFallingAlarm": {
+    "name": "snmpFallingAlarm",
+    "oid": "1.3.6.1.6.3.2.1.1.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmVariable"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmSampleType"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmValue"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmFallingThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "An event that is generated when an alarm entry crosses its falling threshold. The instances of those objects contained within the varbind list are those of the alarm entry which generated this event."
+  },
+  "snmpObjectUnavailableAlarm": {
+    "name": "snmpObjectUnavailableAlarm",
+    "oid": "1.3.6.1.6.3.2.1.1.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmVariable"
+      }
+    ],
+    "status": "current",
+    "description": "An event that is generated when a variable monitored by an alarm entry becomes unavailable. The instance of snmpAlarmVariable contained within the varbind list is the one associated with the alarm entry which generated this event."
+  },
+  "snmpEvent": {
+    "name": "snmpEvent",
+    "oid": "1.3.6.1.6.3.2.1.2",
+    "class": "objectidentity"
+  },
+  "snmpEventNextIndex": {
+    "name": "snmpEventNextIndex",
+    "oid": "1.3.6.1.6.3.2.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index number of the next appropriate unassigned entry in the snmpEventTable. The value 0 indicates that no unassigned entries are available. A management station should create new entries in the snmpEventTable using this algorithm: first, issue a management protocol retrieval operation to determine the value of snmpEventNextIndex; and, second, issue a management protocol set operation to create an instance of the snmpEventStatus object setting its value to `createAndWait' or 'createAndGo'."
+  },
+  "snmpEventTable": {
+    "name": "snmpEventTable",
+    "oid": "1.3.6.1.6.3.2.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of events."
+  },
+  "snmpEventEntry": {
+    "name": "snmpEventEntry",
+    "oid": "1.3.6.1.6.3.2.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A set of parameters that describe an event that is generated when certain conditions are met."
+  },
+  "snmpEventIndex": {
+    "name": "snmpEventIndex",
+    "oid": "1.3.6.1.6.3.2.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index that uniquely identifies an entry in the snmpEvent table. Each such entry defines an event generated when the appropriate conditions occur."
+  },
+  "snmpEventID": {
+    "name": "snmpEventID",
+    "oid": "1.3.6.1.6.3.2.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The authoritative identification of the event type generated by this entry. This variable occurs as the second varbind of an InformRequest- PDU. If this OBJECT IDENTIFIER maps to a NOTIFICATION-TYPE the sender will place the objects listed in the NOTIFICATION-TYPE in the varbind list."
+  },
+  "snmpEventDescription": {
+    "name": "snmpEventDescription",
+    "oid": "1.3.6.1.6.3.2.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A comment describing this snmpEvent entry."
+  },
+  "snmpEventEvents": {
+    "name": "snmpEventEvents",
+    "oid": "1.3.6.1.6.3.2.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of events caused by event generators associated with this snmpEvent entry."
+  },
+  "snmpEventLastTimeSent": {
+    "name": "snmpEventLastTimeSent",
+    "oid": "1.3.6.1.6.3.2.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime at the time this snmpEvent entry last generated an event. If this entry has not generated any events, this value will be zero."
+  },
+  "snmpEventStatus": {
+    "name": "snmpEventStatus",
+    "oid": "1.3.6.1.6.3.2.1.2.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this snmpEvent entry. This object may not be set to `active' unless the following columnar objects exist in this row: snmpEventID, snmpEventDescription, snmpEventEvents, and snmpEventLastTimeSent. Setting an instance of this object to the value 'destroy' has the effect of invalidating any/all entries in the snmpEventTable, and the snmpEventNotifyTable which reference the corresponding snmpEventEntry."
+  },
+  "snmpEventNotifyMinInterval": {
+    "name": "snmpEventNotifyMinInterval",
+    "oid": "1.3.6.1.6.3.2.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The minimum interval that the SNMPv2 entity acting in a dual role will wait before retransmitting an InformRequest-PDU. This object specifies the minimal value supported by the SNMPv2 entity acting in a dual role, based on resource or implementation constraints. For a particular entry in the snmpEventNotifyTable, if the associated snmpEventNotifyIntervalRequested variable is greater than this object, the snmpEventNotifyIntervalRequested value shall be used as the minimum interval for retransmissions of InformRequest-PDUs sent on behalf of that entry."
+  },
+  "snmpEventNotifyMaxRetransmissions": {
+    "name": "snmpEventNotifyMaxRetransmissions",
+    "oid": "1.3.6.1.6.3.2.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum number of time that the SNMPv2 entity acting in a dual role will retransmit an InformRequest-PDU. This object specifies the maximal value supported by the SNMPv2 entity acting in a dual role, based on resource or implementation constraints. For a particular entry in the snmpEventNotifyTable, if the associated snmpEventNotifyRetransmissionsRequested variable is less than this object, the snmpEventNotifyRetransmissionsRequested value shall be used as the retransmission count for InformRequest-PDUs sent on behalf of that entry."
+  },
+  "snmpEventNotifyTable": {
+    "name": "snmpEventNotifyTable",
+    "oid": "1.3.6.1.6.3.2.1.2.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of protocol configuration entries for event notifications from this entity."
+  },
+  "snmpEventNotifyEntry": {
+    "name": "snmpEventNotifyEntry",
+    "oid": "1.3.6.1.6.3.2.1.2.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventIndex",
+        "implied": 0
+      },
+      {
+        "module": "SNMPv2-PARTY-MIB",
+        "object": "contextIdentity",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A set of parameters that describe the type and destination of InformRequest-PDUs sent for a particular event. The snmpEventIndex in this entry's INDEX clause identifies the snmpEventEntry which, when triggered, will generate a notification as configured in this entry. The contextIdentity in this entry's INDEX clause identifies the context to which a notification will be sent."
+  },
+  "snmpEventNotifyIntervalRequested": {
+    "name": "snmpEventNotifyIntervalRequested",
+    "oid": "1.3.6.1.6.3.2.1.2.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 30,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The requested interval for retransmission of Inform PDUs generated on the behalf of this entry. This variable will be the actual interval used unless the snmpEventNotifyMinInterval is greater than this object, in which case the interval shall be equal to snmpEventNotifyMinInterval."
+  },
+  "snmpEventNotifyRetransmissionsRequested": {
+    "name": "snmpEventNotifyRetransmissionsRequested",
+    "oid": "1.3.6.1.6.3.2.1.2.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The requested number of retransmissions of an InformRequest-PDU generated on behalf of this entry. This variable will be the actual number of retransmissions used unless the snmpEventNotifyMaxRetransmissions is less than this object, in which case the retransmission count shall be equal to snmpEventNotifyMaxRetransmissions."
+  },
+  "snmpEventNotifyLifetime": {
+    "name": "snmpEventNotifyLifetime",
+    "oid": "1.3.6.1.6.3.2.1.2.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 86400,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The number of seconds this entry shall live until the corresponding instance of snmpEventNotifyStatus is set to 'destroy'. This value shall count down to zero, at which time the corresponding instance of snmpEventNotifyStatus will be set to 'destroy'. Any management station that is using this entry must periodically refresh this value to ensure the continued delivery of events."
+  },
+  "snmpEventNotifyStatus": {
+    "name": "snmpEventNotifyStatus",
+    "oid": "1.3.6.1.6.3.2.1.2.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The state of this snmpEventNotifyEntry. This object may not be set to `active' unless the following columnar objects exist in this row: snmpEventNotifyIntervalRequested, snmpEventNotifyRetransmissionsRequested, and snmpEventNotifyLifetime."
+  },
+  "snmpM2MConformance": {
+    "name": "snmpM2MConformance",
+    "oid": "1.3.6.1.6.3.2.2",
+    "class": "objectidentity"
+  },
+  "snmpM2MCompliances": {
+    "name": "snmpM2MCompliances",
+    "oid": "1.3.6.1.6.3.2.2.1",
+    "class": "objectidentity"
+  },
+  "snmpM2MGroups": {
+    "name": "snmpM2MGroups",
+    "oid": "1.3.6.1.6.3.2.2.2",
+    "class": "objectidentity"
+  },
+  "snmpM2MCompliance": {
+    "name": "snmpM2MCompliance",
+    "oid": "1.3.6.1.6.3.2.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "snmpAlarmGroup",
+        "module": "SNMPv2-M2M-MIB"
+      },
+      {
+        "object": "snmpEventGroup",
+        "module": "SNMPv2-M2M-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMPv2 entities which implement the Manager-to-Manager MIB."
+  },
+  "snmpAlarmGroup": {
+    "name": "snmpAlarmGroup",
+    "oid": "1.3.6.1.6.3.2.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmNextIndex"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmVariable"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmInterval"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmSampleType"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmValue"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmStartupAlarm"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmRisingThreshold"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmFallingThreshold"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmRisingEventIndex"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmFallingEventIndex"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmUnavailableEventIndex"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpAlarmStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects allowing the description and configuration of threshold alarms from a SNMPv2 entity acting in a dual role."
+  },
+  "snmpEventGroup": {
+    "name": "snmpEventGroup",
+    "oid": "1.3.6.1.6.3.2.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventNextIndex"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventID"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventDescription"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventEvents"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventLastTimeSent"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventStatus"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventNotifyMinInterval"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventNotifyMaxRetransmissions"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventNotifyIntervalRequested"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventNotifyRetransmissionsRequested"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventNotifyLifetime"
+      },
+      {
+        "module": "SNMPv2-M2M-MIB",
+        "object": "snmpEventNotifyStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects allowing the description and configuration of events from a SNMPv2 entity acting in a dual role."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SNMPv2-M2M-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:13:00 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SNMPv2-M2M-MIB"
+  }
+}

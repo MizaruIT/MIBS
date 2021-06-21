@@ -1,0 +1,1299 @@
+TLS DEFINITIONS ::= BEGIN
+
+-- Title:       Nortel Networks Transparent Lan Service (TLS) Enterprise MIB
+-- Date:        28 June 1999
+--
+-- Revision:
+--              v1   :  Genesis
+--		v2   :  Added an Enterprise specific trap - craft port
+--			enabled trap
+--              v17  :  depricated tlsTDPriorityMap in tdtbl and added
+--                      tlsTDIfL2ToTDPriorityMap & tlsTDIfEnabled to 
+--                      tlsTdIftbl
+--              v19  :  changes for OEL2
+--                      tlsIfMode now includes OEL2
+--                      FDB fields adjusted to accomodated OEL2
+--                      tlsFdbIptPort renamed to tlsFdbNextHopPort
+--                      tlsFdbIptMac  renamed to tlsFdbNextHopMac
+--              v20  :  tlsTDIfConnectivity added to tlsTDIf group
+--              v21  :  changes for nni td to qtag mappings and filtering
+--                      tlsIfCustomerFramesTag is now tlsIfCustDefaultFramesTag
+--                      tlsIfEntry now includes tlsIfCustDefaultFramesTagFilter
+--                      added new object identifier tlsNNITDIf
+--                      tlsNNITDIf group is for nni mapping and filtering
+--            v22/23 :  added a boolean tlsIftlsTDStateChangedEnable to
+--                      enable/disable the tlsTDStateChanged Trap
+--              v24  :  changed cust-def and mgmt qtags to 1-4096
+--              v25  :  added new local define "tlsDataTDId" and use it in
+--                      tlsNNITDIf table
+--              v26  :  added 2 new counters: tlsIfReconfMismatchEgress and 
+--                      tlsIfReconfMismatchIngress in the tlsIf table 
+--              v27  :  removed 'mismatch' from tlsFdbEntryType 
+--              v28  :  fix comments
+--              v29  :  change nni mapping qtags to 1-4096
+--              v30  :  add 'unknown' value for fdb port capability
+--              v31  :  add 'unknown' value for fdb format
+--              v32  :  some compilers like Optivity require the nortel and
+--                      sonetTransport to be explicitly imported rather than
+--                      being labelled against their OIDs.
+--		v33  :  Added TlsIfType constant. Turned the existing constants
+--                      into textual conventions.
+--              v34  :  Defining OID as shown in RFC 1155. Changing the OID 
+--                      definition by naming only the root.
+
+IMPORTS
+	MODULE-IDENTITY				FROM SNMPv2-SMI
+	OBJECT-TYPE				FROM RFC-1212
+	DisplayString, MacAddress, RowStatus,
+	TruthValue,
+	TEXTUAL-CONVENTION			FROM SNMPv2-TC
+	IpAddress, Integer32, Counter32,
+	Counter64				FROM SNMPv2-SMI
+	TRAP-TYPE				FROM RFC-1215	
+        sonetTransport                          FROM NORTEL-MIB-ARCS-MIB;
+
+iplt   MODULE-IDENTITY
+       LAST-UPDATED 	"9910110000Z"
+       ORGANIZATION    "Nortel Networks"
+       CONTACT-INFO    "Global Optical Customer Service
+                        Tel:   1-800 (ASK-TRAN) or
+                               1-800 (ASK-ETAS)"
+       DESCRIPTION 	"Enterprise MIB for Transparent LAN Service
+                         on Nortel Networks Equipment."
+
+       ::= { sonetTransport 3 }
+
+-- Local definitions here.
+tls		OBJECT IDENTIFIER ::= { iplt 1 }
+tlsIf		OBJECT IDENTIFIER ::= { tls 1 }
+tlsTD		OBJECT IDENTIFIER ::= { tls 2 }
+tlsTDIf		OBJECT IDENTIFIER ::= { tls 3 }
+tlsFdb          OBJECT IDENTIFIER ::= { tls 4 }
+tlsNNITDIf      OBJECT IDENTIFIER ::= { tls 5 }
+
+tlsip 		OBJECT IDENTIFIER ::= { iplt 2 }
+
+tlsipArp	OBJECT IDENTIFIER ::= { tlsip 1 }
+tlsipIgmp       OBJECT IDENTIFIER ::= { tlsip 2 }
+
+--
+-- Textual conventions used in this MIB
+--
+TlsPriorityMap ::= TEXTUAL-CONVENTION
+	STATUS	current
+	DESCRIPTION
+		"Indicates the p-bits priority to OPE priority mapping."
+	SYNTAX  OCTET STRING (SIZE (8))
+	
+TlsTDId ::= TEXTUAL-CONVENTION
+	STATUS	current
+	DESCRIPTION
+		"Indicates the Transparent TD range."
+	SYNTAX  Integer32 (1..'FFFFFF'H)  -- 24 bits
+	
+TlsDataTDId ::= TEXTUAL-CONVENTION
+	STATUS	current
+	DESCRIPTION
+		"Indicates the Transparent TD range that can be provisioned 
+		 by the customer."
+	SYNTAX   Integer32 (100..'FFFFFF'H)  -- 24 bits
+	
+TlsIfType       ::= TEXTUAL-CONVENTION
+	STATUS	current
+	DESCRIPTION
+		"Indicates the OPE Ethernet port type that can be provisioned 
+		 by the customer."
+	SYNTAX   INTEGER {      transparent(1),
+                                p2p(2),
+                                mapped(3),
+                                tls-nni(4),
+                                tls-ip-nni(5),
+                                ipt-ring-local(6),
+                                craft (7)
+                            }
+
+-- TLS If Table
+
+tlsIfTable OBJECT-TYPE
+	SYNTAX		SEQUENCE OF TlsIfEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Provisioning information for a collection of
+			 TLS capable interfaces attached to a particular
+			 system."
+	::= { tlsIf 1 }
+
+tlsIfEntry OBJECT-TYPE
+	SYNTAX		TlsIfEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Provisioning information for a particular TLS
+			 capable interface."
+	INDEX		{ tlsIfIndex }
+	::= { tlsIfTable 1 }
+
+TlsIfEntry ::=
+	SEQUENCE {
+		tlsIfIndex			INTEGER,
+		tlsIfType			TlsIfType,
+		tlsIfDestPhysAddress		MacAddress,
+		tlsIfDestPhysPort		INTEGER,
+		tlsIfUnknownTD			Counter32,
+                tlsIfCustDefaultFramesTag	INTEGER,
+                tlsIfMgmtFramesTag 	 	INTEGER,
+		tlsIfIpAddress			IpAddress,
+                tlsIfDefaultGateway		IpAddress,
+                tlsIfMode			INTEGER,
+                tlsIfAction     	        INTEGER,
+		tlsIfResult			INTEGER,
+                tlsIfSubnetMask         	IpAddress,
+                tlsIfCustDefaultFramesTagFilter TruthValue,
+                tlsIftlsTDStateChangedEnable    TruthValue,
+		tlsIfReconfMismatchEgress	Counter32, 
+		tlsIfReconfMismatchIngress	Counter32 
+	}
+
+tlsIfIndex OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"An index value that uniquely identifies an TLS
+			 capable interface.  The interface identified by
+			 a particular value of this index is the same
+			 interface as identified by the same value of
+			 ifIndex."
+	::= { tlsIfEntry 1 }
+
+tlsIfType OBJECT-TYPE
+	SYNTAX		TlsIfType
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Identifies the service type being provided
+			 on this interface."
+	DEFVAL		{ transparent }
+	::= { tlsIfEntry 2 }
+
+tlsIfDestPhysAddress OBJECT-TYPE
+	SYNTAX		MacAddress
+	ACCESS		read-write
+	STATUS		optional
+	DESCRIPTION	"Physical address of the remote iPT node to
+			 which all packets will be forwarded.  This
+			 attribute applies only to TLS interfaces of
+			 type p2p (point to point)."
+	::= { tlsIfEntry 3 }
+
+tlsIfDestPhysPort OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-write
+	STATUS		optional
+	DESCRIPTION	"Port number on the remote iPT node to which
+			 all packets will be forwarded.  This attribute
+			 applies only to TLS interfaces of type p2p
+			 (point to point)."
+	::= { tlsIfEntry 4 }
+
+tlsIfUnknownTD OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of ingress MAC frames discarded
+			 because they could not be classified into a TD.
+			 This attribute applies only to TLS interfaces
+			 of type Mapped or Transparent modes."
+	::= { tlsIfEntry 5 }
+
+tlsIfCustDefaultFramesTag OBJECT-TYPE
+
+	SYNTAX          INTEGER (1..4096)
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "In order to allow non-TLS equipment
+                         (accelar routers,etc) to separate Customer frames
+                         from Management/Control Frames, NNI ports will tag
+                         every customer frame exiting the NNI (at egress) with
+                         this 802.1q tag. This attribute only applies to
+                         interfaces with a TLS interface type of tls-nni,
+                         or tls-ip-nni."
+        ::= { tlsIfEntry 6 }
+
+tlsIfMgmtFramesTag OBJECT-TYPE
+
+        SYNTAX          INTEGER (1..4096)
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "In order to allow non-TLS equipment
+                         (accelar routers,etc) to separate Management frames
+                         from Customer Frames, NNI ports will tag
+                         every Management frame exiting the NNI (at egress) with
+                         this 802.1q tag. This attribute only applies to
+                         interfaces with a TLS interface type of tls-nni,
+                         or tls-ip-nni."
+        ::= { tlsIfEntry 7 }
+
+tlsIfIpAddress OBJECT-TYPE
+	SYNTAX		IpAddress
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"The IP address of this interface"
+	::= { tlsIfEntry 8 }
+	
+tlsIfDefaultGateway OBJECT-TYPE
+        SYNTAX          IpAddress
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "The default gateway address of this interface"
+        ::= { tlsIfEntry 9 }
+
+tlsIfMode OBJECT-TYPE
+	SYNTAX		INTEGER {
+                                  none(1),
+				  tls-l2(2),
+                                  reserved(3),
+                                  oel2(4)
+                        }
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"The mode of this interface"
+	::= { tlsIfEntry 10 }
+
+tlsIfAction OBJECT-TYPE
+	SYNTAX		INTEGER {
+                                  none(1), -- none of these
+                                  arp(2),  -- issue an ARP
+                                  arpFlush(3) -- flush the ARP cache
+                        }
+  	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Initiate an action pertaining to a port.  ie, ARP."
+	DEFVAL		{ none }
+        ::= { tlsIfEntry 11 }
+
+tlsIfResult OBJECT-TYPE
+	SYNTAX		INTEGER {
+				 none(1), -- none of these
+				 inProgress(2), -- action still in progress
+				 success(3), -- action successful
+				 fail(4) -- action failed
+                        }
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Result from the last If action"
+	DEFVAL		{ none }
+	::= { tlsIfEntry 12 }
+
+tlsIfSubnetMask OBJECT-TYPE
+        SYNTAX          IpAddress
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The subnet mask for the UNI port.  For release
+                         9.2, this is simply a mirror of the CPU subnet
+                         mask and thus is read-only.  Future releases
+                         might include multi-subnetting and hence might
+                         change this to read-write."
+        ::= { tlsIfEntry 13 }
+
+tlsIfCustDefaultFramesTagFilter OBJECT-TYPE
+        SYNTAX          TruthValue
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Indicate whether the default customer Qtag on this
+                         port is filtered (dropped) on egress and Ingress.
+                         This value will be set to true for filtered and
+                         false if not filtered."
+        ::= { tlsIfEntry 14 }
+
+tlsIftlsTDStateChangedEnable OBJECT-TYPE
+        SYNTAX          TruthValue
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Used to enable/disable the tlsTDStateChanged
+                         Notification for all TDs on the port."
+        ::= { tlsIfEntry 15 }
+
+tlsIfReconfMismatchEgress OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The nubmer of packets received where the cpu port 
+			 mode is not matched with the source port's capability 
+		         (as shown in the FDB)" 
+        ::= { tlsIfEntry 16 }
+
+tlsIfReconfMismatchIngress OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The nubmer of packets sent where the cpu port 
+                         mode is not matched with the destination port's 
+		         capability (as shown in the FDB)"
+        ::= { tlsIfEntry 17 }
+
+-- Transparent Domain (TD) table
+
+tlsTDTable OBJECT-TYPE
+	SYNTAX		SEQUENCE OF TlsTDEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Provisioning information for a collection of
+			 Transparent Domains relevant at this system."
+	::= { tlsTD 1 }
+
+tlsTDEntry OBJECT-TYPE
+	SYNTAX		TlsTDEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Provisioning information for a particular
+			 Transparent Domain on this system."
+	INDEX		{ tlsTDId }
+	::= { tlsTDTable 1 }
+
+TlsTDEntry ::=
+	SEQUENCE {
+		tlsTDId				TlsTDId,
+		tlsTDName                       DisplayString,
+		tlsTDUNIIndex			INTEGER,
+		tlsTDMCastAddr			IpAddress,
+		tlsTDFlushEnabled		TruthValue,
+		tlsTDFlushDelayTimer		INTEGER,
+                tlsTDPriorityMap                TlsPriorityMap,
+		tlsTDRowStatus			RowStatus
+	}
+
+tlsTDId OBJECT-TYPE
+	SYNTAX		TlsTDId
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"A network wide identifier for a particular
+			 Transparent Domain."
+	::= { tlsTDEntry 1 }
+
+tlsTDName OBJECT-TYPE
+	SYNTAX		DisplayString (SIZE (0..63))
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"A text string providing further information about
+			 the registrant/owner of a particular Transparent
+			 Domain."
+        DEFVAL           { "none" }
+	::= { tlsTDEntry 2 }
+	
+tlsTDUNIIndex OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Index of the TLS/IP UNI table entry which is to
+			 be used by this TD when communicating in the TLS/IP
+			 network.  A value of zero indicates that only TLS/L2
+			 en/decapsulation will be done for this TD."
+	::= { tlsTDEntry 3 }
+
+tlsTDMCastAddr OBJECT-TYPE
+	SYNTAX		IpAddress
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"An IP multicast address which is to be used by this
+			 TD for flooding on th TLS/IP network.  This attribute
+			 is only relevant for TDs which are associated with a
+			 TLS/IP UNI.  A value of 0.0.0.0 should be reported
+			 for TDs which are not associated with a
+			 TLS/IP UNI."
+	::= { tlsTDEntry 4 }
+
+tlsTDFlushEnabled OBJECT-TYPE
+	SYNTAX		TruthValue
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Boolean value indicating whether the TLS Flush
+			 protocol is enabled for this TD.  This protocol
+			 can only be enabled on TDs which are running full
+			 TLS/IP, and must be disabled otherwise."
+	::= { tlsTDEntry 5 }
+
+tlsTDFlushDelayTimer OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"The maximum delay in seconds before IP unicasting
+			 to a newly learned MAC destination.  This is
+			 only valid if the TLS Flush protocol is enabled."
+	::= { tlsTDEntry 6 }
+
+tlsTDPriorityMap OBJECT-TYPE
+	SYNTAX		TlsPriorityMap
+	ACCESS		read-write
+	STATUS		deprecated	
+	DESCRIPTION	"Maps 802.1p priorities (0-7) to iPT class-of-service
+			 (COS) values (0-7) for packets across a UNI. The
+			 first bytes represent the COS of the iPT
+                         frame encapsulating a packet with an 802.1p priority
+                         of 0. Subsequent bytes represent the mappings
+                         of the remaining 802.1p priorities.
+
+                         The default priority map is a mapping of 802.1p
+                         priorities to their iPT COS equivalent"
+        DEFVAL           { "00:01:02:02:03:03:05:05" }
+	::= { tlsTDEntry 7 }
+
+tlsTDRowStatus OBJECT-TYPE
+	SYNTAX		RowStatus
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Used to create/delete an entry."
+	::= { tlsTDEntry 8 }
+
+-- Transparent Domain Statistics Table
+--
+-- Implementation of the tlsTDStatsTable is optional.  It is implemented
+-- by those TLS devices which are capable of capturing these stats for
+-- each Transparent Domain.
+
+tlsTDStatsTable	OBJECT-TYPE
+	SYNTAX		SEQUENCE OF TlsTDStatsEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Statistics about the operation of a collection
+			 of Transparent Domains."
+	::= { tlsTD 2 }
+
+tlsTDStatsEntry	OBJECT-TYPE
+	SYNTAX		TlsTDStatsEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Statistics about the operation of a particular
+			 Transparent Domain."
+	INDEX		{ tlsTDStatsIndex }
+	::= { tlsTDStatsTable 1 }
+
+TlsTDStatsEntry ::=
+	SEQUENCE {
+		tlsTDStatsIndex			TlsTDId,
+		tlsTDStatsDataFramesIn		Counter32,
+		tlsTDStatsDataFramesOut		Counter32,
+		tlsTDStatsUCastMACIn		Counter32,
+		tlsTDStatsUCastMACOut		Counter32,
+		tlsTDStatsUCastMACInUnknownDest	Counter32,
+		tlsTDStatsMCastMACIn		Counter32,
+		tlsTDStatsMCastMACOut		Counter32,
+		tlsTDStatsBCastMACIn		Counter32,
+		tlsTDStatsBCastMACOut		Counter32,
+		tlsTDStatsOctetsIn		Counter64,
+		tlsTDStatsOctetsOut		Counter64
+	}
+
+tlsTDStatsIndex OBJECT-TYPE
+	SYNTAX		TlsTDId
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The value of the instance of the tlsTDId object for
+			 the Transparent Domain for which these stats are
+			 collected."
+	::= { tlsTDStatsEntry 1 }
+
+tlsTDStatsDataFramesIn OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of TLS frames received from the TLS network
+			 by this TD."
+	::= { tlsTDStatsEntry 2 }
+
+tlsTDStatsDataFramesOut OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of TLS frames sent into the TLS network by
+			 this TD."
+	::= { tlsTDStatsEntry 3 }
+
+tlsTDStatsUCastMACIn OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of unicast MAC frames ingressed on this TD."
+	::= { tlsTDStatsEntry 4 }
+
+tlsTDStatsUCastMACOut OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of unicast MAC frames egressed on this TD."
+	::= { tlsTDStatsEntry 5 }
+
+tlsTDStatsUCastMACInUnknownDest OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of unicast MAC frames which arrived at ingress
+			 for which the MAC destination address (DA) was not
+			 found in the FDB for this TD."
+	::= { tlsTDStatsEntry 6 }
+
+tlsTDStatsMCastMACIn OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of multicast MAC frames ingressed on this TD."
+	::= { tlsTDStatsEntry 7 }
+
+tlsTDStatsMCastMACOut OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of multicast MAC frames egressed on this TD."
+	::= { tlsTDStatsEntry 8 }
+
+tlsTDStatsBCastMACIn OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of broadcast MAC frames ingressed on this TD."
+	::= { tlsTDStatsEntry 9 }
+
+tlsTDStatsBCastMACOut OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of broadcast MAC frames egressed on this TD."
+	::= { tlsTDStatsEntry 10 }
+
+tlsTDStatsOctetsIn OBJECT-TYPE
+	SYNTAX		Counter64
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of octets ingressed on this TD."
+	::= { tlsTDStatsEntry 11 }
+
+tlsTDStatsOctetsOut OBJECT-TYPE
+	SYNTAX		Counter64
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of octets egressed on this TD."
+	::= { tlsTDStatsEntry 12 }
+
+-- Transparent Domain Interface (TDIf) Table
+
+tlsTDIfTable	OBJECT-TYPE
+	SYNTAX		SEQUENCE OF TlsTDIfEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Provisioned mappings (or classification functions)
+			 between {ifIndex, Tag Value} : tlsTDId."
+	::= { tlsTDIf 1 }
+
+tlsTDIfEntry	OBJECT-TYPE
+	SYNTAX		TlsTDIfEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Mapping from a particular {ifIndex, Tag Value} pair
+			 to a Transparent Domain."
+	INDEX		{ tlsTDIfIndex, tlsTDIfTagValue }
+	::= { tlsTDIfTable 1 }
+
+TlsTDIfEntry ::=
+	SEQUENCE {
+		tlsTDIfIndex			INTEGER,
+		tlsTDIfTagValue			INTEGER,
+		tlsTDIfTDIndex			TlsTDId,
+		tlsTDIfRowStatus		RowStatus,
+                tlsTDIfL2ToTDPriorityMap        TlsPriorityMap,
+                tlsTDIfEnabled                  TruthValue,
+		tlsTDIfConnectivity		INTEGER
+	}
+
+tlsTDIfIndex OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The value of the instance of the ifIndex object,
+			 defined in MIB-II, over which this mapping is
+			 valid."
+	::= { tlsTDIfEntry 1 }
+
+tlsTDIfTagValue OBJECT-TYPE
+	SYNTAX		INTEGER (0..4097)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tag Value for which this mapping is valid.
+
+			 0-4095 = 802.1Q Tagged Frames
+			 4096   = Untagged Frame
+			 4097   = Transparent"
+	::= { tlsTDIfEntry 2 }
+
+tlsTDIfTDIndex OBJECT-TYPE
+	SYNTAX		TlsTDId
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Transparent Domain in which to classify frames
+			 matching the key for this table entry."
+	::= { tlsTDIfEntry 3 }
+
+tlsTDIfRowStatus OBJECT-TYPE
+	SYNTAX		RowStatus
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Used to create/delete an entry."
+	::= { tlsTDIfEntry 4 }
+
+tlsTDIfL2ToTDPriorityMap OBJECT-TYPE
+        SYNTAX          TlsPriorityMap
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "Maps 802.1p priorities (0-7) to Optical Ethernet
+                         class-of-service (COS) values (0-7) for packets
+                         across a UNI. The first bytes represent the COS for
+                         802.1p priority of 0. Subsequent bytes represent the
+                         mappings of the remaining 802.1p priorities."
+        DEFVAL           { "00:01:02:03:04:05:05:05" }
+        ::= { tlsTDIfEntry 5 }
+
+tlsTDIfEnabled OBJECT-TYPE
+        SYNTAX	       	TruthValue
+        ACCESS      	read-write
+        STATUS      	mandatory
+        DESCRIPTION 	"Indicate whether service has been activated on 
+			this TD."
+        DEFVAL       	{ false }
+        ::= { tlsTDIfEntry 6 }
+
+tlsTDIfConnectivity OBJECT-TYPE
+	SYNTAX		INTEGER {
+				hub(1),
+				spoke(2),
+				pt-pt(3)
+				}
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"The TD connectivity type."
+        DEFVAL		{ hub }
+	::= { tlsTDIfEntry 7 }
+					
+
+
+-- Transparent Domain Interface Stats Table
+--
+-- Implementation of the tlsTDIfStatsTable is optional.  It is implemented
+-- by those TLS devices which are capable of capturing these stats for
+-- each Transparent Domain Interface.
+
+tlsTDIfStatsTable	OBJECT-TYPE
+	SYNTAX		SEQUENCE OF TlsTDIfStatsEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Statistics about the operation of a collection
+			 of Transport Domain Interfaces."
+	::= { tlsTDIf 2 }
+
+tlsTDIfStatsEntry	OBJECT-TYPE
+	SYNTAX		TlsTDIfStatsEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Statistics about the operation of a particular
+			 Transparent Domain Interface."
+	INDEX		{ tlsTDIfStatsIndex, tlsTDIfStatsTagValue }
+	::= { tlsTDIfStatsTable 1 }
+
+TlsTDIfStatsEntry ::=
+	SEQUENCE {
+		tlsTDIfStatsIndex		INTEGER,
+		tlsTDIfStatsTagValue		INTEGER,
+		tlsTDIfStatsUCastMACIn		Counter32,
+		tlsTDIfStatsUCastMACOut		Counter32,
+		tlsTDIfStatsUCastMACInUnknownDest Counter32,
+		tlsTDIfStatsMCastMACIn		Counter32,
+		tlsTDIfStatsMCastMACOut		Counter32,
+		tlsTDIfStatsBCastMACIn		Counter32,
+		tlsTDIfStatsBCastMACOut		Counter32,
+		tlsTDIfStatsOctetsIn		Counter64,
+		tlsTDIfStatsOctetsOut		Counter64
+	}
+
+tlsTDIfStatsIndex OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The value of the instance of the ifIndex object,
+			 defined in MIB-II, for which these statistics are
+			 collected."
+	::= { tlsTDIfStatsEntry 1 }
+
+tlsTDIfStatsTagValue OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The Tag Value for which these statistics are
+			 collected."
+	::= { tlsTDIfStatsEntry 2 }
+
+tlsTDIfStatsUCastMACIn OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of unicast MAC frames ingressed on this TDIf."
+	::= { tlsTDIfStatsEntry 3 }
+
+tlsTDIfStatsUCastMACOut OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of unicast MAC frames egressed on this TDIf."
+	::= { tlsTDIfStatsEntry 4 }
+
+tlsTDIfStatsUCastMACInUnknownDest OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of unicast MAC frames which arrived at ingress
+			 for which the MAC destination address (DA) was not
+			 found in the FDB for this TDIf."
+	::= { tlsTDIfStatsEntry 5 }
+
+tlsTDIfStatsMCastMACIn OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of multicast MAC frames ingressed on this
+			 TDIf."
+	::= { tlsTDIfStatsEntry 6 }
+
+tlsTDIfStatsMCastMACOut OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of multicast MAC frames egressed on this
+			 TDIf."
+	::= { tlsTDIfStatsEntry 7 }
+
+tlsTDIfStatsBCastMACIn OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of broadcast MAC frames ingressed on this
+			 TDIf."
+	::= { tlsTDIfStatsEntry 8 }
+
+tlsTDIfStatsBCastMACOut OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of broadcast MAC frames egressed on this TDIf."
+	::= { tlsTDIfStatsEntry 9 }
+
+tlsTDIfStatsOctetsIn OBJECT-TYPE
+	SYNTAX		Counter64
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of octets ingressed on this TDIf."
+	::= { tlsTDIfStatsEntry 10 }
+
+tlsTDIfStatsOctetsOut OBJECT-TYPE
+	SYNTAX		Counter64
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Number of octets egressed on this TDIf."
+	::= { tlsTDIfStatsEntry 11 }
+
+
+--
+-- Filtering Database
+--
+tlsFdbTable OBJECT-TYPE
+        SYNTAX      SEQUENCE OF IPTFdbEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "TLS filtering database.  There exists one FDB per port
+                     per TD."
+        ::= { tlsFdb 1 }
+ 
+tlsFdbEntry OBJECT-TYPE
+        SYNTAX      IPTFdbEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION     "Information on a learned or static MAC entry
+                         on a per interface, per TD basis"
+        INDEX       { tlsFdbTDId, tlsFdbIfIndex, tlsFdbMAC }
+        ::= { tlsFdbTable 1 }
+ 
+IPTFdbEntry ::=
+    SEQUENCE {
+        tlsFdbTDId              TlsTDId,
+        tlsFdbIfIndex           INTEGER,
+        tlsFdbMAC               MacAddress,
+        tlsFdbNextHopMacAddr    MacAddress,
+        tlsFdbNextHopPort       INTEGER,
+        tlsFdbEntryType         INTEGER,
+        tlsFdbIpAddress         IpAddress,
+	tlsFdbRowStatus		RowStatus,
+        tlsFdbLocalNode		INTEGER,
+        tlsFdbLocalSubnet       INTEGER,
+        tlsFdbFormat		INTEGER,
+        tlsFdbPortCapability    INTEGER,
+        tlsFdbGatewayRouterIp   IpAddress,
+	tlsFdbGatewayIMac	MacAddress,
+	tlsFdbGatewayEMac	MacAddress,
+	tlsFdbVirtualPort	INTEGER,
+        tlsFdbLocalPort         INTEGER
+    }
+ 
+tlsFdbTDId OBJECT-TYPE
+        SYNTAX      TlsTDId
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION     "The Transparent Domain Identifier for which this 
+                        entry contains filtering database information."
+        ::= { tlsFdbEntry 1 }
+
+tlsFdbIfIndex OBJECT-TYPE
+        SYNTAX          INTEGER
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The value of the instance of the ifIndex object
+                        defined in MIB-II to which this FDB entry pertains."
+        ::= { tlsFdbEntry 2 }
+
+tlsFdbMAC OBJECT-TYPE
+        SYNTAX          MacAddress
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Ethernet MAC address pertaining to this 
+                        FDB entry."
+        ::= { tlsFdbEntry 3 }
+
+tlsFdbNextHopMacAddr OBJECT-TYPE
+        SYNTAX          MacAddress
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "Physical address of the destination iPT node to 
+                        which packets destined to the tlsFdbMac will be 
+                        forwarded on this ring. This may be the local RPR 
+                        node."
+        ::= { tlsFdbEntry 4 }
+
+tlsFdbNextHopPort OBJECT-TYPE
+        SYNTAX          INTEGER
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "Interface index of the port on the destination
+                         RPR node to which packets are forwarded."
+        ::= { tlsFdbEntry 5 }
+
+tlsFdbEntryType OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                static(1),
+                                dynamic(2)
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The type of the entry in regards to static or
+                        dynamic (learned)."
+        ::= { tlsFdbEntry 6 }
+
+tlsFdbIpAddress OBJECT-TYPE
+        SYNTAX          IpAddress
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "Unicast IP Address of the destination TLS UNI 
+                         for this entry.  A value of 0.0.0.0 should be
+                         reported for TDs which are not associated with
+                         an OEL2 UNI."
+        ::= { tlsFdbEntry 7 }
+
+tlsFdbRowStatus OBJECT-TYPE
+	SYNTAX		RowStatus
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Used to create/delete an entry."
+	::= { tlsFdbEntry 8 }
+
+tlsFdbLocalNode OBJECT-TYPE
+	SYNTAX		INTEGER {
+                                local(1),
+                                remote(2)
+                                }
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"This entry is either remote or local to the node."
+	::= { tlsFdbEntry 9 }
+
+tlsFdbLocalSubnet OBJECT-TYPE
+	SYNTAX		INTEGER {
+				local(1),
+				remote(2)
+				}
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"This entry is either remote or local to the ring 
+			subnet. This value is unsupported for OEL2."
+	::= { tlsFdbEntry 10 }
+
+tlsFdbFormat OBJECT-TYPE
+	SYNTAX		INTEGER {
+				tls-l2(1),
+				oel2(2),
+                                unknown(3)
+			}
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"This entry is either in tls-L2 format, OEL2
+                         format, or is unknown."
+	::= { tlsFdbEntry 11 }
+
+tlsFdbPortCapability OBJECT-TYPE
+	SYNTAX		INTEGER {
+				tls-l2(1),
+				oel2(2),
+                                tlsl2-and-oel2(3),
+                                unknown(4)
+				}
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The maximum remote port capability - ie, it can
+                        understand tls-l2, oel2, both tls-l2 and oel2, 
+                        or is unknown." 
+	::= { tlsFdbEntry 12 }
+
+tlsFdbGatewayRouterIp OBJECT-TYPE
+	SYNTAX		IpAddress
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"The IP address of the entry's default gateway.
+                        This value is unsupported for OEL2."
+	::= { tlsFdbEntry 13 }
+
+tlsFdbGatewayIMac OBJECT-TYPE
+	SYNTAX		MacAddress
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The IMac address of the gateway nni port."
+	::= { tlsFdbEntry 14 }
+
+tlsFdbGatewayEMac OBJECT-TYPE
+	SYNTAX		MacAddress
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The EMac address of the entry's gateway."
+	::= { tlsFdbEntry 15 }
+
+tlsFdbVirtualPort OBJECT-TYPE
+	SYNTAX		INTEGER (0..15)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The virtual port on the gateway NNI port. This
+                        value is unsupported for OEL2"
+	::= { tlsFdbEntry 16 }
+
+tlsFdbLocalPort OBJECT-TYPE
+	SYNTAX		INTEGER {
+				local(1),
+				remote(2)
+				}
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"This entry is either remote or local to the port."
+	::= { tlsFdbEntry 17 }
+
+--
+-- NNI Trasparent Domain Interface Table
+--
+tlsNNITDIfTable	OBJECT-TYPE
+	SYNTAX		SEQUENCE OF TlsNNITDIfEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"The NNITDIF table contains the NNI port TDI to 
+			 Qtag mappings for this entity"
+	::= { tlsNNITDIf 1 }
+
+tlsNNITDIfEntry	OBJECT-TYPE
+	SYNTAX		TlsNNITDIfEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	" An NNI port TDI to Qtag mapping"
+	INDEX		{ tlsNNITDIfIndex, tlsNNITDIfTDIndex }
+	::= { tlsNNITDIfTable 1 }
+
+TlsNNITDIfEntry ::=
+	SEQUENCE {
+		tlsNNITDIfIndex		INTEGER,
+		tlsNNITDIfTDIndex	TlsDataTDId,
+		tlsNNITDIfTagValue	INTEGER,
+		tlsNNITDIfFilter	TruthValue,
+		tlsNNITDIfRowStatus	RowStatus
+    	}
+
+tlsNNITDIfIndex	OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The port on which this entry resides"
+	::= { tlsNNITDIfEntry 1 }
+
+tlsNNITDIfTDIndex OBJECT-TYPE
+	SYNTAX		TlsDataTDId
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Transparent Domain in which to classify frames
+		 	matching the key for this table entry."
+	::= { tlsNNITDIfEntry 2 }
+
+tlsNNITDIfTagValue OBJECT-TYPE
+	SYNTAX		INTEGER (1..4096)
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Tag Value for which this mapping is valid.
+		 	1-4094 = 802.1Q Tagged Frames
+                        4095   = unused and disallowed
+		 	4096   = Untagged Frame"
+	::= { tlsNNITDIfEntry 3}
+
+tlsNNITDIfFilter OBJECT-TYPE
+	SYNTAX		TruthValue
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Filter value for dropping frames for this td to
+                         Qtag mapping. This value will be set to true for
+                         filtered frames and false for frames not being
+                         filtered"
+	::= { tlsNNITDIfEntry 4}
+
+tlsNNITDIfRowStatus OBJECT-TYPE
+	SYNTAX		RowStatus
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Used to create/delete an entry."
+	::= { tlsNNITDIfEntry 5 }
+
+
+--
+--  TLS Specific Trap Definitions
+-- For adding new traps, please, check the trap numbers in the following
+-- files :
+-- IPT_COMMON_MIB
+-- IPT_TLS_MIB
+-- NORTEL_TLS_MIB
+--
+uniOnRBDTrap  TRAP-TYPE
+              ENTERPRISE tls
+              VARIABLES {
+                  tlsTDIfIndex,
+                  tlsTDIfTagValue
+              }
+              DESCRIPTION
+                  "UNI placed on Ring-Broadcast-Domain Trap. This trap is 
+                  sent whenever an entry is added to the TlsTDIFTable that
+                  places a UNI on the same TD as management traffic
+                  (i.e. the ring broadcat domain)."
+              ::= 10
+
+
+uniOffRBDTrap TRAP-TYPE
+              ENTERPRISE tls
+              VARIABLES {
+                  tlsTDIfIndex,
+                  tlsTDIfTagValue
+              }
+              DESCRIPTION
+                  "UNI taken off Ring-Broadcast-Domain Trap. This trap is
+                  sent whenever an entry is deleted from the TlsTDIFTable that
+                  removes a UNI from the ring broadcast domain"
+              ::= 20
+
+craftPortEnabledTrap TRAP-TYPE
+		     ENTERPRISE tls
+		     VARIABLES {
+			tlsIfIndex
+		     }
+		     DESCRIPTION
+			"Craft Port Enabled Trap. This trap is sent whenever
+			 a lan port is being enabled as a craft port"
+		     ::=30
+
+-- tlsip stuff
+
+tlsipArpTable OBJECT-TYPE
+	SYNTAX 		SEQUENCE OF TLSIPArpEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"The Arp table contains the current ARP cache
+			information for this entity"
+	::= { tlsipArp 1 }
+
+tlsipArpEntry OBJECT-TYPE
+	SYNTAX		TLSIPArpEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"An iPT Arp cache entry"
+	INDEX		{ tlsipArpPort,
+			  tlsipArpIpAddress }
+	::= { tlsipArpTable 1 }
+
+TLSIPArpEntry ::=
+	SEQUENCE {
+		  tlsipArpPort		INTEGER,
+		  tlsipArpIpAddress	IpAddress,
+		  tlsipArpMacAddress	MacAddress,
+                  tlsipArpNNIMacAddress	MacAddress,
+		  tlsipArpVirtualPort	INTEGER,
+		  tlsipArpStaticEntry	INTEGER,
+		  tlsipArpAgingTime	INTEGER,	
+		  tlsipArpRowStatus	RowStatus
+		 }
+
+tlsipArpPort OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The port on which this entity resides"
+	::= { tlsipArpEntry 1 }
+
+tlsipArpIpAddress OBJECT-TYPE
+	SYNTAX		IpAddress
+	ACCESS		read-only 
+	STATUS		mandatory
+	DESCRIPTION	"The IP address of the default gateway in this entry"
+	::= { tlsipArpEntry 2 }
+
+tlsipArpMacAddress OBJECT-TYPE
+	SYNTAX		MacAddress
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The MAC address corresponding to the router
+                        in this entry"
+	::= { tlsipArpEntry 3 }
+
+tlsipArpNNIMacAddress OBJECT-TYPE
+	SYNTAX		MacAddress
+	ACCESS		read-only	
+	STATUS		mandatory
+	DESCRIPTION	"The MAC address of the NNI port connected to
+                        the router"
+	::= { tlsipArpEntry 4 }
+
+tlsipArpVirtualPort OBJECT-TYPE
+	SYNTAX		INTEGER (0..15)
+        ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The Virtual Port number of the router"
+        ::= { tlsipArpEntry 5 }
+
+tlsipArpStaticEntry OBJECT-TYPE
+	SYNTAX		INTEGER {
+				  none(1),  -- don't know
+				  yes(2), -- yep,it's a static entry all right 
+			          no(3) -- nope, it isn't a static entry
+                                }
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Is this entry a static entry?"
+        ::= { tlsipArpEntry 6}
+
+tlsipArpAgingTime OBJECT-TYPE
+	SYNTAX		INTEGER
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The time to live of this ARP cache entry"
+	::= { tlsipArpEntry 7 }
+
+tlsipArpRowStatus OBJECT-TYPE
+	SYNTAX		RowStatus
+        ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"Used to create/delete an entry in this table"
+	::= { tlsipArpEntry 8 }
+
+
+tlsipArpUnresolvedAddress OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of unresolved entries resulting 
+                        from ARPS"
+	::= { tlsipArp 2 }
+
+tlsipArpPacketError OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of ARP responses received with errors"
+	::= { tlsipArp 3 }
+
+tlsipIgmpMCastStatsTable OBJECT-TYPE
+	SYNTAX		SEQUENCE OF TlsipIgmpMCastStatsEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Statistics pertaining to IGMP multicast"
+	::= { tlsipIgmp 1 }
+
+tlsipIgmpMCastStatsEntry OBJECT-TYPE
+	SYNTAX		TlsipIgmpMCastStatsEntry
+	ACCESS		not-accessible
+	STATUS		mandatory
+	DESCRIPTION	"Statistics pertaining to IGMP for a specific TD"
+	INDEX		{ tlsipIgmpMCastStatsIndex }
+        ::= { tlsipIgmpMCastStatsTable 1 }
+
+TlsipIgmpMCastStatsEntry ::=
+	SEQUENCE {
+			tlsipIgmpMCastStatsIndex IpAddress,
+			tlsipIgmpMembershipRecv	 Counter32,
+                        tlsipIgmpMembershipSent  Counter32,
+			tlsipIgmpQueriesRecv 	 Counter32
+		}
+
+tlsipIgmpMCastStatsIndex OBJECT-TYPE
+	SYNTAX	        IpAddress 
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The multicast address belonging to the group 
+			for which these stats are collected."
+	::= { tlsipIgmpMCastStatsEntry 1 }	
+
+tlsipIgmpMembershipRecv OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of membership reports received by
+                        this multicast group"
+        ::= { tlsipIgmpMCastStatsEntry 2 }
+
+tlsipIgmpMembershipSent OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of membership reports sent by this 
+                        multicast group"
+	::= { tlsipIgmpMCastStatsEntry 3 }
+
+tlsipIgmpQueriesRecv OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of queries received by this multicast
+                        group."
+	::= { tlsipIgmpMCastStatsEntry 4 }
+
+tlsipIgmpGenQueriesRecv OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of general queries received by
+			the system"
+	::= { tlsipIgmp 2 }
+
+tlsipIgmpInvalidType OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of IGMP packets received with an
+			invalid type"
+	::= { tlsipIgmp 3 }
+
+tlsipIgmpErrors OBJECT-TYPE
+	SYNTAX		Counter32
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The IGMP packets received with errors"
+	::= { tlsipIgmp 4 }
+
+
+END

@@ -1,0 +1,1264 @@
+{
+  "imports": {
+    "class": "imports",
+    "AN-MIB": [
+      "she"
+    ],
+    "ENTITY-MIB": [
+      "PhysicalIndex"
+    ],
+    "SHE-ALARMING-MIB": [
+      "sheAlarmReportingSource",
+      "SheAlarmSevProfileIndex",
+      "sheAlarmReportingSourceType",
+      "sheAlarmSeverity",
+      "sheAlarmTimeAndDate"
+    ],
+    "SHE-TC-MIB": [
+      "SheControlStatusType"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "Counter32",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "MODULE-IDENTITY",
+      "iso",
+      "Integer32",
+      "Gauge32",
+      "Bits",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "DisplayString"
+    ]
+  },
+  "sheSync": {
+    "name": "sheSync",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2007-04-05 15:11",
+        "description": "Initial version - merge from GPON project."
+      },
+      {
+        "revision": "2007-10-16 11:00",
+        "description": "New release SHE R2.6P support new types of possible sync sources."
+      },
+      {
+        "revision": "2007-11-27 11:37",
+        "description": "Expand support to a configurable sync source table according concept paper SHE R3.0."
+      },
+      {
+        "revision": "2007-12-12 13:57",
+        "description": "Correct SSM-Level definitions."
+      },
+      {
+        "revision": "2007-12-20 13:09",
+        "description": "Redesign synctables after review by systems."
+      },
+      {
+        "revision": "2008-03-10 15:53",
+        "description": "Supported startet now with SHE R2.8."
+      },
+      {
+        "revision": "2008-07-29 10:06",
+        "description": "Add new Alarm if no SSM information is detected for selected sync source (only for sources who will support SSM like sync ethernet - not for T3)."
+      },
+      {
+        "revision": "2008-08-28 11:14",
+        "description": "Correct some descriptions regarding the parameter support started with R2.8 instead of R3.0."
+      },
+      {
+        "revision": "2008-10-08 08:48",
+        "description": "Add comment for used syncSources depending on CXU type. Modify syntax for sheSyncSourceAvailabilityType."
+      },
+      {
+        "revision": "2009-02-04 08:43",
+        "description": "Modify SyncSourceAvailabilityTable - new parameter for configurable clock source types on new power modules. New controlRequest types to configure these power modules."
+      },
+      {
+        "revision": "2009-03-03 08:40",
+        "description": "Add notification for AvailabilityTable update if HW base was changed."
+      },
+      {
+        "revision": "2009-03-25 09:29",
+        "description": "Add new ControlReqResult values for detailed failure codes."
+      },
+      {
+        "revision": "2009-06-03 14:20",
+        "description": "Add new ReqResult-Trap for sourceType modification command."
+      }
+    ],
+    "lastupdated": "200906031500Z",
+    "organization": "Nokia Siemens Networks",
+    "contactinfo": "Gerd Barchmann COO BCS BBA RD HW1 gerd.barchmann@nsn.com +49 3834 555654",
+    "description": "The MIB module for managing the clock sources (timing) of the network element."
+  },
+  "SheSyncPriorityType": {
+    "name": "SheSyncPriorityType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 2
+          }
+        ]
+      }
+    }
+  },
+  "SheSyncWaitTimeToRestoreType": {
+    "name": "SheSyncWaitTimeToRestoreType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    }
+  },
+  "SheSyncSourceAlarmStateType": {
+    "name": "SheSyncSourceAlarmStateType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "sheAlarmCleared": 0,
+          "sheAlarmPresent": 1
+        }
+      }
+    }
+  },
+  "SheSyncAvailabilityIndexType": {
+    "name": "SheSyncAvailabilityIndexType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    }
+  },
+  "SheSyncControlReqType": {
+    "name": "SheSyncControlReqType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noRequest": 1,
+          "sheModifySyncSource": 101,
+          "sheModifySyncWaitTimeToRestore": 102,
+          "sheModifySyncGlobals": 103,
+          "sheModifyUsedSyncSource": 104,
+          "sheSetVaribaleSyncSourceTypeToT3": 105,
+          "sheSetVaribaleSyncSourceTypeToE1": 106,
+          "sheSetVaribaleSyncSourceTypeToBits": 107
+        }
+      }
+    }
+  },
+  "SheSyncModeType": {
+    "name": "SheSyncModeType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "revertive": 1,
+          "nonrevertive": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "sheSyncMode values"
+  },
+  "SheSyncControlReqResultType": {
+    "name": "SheSyncControlReqResultType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noRequest": 1,
+          "commExecStarted": 5,
+          "paramFaulty": 11,
+          "requestBusy": 12,
+          "setDataFailed": 13,
+          "aswTimeout": 14,
+          "commandFailed": 15,
+          "commandSucceeded": 16,
+          "wrongAlarmSeverityIndex": 23,
+          "clockSourceNotAvailable": 24,
+          "clockSourceNotAccessible": 25,
+          "clockModeNotSupported": 26,
+          "clockSourceTypeModifyNotSupported": 27,
+          "clockSourceTypeModifyNotPossibleForActiveClocks": 28
+        }
+      }
+    },
+    "status": "current",
+    "description": "The result type for synchronization control commands."
+  },
+  "SheSyncSourceType": {
+    "name": "SheSyncSourceType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "sheInternalSyncSource": 1,
+          "sheT3orE1SyncSource": 2,
+          "sheBitsSyncSource": 3,
+          "sheEthernetSyncSource": 4,
+          "sheTimingOverPacketSyncSource": 6,
+          "sheT3SyncSource": 8,
+          "sheE1SyncSource": 9
+        }
+      }
+    },
+    "status": "current",
+    "description": "Used in sheSyncSourceAvailabilityTable to show the type of available clocksources. Only external sources will be shown in that table but the internal oscilator is always available and will be used if no external clocks could be detected or all of them are down. "
+  },
+  "sheSyncObjects": {
+    "name": "sheSyncObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1",
+    "class": "objectidentity"
+  },
+  "sheSyncGlobalObjects": {
+    "name": "sheSyncGlobalObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.1",
+    "class": "objectidentity"
+  },
+  "sheSyncActiveClockSource": {
+    "name": "sheSyncActiveClockSource",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncPriorityType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current chosen (active) clock source. Identifies an entry in the SyncSourceTable. 0 means that no syncSource is available or configured and the NE uses the internal clock of the used CXU board. "
+  },
+  "sheSyncWaitTimeToRestore": {
+    "name": "sheSyncWaitTimeToRestore",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncWaitTimeToRestoreType",
+      "class": "type"
+    },
+    "units": "100 ms",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This time has to expire before switch back to a higher clock source after error condition. Unit is 100 ms."
+  },
+  "sheSyncMode": {
+    "name": "sheSyncMode",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncModeType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "revertive",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The used sync - mode. revertive - the highest priority sync source with valid reference is always selected. nonrevertive - the active sync source will always remain active while it is valid. Only if this sync source will be come invalid, a refence switchover to a valid reference with highest priority will be initiated. New parameter with R2.8."
+  },
+  "sheSyncLocalClockSSMLevel": {
+    "name": "sheSyncLocalClockSSMLevel",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 15,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This parameter defines the configured SSM-Level for the local clock. This parameter should be transmitted, if all selected clock sources are failed and the NE uses his own internal clock reference (free run). The level is defined in 16 steps from 0..15, where 0 is the highest quality level. New parameter with R2.8."
+  },
+  "sheSyncSourceTable": {
+    "name": "sheSyncSourceTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The synchronization source table is used to manage synchronization sources and there priorities in the network element. "
+  },
+  "sheSyncSourceEntry": {
+    "name": "sheSyncSourceEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourcePriority",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the SyncSourceTable. It defines one possible synchronization source of the network element and its priority. Maximum two sources could be selected from SyncSourceAvailabilityTable if CXU_B3 is used. All other CXU types will only accept one table entry!"
+  },
+  "sheSyncSourcePriority": {
+    "name": "sheSyncSourcePriority",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncPriorityType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A unique value to identify the priority of the synchronization source. Used as table index. 0 is not an useful index for that table."
+  },
+  "sheSyncSourceType": {
+    "name": "sheSyncSourceType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncSourceType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The type of the synchronization source of the network element. NOTE: Not longer used with SHE R2.8."
+  },
+  "sheSyncSourceHwUnitIndex": {
+    "name": "sheSyncSourceHwUnitIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "Identifies the hardware unit that contains the synchronization source. If the hardware unit is not equipped, sheSyncSourceHwUnitIndex contains -1. NOTE: Not longer used with SHE R2.8."
+  },
+  "sheSyncSourceInterfaceNumber": {
+    "name": "sheSyncSourceInterfaceNumber",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 72
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "obsolete",
+    "description": "The number of the physical interface of the hardware unit. The interfaces are numbered vendor specific starting with 1 in ascending order. Synchronization interfaces may not be contained in the interface table. NOTE: Not longer used with SHE R2.8."
+  },
+  "sheSyncSourceAlarmState": {
+    "name": "sheSyncSourceAlarmState",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncSourceAlarmStateType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "An alarm is generated when a clock source can't be used."
+  },
+  "sheSyncSourceAlarmSeverityIndex": {
+    "name": "sheSyncSourceAlarmSeverityIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSevProfileIndex",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This index selects an item in the sheAlarmSeverityProfileTable[]. It is used to assign the reported alarm to a severity."
+  },
+  "sheSyncSourceSelectedAvailabilityIndex": {
+    "name": "sheSyncSourceSelectedAvailabilityIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncAvailabilityIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A unique value to identify a available synchronization source (from sheSyncAvailabilityTable) which is used as sync source for the NE. An index value 0 means no source is selected. New parameter with R2.8."
+  },
+  "sheSyncSourceSSMLevel": {
+    "name": "sheSyncSourceSSMLevel",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This parameter defines the configured reference or assigned SSM-Level for this sync source. It should work as reference level only for source types, which supports SSM OAM messages for clock quality evaluation like ToP or syncEthernet. For other sourcetypes it is the assigned SSM-Level which should be used by the input selector for sourceclock quality comparation. The level is defined in 16 steps from 0..15, where 0 is the highest quality level. The sync source will be invalid, if the received SSM level is above the configured reference level. New parameter with R2.8."
+  },
+  "sheSyncSourceSSMLevelRec": {
+    "name": "sheSyncSourceSSMLevelRec",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This parameter shows the received SSM-Level for this sync source. It is only valid for source types, which supports SSM OAM messages for clock quality evaluation like syncEthernet or ToP. In case of ToP sync sources, the NE will internaly convert the received stratum number (IEEE1588) to an SSM level value according G.781. The level is defined in 16 steps from 0..15, where 0 is the highest quality level. The sync source will be invalid, if the received SSM level is above the configured reference level. New parameter with R2.8. "
+  },
+  "sheSyncControlGroup": {
+    "name": "sheSyncControlGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3",
+    "class": "objectidentity"
+  },
+  "sheSyncCgControlReq": {
+    "name": "sheSyncCgControlReq",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncControlReqType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "sheModifySyncSource (101): sheSyncCgSourcePriority sheSyncCgSourceAlarmSeverityIndex sheModifySyncWaitTimeToRestore (102): sheSyncCgSourceWaitTimeToRestore New commands with R2.8: sheModifySyncGlobals (103): sheSyncCgMode sheSyncCgSourceWaitTimeToRestore sheSyncCgSourceSSMLevel sheModifyUsedSyncSource (104): -> Maximum two sources could be selected from SyncSourceAvailabilityTable if CXU_B3 is used. All other CXU types will only accept one table entry! sheSyncCgSourcePriority sheSyncCgSourceAvailabilityIndex sheSyncCgSourceSSMLevel New commands with R2.8 maintenance: Valid only if clock sources with parameter TypeSelectionPossible == TRUE are available in the system. More then one trap could be send if more then one clock source was reconfigured by only one command. sheSetVaribaleSyncSourceTypeToT3 (105): sheSetVaribaleSyncSourceTypeToE1 (106): sheSetVaribaleSyncSourceTypeToBits (107):"
+  },
+  "sheSyncCgControlStatus": {
+    "name": "sheSyncCgControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the status of a control request. "
+  },
+  "sheSyncCgControlReqResult": {
+    "name": "sheSyncCgControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncControlReqResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command. "
+  },
+  "sheSyncCgControlTimeStamp": {
+    "name": "sheSyncCgControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command). "
+  },
+  "sheSyncCgSourcePriority": {
+    "name": "sheSyncCgSourcePriority",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncPriorityType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A unique value to identify the synchronization source and its priority. Parameter for command sheModifySyncSource and sheModifyUsedSyncSource to select the table entry to be modified. 0 is not a useful index value for these commands."
+  },
+  "sheSyncCgSourceAlarmSeverityIndex": {
+    "name": "sheSyncCgSourceAlarmSeverityIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSevProfileIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This index selects an item in the sheAlarmSeverityProfileTable[]. It is used to assign the reported alarm (clock source can't be used) to a severity."
+  },
+  "sheSyncCgSourceWaitTimeToRestore": {
+    "name": "sheSyncCgSourceWaitTimeToRestore",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncWaitTimeToRestoreType",
+      "class": "type"
+    },
+    "units": "100 ms",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This time has to expire before switch back to a higher clock source after error condition. Unit is 100 ms."
+  },
+  "sheSyncCgMode": {
+    "name": "sheSyncCgMode",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncModeType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The used sync - mode. revertive - the highest priority sync source with valid reference is always selected. nonrevertive - the active sync source will always remain active while it is valid. Only if this sync source will be come invalid, a refence switchover to a valid reference with highest priority will be initiated. New parameter with R2.8."
+  },
+  "sheSyncCgSourceSSMLevel": {
+    "name": "sheSyncCgSourceSSMLevel",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This parameter defines the configured reference SSM-Level for this sync source. The level is defined in 16 steps from 0..15, where 0 is the highest quality level. New parameter with R2.8."
+  },
+  "sheSyncCgSourceAvailabilityIndex": {
+    "name": "sheSyncCgSourceAvailabilityIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.3.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncAvailabilityIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Select an entry from sheSyncSourceAvailabilityTable to be used as possible sync source for the NE. An index parameter 0 will delete the current used syncSource from the selected priority position without an new entry. New parameter with R2.8."
+  },
+  "sheSyncNotifications": {
+    "name": "sheSyncNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4",
+    "class": "objectidentity"
+  },
+  "sheSyncEvents": {
+    "name": "sheSyncEvents",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1",
+    "class": "objectidentity"
+  },
+  "sheSyncControlResult": {
+    "name": "sheSyncControlResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourcePriority"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlReq"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Notification sent at the end of a long running command. "
+  },
+  "sheSyncClockSourceModified": {
+    "name": "sheSyncClockSourceModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourcePriority"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAlarmSeverityIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when a clock source (entry in the SyncSourceTable) has been modified."
+  },
+  "sheSyncWaitTimeToRestoreModified": {
+    "name": "sheSyncWaitTimeToRestoreModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncWaitTimeToRestore"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the WaitTimeToRestore has been modified."
+  },
+  "sheSyncActiveClockSourceChanged": {
+    "name": "sheSyncActiveClockSourceChanged",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncActiveClockSource"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the active clock source has changed."
+  },
+  "sheSyncGlobalsModified": {
+    "name": "sheSyncGlobalsModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncWaitTimeToRestore"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncMode"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncLocalClockSSMLevel"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the SyncGlobals has been modified. New parameter with R2.8."
+  },
+  "sheSyncUsedSyncSourcesModified": {
+    "name": "sheSyncUsedSyncSourcesModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourcePriority"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourceAvailabilityIndex"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourceSSMLevel"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the used sync source table was reconfigured. New parameter with R2.8."
+  },
+  "sheSyncAvailableSyncSourceTypeModified": {
+    "name": "sheSyncAvailableSyncSourceTypeModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAvailabilityType"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when the types of some available sources were reconfigured. More then one trap could be send if more then one clock source was reconfigured by only one command. New parameter with R2.8 maintenance."
+  },
+  "sheSyncAvailabilityTableUpdated": {
+    "name": "sheSyncAvailabilityTableUpdated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.8",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent by the NE if the list of available sync sources change during runtime. That could be happened if power modules with sync source interfaces will be replaced. New parameter with R2.8 maintenance."
+  },
+  "sheSyncSourceModifiedReqResult": {
+    "name": "sheSyncSourceModifiedReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.1.11",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlReq"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "ReqResult trap for long running command's."
+  },
+  "sheSyncAlarms": {
+    "name": "sheSyncAlarms",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.2",
+    "class": "objectidentity"
+  },
+  "sheSyncClockSourceAlarm": {
+    "name": "sheSyncClockSourceAlarm",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.2.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSource"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSourceType"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSeverity"
+      }
+    ],
+    "status": "current",
+    "description": "An alarm is generated when a clock source can't be used."
+  },
+  "sheSyncClockNoSSMInfoAlarm": {
+    "name": "sheSyncClockNoSSMInfoAlarm",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.4.2.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSource"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSourceType"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSeverity"
+      }
+    ],
+    "status": "current",
+    "description": "This alarm is generated when a selected clock source normaly support SSM information, but NO SSM data could be detected. The SSMLevelRec will be set to '1111' in this case. This is only possible for source types, which supports SSM OAM messages for clock quality evaluation like syncEthernet or ToP. New parameter with R2.8."
+  },
+  "sheSyncSourceAvailabilityTable": {
+    "name": "sheSyncSourceAvailabilityTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The source availability table is used to show the management system which synchronization sources are available in the NE element depending on the used hardware configuration. The table has a fixed number of entries created by the NE. From these table entrys, the list of used clocksources inside the sheSyncSourceTable could be configured. New table supported with R2.8."
+  },
+  "sheSyncSourceAvailabilityEntry": {
+    "name": "sheSyncSourceAvailabilityEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAvailabilityIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the SyncSourceAvailabilityTable. It defines the possible synchronization sources of the network element, depending on the used HW."
+  },
+  "sheSyncSourceAvailabilityIndex": {
+    "name": "sheSyncSourceAvailabilityIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncAvailabilityIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A unique value to identify a available synchronization source. Used as table index. Value 0 is not a valid index value for this table."
+  },
+  "sheSyncSourceAvailabilityType": {
+    "name": "sheSyncSourceAvailabilityType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheSyncSourceType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of the synchronization source of the network element. Valid Parameters: sheInternalSyncSource -> always available on CXU board sheT3orE1SyncSource -> depends on used PM module, type could not exactly evaluated by NE sheBitsSyncSource -> depends on used PM module sheEthernetSyncSource -> depends on used CXU board type sheTimingOverPacketSyncSource -> depends on used CXU board type (not supported by R2.8) sheT3SyncSource -> depends on used PM module sheE1SyncSource -> depends on used PM module The type T3 or E1 normaly depend on the used powermodule HW, but new module support both types of clock inputs and the system could not longer distinguish them. New with R2.8 maintenance: New powermoduls support a type selection for used input clock. Check new parameter of this table if the current clock support a SourceType switching. "
+  },
+  "sheSyncSourceAvailabilityHwUnitIndex": {
+    "name": "sheSyncSourceAvailabilityHwUnitIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysicalIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Identifies the hardware unit that contains the synchronization source. "
+  },
+  "sheSyncSourceAvailabilityInterfaceNumber": {
+    "name": "sheSyncSourceAvailabilityInterfaceNumber",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 72
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of the physical interface of the hardware unit. The interfaces are numbered vendor specific starting with 1 in ascending order. Synchronization interfaces may not be contained in the interface table."
+  },
+  "sheSyncSourceAvailabilityTypeSelectionPossible": {
+    "name": "sheSyncSourceAvailabilityTypeSelectionPossible",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This status parameter shows, if the type of this clock source entry is fix or could be modified by configuration. This is a new parameter with R2.8 maintenance, where a new power module was introduced, which supports a configurable input selector to choose the SourceClockType out of this range: sheBitsSyncSource or sheT3SyncSource (default) or sheE1SyncSource. Only if clock sources with parameter TypeSelectionPossible == TRUE are available in the system, the new controlRequest commands for type switching could be used."
+  },
+  "sheSyncConformance": {
+    "name": "sheSyncConformance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6",
+    "class": "objectidentity"
+  },
+  "sheSyncCompliances": {
+    "name": "sheSyncCompliances",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6.1",
+    "class": "objectidentity"
+  },
+  "sheSyncCompliance": {
+    "name": "sheSyncCompliance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "sheSyncConfigGroup",
+        "module": "SHE-SYNC-MIB"
+      },
+      {
+        "object": "sheSyncConfigControlGroup",
+        "module": "SHE-SYNC-MIB"
+      },
+      {
+        "object": "sheSyncNotificationsGroup",
+        "module": "SHE-SYNC-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheSyncGroups": {
+    "name": "sheSyncGroups",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6.2",
+    "class": "objectidentity"
+  },
+  "sheSyncConfigGroup": {
+    "name": "sheSyncConfigGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncActiveClockSource"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncWaitTimeToRestore"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourcePriority"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAlarmState"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAlarmSeverityIndex"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncMode"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceSSMLevel"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAvailabilityIndex"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAvailabilityType"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAvailabilityHwUnitIndex"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncLocalClockSSMLevel"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAvailabilityTypeSelectionPossible"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceAvailabilityInterfaceNumber"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceSelectedAvailabilityIndex"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceSSMLevelRec"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheSyncConfigControlGroup": {
+    "name": "sheSyncConfigControlGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlReq"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlStatus"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlReqResult"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgControlTimeStamp"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourcePriority"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourceAlarmSeverityIndex"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourceWaitTimeToRestore"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgMode"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourceSSMLevel"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncCgSourceAvailabilityIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheSyncNotificationsGroup": {
+    "name": "sheSyncNotificationsGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6.2.3",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncControlResult"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncClockSourceModified"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncWaitTimeToRestoreModified"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncActiveClockSourceChanged"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncClockSourceAlarm"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncUsedSyncSourcesModified"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncGlobalsModified"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncAvailabilityTableUpdated"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncClockNoSSMInfoAlarm"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncAvailableSyncSourceTypeModified"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceModifiedReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheSyncObsoleteGroup": {
+    "name": "sheSyncObsoleteGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.15.1.6.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceType"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceHwUnitIndex"
+      },
+      {
+        "module": "SHE-SYNC-MIB",
+        "object": "sheSyncSourceInterfaceNumber"
+      }
+    ],
+    "status": "obsolete",
+    "description": "This parameters are not longer supported by SHE R3.0."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SHE-SYNC-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:52:49 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SHE-SYNC-MIB"
+  }
+}

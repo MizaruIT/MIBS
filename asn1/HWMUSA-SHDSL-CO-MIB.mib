@@ -1,0 +1,172 @@
+--  ------------------------------------------------------------------
+-- Description ： HWMUSA-SHDSL-CO-MIB
+-- Author      ： Zhufudang
+-- Create Date ： 2002-12-06
+-- Modify Date ： 2002-12-06
+-- Version     ： 1.00
+-- Copyright 1985 - 2004 HuaWei Tech, Inc.
+--           ALL RIGHTS RESERVED 
+-- ------------------------------------------------------------------
+
+	HWMUSA-SHDSL-CO-MIB DEFINITIONS ::= BEGIN
+ 
+		IMPORTS
+			hwProducts			
+				FROM HUAWEI-MIB			
+			ifIndex			
+				FROM IF-MIB			
+			OBJECT-TYPE			
+				FROM SNMPv2-SMI;
+	
+
+		musa OBJECT IDENTIFIER ::= { hwProducts 6 }
+		
+		ias OBJECT IDENTIFIER ::= { musa 7 }
+		
+		hwIasService OBJECT IDENTIFIER ::= { ias 4 }
+		
+		hwMusaShdsl OBJECT IDENTIFIER ::= { hwIasService 4 }
+		
+		hwShdslCO OBJECT IDENTIFIER ::= { hwMusaShdsl 1 }
+		
+		shdslPortTypeConfTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF ShdslPortTypeConfEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"This table supports the configuration of port type in the SLC and SLF board"
+			::= { hwShdslCO 1 }
+		
+		shdslPortTypeConfEntry OBJECT-TYPE
+			SYNTAX ShdslPortTypeConfEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the shdslPortTypeConfTable.  Each entry 
+				represents the shdsl port type.It is indexed by 
+				the ifIndex of the associated shdsl port."
+			INDEX { ifIndex }
+			::= { shdslPortTypeConfTable 1 }
+		
+		ShdslPortTypeConfEntry ::=
+			SEQUENCE { 
+				shdslPortTypeConfig
+					INTEGER
+			 }
+
+		shdslPortTypeConfig OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				shdsl-e1(0),
+				shdsl-v35(1)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This object is not allowed to set when the associated port is 
+				in service (PVC) or its state is not deactived.When the port is 
+				set to a kind of type,its modem cpe interface should be
+				the same type as the port.
+				"
+			::= { shdslPortTypeConfEntry 1 }
+		
+		shdslPortBindConfTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF ShdslPortBindConfEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"This table supports the configuration of port type in the SLC and SLF board"
+			::= { hwShdslCO 2 }
+		
+		shdslPortBindConfEntry OBJECT-TYPE
+			SYNTAX ShdslPortBindConfEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION			 " "
+			INDEX { shdslPortBindPriPosition }
+			::= { shdslPortBindConfTable 1 }
+		
+		ShdslPortBindConfEntry ::=
+			SEQUENCE { 
+				shdslPortBindPriPosition
+					INTEGER,
+				shdslPortBindSlavPosition
+					INTEGER,
+				shdslPortBindConfig
+					INTEGER
+			 }
+			 
+		shdslPortBindPriPosition OBJECT-TYPE
+			SYNTAX INTEGER				
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION"SHDSL端口绑定的主端口"
+			::= { shdslPortBindConfEntry 1 }
+			
+			
+		shdslPortBindSlavPosition OBJECT-TYPE
+			SYNTAX INTEGER				
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION"SHDSL端口绑定的副端口"
+			::= { shdslPortBindConfEntry 2 }
+
+		shdslPortBindConfig OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				shdsl-port-bind(1),
+				shdsl-port-unbind(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				SHLA现支持相邻两个端口绑定成四线，实现四线特性。两个端口一个主端口（必须为偶数端口）
+				，一个副端口（必须为主端口号＋1）。下发绑定、解除绑定命令时请按照主端口下发。绑定后
+				所有端口操作都会按照主端口进行，副端口不允许操作，但是单板上报告警等信息都还是按照每
+				个端口上报。    同时需要将模板配置spanprofileconfigtabl中的wireinterface打开。在
+				wireinterface等于four wire情况下，minrate、maxrate速率要相等，范围为384～4608，且为
+				128的倍数。在激活端口是，下带的激活线路模板的wireinterface应该和该端口的绑定、非绑定
+				类型匹配。
+				"
+			::= { shdslPortBindConfEntry 3 }  
+			
+		hwShdslPortConfTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwShdslPortConfEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+			 " shdsl port configuration Table
+
+				Shdsl端口的属性表"
+			::= { hwShdslCO 3 }
+		
+		hwShdslPortConfEntry OBJECT-TYPE
+			SYNTAX HwShdslPortConfEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"An entry in the hwShdslPortTable.
+				 
+				 该表walk操作,返回所有端口的相关数据
+				 该表索引为ifIndex"
+			INDEX { ifIndex }
+			::= { hwShdslPortConfTable 1 }
+		
+		HwShdslPortConfEntry ::=
+			SEQUENCE { 
+				hwShdslPortServiceMode
+					INTEGER
+			 }
+
+		hwShdslPortServiceMode OBJECT-TYPE
+			SYNTAX INTEGER{atm(1),tdm(2)}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION			 "
+			端口业务模式，可以get，set操作
+			1为ATM模式，2为TDM模式，系统默认为ATM模式"
+			::= { hwShdslPortConfEntry 1 }
+		
+	
+	END

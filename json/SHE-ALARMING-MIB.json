@@ -1,0 +1,1160 @@
+{
+  "imports": {
+    "class": "imports",
+    "AN-MIB": [
+      "she"
+    ],
+    "SHE-TC-MIB": [
+      "SheControlStatusType"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "Counter64",
+      "Integer32",
+      "Bits",
+      "iso",
+      "Gauge32",
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "NOTIFICATION-TYPE",
+      "IpAddress",
+      "MibIdentifier",
+      "OBJECT-IDENTITY",
+      "Counter32",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TruthValue"
+    ]
+  },
+  "sheAlarming": {
+    "name": "sheAlarming",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2004-10-06 11:09",
+        "description": "First Release"
+      },
+      {
+        "revision": "2004-11-23 11:09",
+        "description": "Correct controlgroup sheAlarmControl. ProfileIndex, AlarmID and Serverity are read/write."
+      },
+      {
+        "revision": "2005-01-07 11:10",
+        "description": "Strip ControlRequestType and ControlRequestResultType. Each of this types should only contain Request's or Result's."
+      },
+      {
+        "revision": "2005-04-21 11:10",
+        "description": "Change syntax for ...ControlTimeStamp."
+      },
+      {
+        "revision": "2006-08-10 11:11",
+        "description": "Add new enum value to ReportingSourceType for l2cp."
+      },
+      {
+        "revision": "2007-03-28 11:11",
+        "description": "Add configuration of alarm history table. Add alarm history table."
+      },
+      {
+        "revision": "2007-04-16 10:30",
+        "description": "Add new value to sheReportingSourceType for SyncSource(11)."
+      },
+      {
+        "revision": "2007-06-11 13:37",
+        "description": "Add timestamp for last overwritten Alarm to sheAlarmHistoryBase (with R2.6 RP2)."
+      }
+    ],
+    "lastupdated": "200706111000Z",
+    "organization": "Nokia Siemens Networks",
+    "contactinfo": "Gerd Barchmann COO BBA DSLAM RD SDE gerd.barchmann@nsn.com +49 3834 555654",
+    "description": "The MIB module representing multiple logical entities for the SHE alarm management. "
+  },
+  "SheReportingSourceType": {
+    "name": "SheReportingSourceType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "physicalEntity": 1,
+          "interface": 2,
+          "vccTp": 3,
+          "vlan": 4,
+          "bridgePort": 5,
+          "erpDomain": 6,
+          "voip": 7,
+          "vccTpShdsl": 8,
+          "vccTpVdsl": 9,
+          "l2cp": 10,
+          "syncSource": 11,
+          "unknown": 20
+        }
+      }
+    },
+    "status": "current",
+    "description": " The type to identify the type of failed component reporting the alarm. "
+  },
+  "SheAlarmSeverityType": {
+    "name": "SheAlarmSeverityType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "critical": 1,
+          "major": 2,
+          "minor": 3,
+          "warning": 4,
+          "cleared": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": " The type for alarm severities. "
+  },
+  "SheAlarmSevProfileIndex": {
+    "name": "SheAlarmSevProfileIndex",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": " The type for the alarm severity profile index. Currently 10 profiles are supported. "
+  },
+  "SheAlarmControlRequestType": {
+    "name": "SheAlarmControlRequestType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "modifyAlarmSeverity": 1,
+          "updateAlarmList": 2,
+          "setAlarmHistoryEnabled": 5,
+          "setAlarmHistoryBase": 6,
+          "clearAlarmHistory": 7
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type for alarm control commands."
+  },
+  "SheAlarmControlRequestResultType": {
+    "name": "SheAlarmControlRequestResultType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "commExecStarted": 30,
+          "paramFaulty": 31,
+          "requestBusy": 32,
+          "setDataFailed": 34,
+          "aswTimeout": 35,
+          "commandFailed": 36,
+          "commandSucceeded": 37
+        }
+      }
+    },
+    "status": "current",
+    "description": "The result type for alarm control commands."
+  },
+  "sheAlarmNotificationObjects": {
+    "name": "sheAlarmNotificationObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.1",
+    "class": "objectidentity"
+  },
+  "sheAlarmTimeAndDate": {
+    "name": "sheAlarmTimeAndDate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " Indicates the time stamp when the alarm notification was sent. "
+  },
+  "sheAlarmReportingSource": {
+    "name": "sheAlarmReportingSource",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " Indicates the failed component which reports the alarm. It is the entPhysicalIndex in case of a card is reporting. "
+  },
+  "sheAlarmReportingSourceType": {
+    "name": "sheAlarmReportingSourceType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheReportingSourceType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " Indicates the type of failed component. It allows to interprete the sheAlarmReportingSource, e.g. in case of type is - physicalEntity then the sheAlarmReportingSource is entPhysicalIndex, - interface the sheAlarmReportingSource is a ifIndex, - vccTp the sheAlarmReportingSource is a VccTp index. "
+  },
+  "sheAlarmSeverity": {
+    "name": "sheAlarmSeverity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSeverityType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The alarm severity. cleared indicates the clearing of alarm. Other values indicate that the alarm is present. "
+  },
+  "sheAlarmConfigurationObjects": {
+    "name": "sheAlarmConfigurationObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2",
+    "class": "objectidentity"
+  },
+  "sheAlarmSeverityProfileTable": {
+    "name": "sheAlarmSeverityProfileTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " The table of alarm severity profiles. SHE supports 10 profiles. Profiles cannot be created or deleted dynamically. Profile 1 is the default profile. Each entry associates a profile index and AlarmID pairs with severities to be used within alarm traps. Alarm severities can be modified by command. "
+  },
+  "sheAlarmSeverityProfileEntry": {
+    "name": "sheAlarmSeverityProfileEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSevProfileIndex",
+        "implied": 0
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSevProfileAlarmID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": " Entry of the alarm severity profile table. "
+  },
+  "sheAlarmSevProfileIndex": {
+    "name": "sheAlarmSevProfileIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSevProfileIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " A number identifying this alarm severity profile. "
+  },
+  "sheAlarmSevProfileAlarmID": {
+    "name": "sheAlarmSevProfileAlarmID",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The OID of alarm. "
+  },
+  "sheAlarmSevProfileSeverity": {
+    "name": "sheAlarmSevProfileSeverity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSeverityType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The severity of alarm. "
+  },
+  "sheAlarmControl": {
+    "name": "sheAlarmControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4",
+    "class": "objectidentity"
+  },
+  "sheAlarmControlRequest": {
+    "name": "sheAlarmControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " This attribute identifies the control commands. modifyAlarmSeverity: modifies the severity of an alarm in specific profile. Profile 1 is the default profile and its severities cannot be modified. updateAlarmList: the NE updates entries of alarms in the sheAlarmTable after having changed alarm severities of alarms (due to change profile pointers in managed entities or after modification of alarm severities in profiles). This command should be applied once after having finished modifications of severties. Notifications : none "
+  },
+  "sheAlarmControlStatus": {
+    "name": "sheAlarmControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The status of a control request. "
+  },
+  "sheAlarmControlSevProfileIndex": {
+    "name": "sheAlarmControlSevProfileIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSevProfileIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " A number identifying this alarm severity profile. "
+  },
+  "sheAlarmControlAlarmID": {
+    "name": "sheAlarmControlAlarmID",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " The OID of alarm. "
+  },
+  "sheAlarmControlSeverity": {
+    "name": "sheAlarmControlSeverity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSeverityType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " The severity of alarm. "
+  },
+  "sheAlarmControlTimer": {
+    "name": "sheAlarmControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The maximum wait time for the manager for command ending. For long running commands. The manager reads this value from the DSLAM. "
+  },
+  "sheAlarmControlReqResult": {
+    "name": "sheAlarmControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The result of the last user command. "
+  },
+  "sheAlarmControlTimeStamp": {
+    "name": "sheAlarmControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.4.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The time stamp of the last command (end of command). "
+  },
+  "sheAlarmListTable": {
+    "name": "sheAlarmListTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " The alarm list table is used to store all reported alarms. "
+  },
+  "sheAlarmListEntry": {
+    "name": "sheAlarmListEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmListIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": " Entry of the alarm lis table. "
+  },
+  "sheAlarmListIndex": {
+    "name": "sheAlarmListIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The index of table. "
+  },
+  "sheAlarmListTimeAndDate": {
+    "name": "sheAlarmListTimeAndDate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The time and date when the alarm notification was sent. "
+  },
+  "sheAlarmListAlarmID": {
+    "name": "sheAlarmListAlarmID",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The OID of alarm. "
+  },
+  "sheAlarmListReportingSource": {
+    "name": "sheAlarmListReportingSource",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The failed component which reports the alarm, e.g. the entPhysicalIndex in case of a card is reporting the alarm. "
+  },
+  "sheAlarmListReportingSourceType": {
+    "name": "sheAlarmListReportingSourceType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheReportingSourceType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The type of failed component. "
+  },
+  "sheAlarmListSeverity": {
+    "name": "sheAlarmListSeverity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSeverityType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The alarm severity of alarm. "
+  },
+  "sheAlarmHistory": {
+    "name": "sheAlarmHistory",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6",
+    "class": "objectidentity"
+  },
+  "sheAlarmHistoryBase": {
+    "name": "sheAlarmHistoryBase",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.1",
+    "class": "objectidentity"
+  },
+  "sheAlarmHistoryEnabled": {
+    "name": "sheAlarmHistoryEnabled",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Enable/ disable alarm history in NE. Default: false"
+  },
+  "sheAlarmHistoryEntryNumber": {
+    "name": "sheAlarmHistoryEntryNumber",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum number of the alarm history entries to keep. Default: 100"
+  },
+  "sheAlarmHistorySeverityLevel": {
+    "name": "sheAlarmHistorySeverityLevel",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSeverityType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This attribute defines the minimum level of alarms which should be stored in alarm history. All alarms of higher priority will also be stored in that case. If set to critical(1) only critical alarms will be stored. If set to warning(4) all alarms will be stored. The level cleared(5) is not a valid configuration! Default: critical(1)"
+  },
+  "sheAlarmHistoryLatestOverwriteTimeAndDate": {
+    "name": "sheAlarmHistoryLatestOverwriteTimeAndDate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If the sheAlarmHistoryTable wrap around, because the configured maximum level was reached, the latest timestamp of the overwritten entrys are stored here for management system recovery. 1.If the overwritten alarm was cleared, the clearing time will be compared with the currently stored value. 2.If the overwritten alarm was not cleared, the arising time will be compared with the currently stored value. 3.The latest timestamp will be stored or maybe the currently stored value will be keeped. "
+  },
+  "sheAlarmHistoryControl": {
+    "name": "sheAlarmHistoryControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2",
+    "class": "objectidentity"
+  },
+  "sheAlarmHistoryControlRequest": {
+    "name": "sheAlarmHistoryControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Alarm history global user commands. setAlarmHistoryEnabled(5): sheAlarmHistoryControlEnabled setAlarmHistoryBase(6): sheAlarmHistoryControlEntryNumber sheAlarmHistoryControlSeverityLevel clearAlarmHistory(7): "
+  },
+  "sheAlarmHistoryControlStatus": {
+    "name": "sheAlarmHistoryControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The status of a control request. "
+  },
+  "sheAlarmHistoryControlTimer": {
+    "name": "sheAlarmHistoryControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for command ending. For long running commands. The manager reads this value from the DSLAM. "
+  },
+  "sheAlarmHistoryControlTimeStamp": {
+    "name": "sheAlarmHistoryControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command). "
+  },
+  "sheAlarmHistoryControlReqResult": {
+    "name": "sheAlarmHistoryControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheAlarmHistoryControlEnabled": {
+    "name": "sheAlarmHistoryControlEnabled",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable/ disable alarm history in NE. "
+  },
+  "sheAlarmHistoryControlEntryNumber": {
+    "name": "sheAlarmHistoryControlEntryNumber",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum number of the alarm history entries to keep."
+  },
+  "sheAlarmHistoryControlSeverityLevel": {
+    "name": "sheAlarmHistoryControlSeverityLevel",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSeverityType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This attribute defines the minimum level of alarms which should be stored in alarm history. All alarms of higher priority will also be stored in that case. If set to critical(1) only critical alarms will be stored. If set to warning(4) all alarms will be stored. The level cleared(5) is not a valid configuration!"
+  },
+  "sheAlarmHistoryNotifications": {
+    "name": "sheAlarmHistoryNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.3",
+    "class": "objectidentity"
+  },
+  "sheAlarmHistoryEnabledChanged": {
+    "name": "sheAlarmHistoryEnabledChanged",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryEnabled"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "Alarm history enabled changed."
+  },
+  "sheAlarmHistoryBaseChanged": {
+    "name": "sheAlarmHistoryBaseChanged",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryEntryNumber"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistorySeverityLevel"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "Alarm history base parameter changed."
+  },
+  "sheAlarmHistoryCleared": {
+    "name": "sheAlarmHistoryCleared",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "Alarm hsitory table cleared."
+  },
+  "sheAlarmHistoryTable": {
+    "name": "sheAlarmHistoryTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The alarm history table is used to store all reported alarms. "
+  },
+  "sheAlarmHistoryEntry": {
+    "name": "sheAlarmHistoryEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entry of the alarm history table."
+  },
+  "sheAlarmHistoryIndex": {
+    "name": "sheAlarmHistoryIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The index of table. The range depends on setting of sheAlarmHistoryEntryNumber."
+  },
+  "sheAlarmHistoryArisalTimeAndDate": {
+    "name": "sheAlarmHistoryArisalTimeAndDate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time and date when the alarm notification was sent. "
+  },
+  "sheAlarmHistoryClearingTimeAndDate": {
+    "name": "sheAlarmHistoryClearingTimeAndDate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time and date when the alarm clearing notification was sent. "
+  },
+  "sheAlarmHistoryAlarmID": {
+    "name": "sheAlarmHistoryAlarmID",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The OID of alarm. "
+  },
+  "sheAlarmHistoryReportingSource": {
+    "name": "sheAlarmHistoryReportingSource",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The failed component which reports the alarm, e.g. the entPhysicalIndex in case of a card is reporting the alarm. "
+  },
+  "sheAlarmHistoryReportingSourceType": {
+    "name": "sheAlarmHistoryReportingSourceType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheReportingSourceType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The type of failed component. "
+  },
+  "sheAlarmHistorySeverity": {
+    "name": "sheAlarmHistorySeverity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.2.6.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheAlarmSeverityType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The alarm severity of alarm. "
+  },
+  "sheAlarmingConformance": {
+    "name": "sheAlarmingConformance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100",
+    "class": "objectidentity"
+  },
+  "sheAlarmingCompliances": {
+    "name": "sheAlarmingCompliances",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100.1",
+    "class": "objectidentity"
+  },
+  "sheAlarmingCompliance": {
+    "name": "sheAlarmingCompliance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "sheAlarmingNotificationGroup",
+        "module": "SHE-ALARMING-MIB"
+      },
+      {
+        "object": "sheAlarmingConfigurationGroup",
+        "module": "SHE-ALARMING-MIB"
+      },
+      {
+        "object": "sheAlarmHistoryGroup",
+        "module": "SHE-ALARMING-MIB"
+      },
+      {
+        "object": "sheAlarmHistoryNotificationGroup",
+        "module": "SHE-ALARMING-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheAlarmingGroups": {
+    "name": "sheAlarmingGroups",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100.2",
+    "class": "objectidentity"
+  },
+  "sheAlarmingNotificationGroup": {
+    "name": "sheAlarmingNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSource"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSourceType"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSeverity"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheAlarmingConfigurationGroup": {
+    "name": "sheAlarmingConfigurationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSevProfileIndex"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSevProfileAlarmID"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSevProfileSeverity"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlRequest"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlStatus"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlSevProfileIndex"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlAlarmID"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlSeverity"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlTimer"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlReqResult"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmControlTimeStamp"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmListIndex"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmListTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmListAlarmID"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmListReportingSource"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmListReportingSourceType"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmListSeverity"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheAlarmHistoryGroup": {
+    "name": "sheAlarmHistoryGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryEnabled"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryEntryNumber"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistorySeverityLevel"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlRequest"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlStatus"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlTimer"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlTimeStamp"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlReqResult"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlEnabled"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlEntryNumber"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryControlSeverityLevel"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryIndex"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryArisalTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryClearingTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryAlarmID"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryReportingSource"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryReportingSourceType"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistorySeverity"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryLatestOverwriteTimeAndDate"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheAlarmHistoryNotificationGroup": {
+    "name": "sheAlarmHistoryNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.3.100.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryEnabledChanged"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryBaseChanged"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmHistoryCleared"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SHE-ALARMING-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:04:24 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SHE-ALARMING-MIB"
+  }
+}

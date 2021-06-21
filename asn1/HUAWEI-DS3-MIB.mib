@@ -1,0 +1,44 @@
+    HUAWEI-DS3-MIB DEFINITIONS ::= BEGIN
+ 
+	IMPORTS
+            Integer32, Unsigned32, Gauge32, OBJECT-TYPE
+		FROM SNMPv2-SMI
+            ds3, dsx3ConfigEntry, dsx3LineIndex, dsx3IfIndex		
+	        FROM DS3-MIB;
+		
+	hwdsx3DsFrameType OBJECT-TYPE
+	    SYNTAX INTEGER
+	    {
+		Adm(1),
+		Plcp(2)
+	    }
+	    MAX-ACCESS read-create
+	    STATUS current
+	    DESCRIPTION
+		"
+		    The S/UNI-JET supports both M23 and C-bit parity DS3 framing 
+                formats. This format can be extended to support direct byte map-
+                -ping or PLCP mapping of ATM cells.
+                
+                Adm ---- M23 Operation:
+                    The C bits are passed through transparently in M23 framer only
+                mode except for the C-bit Parity ID bit which toggles every M fra-
+                -me.
+                    In M23 ATM applications, the C bits other than the Parity ID 
+                bit are forced to logic one.
+                
+                Plcp ---- C-bit Parity Operation:
+                    The C-bit Parity ID bit is forced to logic one. 
+                    The second C-bit in Msubframe 1 is set to logic one. The third 
+                C-bit in M-subframe 1 provides a far-end alarm and control (FEAC) 
+                signal. The FEAC channel is sourced by the XBOC block. The 3 C-bits
+                in Msubframe 3 carry path parity information. The value of these 3 
+                C-bits is the same as that of the P-bits. The 3 C-bits in Msubframe
+                4 are the FEBE bits. The 3 C-bits in M-subframe 5 contain the 28.2 
+                Kbit/s path maintenance datalink. The remaining C-bits are unused 
+                and set to logic one.
+               "
+		 DEFVAL { 1 }
+	::= { dsx3ConfigEntry 65535 }
+
+        END

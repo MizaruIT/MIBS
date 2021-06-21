@@ -1,0 +1,1625 @@
+{
+  "imports": {
+    "class": "imports",
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "Gauge32",
+      "iso",
+      "Counter32",
+      "Integer32",
+      "MODULE-IDENTITY",
+      "Unsigned32",
+      "TimeTicks",
+      "Counter64",
+      "Bits",
+      "MibIdentifier",
+      "OBJECT-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "IpAddress"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "DisplayString"
+    ],
+    "WS-SMI": [
+      "wsSw"
+    ],
+    "WS-TYPE-MIB": [
+      "DoActionNow"
+    ]
+  },
+  "wsSwRadiusModule": {
+    "name": "wsSwRadiusModule",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2008-07-29 13:51",
+        "description": "01a06 Added scalar wsSwRadiusSaveUsers to save Radius User Configuration."
+      },
+      {
+        "revision": "2008-07-09 14:06",
+        "description": "01a05 In wsSwRadiusRateLimitWirelessToWired and wsSwRadiusRateLimitWiredToWireless: - Changed the range from (100..100000) to (0 | 100..100000). - Added kbps as the UNITS. - Modified the DESCRIPTION."
+      },
+      {
+        "revision": "2008-05-29 15:22",
+        "description": "01a04 Changed the range for wsSwRadiusAccessVlanPtrs from 0-4096 to 0-4094."
+      },
+      {
+        "revision": "2008-05-19 10:30",
+        "description": "Added default value for WiredToWireless"
+      },
+      {
+        "revision": "2008-05-16 11:02",
+        "description": "Added wired-to-wireless,wireless-to-wired rate limit columns to AccessTable"
+      },
+      {
+        "revision": "2007-02-08 16:53",
+        "description": "01a01"
+      }
+    ],
+    "lastupdated": "200807291523Z",
+    "organization": "Symbol Technologies, Inc",
+    "contactinfo": "Symbol Technologies, Inc. Customer Service Postal: One Symbol Plaza Holtsville, NY 11742-1300 USA Tel: +1. 631.738.6213 E-mail: support@symbol.com Web: http://www.symbol.com/support",
+    "description": "MIB for Radius Services"
+  },
+  "AbbrevRowStatus": {
+    "name": "AbbrevRowStatus",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "createAndGo": 4,
+          "destroy": 6
+        }
+      }
+    }
+  },
+  "Password": {
+    "name": "Password",
+    "class": "type",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type"
+    }
+  },
+  "wsSwRadius": {
+    "name": "wsSwRadius",
+    "oid": "1.3.6.1.4.1.388.14.2.13",
+    "class": "objectidentity"
+  },
+  "wsSwRadiusGlobal": {
+    "name": "wsSwRadiusGlobal",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1",
+    "class": "objectidentity"
+  },
+  "wsSwRadiusSaveStatus": {
+    "name": "wsSwRadiusSaveStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "save": 1,
+          "idle": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Save the configuration info for the radius server. This OID should only be used to set and the only valid value for set is save(1). Get on this OID will always return idle(2)"
+  },
+  "wsSwRadiusServerEnable": {
+    "name": "wsSwRadiusServerEnable",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enable": 0,
+          "disable": 1
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable(0) or disable(1) the radius server."
+  },
+  "wsSwRadiusCATrustPoint": {
+    "name": "wsSwRadiusCATrustPoint",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "CA certificate trustpoint. Setting this OID with blank string( zero length string ) removes the configured trustpoint"
+  },
+  "wsSwRadiusServerTrustPoint": {
+    "name": "wsSwRadiusServerTrustPoint",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Server certificate trustpoint. Setting this OID with blank string( zero length string ) removes the configured trustpoint"
+  },
+  "wsSwRadiusAuthType": {
+    "name": "wsSwRadiusAuthType",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "tls": 0,
+          "ttlsAndMd5": 1,
+          "ttlsAndPap": 2,
+          "ttlsAndMschapV2": 3,
+          "peapAndGtc": 4,
+          "peapAndMschapV2": 5,
+          "all": 6
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Radius authentication type"
+  },
+  "wsSwRadiusDataSource": {
+    "name": "wsSwRadiusDataSource",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "local": 1,
+          "ldap": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Radius datasource which can be local or ldap"
+  },
+  "wsSwRadiusProxyRetryCount": {
+    "name": "wsSwRadiusProxyRetryCount",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 3,
+            "max": 6
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Number of retries for sending messages to a proxy"
+  },
+  "wsSwRadiusProxyTimeout": {
+    "name": "wsSwRadiusProxyTimeout",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 5,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Timeout in seconds before retrying to a proxy"
+  },
+  "wsSwRadiusCRL": {
+    "name": "wsSwRadiusCRL",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 0,
+          "enable": 1
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusLdapGroupVerification": {
+    "name": "wsSwRadiusLdapGroupVerification",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set the ldap group search configuration."
+  },
+  "wsSwRadiusSaveUsers": {
+    "name": "wsSwRadiusSaveUsers",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.1.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DoActionNow",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Save Radius User Configuration."
+  },
+  "wsSwRadiusLdapTable": {
+    "name": "wsSwRadiusLdapTable",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table can have only 2 rows. One for primary ldap server and other for secondary ldap server."
+  },
+  "wsSwRadiusLdapEntry": {
+    "name": "wsSwRadiusLdapEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapServerType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusLdapServerType": {
+    "name": "wsSwRadiusLdapServerType",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "primary": 1,
+          "secondary": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Primary or secondary ldap server"
+  },
+  "wsSwRadiusLdapServerIp": {
+    "name": "wsSwRadiusLdapServerIp",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "IP Address of ldap server. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapServerPort": {
+    "name": "wsSwRadiusLdapServerPort",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Port of LDAP server. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapLoginAttribute": {
+    "name": "wsSwRadiusLdapLoginAttribute",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Ldap Login. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapPasswordAttribute": {
+    "name": "wsSwRadiusLdapPasswordAttribute",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Ldap Password. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapBindDistinguishedName": {
+    "name": "wsSwRadiusLdapBindDistinguishedName",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Bind Distinguished Name. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapBindDistinguishedPassword": {
+    "name": "wsSwRadiusLdapBindDistinguishedPassword",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Bind distinguished password. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapBaseDistinguishedName": {
+    "name": "wsSwRadiusLdapBaseDistinguishedName",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Base distinguished password. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapGroupAttribute": {
+    "name": "wsSwRadiusLdapGroupAttribute",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Group Attribute. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapGroupFilter": {
+    "name": "wsSwRadiusLdapGroupFilter",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Group Filter. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapGroupMembershipAttribute": {
+    "name": "wsSwRadiusLdapGroupMembershipAttribute",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Membership Attribute. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusLdapNetTimeout": {
+    "name": "wsSwRadiusLdapNetTimeout",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Timeout value in the range of 1 to 10. If the user does not enter any value or if the value entered is 0, then the default value for net timeout will be used. The default value for net timeout is 1."
+  },
+  "wsSwRadiusLdapRowStatus": {
+    "name": "wsSwRadiusLdapRowStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AbbrevRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Row Status for LDAP table."
+  },
+  "wsSwRadiusUsersTable": {
+    "name": "wsSwRadiusUsersTable",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusUsersEntry": {
+    "name": "wsSwRadiusUsersEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusUsersId": {
+    "name": "wsSwRadiusUsersId",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This OID is used to add a user. The user name can not be greater 64 characters"
+  },
+  "wsSwRadiusUsersPassword": {
+    "name": "wsSwRadiusUsersPassword",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Radius user password"
+  },
+  "wsSwRadiusUsersIfGuestUser": {
+    "name": "wsSwRadiusUsersIfGuestUser",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Whether the user is guest user or not."
+  },
+  "wsSwRadiusUsersGroups": {
+    "name": "wsSwRadiusUsersGroups",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "g8": 0,
+        "g7": 1,
+        "g6": 2,
+        "g5": 3,
+        "g4": 4,
+        "g3": 5,
+        "g2": 6,
+        "g1": 7,
+        "g16": 8,
+        "g15": 9,
+        "g14": 10,
+        "g13": 11,
+        "g12": 12,
+        "g11": 13,
+        "g10": 14,
+        "g9": 15,
+        "g24": 16,
+        "g23": 17,
+        "g22": 18,
+        "g21": 19,
+        "g20": 20,
+        "g19": 21,
+        "g18": 22,
+        "g17": 23,
+        "g32": 24,
+        "g31": 25,
+        "g30": 26,
+        "g29": 27,
+        "g28": 28,
+        "g27": 29,
+        "g26": 30,
+        "g25": 31,
+        "g40": 32,
+        "g39": 33,
+        "g38": 34,
+        "g37": 35,
+        "g36": 36,
+        "g35": 37,
+        "g34": 38,
+        "g33": 39,
+        "g48": 40,
+        "g47": 41,
+        "g46": 42,
+        "g45": 43,
+        "g44": 44,
+        "g43": 45,
+        "g42": 46,
+        "g41": 47,
+        "g56": 48,
+        "g55": 49,
+        "g54": 50,
+        "g53": 51,
+        "g52": 52,
+        "g51": 53,
+        "g50": 54,
+        "g49": 55,
+        "g64": 56,
+        "g63": 57,
+        "g62": 58,
+        "g61": 59,
+        "g60": 60,
+        "g59": 61,
+        "g58": 62,
+        "g57": 63,
+        "g72": 64,
+        "g71": 65,
+        "g70": 66,
+        "g69": 67,
+        "g68": 68,
+        "g67": 69,
+        "g66": 70,
+        "g65": 71,
+        "g80": 72,
+        "g79": 73,
+        "g78": 74,
+        "g77": 75,
+        "g76": 76,
+        "g75": 77,
+        "g74": 78,
+        "g73": 79,
+        "g88": 80,
+        "g87": 81,
+        "g86": 82,
+        "g85": 83,
+        "g84": 84,
+        "g83": 85,
+        "g82": 86,
+        "g81": 87,
+        "g96": 88,
+        "g95": 89,
+        "g94": 90,
+        "g93": 91,
+        "g92": 92,
+        "g91": 93,
+        "g90": 94,
+        "g89": 95,
+        "null": 96,
+        "unused1": 97,
+        "unused2": 98,
+        "unused3": 99,
+        "g100": 100,
+        "g99": 101,
+        "g98": 102
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "List of groups to which the user belongs. The g1, g2 ... in the list indicate the group numbers 1, 2 ...The group number to group name mapping can be found in wsSwRadiusGroupsTable table."
+  },
+  "wsSwRadiusUsersExpiryDateAndTime": {
+    "name": "wsSwRadiusUsersExpiryDateAndTime",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Expiry date and time should be of the format MM:DD:YYYY-HH:MM "
+  },
+  "wsSwRadiusUsersRowStatus": {
+    "name": "wsSwRadiusUsersRowStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AbbrevRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Row status of wsSwRadiusUsersTable"
+  },
+  "wsSwRadiusUsersStartDateAndTime": {
+    "name": "wsSwRadiusUsersStartDateAndTime",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Expiry date and time should be of the format MM:DD:YYYY-HH:MM "
+  },
+  "wsSwRadiusGroupsTable": {
+    "name": "wsSwRadiusGroupsTable",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusGroupsEntry": {
+    "name": "wsSwRadiusGroupsEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusGroupName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusGroupName": {
+    "name": "wsSwRadiusGroupName",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Name of the group"
+  },
+  "wsSwRadiusGroupNum": {
+    "name": "wsSwRadiusGroupNum",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A group number corresponding to group. g1, g2 ... are identifiers used while associating users to groups. The value g1 indicates group with group number 1, the value g2 indicates group with group number 2 and so on."
+  },
+  "wsSwRadiusIfGuestGroup": {
+    "name": "wsSwRadiusIfGuestGroup",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "whether this group is guest group or not."
+  },
+  "wsSwRadiusGroupRowStatus": {
+    "name": "wsSwRadiusGroupRowStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AbbrevRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Row status of wsSwRadiusGroupsTable"
+  },
+  "wsSwRadiusClientAuthTable": {
+    "name": "wsSwRadiusClientAuthTable",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusClientAuthEntry": {
+    "name": "wsSwRadiusClientAuthEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusClientAuthIpAndMask",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusClientAuthIpAndMask": {
+    "name": "wsSwRadiusClientAuthIpAndMask",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The client IP address with subnet mask"
+  },
+  "wsSwRadiusClientAuthSharedSecret": {
+    "name": "wsSwRadiusClientAuthSharedSecret",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Shared secret between the client and the radius server. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusClientAuthRowStatus": {
+    "name": "wsSwRadiusClientAuthRowStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AbbrevRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Row status of Client Auth Table."
+  },
+  "wsSwRadiusAccessTable": {
+    "name": "wsSwRadiusAccessTable",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusAccessEntry": {
+    "name": "wsSwRadiusAccessEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusAccessGroupId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusAccessGroupId": {
+    "name": "wsSwRadiusAccessGroupId",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Displays the GroupId for which coressponding WLAN mapping is being dispalyed."
+  },
+  "wsSwRadiusAccessVlanPtrs": {
+    "name": "wsSwRadiusAccessVlanPtrs",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4094
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Vlan with which the group is associated. Values 1 to 4094 indicate the configured vlans. Value 0 indicates that No VLAN is configured."
+  },
+  "wsSwRadiusTimeofAccessStart": {
+    "name": "wsSwRadiusTimeofAccessStart",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Radius Access Policy Start time. Format is HHMM"
+  },
+  "wsSwRadiusTimeofAccessEnd": {
+    "name": "wsSwRadiusTimeofAccessEnd",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Radius Access Policy End time. Format is HHMM"
+  },
+  "wsSwRadiusTimeofAccessDays": {
+    "name": "wsSwRadiusTimeofAccessDays",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "unused": 0,
+        "sunday": 1,
+        "saturday": 2,
+        "friday": 3,
+        "thursday": 4,
+        "wednesday": 5,
+        "tuesday": 6,
+        "monday": 7
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Radius Time Restriction in Days."
+  },
+  "wsSwRadiusAccessWlanPtrs": {
+    "name": "wsSwRadiusAccessWlanPtrs",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "wlan8": 0,
+        "wlan7": 1,
+        "wlan6": 2,
+        "wlan5": 3,
+        "wlan4": 4,
+        "wlan3": 5,
+        "wlan2": 6,
+        "wlan1": 7,
+        "wlan16": 8,
+        "wlan15": 9,
+        "wlan14": 10,
+        "wlan13": 11,
+        "wlan12": 12,
+        "wlan11": 13,
+        "wlan10": 14,
+        "wlan9": 15,
+        "wlan24": 16,
+        "wlan23": 17,
+        "wlan22": 18,
+        "wlan21": 19,
+        "wlan20": 20,
+        "wlan19": 21,
+        "wlan18": 22,
+        "wlan17": 23,
+        "wlan32": 24,
+        "wlan31": 25,
+        "wlan30": 26,
+        "wlan29": 27,
+        "wlan28": 28,
+        "wlan27": 29,
+        "wlan26": 30,
+        "wlan25": 31,
+        "wlan40": 32,
+        "wlan39": 33,
+        "wlan38": 34,
+        "wlan37": 35,
+        "wlan36": 36,
+        "wlan35": 37,
+        "wlan34": 38,
+        "wlan33": 39,
+        "wlan48": 40,
+        "wlan47": 41,
+        "wlan46": 42,
+        "wlan45": 43,
+        "wlan44": 44,
+        "wlan43": 45,
+        "wlan42": 46,
+        "wlan41": 47,
+        "wlan56": 48,
+        "wlan55": 49,
+        "wlan54": 50,
+        "wlan53": 51,
+        "wlan52": 52,
+        "wlan51": 53,
+        "wlan50": 54,
+        "wlan49": 55,
+        "wlan64": 56,
+        "wlan63": 57,
+        "wlan62": 58,
+        "wlan61": 59,
+        "wlan60": 60,
+        "wlan59": 61,
+        "wlan58": 62,
+        "wlan57": 63,
+        "wlan72": 64,
+        "wlan71": 65,
+        "wlan70": 66,
+        "wlan69": 67,
+        "wlan68": 68,
+        "wlan67": 69,
+        "wlan66": 70,
+        "wlan65": 71,
+        "wlan80": 72,
+        "wlan79": 73,
+        "wlan78": 74,
+        "wlan77": 75,
+        "wlan76": 76,
+        "wlan75": 77,
+        "wlan74": 78,
+        "wlan73": 79,
+        "wlan88": 80,
+        "wlan87": 81,
+        "wlan86": 82,
+        "wlan85": 83,
+        "wlan84": 84,
+        "wlan83": 85,
+        "wlan82": 86,
+        "wlan81": 87,
+        "wlan96": 88,
+        "wlan95": 89,
+        "wlan94": 90,
+        "wlan93": 91,
+        "wlan92": 92,
+        "wlan91": 93,
+        "wlan90": 94,
+        "wlan89": 95,
+        "wlan104": 96,
+        "wlan103": 97,
+        "wlan102": 98,
+        "wlan101": 99,
+        "wlan100": 100,
+        "wlan99": 101,
+        "wlan98": 102,
+        "wlan97": 103,
+        "wlan112": 104,
+        "wlan111": 105,
+        "wlan110": 106,
+        "wlan109": 107,
+        "wlan108": 108,
+        "wlan107": 109,
+        "wlan106": 110,
+        "wlan105": 111,
+        "wlan120": 112,
+        "wlan119": 113,
+        "wlan118": 114,
+        "wlan117": 115,
+        "wlan116": 116,
+        "wlan115": 117,
+        "wlan114": 118,
+        "wlan113": 119,
+        "wlan128": 120,
+        "wlan127": 121,
+        "wlan126": 122,
+        "wlan125": 123,
+        "wlan124": 124,
+        "wlan123": 125,
+        "wlan122": 126,
+        "wlan121": 127,
+        "wlan136": 128,
+        "wlan135": 129,
+        "wlan134": 130,
+        "wlan133": 131,
+        "wlan132": 132,
+        "wlan131": 133,
+        "wlan130": 134,
+        "wlan129": 135,
+        "wlan144": 136,
+        "wlan143": 137,
+        "wlan142": 138,
+        "wlan141": 139,
+        "wlan140": 140,
+        "wlan139": 141,
+        "wlan138": 142,
+        "wlan137": 143,
+        "wlan152": 144,
+        "wlan151": 145,
+        "wlan150": 146,
+        "wlan149": 147,
+        "wlan148": 148,
+        "wlan147": 149,
+        "wlan146": 150,
+        "wlan145": 151,
+        "wlan160": 152,
+        "wlan159": 153,
+        "wlan158": 154,
+        "wlan157": 155,
+        "wlan156": 156,
+        "wlan155": 157,
+        "wlan154": 158,
+        "wlan153": 159,
+        "wlan168": 160,
+        "wlan167": 161,
+        "wlan166": 162,
+        "wlan165": 163,
+        "wlan164": 164,
+        "wlan163": 165,
+        "wlan162": 166,
+        "wlan161": 167,
+        "wlan176": 168,
+        "wlan175": 169,
+        "wlan174": 170,
+        "wlan173": 171,
+        "wlan172": 172,
+        "wlan171": 173,
+        "wlan170": 174,
+        "wlan169": 175,
+        "wlan184": 176,
+        "wlan183": 177,
+        "wlan182": 178,
+        "wlan181": 179,
+        "wlan180": 180,
+        "wlan179": 181,
+        "wlan178": 182,
+        "wlan177": 183,
+        "wlan192": 184,
+        "wlan191": 185,
+        "wlan190": 186,
+        "wlan189": 187,
+        "wlan188": 188,
+        "wlan187": 189,
+        "wlan186": 190,
+        "wlan185": 191,
+        "wlan200": 192,
+        "wlan199": 193,
+        "wlan198": 194,
+        "wlan197": 195,
+        "wlan196": 196,
+        "wlan195": 197,
+        "wlan194": 198,
+        "wlan193": 199,
+        "wlan208": 200,
+        "wlan207": 201,
+        "wlan206": 202,
+        "wlan205": 203,
+        "wlan204": 204,
+        "wlan203": 205,
+        "wlan202": 206,
+        "wlan201": 207,
+        "wlan216": 208,
+        "wlan215": 209,
+        "wlan214": 210,
+        "wlan213": 211,
+        "wlan212": 212,
+        "wlan211": 213,
+        "wlan210": 214,
+        "wlan209": 215,
+        "wlan224": 216,
+        "wlan223": 217,
+        "wlan222": 218,
+        "wlan221": 219,
+        "wlan220": 220,
+        "wlan219": 221,
+        "wlan218": 222,
+        "wlan217": 223,
+        "wlan232": 224,
+        "wlan231": 225,
+        "wlan230": 226,
+        "wlan229": 227,
+        "wlan228": 228,
+        "wlan227": 229,
+        "wlan226": 230,
+        "wlan225": 231,
+        "wlan240": 232,
+        "wlan239": 233,
+        "wlan238": 234,
+        "wlan237": 235,
+        "wlan236": 236,
+        "wlan235": 237,
+        "wlan234": 238,
+        "wlan233": 239,
+        "wlan248": 240,
+        "wlan247": 241,
+        "wlan246": 242,
+        "wlan245": 243,
+        "wlan244": 244,
+        "wlan243": 245,
+        "wlan242": 246,
+        "wlan241": 247,
+        "wlan256": 248,
+        "wlan255": 249,
+        "wlan254": 250,
+        "wlan253": 251,
+        "wlan252": 252,
+        "wlan251": 253,
+        "wlan250": 254,
+        "wlan249": 255
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "List of Wlans to which the current group is associated. "
+  },
+  "wsSwRadiusRateLimitWirelessToWired": {
+    "name": "wsSwRadiusRateLimitWirelessToWired",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 100,
+            "max": 100000
+          }
+        ]
+      }
+    },
+    "units": "kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Wireless-To-Wired rate limit(UpLink). The rate is in the range of <100-100000> kbps. The value 0 means that rate limiting is disabled."
+  },
+  "wsSwRadiusRateLimitWiredToWireless": {
+    "name": "wsSwRadiusRateLimitWiredToWireless",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 100,
+            "max": 100000
+          }
+        ]
+      }
+    },
+    "units": "kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Wired-To-Wireless(DownLink) rate limit. The rate is in the range of <100-100000> kbps. The value 0 means that rate limiting is disabled."
+  },
+  "wsSwRadiusProxyServerTable": {
+    "name": "wsSwRadiusProxyServerTable",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusProxyServerEntry": {
+    "name": "wsSwRadiusProxyServerEntry",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyServerRealm",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "wsSwRadiusProxyServerRealm": {
+    "name": "wsSwRadiusProxyServerRealm",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Realm of proxy server."
+  },
+  "wsSwRadiusProxyServerIp": {
+    "name": "wsSwRadiusProxyServerIp",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "IP address of the proxy server. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusProxyServerPort": {
+    "name": "wsSwRadiusProxyServerPort",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.9.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Port of proxy server. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusProxyServerSharedSecret": {
+    "name": "wsSwRadiusProxyServerSharedSecret",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.9.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Shared secret between radius server and proxy server. The value for this OID can be set only while creating the row and cannot be modified later."
+  },
+  "wsSwRadiusProxyServerRowStatus": {
+    "name": "wsSwRadiusProxyServerRowStatus",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.9.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AbbrevRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Row status of wsSwRadiusProxyServerTable"
+  },
+  "wsSwRadiusObjectGroup": {
+    "name": "wsSwRadiusObjectGroup",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.10",
+    "class": "objectidentity"
+  },
+  "wsSwRadiusObjectGroupAll": {
+    "name": "wsSwRadiusObjectGroupAll",
+    "oid": "1.3.6.1.4.1.388.14.2.13.1.10.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusDataSource"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusServerTrustPoint"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusCATrustPoint"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusClientAuthSharedSecret"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusClientAuthRowStatus"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusServerEnable"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusSaveStatus"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyRetryCount"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyTimeout"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyServerIp"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyServerPort"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyServerSharedSecret"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyServerRowStatus"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusGroupRowStatus"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersId"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersPassword"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersGroups"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersRowStatus"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusAccessGroupId"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusAccessWlanPtrs"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusIfGuestGroup"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersIfGuestUser"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusAuthType"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapServerIp"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapServerType"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapServerPort"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapLoginAttribute"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapBindDistinguishedName"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapPasswordAttribute"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapBaseDistinguishedName"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapBindDistinguishedPassword"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapGroupFilter"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapGroupAttribute"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusProxyServerRealm"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusAccessVlanPtrs"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusGroupNum"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusClientAuthIpAndMask"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusGroupName"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapRowStatus"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapGroupMembershipAttribute"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersExpiryDateAndTime"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusTimeofAccessDays"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapNetTimeout"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusCRL"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusUsersStartDateAndTime"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusRateLimitWiredToWireless"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusRateLimitWirelessToWired"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusLdapGroupVerification"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusTimeofAccessEnd"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusTimeofAccessStart"
+      },
+      {
+        "module": "WS-SW-RADIUS-MIB",
+        "object": "wsSwRadiusSaveUsers"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/WS-SW-RADIUS-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:14:05 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "WS-SW-RADIUS-MIB"
+  }
+}

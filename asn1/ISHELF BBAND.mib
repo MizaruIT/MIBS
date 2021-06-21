@@ -1,0 +1,4963 @@
+ISHELF-BBAND-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY,
+    Unsigned32,
+    IpAddress
+        FROM SNMPv2-SMI
+
+    RowStatus,
+    TruthValue,
+    MacAddress
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfBroadBand,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfCircuit,
+    IShelfCardType,
+    IShelfLabel,
+    IShelfBroadbandLabel,
+    IShelfLcpDsRate,
+    IShelfLcpIndex,
+    IShelfLcpPointer,
+    IShelfLcpUsRate,
+    IShelfLcpSnr,
+    IShelfLocation,
+    IShelfScpQos,
+    IShelfScpDsBandwidth,
+    IShelfScpUsBandwidth,
+    IShelfScpIndex,
+    IShelfScpPointer,
+    IShelfScpCLPC,
+    IShelfScpCellRate,
+    IShelfScpMBS,
+    IShelfScpCDVT,
+    IShelfSppIndex,
+    IShelfSppFacilityType,
+    IShelfSppPointer,
+    IShelfVci,
+    IShelfVpi,
+    IShelfAdminState,
+    IShelfEthernetPortMode,
+    IShelfVlanListPointer,
+    IShelfOltSdvPackagePointer,
+    IShelfOperState,
+    IShelfBroadbandNextIndex,
+    IShelfSppContentType,
+    IShelfATMCCType,
+    IShelfImaMode,
+    IShelfLASubType,
+    IShelfVlanPortProfilePointer,
+    IShelfSppOltSARPort
+        FROM ISHELF-TC
+    ;
+
+iShelfBroadBandMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION
+        "The MIB module for managing the BroadBand Services provisioning."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 9 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSppTable - Broadband Service Provider Profile
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR spp
+-- %CLISHOWGROUP spp
+iShelfBroadBandSppTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSppEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table identifies the list of configured Service Provider
+         Profiles in the system.  This read-only table is auto-created/deleted
+         when rows are added/deleted from the specific SPP tables that follow.
+         The FacilityType field will indicate which of the specific SPP tables
+         a given row will be found in."
+    ::= { iShelfBroadBand 1 }
+
+iShelfBroadBandSppEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSppEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfBroadBandSppIndex }
+    ::= { iShelfBroadBandSppTable 1 }
+
+IShelfBroadBandSppEntry ::=
+    SEQUENCE {
+        iShelfBroadBandSppIndex
+            IShelfSppIndex,
+        iShelfBroadBandSppFacilityType
+            IShelfSppFacilityType,
+        iShelfBroadBandSppLocation
+            IShelfLocation,
+        iShelfBroadBandSppCircuit
+            IShelfCircuit
+    }
+
+-- %CLISHOWGROUP spp
+-- %CLICOLLABEL Idx
+iShelfBroadBandSppIndex OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This identifies the SPP."
+    ::= { iShelfBroadBandSppEntry 1 }
+
+-- %CLISHOWGROUP spp
+-- %CLICOLLABEL Type
+iShelfBroadBandSppFacilityType OBJECT-TYPE
+    SYNTAX      IShelfSppFacilityType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The type of facilities used by the service provider."
+    ::= { iShelfBroadBandSppEntry 2 }
+
+-- %CLISHOWGROUP spp
+-- %CLICOLLABEL Location
+iShelfBroadBandSppLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The base location of the SPP.
+         This object must be consistent with the facility type object.
+         For DS1 Facilities this is the Ethernet card location.
+         For DS1-IMA Facilities this is the B3 card location.
+         For Sonet Facilities this is the OC-3, OC-12 or OC-48 card location.
+         For Ethernet Facilities this is the Ethernet card location.
+         For GigEthernet Facilities this is the GigEthernet card location.
+         For OltGigEthernet Facilities this is the OLT card location."
+    ::= { iShelfBroadBandSppEntry 3 }
+
+-- %CLISHOWGROUP spp
+-- %CLICOLLABEL Circuit
+iShelfBroadBandSppCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The base circuit for the SPP."
+    ::= { iShelfBroadBandSppEntry 4 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSppDs1Table - Broadband SPP for DS1 Facility
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR ds1spp
+-- %CLISHOWGROUP ds1spp
+iShelfBroadBandSppDs1Table OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSppDs1Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Definition of a DS1 SPP."
+    ::= { iShelfBroadBand 2 }
+
+iShelfBroadBandSppDs1Entry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSppDs1Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry is a separate DS1 SPP uplink."
+    INDEX       { iShelfBroadBandSppDs1Index }
+    ::= { iShelfBroadBandSppDs1Table 1 }
+
+IShelfBroadBandSppDs1Entry ::=
+    SEQUENCE {
+        iShelfBroadBandSppDs1Index
+            IShelfSppIndex,
+        iShelfBroadBandSppDs1TcLocation
+            IShelfLocation,
+        iShelfBroadBandSppDs1TcCircuit
+            IShelfCircuit,
+        iShelfBroadBandSppDs1Ds1Location
+            IShelfLocation,
+        iShelfBroadBandSppDs1Ds1Circuit
+            IShelfCircuit,
+        iShelfBroadBandSppDs1Label
+            IShelfBroadbandLabel,
+        iShelfBroadBandSppDs1PrimaryVpi
+            IShelfVpi,
+--        iShelfBroadBandSppDs1ContentType
+--	    IShelfSppContentType,
+        iShelfBroadBandSppDs1RowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ds1spp.1
+-- %CLISHOWGROUP ds1spp.2
+-- %CLICOLLABEL Idx
+iShelfBroadBandSppDs1Index OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Simple index for the DS1 SPP."
+    ::= { iShelfBroadBandSppDs1Entry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds1spp.2
+-- %CLICMDABBR TcLoc
+-- %CLICOLLABEL TcLoc
+iShelfBroadBandSppDs1TcLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the B3 card that is providing the bridge between
+         the cell bus and the TDM bus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1Entry 2 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds1spp.2
+-- %CLICMDABBR TcCkt
+-- %CLICOLLABEL TcCkt
+iShelfBroadBandSppDs1TcCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit providing the bridge between the cell bus
+         and the TDM bus."
+    ::= { iShelfBroadBandSppDs1Entry 3 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds1spp.1
+-- %CLICMDABBR DS1Loc
+-- %CLICOLLABEL DS1Loc
+iShelfBroadBandSppDs1Ds1Location OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The location of the T1 card providing the DS1 uplink."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1Entry 4 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds1spp.1
+-- %CLICMDABBR DS1Ckt
+-- %CLICOLLABEL DS1Ckt
+iShelfBroadBandSppDs1Ds1Circuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The DS1 circuit that is the uplink."
+    ::= { iShelfBroadBandSppDs1Entry 5 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds1spp.2
+-- %CLICMDABBR Label
+-- %CLICOLLABEL Label
+iShelfBroadBandSppDs1Label OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name of the DS1 SPP.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs1Entry 6 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds1spp.1
+-- %CLICMDABBR PriVPI
+-- %CLICOLLABEL PriVPI
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1PrimaryVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The primary VPI used for the VCs.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs1Entry 7 }
+    
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds1spp.1
+-- %CLIWIDTH 7
+-- iShelfBroadBandSppDs1ContentType OBJECT-TYPE
+--     SYNTAX      IShelfSppContentType
+--     MAX-ACCESS  read-create
+--     STATUS      current
+--     DESCRIPTION
+--         "The SPP content type.
+--          NOTE:  this object can only be modified with a non-active rowStatus."
+--     DEFVAL	{ both }
+--     ::= { iShelfBroadBandSppDs1Entry 8 }
+
+-- %CLISHOWGROUP ds1spp.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandSppDs1RowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandSppDs1Entry 8 }
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSppDs1ImaTable - Broadband SPP for DS1-IMA Facility
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR imaspp
+-- %CLISHOWGROUP imaspp
+iShelfBroadBandSppDs1ImaTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSppDs1ImaEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Definition of a DS1-IMA SPP."
+    ::= { iShelfBroadBand 3 }
+
+iShelfBroadBandSppDs1ImaEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSppDs1ImaEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry is a separate DS1-IMA SPP uplink."
+    INDEX       { iShelfBroadBandSppDs1ImaIndex }
+    ::= { iShelfBroadBandSppDs1ImaTable 1 }
+
+IShelfBroadBandSppDs1ImaEntry ::=
+    SEQUENCE {
+        iShelfBroadBandSppDs1ImaIndex
+            IShelfSppIndex,
+        iShelfBroadBandSppDs1ImaPrimaryVpi
+            IShelfVpi,
+        iShelfBroadBandSppDs1ImaB3Location
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaB3Circuit
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaNumDs1s
+            INTEGER,
+        iShelfBroadBandSppDs1ImaDs1Location1
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit1
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaDs1Location2
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit2
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaDs1Location3
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit3
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaDs1Location4
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit4
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaDs1Location5
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit5
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaDs1Location6
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit6
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaDs1Location7
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit7
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaDs1Location8
+            IShelfLocation,
+        iShelfBroadBandSppDs1ImaCircuit8
+            IShelfCircuit,
+        iShelfBroadBandSppDs1ImaLabel
+            IShelfBroadbandLabel,
+        iShelfBroadBandSppDs1ImaMode
+            IShelfImaMode,
+        iShelfBroadBandSppDs1ImaMaxDifferentialDelay
+            INTEGER,
+        iShelfBroadBandSppDs1ImaNumDs1s
+            INTEGER,
+--    	iShelfBroadBandSppDs1ImaContentType
+--	    IShelfSppContentType,
+        iShelfBroadBandSppDs1ImaRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP imaspp.1
+-- %CLISHOWGROUP imaspp.2
+-- %CLISHOWGROUP imaspp.3
+-- %CLISHOWGROUP imaspp.4
+-- %CLICOLLABEL Idx
+iShelfBroadBandSppDs1ImaIndex OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Simple index for the DS1-IMA SPP."
+    ::= { iShelfBroadBandSppDs1ImaEntry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.2
+-- %CLICMDABBR PriVPI
+-- %CLICOLLABEL PriVPI
+iShelfBroadBandSppDs1ImaPrimaryVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The primary VPI used for the VCs.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs1ImaEntry 2 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.1
+-- %CLICMDABBR B3Loc
+-- %CLICOLLABEL B3Loc
+iShelfBroadBandSppDs1ImaB3Location OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the B3 card that is providing the bridge between
+         the cell bus and the TDM bus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 3 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.1
+-- %CLICMDABBR B3Ckt
+-- %CLICOLLABEL B3Ckt
+iShelfBroadBandSppDs1ImaB3Circuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The circuit providing the bridge between the cell bus and the TDM bus."
+    ::= { iShelfBroadBandSppDs1ImaEntry 4 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP imaspp.2
+-- %CLICMDABBR NumDS1s
+-- %CLICOLLABEL NumDS1s
+iShelfBroadBandSppDs1ImaNumDs1s OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The number of DS1s in this DS1-IMA group.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 5 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.1
+-- %CLICMDABBR Ds1Loc1
+-- %CLICOLLABEL Ds1Loc1
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location1 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 1st DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 6 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.1
+-- %CLICMDABBR Ds1Ckt1
+-- %CLICOLLABEL Ds1Ckt1
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit1 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 1st DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 7 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Loc2
+-- %CLICOLLABEL Ds1Loc2
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location2 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 2nd DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 8 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Ckt2
+-- %CLICOLLABEL Ds1Ckt2
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit2 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 2nd DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 9 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Loc3
+-- %CLICOLLABEL Ds1Loc3
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location3 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 3rd DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 10 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Ckt3
+-- %CLICOLLABEL Ds1Ckt3
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit3 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 3rd DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 11 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Loc4
+-- %CLICOLLABEL Ds1Loc4
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location4 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 4th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 12 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Ckt4
+-- %CLICOLLABEL Ds1Ckt4
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit4 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 4th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 13 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Loc5
+-- %CLICOLLABEL Ds1Loc5
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location5 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 5th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 14 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.3
+-- %CLICMDABBR Ds1Ckt5
+-- %CLICOLLABEL Ds1Ckt5
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit5 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 5th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 15 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.4
+-- %CLICMDABBR Ds1Loc6
+-- %CLICOLLABEL Ds1Loc6
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location6 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 6th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 16 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.4
+-- %CLICMDABBR Ds1Ckt6
+-- %CLICOLLABEL Ds1Ckt6
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit6 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 6th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 17 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.4
+-- %CLICMDABBR Ds1Loc7
+-- %CLICOLLABEL Ds1Loc7
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location7 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 7th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 18 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.4
+-- %CLICMDABBR Ds1Ckt7
+-- %CLICOLLABEL Ds1Ckt7
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit7 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 7th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 19 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.4
+-- %CLICMDABBR Ds1Loc8
+-- %CLICOLLABEL Ds1Loc8
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaDs1Location8 OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The location of the 8th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 20 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.4
+-- %CLICMDABBR Ds1Ckt8
+-- %CLICOLLABEL Ds1Ckt8
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSppDs1ImaCircuit8 OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The circuit of the 8th DS1-IMA uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 21 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.2
+-- %CLICMDABBR Label
+-- %CLICOLLABEL Label
+iShelfBroadBandSppDs1ImaLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for this SPP uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs1ImaEntry 22 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP imaspp.2
+-- %CLICMDABBR Mode
+-- %CLICOLLABEL Mode
+iShelfBroadBandSppDs1ImaMode OBJECT-TYPE
+    SYNTAX      IShelfImaMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { standard }
+    ::= { iShelfBroadBandSppDs1ImaEntry 23 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP imaspp.2
+-- %CLICMDABBR Delay
+-- %CLICOLLABEL Delay
+iShelfBroadBandSppDs1ImaMaxDifferentialDelay OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    delay25(0),
+                    delay50(1),
+                    delay75(2),
+                    delay100(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The differential delay in msec.  It
+         can be set to 25, 50, 75, or 100 msec.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs1ImaEntry 24 }
+    
+-- %SETINACTIVE
+-- %CLISHOWGROUP imaspp.1
+-- %CLIWIDTH 7
+-- iShelfBroadBandSppDs1ImaContentType OBJECT-TYPE
+--     SYNTAX      IShelfSppContentType
+--     MAX-ACCESS  read-create
+--     STATUS      current
+--     DESCRIPTION
+--         "The SPP content type.
+--          NOTE:  this object can only be modified with a non-active rowStatus."
+--     DEFVAL      { both }
+--     ::= { iShelfBroadBandSppDs1ImaEntry 25 }
+
+-- %CLISHOWGROUP imaspp.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandSppDs1ImaRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandSppDs1ImaEntry 25 }
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSppSonetTable - Broadband SPP for SONET Facility
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR sonetspp
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSppSonetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Definition of a SONET SPP.
+         Note that the SONET SPP can be configured with 1 - 16 VPIs (1 primary and up to 15 extra).
+         There is a total SONET SPP budget of 2000 VCs that can be allocated any way across the 16 VPIs.
+         For example, a single VPI can be allocated all 2000 VCs or 5 VPIs can each be allocated 400 VCs."
+    ::= { iShelfBroadBand 4 }
+
+iShelfBroadBandSppSonetEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSppSonetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry is a separate SONET SPP uplink."
+    INDEX       { iShelfBroadBandSppSonetIndex }
+    ::= { iShelfBroadBandSppSonetTable 1 }
+
+IShelfBroadBandSppSonetEntry ::=
+    SEQUENCE {
+        iShelfBroadBandSppSonetIndex
+            IShelfSppIndex,
+        iShelfBroadBandSppSonetLocation
+            IShelfLocation,
+        iShelfBroadBandSppSonetCircuit
+            INTEGER,
+        iShelfBroadBandSppSonetType
+            INTEGER,
+        iShelfBroadBandSppSonetLabel
+            IShelfBroadbandLabel,
+        iShelfBroadBandSppSonetPrimaryVpi
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForPriVpi
+            INTEGER,
+--        iShelfBroadBandSppSonetMultipleVcRanges
+--            TruthValue,
+	iShelfBroadBandSppSonetContentType
+	   IShelfSppContentType,
+        iShelfBroadBandSppSonetNumExtraVpi
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi1
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi1
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi2
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi2
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi3
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi3
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi4
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi4
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi5
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi5
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi6
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi6
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi7
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi7
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi8
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi8
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi9
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi9
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi10
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi10
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi11
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi11
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi12
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi12
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi13
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi13
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi14
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi14
+            INTEGER,
+        iShelfBroadBandSppSonetExtraVpi15
+            IShelfVpi,
+        iShelfBroadBandSppSonetNumVciForExVpi15
+            INTEGER,
+        iShelfBroadBandSppSonetRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP sonetspp
+-- %CLICOLLABEL Index
+iShelfBroadBandSppSonetIndex OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Simple index for the SONET uplink."
+    ::= { iShelfBroadBandSppSonetEntry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR Location
+-- %CLICOLLABEL Location
+iShelfBroadBandSppSonetLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The location of the OC-x card."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppSonetEntry 2 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR Circuit
+-- %CLICOLLABEL Circuit
+iShelfBroadBandSppSonetCircuit OBJECT-TYPE
+    SYNTAX      INTEGER (1..48)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This identifies the circuit number associated with the
+         service.  Based on the card type of the host location and the
+         circuit type above the ranges are as follows:
+         OC-3/STS1:    1-3
+         OC-3/STS3c:   1
+         OC-12/STS1:   1-12
+         OC-12/STS3c:  1-4
+         OC-12/STS12c: 1
+         OC-48/STS1:   1-48
+         OC-48/STS3c:  1-16
+         OC-48/STS12c: 1-4
+         OC-48/STS48c: 1"
+    ::= { iShelfBroadBandSppSonetEntry 3 }
+
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR Type
+-- %CLICOLLABEL Type
+iShelfBroadBandSppSonetType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    sts1(1),
+                    sts3c(2),
+                    sts12c(3),
+                    sts48c(4)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "For OC-3 cards this can be sts1 or sts3c. For OC-12 this can be
+         sts1, sts3c or sts12c. For OC-48 cards any of the values are available."
+    ::= { iShelfBroadBandSppSonetEntry 4 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR Label
+-- %CLICOLLABEL Label
+iShelfBroadBandSppSonetLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for the SONET uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 5 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR PriVPI
+-- %CLICOLLABEL PriVPI
+iShelfBroadBandSppSonetPrimaryVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The primary VPI used for VCs."
+    ::= { iShelfBroadBandSppSonetEntry 6 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR NumVCIs
+-- %CLICOLLABEL NumVCIs
+iShelfBroadBandSppSonetNumVciForPriVpi OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for the primary VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 7 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR MultiRange
+-- %CLICOLLABEL MultiRange
+-- iShelfBroadBandSppSonetMultipleVcRanges OBJECT-TYPE
+--     SYNTAX      TruthValue
+--     MAX-ACCESS  read-write
+--     STATUS      current
+--     DESCRIPTION
+--         "The flag to enable or disable multiple VC ranges.
+--          true - enables multiple ranges
+--          false - disables multiple ranges
+--          The attribute must be set to true to enable the creation of an extra VPI
+--          for this SONET SPP in the Extra SONET VPI table.
+--          Setting this object to false will automatically delete associated rows
+--          in the Extra SONET VPI table.
+--          NOTE:  this object can only be modified with a non-active rowStatus."
+--     DEFVAL      { false }
+--     ::= { iShelfBroadBandSppSonetEntry 8 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLIWIDTH 7
+iShelfBroadBandSppSonetContentType OBJECT-TYPE
+    SYNTAX      IShelfSppContentType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The SPP content type."
+    DEFVAL      { both }
+    ::= { iShelfBroadBandSppSonetEntry 8 }
+    
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+-- %CLICMDABBR NumExVPIs
+-- %CLICOLLABEL NumExVPIs
+iShelfBroadBandSppSonetNumExtraVpi OBJECT-TYPE
+    SYNTAX      INTEGER (0..15)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of extra VPIs used for this uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 9 }
+   
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi1 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 10 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi1 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 11 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi2 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 12 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi2 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 13 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi3 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 14 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi3 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 15 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi4 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 16 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi4 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 17 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi5 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 18 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi5 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 19 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi6 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 20 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi6 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 21 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi7 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 22 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi7 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 23 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi8 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 24 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi8 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 25 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi9 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 26 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi9 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 27 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi10 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 28 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi10 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 29 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi11 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 30 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi11 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 31 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi12 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 32 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi12 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 33 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi13 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 34 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi13 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 35 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi14 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 36 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi14 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 37 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetExtraVpi15 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppSonetEntry 38 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP sonetspp
+iShelfBroadBandSppSonetNumVciForExVpi15 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppSonetEntry 39 }
+
+-- %CLISHOWGROUP sonetspp
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandSppSonetRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandSppSonetEntry 40 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSppOltEthernetTable - Broadband SPP for Ethernet Facilities on OLT cards
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR oltspp
+-- %CLISHOWGROUP oltspp
+iShelfBroadBandSppOltEthernetTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSppOltEthernetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Definition for the OLT GigEthernet SPP uplink."
+    ::= { iShelfBroadBand 5 }
+
+iShelfBroadBandSppOltEthernetEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSppOltEthernetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry defines a separate OLT GigEthernet uplink."
+    INDEX       { iShelfBroadBandSppOltEthernetIndex }
+    ::= { iShelfBroadBandSppOltEthernetTable 1 }
+
+IShelfBroadBandSppOltEthernetEntry ::=
+    SEQUENCE {
+        iShelfBroadBandSppOltEthernetIndex
+            IShelfSppIndex,
+        iShelfBroadBandSppOltEthernetLocation
+            IShelfLocation,
+        iShelfBroadBandSppOltEthernetLabel
+            IShelfBroadbandLabel,
+        iShelfBroadBandSppOltEthernetAdminState
+            IShelfAdminState,
+        iShelfBroadBandSppOltEthernetOperState
+            IShelfOperState,
+        iShelfBroadBandSppOltEthernetAdminMode
+            IShelfEthernetPortMode,
+        iShelfBroadBandSppOltEthernetOperMode
+            IShelfEthernetPortMode,
+        iShelfBroadBandSppOltEthernetGatewayAddress
+            IpAddress,
+        iShelfBroadBandSppOltEthernetIpAddress
+            IpAddress,
+        iShelfBroadBandSppOltEthernetIpMask
+            IpAddress,
+        iShelfBroadBandSppOltEthernetMacAddress
+            MacAddress,
+        iShelfBroadBandSppOltEthernetVlanList
+            IShelfVlanListPointer,
+        iShelfBroadBandSppOltEthernetContentType
+            IShelfSppContentType,
+        iShelfBroadBandSppOltEthernetOltSARPort
+            IShelfSppOltSARPort,
+        iShelfBroadBandSppOltEthernetRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP oltspp.1
+-- %CLISHOWGROUP oltspp.2
+-- %CLISHOWGROUP oltspp.3
+-- %CLICOLLABEL Idx
+iShelfBroadBandSppOltEthernetIndex OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Simple index for the OLT GigEthernet SPP."
+    ::= { iShelfBroadBandSppOltEthernetEntry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP oltspp.1
+-- %CLICOLLABEL Loc
+-- %CLICMDABBR Loc
+iShelfBroadBandSppOltEthernetLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The location of the OLT card."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppOltEthernetEntry 2 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP oltspp.3
+-- %CLICOLLABEL Label
+-- %CLICMDABBR Label
+iShelfBroadBandSppOltEthernetLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for this uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppOltEthernetEntry 3 }
+
+-- %CLICOLLABEL AdminSt
+-- %CLICMDABBR AdminSt
+-- %CLISHOWGROUP oltspp.1
+-- %CLIOPTION
+iShelfBroadBandSppOltEthernetAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The provisioned administrative state of the uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { unlock }
+    ::= { iShelfBroadBandSppOltEthernetEntry 4 }
+
+-- %CLICOLLABEL OperSt
+-- %CLICMDABBR OperSt
+-- %CLISHOWGROUP oltspp.1
+iShelfBroadBandSppOltEthernetOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operating state of the uplink."
+    ::= { iShelfBroadBandSppOltEthernetEntry 5 }
+
+-- %CLICOLLABEL AdminMode
+-- %CLICMDABBR AdminMode
+-- %CLISHOWGROUP oltspp.1
+-- %CLIOPTION
+iShelfBroadBandSppOltEthernetAdminMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The provisioned administrative mode of the uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { auto }
+    ::= { iShelfBroadBandSppOltEthernetEntry 6 }
+
+-- %CLICOLLABEL OperMode
+-- %CLICMDABBR OperMode
+-- %CLISHOWGROUP oltspp.1
+iShelfBroadBandSppOltEthernetOperMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operating mode of the uplink."
+    ::= { iShelfBroadBandSppOltEthernetEntry 7 }
+
+-- %CLICOLLABEL Gateway
+-- %CLICMDABBR Gateway
+-- %CLISHOWGROUP oltspp.2
+iShelfBroadBandSppOltEthernetGatewayAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The IP address of the default gateway for the network the uplink is connected to.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppOltEthernetEntry 8 }
+
+-- %CLICOLLABEL IPAddress
+-- %CLICMDABBR IPAddress
+-- %CLISHOWGROUP oltspp.2
+iShelfBroadBandSppOltEthernetIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The IP address for the OLT GigEthernet port.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppOltEthernetEntry 9 }
+
+-- %CLICOLLABEL Mask
+-- %CLICMDABBR Mask
+-- %CLISHOWGROUP oltspp.2
+iShelfBroadBandSppOltEthernetIpMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The subnet mask for the OLT GigEthernet port.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppOltEthernetEntry 10 }
+
+-- %CLICOLLABEL MAC
+-- %CLICMDABBR MAC
+-- %CLISHOWGROUP oltspp.3
+iShelfBroadBandSppOltEthernetMacAddress OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The MAC address of the OLT GigEthernet port."
+    ::= { iShelfBroadBandSppOltEthernetEntry 11 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL VList
+-- %CLICMDABBR VList
+-- %CLISHOWGROUP oltspp.3
+-- %CLIOPTION
+iShelfBroadBandSppOltEthernetVlanList OBJECT-TYPE
+    SYNTAX      IShelfVlanListPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The list of VLANs associated with the OLT GigEthernet port.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSppOltEthernetEntry 12 }
+    
+-- %SETINACTIVE
+-- %CLISHOWGROUP oltspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppOltEthernetContentType OBJECT-TYPE
+    SYNTAX      IShelfSppContentType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The SPP content type.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { both }
+    ::= { iShelfBroadBandSppOltEthernetEntry 13 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP oltspp.1
+-- %CLIWIDTH 6
+iShelfBroadBandSppOltEthernetOltSARPort OBJECT-TYPE
+    SYNTAX      IShelfSppOltSARPort
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The OLT SAR Port number associated with this SPP. 
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppOltEthernetEntry 14 }
+
+-- %CLISHOWGROUP oltspp.3
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandSppOltEthernetRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandSppOltEthernetEntry 15 }
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSppEthernetTable - Broadband SPP for Ethernet Facilities
+--
+--                       Note: Non-OLT Ethernet facilities.
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR ethspp
+-- %CLISHOWGROUP ethspp
+iShelfBroadBandSppEthernetTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSppEthernetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Definition for non-OLT Ethernet SPP uplinks."
+    ::= { iShelfBroadBand 6 }
+
+iShelfBroadBandSppEthernetEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSppEthernetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry defines a separate Ethernet uplink."
+    INDEX       { iShelfBroadBandSppEthernetIndex }
+    ::= { iShelfBroadBandSppEthernetTable 1 }
+
+IShelfBroadBandSppEthernetEntry ::=
+    SEQUENCE {
+        iShelfBroadBandSppEthernetIndex
+            IShelfSppIndex,
+        iShelfBroadBandSppEthernetLocation
+            IShelfLocation,
+        iShelfBroadBandSppEthernetLabel
+            IShelfBroadbandLabel,
+        iShelfBroadBandSppEthernetVlanPortProfile
+            IShelfVlanPortProfilePointer,
+        iShelfBroadBandSppEthernetBridgeType
+            INTEGER,
+        iShelfBroadBandSppEthernetTrafficShapingEnable
+            TruthValue,
+        iShelfBroadBandSppEthernetBFTAgeTimer
+            INTEGER,
+        iShelfBroadBandSppEthernetBFTRelearnProtectTimer
+            INTEGER,
+        iShelfBroadBandSppEthernetBFTGraceHoldTimer
+            INTEGER,
+        iShelfBroadBandSppEthernetAdminState
+            IShelfAdminState,
+        iShelfBroadBandSppEthernetOperState
+            IShelfOperState,
+        iShelfBroadBandSppEthernetAdminMode
+            IShelfEthernetPortMode,
+        iShelfBroadBandSppEthernetOperMode
+            IShelfEthernetPortMode,
+        iShelfBroadBandSppEthernetEthType
+            INTEGER,
+        iShelfBroadBandSppEthernetMedia
+            INTEGER,
+        iShelfBroadBandSppEthernetClockSource
+            INTEGER,
+        iShelfBroadBandSppEthernetContentType
+            IShelfSppContentType,
+        iShelfBroadBandSppEthernetHostVLPId
+            IShelfVlanPortProfilePointer,
+        iShelfBroadBandSppEthernetHostGWAddr
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr1
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr2
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr3
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr4
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr5
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr6
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr7
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr8
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr9
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr10
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr11
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr12
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr13
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr14
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr15
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPAddr16
+            IpAddress,
+        iShelfBroadBandSppEthernetHostIPMask
+            IpAddress,
+        iShelfBroadBandSppEthernetEsaEnabled
+            TruthValue,
+        iShelfBroadBandSppEthernetEsaCallServerIPAddr
+            IpAddress,
+        iShelfBroadBandSppEthernetEsaGWLabel
+            IShelfBroadbandLabel,
+        iShelfBroadBandSppEthernetEsaDigitLen
+            INTEGER,
+        iShelfBroadBandSppEthernetEsaTestCktEnabled
+            TruthValue,
+        iShelfBroadBandSppEthernetEsaTestCktLocation
+            IShelfLocation,
+        iShelfBroadBandSppEthernetRowStatus
+            RowStatus,
+        iShelfBroadBandSppEthernetEsaTestCktCircuit
+            IShelfCircuit 
+    }
+
+-- %CLISHOWGROUP ethspp.1
+-- %CLISHOWGROUP ethspp.2
+-- %CLISHOWGROUP ethspp.3
+-- %CLICOLLABEL Idx
+iShelfBroadBandSppEthernetIndex OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Simple index for the Ethernet SPP uplink."
+    ::= { iShelfBroadBandSppEthernetEntry 1 }
+
+-- %CLISHOWGROUP ethspp.1
+-- %CLICMDABBR Loc
+-- %CLICOLLABEL Loc
+iShelfBroadBandSppEthernetLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The location of the card containing the uplink."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppEthernetEntry 2 }
+
+-- %CLISHOWGROUP ethspp.2
+-- %CLICMDABBR Label
+-- %CLICOLLABEL Label
+iShelfBroadBandSppEthernetLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for the uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 3 }
+
+-- %CLISHOWGROUP ethspp.2
+-- %CLICMDABBR VList
+-- %CLICOLLABEL VList
+-- %CLIOPTION
+iShelfBroadBandSppEthernetVlanPortProfile OBJECT-TYPE
+    SYNTAX      IShelfVlanPortProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The list of VLANs associated with the uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSppEthernetEntry 4 }
+
+-- %CLISHOWGROUP ethspp.3
+-- %CLICMDABBR BridgeType
+-- %CLICOLLABEL BridgeType
+-- %CLIOPTION
+iShelfBroadBandSppEthernetBridgeType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    bridge802dot1d(1),
+                    bridge802dot1q(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The type of bridging supported on the Ethernet port."
+    DEFVAL      { bridge802dot1d }
+    ::= { iShelfBroadBandSppEthernetEntry 5 }
+
+-- %CLISHOWGROUP ethspp.3
+-- %CLICMDABBR ShapingEn
+-- %CLICOLLABEL ShapingEn
+-- %CLIOPTION
+iShelfBroadBandSppEthernetTrafficShapingEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Traffic shaping can be enabled and disabled.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { false }
+    ::= { iShelfBroadBandSppEthernetEntry 6 }
+
+-- %CLISHOWGROUP ethspp.2
+-- %CLICMDABBR AgeTime
+-- %CLICOLLABEL AgeTime
+-- %CLIOPTION
+iShelfBroadBandSppEthernetBFTAgeTimer OBJECT-TYPE
+    SYNTAX      INTEGER (10..1000000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Bridge Forwarding Table age timer. Units are in seconds.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 300 }
+    ::= { iShelfBroadBandSppEthernetEntry 7 }
+
+-- %CLISHOWGROUP ethspp.2
+-- %CLICMDABBR RelearnTime
+-- %CLICOLLABEL RelearnTime
+-- %CLIOPTION
+iShelfBroadBandSppEthernetBFTRelearnProtectTimer OBJECT-TYPE
+    SYNTAX      INTEGER (0..1000000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Bridge Forwarding Table relearn protect timer. Units are in seconds.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 15 }
+    ::= { iShelfBroadBandSppEthernetEntry 8 }
+
+-- %CLISHOWGROUP ethspp.2
+-- %CLICMDABBR GraceTime
+-- %CLICOLLABEL GraceTime
+-- %CLIOPTION
+iShelfBroadBandSppEthernetBFTGraceHoldTimer OBJECT-TYPE
+    SYNTAX      INTEGER (0..1000000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Bridge Forwarding Table grace hold timer. Units are in seconds.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSppEthernetEntry 9 }
+
+-- %CLISHOWGROUP ethspp.1
+-- %CLICMDABBR AdminSt
+-- %CLICOLLABEL AdminSt
+-- %CLIOPTION
+iShelfBroadBandSppEthernetAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The provisioned administrative state of the uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { unlock }
+    ::= { iShelfBroadBandSppEthernetEntry 10 }
+
+-- %CLISHOWGROUP ethspp.1
+-- %CLICMDABBR OperSt
+-- %CLICOLLABEL OperSt
+iShelfBroadBandSppEthernetOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operating state of the uplink."
+    ::= { iShelfBroadBandSppEthernetEntry 11 }
+
+-- %CLISHOWGROUP ethspp.1
+-- %CLICMDABBR AdminMode
+-- %CLICOLLABEL AdminMode
+-- %CLIOPTION
+iShelfBroadBandSppEthernetAdminMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The provisioned administrative mode of the uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { auto }
+    ::= { iShelfBroadBandSppEthernetEntry 12 }
+
+-- %CLISHOWGROUP ethspp.1
+-- %CLICMDABBR OperMode
+-- %CLICOLLABEL OperMode
+iShelfBroadBandSppEthernetOperMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operating mode of the uplink."
+    ::= { iShelfBroadBandSppEthernetEntry 13 }
+
+-- %CLISHOWGROUP ethspp.3
+-- %CLICMDABBR EtherType
+-- %CLICOLLABEL EtherType
+-- %CLIOPTION
+iShelfBroadBandSppEthernetEthType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ethTypeII(1),         -- Ethernet II
+                    ethType802dot3(2)     -- 802.3
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The Ethernet type of the port."
+    DEFVAL      { ethTypeII }
+    ::= { iShelfBroadBandSppEthernetEntry 14 }
+
+-- %CLISHOWGROUP ethspp.3
+-- %CLICMDABBR MediaType
+-- %CLICOLLABEL MediaType
+-- %CLIOPTION
+iShelfBroadBandSppEthernetMedia OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    base100Tx(1),       -- 802.3ab
+                    base1000Tx(2),      -- 802.3u
+                    base1000FxSxLxZx(3) -- 802.3z
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The type of media supported on the Ethernet port."
+    DEFVAL      { base1000Tx }
+    ::= { iShelfBroadBandSppEthernetEntry 15 }
+
+-- %CLISHOWGROUP ethspp.3
+-- %CLICMDABBR ClkSrc
+-- %CLICOLLABEL ClkSrc
+-- %CLIOPTION
+iShelfBroadBandSppEthernetClockSource OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    master(1),
+                    slave(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The clock source for the Ethernet port."
+    DEFVAL      { slave }
+    ::= { iShelfBroadBandSppEthernetEntry 16 }
+    
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetContentType OBJECT-TYPE
+    SYNTAX      IShelfSppContentType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The SPP content type. both(0), data(1), video(2).
+        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { data }
+    ::= { iShelfBroadBandSppEthernetEntry 17 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostVLPId OBJECT-TYPE
+    SYNTAX      IShelfVlanPortProfilePointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The list of VLANs associated with the host IP interface. 
+         Zero means no profile specified.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSppEthernetEntry 18 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostGWAddr OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The default gateway IP address on the host IP interface.
+        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 19 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr1 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If BridgeType is 802.1q (VLAN) then this is the IP address correlated with 
+         the corresponding VLAN Config Profile referenced in the VLAN Port Profile 
+         spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         
+         If BridgeType is 802.1d then this is the IP address of the host interface
+         and the corresponding mask is specified in HostIPMask.
+         
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 20 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr2 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 21 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr3 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 22 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr4 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 23 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr5 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 24 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr6 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 25 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr7 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 26 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr8 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 27 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr9 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 28 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr10 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 29 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr11 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 30 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr12 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 31 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr13 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 32 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr14 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 33 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr15 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 34 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPAddr16 OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address correlated with the corresponding VLAN Config Profile referenced
+         in the VLAN Port Profile spcified by the iShelfBroadBandSppEthernetHostVLPId.
+         A value of 0.0.0.0 disables this entry.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 35 }
+
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetHostIPMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP mask for iShelfBroadBandSppEthernetHostIPAddr1 if BridgeType is 802.1d.         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 36 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetEsaEnabled OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Emercency Stand Alone service enabled if true. Provide SIP-proxy
+         emergency call service. If enabled at least one EthernetHostIPAddr
+         must be defined.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { false }
+    ::= { iShelfBroadBandSppEthernetEntry 37 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetEsaCallServerIPAddr OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "IP address of the SIP call server used for ESA service.
+        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 38 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetEsaGWLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Name used by the SIP call server to reference this ESA interface.
+        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppEthernetEntry 39 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetEsaDigitLen OBJECT-TYPE
+    SYNTAX      INTEGER (2..10)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Number of dialed digits in the dialing plan. 2-10.
+        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 2 }
+    ::= { iShelfBroadBandSppEthernetEntry 40 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetEsaTestCktEnabled OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If true, enables the use of a dedicated POTS circuit for ESA validation.
+        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { false }
+    ::= { iShelfBroadBandSppEthernetEntry 41 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetEsaTestCktLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location of the POTS circuit used for ESA validation.
+        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppEthernetEntry 42 }
+    
+-- %CLISHOWGROUP ethspp.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICMDABBR RowStatus
+-- %CLICOLLABEL RowStatus
+iShelfBroadBandSppEthernetRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandSppEthernetEntry 43 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ethspp.1
+-- %CLIWIDTH 7
+iShelfBroadBandSppEthernetEsaTestCktCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "ESA Test Circuit circuit number.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandSppEthernetEntry 44 }
+    
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandScpTable - Broadband service contract profile
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR scp
+-- %CLISHOWGROUP scp
+iShelfBroadBandScpTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandScpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfBroadBand 7 }
+
+iShelfBroadBandScpEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandScpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfBroadBandScpIndex }
+    ::= { iShelfBroadBandScpTable 1 }
+
+IShelfBroadBandScpEntry ::=
+    SEQUENCE {
+        iShelfBroadBandScpIndex
+            IShelfScpIndex,
+        iShelfBroadBandScpSpp
+            IShelfSppIndex,
+        iShelfBroadBandScpLabel
+            IShelfBroadbandLabel,
+        iShelfBroadBandScpQos
+            IShelfScpQos,
+        iShelfBroadBandScpCLPConformance            
+            IShelfScpCLPC,
+        iShelfBroadBandScpDsPeakCellRate
+            IShelfScpCellRate,
+        iShelfBroadBandScpDsSustainedCellRate
+            IShelfScpCellRate,
+        iShelfBroadBandScpDsMaxBurstSize
+            IShelfScpMBS,
+        iShelfBroadBandScpDsCellDelayVariance
+            IShelfScpCDVT,
+        iShelfBroadBandScpUsPeakCellRate
+            IShelfScpCellRate,
+        iShelfBroadBandScpUsSustainedCellRate
+            IShelfScpCellRate,
+        iShelfBroadBandScpUsMaxBurstSize
+            IShelfScpMBS,
+        iShelfBroadBandScpUsCellDelayVariance
+            IShelfScpCDVT,
+        iShelfBroadBandScpAAL5Discard
+            TruthValue,
+        iShelfBroadBandScpRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP scp.1
+-- %CLISHOWGROUP scp.2
+-- %CLICOLLABEL Idx
+iShelfBroadBandScpIndex OBJECT-TYPE
+    SYNTAX      IShelfScpIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the specific service contract profile."
+    ::= { iShelfBroadBandScpEntry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP scp.1
+-- %CLICMDABBR SPP
+-- %CLICOLLABEL SPP
+iShelfBroadBandScpSpp OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the service provider profile associated
+         with the SCP.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandScpEntry 2 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP scp.1
+-- %CLICMDABBR Label
+-- %CLICOLLABEL Label
+iShelfBroadBandScpLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is the user description of the profile.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandScpEntry 3 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR QoS
+-- %CLICOLLABEL QoS
+-- %CLIOPTION
+iShelfBroadBandScpQos OBJECT-TYPE
+    SYNTAX      IShelfScpQos
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the quality of service associated with
+         the service contract. Valid values are:
+
+         businessVbrNrt(1),
+         residentialUbrNoPolicing(2)
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { residentialUbrNoPolicing }
+    ::= { iShelfBroadBandScpEntry 4 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR clp
+-- %CLICOLLABEL clp
+iShelfBroadBandScpCLPConformance OBJECT-TYPE
+    SYNTAX      IShelfScpCLPC
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "CLP Conformance level (1 - 3).
+        
+         A value of zero indicates not used as in the case of residential QoS.
+         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 3 }
+    ::= { iShelfBroadBandScpEntry 5 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR dspcr
+-- %CLICOLLABEL dspcr
+iShelfBroadBandScpDsPeakCellRate OBJECT-TYPE
+    SYNTAX      IShelfScpCellRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The peak data rate line direction. The value is in units of cells per second.
+         The valid range is 0..353,000.
+
+         A value of zero indicates not used as in the case of residential QoS.
+
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 6 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR dsscr
+-- %CLICOLLABEL dsscr
+iShelfBroadBandScpDsSustainedCellRate OBJECT-TYPE
+    SYNTAX      IShelfScpCellRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The sustained data rate line direction. The value is in units of cells per second.
+         The valid range is 0..353,000.
+
+         A value of zero indicates not used as in the case of residential QoS.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 7 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR dsmbs
+-- %CLICOLLABEL dsmbs
+iShelfBroadBandScpDsMaxBurstSize OBJECT-TYPE
+    SYNTAX      IShelfScpMBS
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Maximum Burst Size line direction. The value is in units of cells.
+         The valid range is 0..353,000. 
+         
+         A value of zero indicates not used as in the case of residential QoS.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 8 }
+    
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR dscdvt
+-- %CLICOLLABEL dscdvt
+iShelfBroadBandScpDsCellDelayVariance OBJECT-TYPE
+    SYNTAX      IShelfScpCDVT
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Cell Delay Variance Tolerance line direction. The value is in units of microseconds.
+         The valid range is 0..100,000. 
+         
+         A value of zero indicates not used as in the case of residential QoS.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 9 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR uspcr
+-- %CLICOLLABEL uspcr
+iShelfBroadBandScpUsPeakCellRate OBJECT-TYPE
+    SYNTAX      IShelfScpCellRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The peak data rate network direction. The value is in units of cells per second.
+         The valid range is 0..353,000.
+
+         A value of zero indicates not used as in the case of residential QoS.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 10 }
+    
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR usscr
+-- %CLICOLLABEL usscr
+iShelfBroadBandScpUsSustainedCellRate OBJECT-TYPE
+    SYNTAX      IShelfScpCellRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The sustained data rate network direction. The value is in units of cells per second.
+         The valid range is 0..353,000.
+
+         A value of zero indicates not used as in the case of residential QoS.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 11 }
+    
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR usmbs
+-- %CLICOLLABEL usmbs
+iShelfBroadBandScpUsMaxBurstSize OBJECT-TYPE
+    SYNTAX      IShelfScpMBS
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Maximum Burst Size network direction. The value is in units of cells.
+         The valid range is 0..353,000. 
+         
+         A value of zero indicates not used as in the case of residential QoS.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 12 }
+    
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR uscdvt
+-- %CLICOLLABEL uscdvt
+iShelfBroadBandScpUsCellDelayVariance OBJECT-TYPE
+    SYNTAX      IShelfScpCDVT
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Cell Delay Variance Tolerance network direction. The value is in units of microseconds.
+         The valid range is 0..100,000. 
+         
+         A value of zero indicates not used as in the case of residential QoS.
+
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandScpEntry 13 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP scp.2
+-- %CLICMDABBR AAL5
+-- %CLICOLLABEL AAL5
+iShelfBroadBandScpAAL5Discard OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Action to be taken for non-conforming ATM cells. true means discard.
+         false means mark (CLP bit set to 1).
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { false }
+    ::= { iShelfBroadBandScpEntry 14 }
+    
+-- %CLISHOWGROUP scp.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandScpRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandScpEntry 15 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandLcpTable - Broadband line configuration profile
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR lcp
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandLcpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfBroadBand 8 }
+
+iShelfBroadBandLcpEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandLcpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfBroadBandLcpIndex }
+    ::= { iShelfBroadBandLcpTable 1 }
+
+IShelfBroadBandLcpEntry ::=
+    SEQUENCE {
+        iShelfBroadBandLcpIndex
+            IShelfLcpIndex,
+        iShelfBroadBandLcpLabel
+            IShelfBroadbandLabel,
+        iShelfBroadBandLcpConfiguration
+            INTEGER,
+        iShelfBroadBandLcpMinDsRate
+            IShelfLcpDsRate,
+        iShelfBroadBandLcpMaxDsRate
+            IShelfLcpDsRate,
+        iShelfBroadBandLcpMinUsRate
+            IShelfLcpUsRate,
+        iShelfBroadBandLcpMaxUsRate
+            IShelfLcpUsRate,
+        iShelfBroadBandLcpCircuitAlarmReportingLevel
+            INTEGER,
+        iShelfBroadBandLcpLineType
+            INTEGER,
+        iShelfBroadBandLcpDsSnr
+            IShelfLcpSnr,
+        iShelfBroadBandLcpUsSnr
+            IShelfLcpSnr,
+        iShelfBroadBandLcpRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpIndex OBJECT-TYPE
+    SYNTAX      IShelfLcpIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the specific line configuration profile."
+    ::= { iShelfBroadBandLcpEntry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpLabel OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This is the user description for the LCP.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandLcpEntry 2 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpConfiguration OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    multimode(1),
+                    gLite(2),
+                    gDMT(3),
+                    t1dot413(4),
+                    adsl2plus(5)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the transmission mode for ADSL system.
+         configures, and tests data-link connections for use by
+         Point-to-Point Protocol (PPP).
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { multimode }
+    ::= { iShelfBroadBandLcpEntry 3 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpMinDsRate OBJECT-TYPE
+    SYNTAX      IShelfLcpDsRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the minimum Kbps allowed for 
+         the downstream rate.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 64 }
+    ::= { iShelfBroadBandLcpEntry 4 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpMaxDsRate OBJECT-TYPE
+    SYNTAX      IShelfLcpDsRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the maximum Kbps allowed for
+         the downstream rate.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1536 }
+    ::= { iShelfBroadBandLcpEntry 5 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpMinUsRate OBJECT-TYPE
+    SYNTAX      IShelfLcpUsRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the minimum Kbps allowed for 
+         the upstream rate.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 32 }
+    ::= { iShelfBroadBandLcpEntry 6 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpMaxUsRate OBJECT-TYPE
+    SYNTAX      IShelfLcpUsRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the maximum Kbps allowed for
+         the upstream rate.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 512 }
+    ::= { iShelfBroadBandLcpEntry 7 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpCircuitAlarmReportingLevel OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    all(1),
+                    major(2),
+                    timeout(3),
+                    none(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the types of alarms to be reported.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { all }
+    ::= { iShelfBroadBandLcpEntry 8 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpLineType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    fast(2),
+                    interleaved(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of line being used.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { interleaved }
+    ::= { iShelfBroadBandLcpEntry 9 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpDsSnr OBJECT-TYPE
+    SYNTAX      IShelfLcpSnr
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the downstream SNR in db.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 6 }
+    ::=  { iShelfBroadBandLcpEntry 10 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP lcp
+iShelfBroadBandLcpUsSnr OBJECT-TYPE
+    SYNTAX      IShelfLcpSnr
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the upstream SNR in db.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 6 }
+    ::=  { iShelfBroadBandLcpEntry 11 }
+
+-- %CLISHOWGROUP lcp
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandLcpRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandLcpEntry 12 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandServiceNextIndex - Broadband Service/Line Associations
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband:scalar
+-- %CLICMDABBR nextindex
+iShelfBroadBandScalar OBJECT IDENTIFIER ::= { iShelfBroadBand 9 }
+
+-- %CLICOLLABEL NextIndex
+iShelfBroadBandServiceNextIndex OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A get/read of this object returns the next Index to be used
+         when creating a new row in either the Data Service Table or
+         the SDV Service Table."
+    ::= { iShelfBroadBandScalar 1 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandDataServiceTable - Broadband Service/Line Associations
+--                                   for Unicast traffic
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR datasvc
+-- %CLISHOWGROUP datasvc
+iShelfBroadBandDataServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandDataServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Service definition for unicast data services."
+    ::= { iShelfBroadBand 10 }
+
+iShelfBroadBandDataServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandDataServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each entry is a separate endpoint service definition.
+         Endpoints can be ADSL subscribers or OLT cards."
+    INDEX       { iShelfBroadBandDataServiceIndex }
+    ::= { iShelfBroadBandDataServiceTable 1 }
+
+IShelfBroadBandDataServiceEntry ::=
+    SEQUENCE {
+        iShelfBroadBandDataServiceIndex
+            IShelfBroadbandNextIndex,
+        iShelfBroadBandDataServiceLocation
+            IShelfLocation,
+        iShelfBroadBandDataServiceCircuit
+            IShelfCircuit,
+        iShelfBroadBandDataServicePortType
+            INTEGER,
+        iShelfBroadBandDataServiceScp
+            IShelfScpIndex,
+        iShelfBroadBandDataServiceLcp
+            IShelfLcpPointer,
+        iShelfBroadBandDataServiceVirtualPath
+            TruthValue,
+        iShelfBroadBandDataServiceNetworkVpi
+            IShelfVpi,
+        iShelfBroadBandDataServiceNetworkVci
+            IShelfVci,
+        iShelfBroadBandDataServiceLineVpi
+            IShelfVpi,
+        iShelfBroadBandDataServiceLineVci
+            IShelfVci,
+        iShelfBroadBandDataServiceVlanList
+            IShelfVlanPortProfilePointer,
+        iShelfBroadBandDataServiceSdvPkg
+            IShelfOltSdvPackagePointer,
+        iShelfBroadBandDataServiceLabel
+            IShelfLabel,
+        iShelfBroadBandDataServiceLASubType
+            IShelfLASubType,
+        iShelfBroadBandDataServiceContentType
+            IShelfSppContentType,
+        iShelfBroadBandDataServiceEVCGroupId
+            IShelfVlanPortProfilePointer,
+        iShelfBroadBandDataServiceRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP datasvc.1
+-- %CLISHOWGROUP datasvc.2
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL Idx
+iShelfBroadBandDataServiceIndex OBJECT-TYPE
+    SYNTAX      IShelfBroadbandNextIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Simple index for the data service entry. The value of this index
+         is determined by reading the Service Next Index scalar."
+    ::= { iShelfBroadBandDataServiceEntry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.1
+-- %CLICOLLABEL Loc
+iShelfBroadBandDataServiceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "Location of the Line side of the Line Association."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandDataServiceEntry 2 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.1
+-- %CLICOLLABEL Ckt
+-- %CLIOPTION
+iShelfBroadBandDataServiceCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the associated circuit on the
+         host card.  The interpretation is based on the card type for the
+         location and the port type.
+
+           Card/Port Type    Valid Range    IShelfCircuit Convention
+                                 CC                SSCCUU
+         ------------------  ------------   ------------------------
+         B3 Card/TC Port:    range is 1-8       000100-000800
+         B3 Card/IMA Group:  range is 1-4       000100-000400
+         ADSL*/ADSL Circuit: range is 1-4       000100-000400
+         ADSL*/TC Port:      range is 1-8       000100-000800
+         OC-3c/Sonet:        range is 1-3       000100-000300
+         OC-12/Sonet:        range is 1-12      000100-001200
+         OC-48/sonet:        range is 1-48      000100-004800
+         Ethernet/Ethernet:  range is 1         000100
+         Ethernet/TC Port:   range is 1         000100
+         Olt/Olt:            range is 1         000100
+         "
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandDataServiceEntry 3 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.1
+-- %CLICOLLABEL PortType
+iShelfBroadBandDataServicePortType OBJECT-TYPE
+    SYNTAX      INTEGER {
+		    unknown(0),
+                    tcPort(1),
+                    imaGroup(2),
+                    adslCircuit(3),
+                    sonetCircuit(4),
+                    ethernetPort(5),
+                    olt(6),
+                    gigE(7),
+                    oneHundredMbpsEth(8)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This defines the type of port to be used for the
+         service.  The following are available based on the card
+         hosting the service.
+         B3:  tcPort or imaGroup
+         ADSL*:  adslCircuit or tcPort
+         OC-3c, OC-12, OC-48:  sonetCircuit
+         Ethernet:  ethernetPort or tcPort"
+    DEFVAL      { unknown }
+    ::= { iShelfBroadBandDataServiceEntry 4 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.2
+-- %CLICOLLABEL SCP
+iShelfBroadBandDataServiceScp OBJECT-TYPE
+    SYNTAX      IShelfScpIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object references the service contract profile for the
+         associated service."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandDataServiceEntry 5 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.2
+-- %CLICOLLABEL LCP
+-- %CLIOPTION
+iShelfBroadBandDataServiceLcp OBJECT-TYPE
+    SYNTAX      IShelfLcpPointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object references the line configuration profile
+         for the associated service.
+         This only applies to DSL subscriber lines."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandDataServiceEntry 6 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL VPath
+iShelfBroadBandDataServiceVirtualPath OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates if a virtual path is used.
+         This parameter is applicable or not based on the SPP associated
+         with the SCP."
+    DEFVAL      { false }
+    ::= { iShelfBroadBandDataServiceEntry 7 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL NetVPI
+-- %CLIWIDTH 7
+iShelfBroadBandDataServiceNetworkVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the network Virtual Path Identifier
+         (VPI).  This parameter is applicable or not based on the SPP (Sonet)
+         associated with the SCP."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandDataServiceEntry 8 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL NetVCI
+-- %CLIWIDTH 7
+iShelfBroadBandDataServiceNetworkVci OBJECT-TYPE
+    SYNTAX      IShelfVci
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the network Virtual Circuit Identifier
+         (VCI).  This parameter is applicable or not based on the SPP (Sonet)
+         associated with the SCP."
+    DEFVAL      { 32 }
+    ::= { iShelfBroadBandDataServiceEntry 9 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL LineVPI
+-- %CLIWIDTH 7
+iShelfBroadBandDataServiceLineVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the line Virtual Path Identifier
+         (VPI).  This parameter is applicable for port types other than
+         ethernet (e.g. DSL)."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandDataServiceEntry 10 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL LineVCI
+-- %CLIWIDTH 7
+iShelfBroadBandDataServiceLineVci OBJECT-TYPE
+    SYNTAX      IShelfVci
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the line Virtual Circuit Identifier
+         (VCI).  This parameter is applicable for port types other than
+         ethernet (e.g. DSL)."
+    DEFVAL      { 32 }
+    ::= { iShelfBroadBandDataServiceEntry 11 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL VList
+iShelfBroadBandDataServiceVlanList OBJECT-TYPE
+    SYNTAX      IShelfVlanPortProfilePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The list of VLANs associated with this service entry. "
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandDataServiceEntry 12 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP datasvc.3
+-- %CLICOLLABEL SDVPkg
+iShelfBroadBandDataServiceSdvPkg OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPackagePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The SDV package (channels) associated with this service entry."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandDataServiceEntry 13 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.2
+-- %CLICOLLABEL Label
+-- %CLIOPTION
+iShelfBroadBandDataServiceLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for this service entry.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandDataServiceEntry 14 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.2
+-- %CLICOLLABEL subtype
+-- %CLIOPTION
+iShelfBroadBandDataServiceLASubType OBJECT-TYPE
+    SYNTAX      IShelfLASubType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Valid values are std(0), trunk(1) and mesh(2). std is for non-TLS. 
+         mesh means this is one of a group of LA's forming a mesh 
+         interconnect between the TLS and one or more UNI's.
+         trunk means this is a point-to-point interconnect between 
+         two TLS UNI's."
+    DEFVAL      { std }
+    ::= { iShelfBroadBandDataServiceEntry 15 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.2
+-- %CLICOLLABEL content
+-- %CLIOPTION
+iShelfBroadBandDataServiceContentType OBJECT-TYPE
+    SYNTAX      IShelfSppContentType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Valid values are data(1) and video(2). Must match the content type of the
+         iShelfBroadBandDataServiceVlanList specified in this entry."
+    DEFVAL      { data }
+    ::= { iShelfBroadBandDataServiceEntry 16 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP datasvc.2
+-- %CLICOLLABEL grpID
+-- %CLIOPTION
+iShelfBroadBandDataServiceEVCGroupId OBJECT-TYPE     
+    SYNTAX      IShelfVlanPortProfilePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Unique identifier specifying which TLS EVC this LA is a member of.
+         Must match the VCPId that specifies the EVC. 0 is a valid value. "
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandDataServiceEntry 17 }
+
+-- %CLISHOWGROUP datasvc.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandDataServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandDataServiceEntry 18 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSDVServiceTable - Broadband Service/Line Associations
+--                                  for Multicast traffic
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR sdvsvc
+-- %CLISHOWGROUP sdvsvc
+iShelfBroadBandSdvServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSdvServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Service definition for multicast data services."
+    ::= { iShelfBroadBand 11 }
+
+iShelfBroadBandSdvServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSdvServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each entry is a separate endpoint service definition.
+         Endpoints can be ADSL subscribers or OLT cards."
+    INDEX       { iShelfBroadBandSdvServiceIndex }
+    ::= { iShelfBroadBandSdvServiceTable 1 }
+
+IShelfBroadBandSdvServiceEntry ::=
+    SEQUENCE {
+        iShelfBroadBandSdvServiceIndex
+            IShelfBroadbandNextIndex,
+        iShelfBroadBandSdvServiceScp
+            IShelfScpPointer,
+        iShelfBroadBandSdvServiceIpAddr
+            IpAddress,
+        iShelfBroadBandSdvServiceChannelId
+            INTEGER,
+        iShelfBroadBandSdvServiceNetworkVpi
+            IShelfVpi,
+        iShelfBroadBandSdvServiceNetworkVci
+            IShelfVci,
+        iShelfBroadBandSdvServiceExportVci
+            IShelfVci,
+        iShelfBroadBandSdvServiceVlanList
+            IShelfVlanPortProfilePointer,
+        iShelfBroadBandSdvServiceLabel
+            IShelfLabel,
+        iShelfBroadBandSdvServiceRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP sdvsvc.1
+-- %CLISHOWGROUP sdvsvc.2
+-- %CLICOLLABEL Idx
+iShelfBroadBandSdvServiceIndex OBJECT-TYPE
+    SYNTAX      IShelfBroadbandNextIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Simple index for the SDV service entry. The value of this index
+         is determined by reading the Service Next Index scalar."
+    ::= { iShelfBroadBandSdvServiceEntry 1 }
+
+-- %CLISHOWGROUP sdvsvc.1
+-- %CLICOLLABEL SCP
+iShelfBroadBandSdvServiceScp OBJECT-TYPE
+    SYNTAX      IShelfScpPointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object references the service contract profile for the
+         associated service.
+         Note that the SDV Service entry can be provisioned without
+         specifying the SCP (a null SCP pointer). The SDV service entry
+         with a null SCP pointer only applies to the OLT card. On the
+         OLT card, this indicates that the video channel is only accessible
+         via the OLT GigEthernet port, not over the backplane cell bus."
+    ::= { iShelfBroadBandSdvServiceEntry 2 }
+
+-- %CLISHOWGROUP sdvsvc.1
+-- %CLICOLLABEL IPAddress
+iShelfBroadBandSdvServiceIpAddr OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The IP address for the SDV channel."
+    ::= { iShelfBroadBandSdvServiceEntry 3 }
+
+-- %CLISHOWGROUP sdvsvc.1
+-- %CLICOLLABEL ChID
+iShelfBroadBandSdvServiceChannelId OBJECT-TYPE
+    SYNTAX      INTEGER (1..9999)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "An integer identifier for this SDV channel."
+    ::= { iShelfBroadBandSdvServiceEntry 4 }
+
+-- %CLISHOWGROUP sdvsvc.2
+-- %CLICOLLABEL NetVPI
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSdvServiceNetworkVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the network Virtual Path Identifier
+         (VPI).  This parameter is applicable or not based on the SPP (Sonet)
+         associated with the SCP."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSdvServiceEntry 5 }
+
+-- %CLISHOWGROUP sdvsvc.2
+-- %CLICOLLABEL NetVCI
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSdvServiceNetworkVci OBJECT-TYPE
+    SYNTAX      IShelfVci
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the network Virtual Circuit Identifier
+         (VCI).  This parameter is applicable or not based on the SPP (Sonet)
+         associated with the SCP."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSdvServiceEntry 6 }
+
+-- %CLISHOWGROUP sdvsvc.2
+-- %CLICOLLABEL ExpVCI
+-- %CLIOPTION
+-- %CLIWIDTH 7
+iShelfBroadBandSdvServiceExportVci OBJECT-TYPE
+    SYNTAX      IShelfVci
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the exported Virtual Circuit Identifier
+         (VPI).  This parameter is applicable or not based on the SPP (Sonet)
+         associated with the SCP."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSdvServiceEntry 7 }
+
+-- %CLISHOWGROUP sdvsvc.2
+-- %CLICOLLABEL VList
+-- %CLIOPTION
+iShelfBroadBandSdvServiceVlanList OBJECT-TYPE
+    SYNTAX      IShelfVlanPortProfilePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The list of VLANs associated with this service entry."
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandSdvServiceEntry 8 }
+
+-- %CLISHOWGROUP sdvsvc.2
+-- %CLICOLLABEL Label
+-- %CLIOPTION
+iShelfBroadBandSdvServiceLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for this service entry.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSdvServiceEntry 9 }
+
+-- %CLISHOWGROUP sdvsvc.1
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandSdvServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandSdvServiceEntry 10 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandExportSdvServiceTable - Broadband Service/Line Associations
+--                                        for Exported Multicast traffic
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR expsdv
+-- %CLISHOWGROUP expsdv
+iShelfBroadBandExportSdvServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandExportSdvServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Service definition for exported multicast data services."
+    ::= { iShelfBroadBand 12 }
+
+iShelfBroadBandExportSdvServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandExportSdvServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry is a separate exported multicast VPI."
+    INDEX       { iShelfBroadBandExportSdvServiceIndex }
+    ::= { iShelfBroadBandExportSdvServiceTable 1 }
+
+IShelfBroadBandExportSdvServiceEntry ::=
+    SEQUENCE {
+        iShelfBroadBandExportSdvServiceIndex
+            IShelfBroadbandNextIndex,
+        iShelfBroadBandExportSdvServiceSpp
+            IShelfSppIndex,
+        iShelfBroadBandExportSdvServiceExportVpi
+            IShelfVpi,
+        iShelfBroadBandExportSdvServiceStartChannelId
+            INTEGER,
+        iShelfBroadBandExportSdvServiceEndChannelId
+            INTEGER,
+        iShelfBroadBandExportSdvServiceLabel
+            IShelfLabel,
+        iShelfBroadBandExportSdvServiceRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP expsdv
+iShelfBroadBandExportSdvServiceIndex OBJECT-TYPE
+    SYNTAX      IShelfBroadbandNextIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Simple index for the Export SDV service entry. The value of this index
+         is determined by reading the Service Next Index scalar."
+    ::= { iShelfBroadBandExportSdvServiceEntry 1 }
+
+-- %CLISHOWGROUP expsdv
+iShelfBroadBandExportSdvServiceSpp OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The SPP used for export."
+    ::= { iShelfBroadBandExportSdvServiceEntry 2 }
+
+-- %CLISHOWGROUP expsdv
+iShelfBroadBandExportSdvServiceExportVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The VPI the exported channels will use."
+    ::= { iShelfBroadBandExportSdvServiceEntry 3 }
+
+-- %CLISHOWGROUP expsdv
+iShelfBroadBandExportSdvServiceStartChannelId OBJECT-TYPE
+    SYNTAX      INTEGER (0..9999)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "An integer identifier for this SDV channel."
+    ::= { iShelfBroadBandExportSdvServiceEntry 4 }
+
+-- %CLISHOWGROUP expsdv
+iShelfBroadBandExportSdvServiceEndChannelId OBJECT-TYPE
+    SYNTAX      INTEGER (0..9999)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "An integer identifier for this SDV channel."
+    ::= { iShelfBroadBandExportSdvServiceEntry 5 }
+
+-- %CLISHOWGROUP expsdv
+-- %CLIOPTION
+iShelfBroadBandExportSdvServiceLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for this service entry.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandExportSdvServiceEntry 6 }
+
+-- %CLISHOWGROUP expsdv
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandExportSdvServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandExportSdvServiceEntry 7 }
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandATMCCTable - Broadband ATM CrossConnects
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR atmcc
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandATMCCEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION 
+        "Definition for ATM CrossConnects."
+    ::= { iShelfBroadBand 13 }
+
+iShelfBroadBandATMCCEntry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandATMCCEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each entry represents an ATM crossconnect. LocationA and CircuitA
+         are the index keys. If this crossconnect is of type Shelf then 
+         CircuitA must be 100 and circuitB must be 200."
+    INDEX       { iShelfBroadBandATMCCLocationA,
+                  iShelfBroadBandATMCCCircuitA}
+    ::= { iShelfBroadBandATMCCTable 1 }
+    
+IShelfBroadBandATMCCEntry ::=
+    SEQUENCE {
+        iShelfBroadBandATMCCLocationA
+            IShelfLocation,
+        iShelfBroadBandATMCCCircuitA
+            IShelfCircuit,
+        iShelfBroadBandATMCCLocationB
+            IShelfLocation,
+        iShelfBroadBandATMCCCircuitB
+            IShelfCircuit,
+        iShelfBroadBandATMCCType
+            IShelfATMCCType,
+--        iShelfBroadBandATMCCTransportCardType     not used anymore??
+--            INTEGER,
+        iShelfBroadBandATMCCSpecifyTransportCards
+            TruthValue,
+        iShelfBroadBandATMCCSourceTransportLocation
+            IShelfLocation,
+        iShelfBroadBandATMCCSourceTransportCircuit
+            IShelfCircuit,
+        iShelfBroadBandATMCCDestTransportLocation
+            IShelfLocation,
+        iShelfBroadBandATMCCDestTransportCircuit
+            IShelfCircuit,
+        iShelfBroadBandATMCCSingleNumTimeSlots
+            INTEGER,
+        iShelfBroadBandATMCCDisableCBAlarms
+            TruthValue,
+        iShelfBroadBandATMCCImaMode
+            IShelfImaMode,
+        iShelfBroadBandATMCCMaxDiffDelay
+            INTEGER,
+        iShelfBroadBandATMCCImaNumDS1s
+            INTEGER,
+        iShelfBroadBandATMCCDS1LocationA1
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA1
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB1
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB1
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationA2
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA2
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB2
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB2
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationA3
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA3
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB3
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB3
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationA4
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA4
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB4
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB4
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationA5
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA5
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB5
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB5
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationA6
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA6
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB6
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB6
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationA7
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA7
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB7
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB7
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationA8
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitA8
+            IShelfCircuit,
+        iShelfBroadBandATMCCDS1LocationB8
+            IShelfLocation,
+        iShelfBroadBandATMCCDS1CircuitB8
+            IShelfCircuit,
+        iShelfBroadBandATMCCRowStatus
+            RowStatus
+    }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCLocationA OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Location of one end of the crossconnect. For Type = Single
+         this is Source location. For Type = IMA this is B3 Location A.
+         For Type = Shelf this is the Upstream Card Location."
+    ::= { iShelfBroadBandATMCCEntry 1 }     
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCCircuitA OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Circuit of the crossconnect associated with LocationA. 
+         For Type = Single, valid values are 100 - 800. 
+         For Type = IMA, valid values are 100 - 400. 
+         For Type = Shelf, not used. Set to 100."
+    ::= { iShelfBroadBandATMCCEntry 2 }     
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCLocationB OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Location of one end of the crossconnect. For Type = Single
+         this is Destination location. For Type = IMA this is B3 Location B.
+         For Type = Shelf this is the Downstream Card Location."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 3 }     
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCCircuitB OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Circuit of the crossconnect associated with LocationB. 
+         For Type = Single, valid values are 100 - 800. 
+         For Type = IMA, valid values are 100 - 400. 
+         For Type = Shelf, not used. Set to 100."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 4 }   
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCType OBJECT-TYPE  
+    SYNTAX      IShelfATMCCType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "ATM Crossconnect type. 
+         single(0), ima(1), shelf(2) "
+    DEFVAL      { 0 }
+    ::= { iShelfBroadBandATMCCEntry 5 }
+    
+
+-- %CLISHOWGROUP atmcc
+--iShelfBroadBandATMCCTransportCardType OBJECT-TYPE  
+--    SYNTAX      INTEGER {
+--                    none(0),
+--                    mdsl(1),
+--                    DS1(2)
+--                }
+--    MAX-ACCESS  read-write
+--    STATUS      current
+--    DESCRIPTION
+--        "If ATMCC type is single then this field identifies the
+--         transport card type.
+--         none(0), mdsl(1), DS1(2)"
+--    ::= { iShelfBroadBandATMCCEntry 6 }
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCSpecifyTransportCards OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If source/dest transport locations are entered this field will
+         be set to TRUE. If type is IMA then this must be set to true."
+    DEFVAL      { false }
+    ::= { iShelfBroadBandATMCCEntry 6 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCSourceTransportLocation OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If transport card type is mdsl or DS1 this identifies the location
+         of the source side of the transport."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 7 }
+    
+ -- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCSourceTransportCircuit OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Source transport circuit number."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 8 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDestTransportLocation OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If transport card type is mdsl or DS1 this identifies the location
+         of the destination side of the transport."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 9 }
+    
+ -- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDestTransportCircuit OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Destination transport circuit number."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 10 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCSingleNumTimeSlots OBJECT-TYPE  
+    SYNTAX      INTEGER  (1..239)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If ATMCC type is single and SpecifyTransportCards is false 
+         this field identifies the number of time slots (1-239)."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandATMCCEntry 11 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDisableCBAlarms OBJECT-TYPE  
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Should the cellbus alarms be disabled?"
+    DEFVAL      { false }
+    ::= { iShelfBroadBandATMCCEntry 12 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCImaMode OBJECT-TYPE  
+    SYNTAX      IShelfImaMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If ATMCC type is ima then this field identifies the IMA mode.
+         standard(0), nonstandard(1)."
+    DEFVAL      { standard }
+    ::= { iShelfBroadBandATMCCEntry 13 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCMaxDiffDelay OBJECT-TYPE  
+    SYNTAX      INTEGER {
+                    delay25(0),
+                    delay50(1),
+                    delay75(2),
+                    delay100(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If ATMCC type is ima then this field identifies the
+        maximim differential delay."
+    DEFVAL      { delay50 }
+    ::= { iShelfBroadBandATMCCEntry 14 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCImaNumDS1s OBJECT-TYPE  
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "If ATMCC type is ima then this field identifies the
+         number of DS1's to be used."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandATMCCEntry 15 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA1 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 1."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 16 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA1 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 1."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 17 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB1 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 1."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 18 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB1 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 1."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 19 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA2 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 2."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 20 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA2 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 2."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 21 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB2 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 2"
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 22 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB2 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 2."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 23 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA3 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 3."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 24 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA3 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 3."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 25 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB3 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 3"
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 26 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB3 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 3."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 27 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA4 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 4."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 28 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA4 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 4."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 29 }
+    
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB4 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 4"
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 30 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB4 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 4."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 31 }
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA5 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 5."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 32 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA5 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 5."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 33 }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB5 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 5"
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 34 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB5 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 5."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 35 }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA6 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 6."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 36 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA6 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 6."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 37 }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB6 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 6"
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 38 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB6 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 6."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 39 }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA7 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 7."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 40 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA7 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 7."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 41 }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB7 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 7"
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 42 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB7 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 7."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 43 }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationA8 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location A of IMA DS1 number 8."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 44 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitA8 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit A of IMA DS1 number 8."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 45 }
+
+
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1LocationB8 OBJECT-TYPE  
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Location B of IMA DS1 number 8."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandATMCCEntry 46 }
+    
+-- %CLISHOWGROUP atmcc
+iShelfBroadBandATMCCDS1CircuitB8 OBJECT-TYPE  
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Circuit B of IMA DS1 number 8."
+    DEFVAL      { 100 }
+    ::= { iShelfBroadBandATMCCEntry 47 }
+
+-- %CLISHOWGROUP atmcc
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandATMCCRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandATMCCEntry 48 }
+    
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfBroadBandSppDs3Table - Broadband SPP for Ds3 Facility
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX broadband
+-- %CLICMDABBR ds3spp
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3Table OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfBroadBandSppDs3Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Definition of a DS3 SPP.
+         Note that the DS3 SPP can be configured with 1 - 16 VPIs (1 primary and up to 15 extra).
+         There is a total DS3 SPP budget of 2000 VCs that can be allocated any way across the 16 VPIs.
+         For example, a single VPI can be allocated all 2000 VCs or 5 VPIs can each be allocated 400 VCs."
+    ::= { iShelfBroadBand 14 }
+
+iShelfBroadBandSppDs3Entry OBJECT-TYPE
+    SYNTAX      IShelfBroadBandSppDs3Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry is a separate DS3 SPP uplink."
+    INDEX       { iShelfBroadBandSppDs3Index }
+    ::= { iShelfBroadBandSppDs3Table 1 }
+
+IShelfBroadBandSppDs3Entry ::=
+    SEQUENCE {
+        iShelfBroadBandSppDs3Index
+            IShelfSppIndex,
+        iShelfBroadBandSppDs3Location
+            IShelfLocation,
+        iShelfBroadBandSppDs3Label
+            IShelfBroadbandLabel,
+        iShelfBroadBandSppDs3DefaultVpi
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForDefVpi
+            INTEGER,
+--        iShelfBroadBandSppDs3MultipleVcRanges
+--            TruthValue,
+        iShelfBroadBandSppDs3NumExtraVpi
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi1
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi1
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi2
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi2
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi3
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi3
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi4
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi4
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi5
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi5
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi6
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi6
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi7
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi7
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi8
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi8
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi9
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi9
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi10
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi10
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi11
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi11
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi12
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi12
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi13
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi13
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi14
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi14
+            INTEGER,
+        iShelfBroadBandSppDs3ExtraVpi15
+            IShelfVpi,
+        iShelfBroadBandSppDs3NumVciForExVpi15
+            INTEGER,
+        iShelfBroadBandSppDs3RowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ds3spp
+-- %CLICOLLABEL Index
+iShelfBroadBandSppDs3Index OBJECT-TYPE
+    SYNTAX      IShelfSppIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Simple index for the DS3 uplink."
+    ::= { iShelfBroadBandSppDs3Entry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+-- %CLICMDABBR Location
+-- %CLICOLLABEL Location
+iShelfBroadBandSppDs3Location OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The location of the DS3 card."
+    DEFVAL      { 10101 }
+    ::= { iShelfBroadBandSppDs3Entry 2 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+-- %CLICMDABBR Label
+-- %CLICOLLABEL Label
+iShelfBroadBandSppDs3Label OBJECT-TYPE
+    SYNTAX      IShelfBroadbandLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user name for the DS3 uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 3 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+-- %CLICMDABBR DefVPI
+-- %CLICOLLABEL DefVPI
+iShelfBroadBandSppDs3DefaultVpi OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "The default VPI used for VCs."
+    ::= { iShelfBroadBandSppDs3Entry 4 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+-- %CLICMDABBR NumVCIs
+-- %CLICOLLABEL NumVCIs
+iShelfBroadBandSppDs3NumVciForDefVpi OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for the default VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 5 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+-- %CLICMDABBR MultiRange
+-- %CLICOLLABEL MultiRange
+-- iShelfBroadBandSppDs3MultipleVcRanges OBJECT-TYPE
+--     SYNTAX      TruthValue
+--     MAX-ACCESS  read-write
+--     STATUS      current
+--     DESCRIPTION
+--         "The flag to enable or disable multiple VC ranges.
+--          true - enables multiple ranges
+--          false - disables multiple ranges
+--          The attribute must be set to true to enable the creation of an extra VPI
+--          for this DS3 SPP in the Extra DS3 VPI table.
+--          Setting this object to false will automatically delete associated rows
+--          in the Extra DS3 VPI table.
+--          NOTE:  this object can only be modified with a non-active rowStatus."
+--     DEFVAL      { false }
+--     ::= { iShelfBroadBandSppDs3Entry 6 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+-- %CLICMDABBR NumExVPIs
+-- %CLICOLLABEL NumExVPIs
+iShelfBroadBandSppDs3NumExtraVpi OBJECT-TYPE
+    SYNTAX      INTEGER (0..15)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of extra VPIs used for this uplink.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 6 }
+   
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi1 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 7 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi1 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 8 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi2 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 9 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi2 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 10 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi3 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 11 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi3 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 12 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi4 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 13 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi4 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 14 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi5 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 15 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi5 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 16 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi6 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 17 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi6 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 18 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi7 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 19 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi7 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 20 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi8 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 21 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi8 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 22 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi9 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 23 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi9 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 24 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi10 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 25 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi10 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 26 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi11 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 27 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi11 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 28 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi12 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 29 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi12 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 30 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi13 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 31 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi13 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 32 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi14 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 33 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi14 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 34 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3ExtraVpi15 OBJECT-TYPE
+    SYNTAX      IShelfVpi
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The extra VPI used for VCs.
+                 NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfBroadBandSppDs3Entry 35 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ds3spp
+iShelfBroadBandSppDs3NumVciForExVpi15 OBJECT-TYPE
+    SYNTAX      INTEGER (1..2000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of VCIs for this VPI.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfBroadBandSppDs3Entry 36 }
+
+-- %CLISHOWGROUP ds3spp
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfBroadBandSppDs3RowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfBroadBandSppDs3Entry 37 }
+
+
+END

@@ -1,0 +1,220 @@
+HUAWEI-DEHA-MIB  DEFINITIONS ::=  BEGIN
+IMPORTS
+           
+  Counter32, OBJECT-TYPE
+           FROM SNMPv2-SMI
+--  RowStatus
+--           FROM SNMPv2-TC  
+  ifIndex
+           FROM IF-MIB
+--  hwFrameIndex, hwSlotIndex
+--           FROM HUAWEI-DEVICE-MIB 
+  hwDeha
+           FROM HUAWEI-MIB;
+
+
+
+  hwDehaPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HwDehaPortTableEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      "DEHA board port configration table"
+    ::= { hwDeha 1 }
+
+  hwDehaPortTableEntry OBJECT-TYPE
+    SYNTAX      HwDehaPortTableEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      "DEHA board port configration table"
+    INDEX {  
+              ifIndex
+             }
+    ::= { hwDehaPortTable 1 }
+
+  HwDehaPortTableEntry ::=
+    SEQUENCE
+    {
+      hwDehaPortWorkMode    INTEGER,
+      hwDehaPortClockMode   INTEGER,
+      hwDehaPortStatus      INTEGER,
+      hwDehaPortLoop        INTEGER,
+      hwDehaPortWarningStatus   INTEGER
+    }
+
+  hwDehaPortWorkMode OBJECT-TYPE
+    SYNTAX      INTEGER{udt(1)}
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The value of UDT portmode "
+    ::={ hwDehaPortTableEntry 1 }
+
+  hwDehaPortClockMode OBJECT-TYPE
+    SYNTAX      INTEGER{system(1),line(2),srts(3)}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Show or set the port clockmode"
+    ::={ hwDehaPortTableEntry 2 }
+
+  hwDehaPortStatus OBJECT-TYPE
+    SYNTAX      INTEGER{normal(1),test(2),fail(3),idle(4)}
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The port status, the test(2) state can only occur when the port is normal and hwDehaPortLoop is local loop or remote loop"
+    ::={ hwDehaPortTableEntry 3 }
+
+  hwDehaPortLoop OBJECT-TYPE
+    SYNTAX      INTEGER{no-loop(1),local-loop(2),remote-loop(3)}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Show or set port loop mode"
+    ::={ hwDehaPortTableEntry 4 }
+
+  hwDehaPortWarningStatus OBJECT-TYPE
+    SYNTAX      INTEGER('0'H..'7f'H)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Alarm state of port, bit0: LOS, bit1: AIS. that means alarm exist when one's value is 1"
+    ::={ hwDehaPortTableEntry 5 }
+
+
+  hwDehaUDTPortStatisTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HwDehaUDTPortStatisTableEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      "The statistics table of DEHA UDT port"
+    ::= { hwDeha 2 }
+
+  hwDehaUDTPortStatisTableEntry OBJECT-TYPE
+    SYNTAX      HwDehaUDTPortStatisTableEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      ""
+    INDEX {  
+              ifIndex
+             }
+    ::= { hwDehaUDTPortStatisTable 1 }
+
+  HwDehaUDTPortStatisTableEntry ::=
+    SEQUENCE
+    {
+    hwDehaUDTPortStatisDisCellResBufOver            Counter32,
+    hwDehaUDTPortStatisChgSDTHead                   Counter32,
+    hwDehaUDTPortStatisDisDownCellInvalidSnOrSnp    Counter32,
+    hwDehaUDTPortStatisResBufOver                   Counter32,
+    hwDehaUDTPortStatisDownCellInvalidSnOrSnp       Counter32,
+    hwDehaUDTPortStatisSCOutOfQue                   Counter32,
+    hwDehaUDTPortStatisDownMisInsCellBySC           Counter32,
+    hwDehaUDTPortStatisDownDisBySC                  Counter32,
+    hwDehaUDTPortStatisResBufUnder                  Counter32,
+    hwDehaUDTPortStatisStartOutSync                 Counter32,
+    hwDehaUDTPortStatisDownLostCellBySC             Counter32,
+    hwDehaUDTPortStatisOper                         INTEGER
+    }
+
+  hwDehaUDTPortStatisDisCellResBufOver OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of discarded cells due to receive buffer overflow"
+    ::={ hwDehaUDTPortStatisTableEntry 1 }
+
+  hwDehaUDTPortStatisChgSDTHead OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of change times of SDT structure head"
+    ::={ hwDehaUDTPortStatisTableEntry 2 }
+
+
+  hwDehaUDTPortStatisDisDownCellInvalidSnOrSnp OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of discarded downstream cells with invalid SN/SNP field"
+    ::={ hwDehaUDTPortStatisTableEntry 3 }
+    
+  hwDehaUDTPortStatisResBufOver OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of completion times of buffer overflow reassembly"
+    ::={ hwDehaUDTPortStatisTableEntry 4 }
+
+  hwDehaUDTPortStatisDownCellInvalidSnOrSnp OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of downstream cells with invalid SN/SNP field"
+    ::={ hwDehaUDTPortStatisTableEntry 5 }
+
+  hwDehaUDTPortStatisSCOutOfQue OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of SC out of sequence"
+    ::={ hwDehaUDTPortStatisTableEntry 6 }
+
+  hwDehaUDTPortStatisDownMisInsCellBySC OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of downstream misinserted cells detected by SC algorithm"
+    ::={ hwDehaUDTPortStatisTableEntry 7 }
+
+  hwDehaUDTPortStatisDownDisBySC OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of downstream cells dischard by SC algorithm"
+    ::={ hwDehaUDTPortStatisTableEntry 8 }
+
+  hwDehaUDTPortStatisResBufUnder OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of end of reassembly buffer underflow"
+    ::={ hwDehaUDTPortStatisTableEntry 9 }
+
+  hwDehaUDTPortStatisStartOutSync OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of times of out-of-sync between ATM structure and port structure head"
+    ::={ hwDehaUDTPortStatisTableEntry 10 }
+
+  hwDehaUDTPortStatisDownLostCellBySC OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of downstream lost cells detected by SC algorithm"
+    ::={ hwDehaUDTPortStatisTableEntry 11 }
+
+  hwDehaUDTPortStatisOper OBJECT-TYPE
+    SYNTAX      INTEGER{noOperation(1),clear(2)}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The operating code of clearing the statistics of DEHA UDT port"
+    ::={ hwDehaUDTPortStatisTableEntry 12 }
+
+END

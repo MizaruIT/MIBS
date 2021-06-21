@@ -1,0 +1,1583 @@
+{
+  "imports": {
+    "class": "imports",
+    "ADVA-MIB": [
+      "fsp150cm"
+    ],
+    "CM-COMMON-MIB": [
+      "PerfCounter64"
+    ],
+    "CM-ENTITY-MIB": [
+      "neIndex",
+      "networkElementEntry",
+      "shelfIndex",
+      "slotIndex"
+    ],
+    "CM-FACILITY-MIB": [
+      "cmFlowIndex",
+      "cmMPFlowIndex",
+      "cmEthernetAccPortIndex",
+      "cmFlowEntry"
+    ],
+    "CM-PERFORMANCE-MIB": [
+      "cmFlowHistoryEntry",
+      "cmFlowStatsEntry"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Bits",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "OBJECT-TYPE",
+      "Counter32",
+      "Gauge32",
+      "MibIdentifier",
+      "TimeTicks",
+      "iso",
+      "IpAddress",
+      "Unsigned32",
+      "NOTIFICATION-TYPE",
+      "MODULE-IDENTITY",
+      "Counter64"
+    ],
+    "SNMPv2-TC": [
+      "MacAddress",
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "VariablePointer",
+      "DisplayString",
+      "RowStatus",
+      "StorageType"
+    ]
+  },
+  "f3BridgeMIB": {
+    "name": "f3BridgeMIB",
+    "oid": "1.3.6.1.4.1.2544.1.12.26",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2012-10-09 00:00",
+        "description": " Notes from release 201210090000Z, (1)MIB version ready for release FSP150CC 5.6CC."
+      }
+    ],
+    "lastupdated": "201209130000Z",
+    "organization": "ADVA Optical Networking",
+    "contactinfo": " Jakub Zalewski ADVA Optical Networking, Inc. Tel: +48 58 7716 411 E-mail: jzalewski@advaoptical.com Postal: ul. Slaska 35/37 81-310 Gdynia, Poland",
+    "description": "This module defines the Bridge MIB definitions used by the F3 (FSP150CM/CC) product lines. Copyright (C) ADVA Optical Networking."
+  },
+  "LearningControl": {
+    "name": "LearningControl",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "macbased": 2,
+          "flowbased": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Learning Control: none - The forwarding function of the Flow does not dynamically learn. macbased - The forwarding function of the Flow dynamically learns based on MAC address. flowbased - The forwarding function of the Flow dynamically learns based on EVC Membership."
+  },
+  "ProtectLearningControl": {
+    "name": "ProtectLearningControl",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "discard": 2,
+          "block": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Protect Learning Control: none - Learned entries for a Flow with the parent Port as a destination can be updated to a different Port. discard - Learned entries for a Flow with the parent Port as a destination cannot be updated to a different Port. Frames received that would update the learned entry are discarded. block - Learned entries for a Flow with the parent Port as a destination cannot be updated to a different Port. After receiving a frame that would update a learned entry, that frame is discarded, the Flow adds a secondary state of BLOCKD, and all subsequent frames received on that port that match the Flow membership shall be discarded until the secondary state of BLCKD is cleared."
+  },
+  "LearningAction": {
+    "name": "LearningAction",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "block": 1,
+          "forward": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Learning Action: block - a frame with a matching destination MAC address is not forwarded forward - a frame with a matching desintation MAC address is forwarded to the destination Port "
+  },
+  "LearningEntryType": {
+    "name": "LearningEntryType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "static": 1,
+          "dynamic": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Learning Entry Type"
+  },
+  "FlowLearningConfigAction": {
+    "name": "FlowLearningConfigAction",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noAction": 1,
+          "flushFwdTable": 2,
+          "clearBlock": 3,
+          "resetAgingTimer": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "Learning Action: noAction - No Action flushFwdTable - Removes all dynamic entries from the Forwarding table of a Flow. clearBlock - removes the secondary state of BLCKD and transitions the flow to a state where frames are not blocked resetAgingTimer - reset the aging timer "
+  },
+  "RetrieveMacAction": {
+    "name": "RetrieveMacAction",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notApllicable": 0,
+          "retrieveMac": 1
+        }
+      }
+    },
+    "status": "current",
+    "description": "Retrieve Mac Address Action"
+  },
+  "f3BridgeConfigObjects": {
+    "name": "f3BridgeConfigObjects",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1",
+    "class": "objectidentity"
+  },
+  "f3BridgeStatsObjects": {
+    "name": "f3BridgeStatsObjects",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2",
+    "class": "objectidentity"
+  },
+  "f3BridgeConformance": {
+    "name": "f3BridgeConformance",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3",
+    "class": "objectidentity"
+  },
+  "f3FlowLearningConfigTable": {
+    "name": "f3FlowLearningConfigTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table extends cmFlowTable to provide parameters for MAC Table control configuration."
+  },
+  "f3FlowLearningConfigEntry": {
+    "name": "f3FlowLearningConfigEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "f3FlowLearningConfigEntry",
+      "module": "F3-BRIDGE-MIB",
+      "object": "cmFlowEntry"
+    },
+    "status": "current",
+    "description": "A conceptual row in the f3FlowLearningConfigTable."
+  },
+  "f3FlowLearningConfigAccIfLearningCtrl": {
+    "name": "f3FlowLearningConfigAccIfLearningCtrl",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningControl",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuring Learning Control on Access Interface of this Flow."
+  },
+  "f3FlowLearningConfigNetIfLearningCtrl": {
+    "name": "f3FlowLearningConfigNetIfLearningCtrl",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningControl",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuring Learning Control on Network Interface of this Flow."
+  },
+  "f3FlowLearningConfigAccMaxFwdEntries": {
+    "name": "f3FlowLearningConfigAccMaxFwdEntries",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuring the maximum number of Forwarding Entires in for the Access Interface Forwarding Table of this Flow."
+  },
+  "f3FlowLearningConfigNetMaxFwdEntries": {
+    "name": "f3FlowLearningConfigNetMaxFwdEntries",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuring the maximum number of Forwarding Entires in for the Network Interface Forwarding Table of this Flow."
+  },
+  "f3FlowLearningConfigAccIfProtectLearningCtrl": {
+    "name": "f3FlowLearningConfigAccIfProtectLearningCtrl",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ProtectLearningControl",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuring Learning Control on Access Interface of this Flow."
+  },
+  "f3FlowLearningConfigNetIfProtectLearningCtrl": {
+    "name": "f3FlowLearningConfigNetIfProtectLearningCtrl",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ProtectLearningControl",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuring Learning Control on Network Interface of this Flow."
+  },
+  "f3FlowLearningConfigAgingTimer": {
+    "name": "f3FlowLearningConfigAgingTimer",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuration of the Aging Timer of this Flow in seconds. Forwarding Entry will be removed from the forwarding table after an inactivity time represented by this entry. Setting the value of 0 disables aging."
+  },
+  "f3FlowLearningConfigTableFullAction": {
+    "name": "f3FlowLearningConfigTableFullAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows configuration of Action on ingress frames when the number of forwarding table entires has reached the maximum Fowarding Table size. block - A frame with a Source MAC address not in the MAC Table will be discarded. forward - A frame with a Source MAC address not in the MAC table will not be learned and will be forwarded based on Destination MAC address of the frame. Only applicable when f3FlowLearningConfigAccIfLearningCtrl is set to 'macbased' or when =f3FlowLearningConfigNetIfLearningCtrl is set to 'macbased'."
+  },
+  "f3FlowLearningConfigAction": {
+    "name": "f3FlowLearningConfigAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FlowLearningConfigAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This objects allows performing user action on Flow Learning Table."
+  },
+  "f3FlowStaticFwdEntTable": {
+    "name": "f3FlowStaticFwdEntTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table allows configuration of Static Forwarding Entries in the Forwarding Table of a Flow."
+  },
+  "f3FlowStaticFwdEntEntry": {
+    "name": "f3FlowStaticFwdEntEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "shelfIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "slotIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmEthernetAccPortIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmFlowIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowStaticFwdEntDestMac",
+        "implied": 1
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3FlowStaticFwdEntTable."
+  },
+  "f3FlowStaticFwdEntDestMac": {
+    "name": "f3FlowStaticFwdEntDestMac",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The MAC address for matching a frame destination MAC address."
+  },
+  "f3FlowStaticFwdEntDestPort": {
+    "name": "f3FlowStaticFwdEntDestPort",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object allows configuring the destination port for a frame with a matching destination MAC address as specified in f3FlowStaticFwdEntDestMac."
+  },
+  "f3FlowStaticFwdEntAction": {
+    "name": "f3FlowStaticFwdEntAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningAction",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object allows configuring the action for this Forwarding Entry."
+  },
+  "f3FlowStaticFwdEntStorageType": {
+    "name": "f3FlowStaticFwdEntStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row."
+  },
+  "f3FlowStaticFwdEntRowStatus": {
+    "name": "f3FlowStaticFwdEntRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3FlowStaticFwdEntRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with f3StaticFwdRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3StaticFwdRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "f3FlowStaticFwdValid": {
+    "name": "f3FlowStaticFwdValid",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents Static FDB entry valid flag."
+  },
+  "f3FlowFdbTable": {
+    "name": "f3FlowFdbTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table allows viewing Forwarding Table of a Flow."
+  },
+  "f3FlowFdbEntry": {
+    "name": "f3FlowFdbEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "shelfIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "slotIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmEthernetAccPortIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmFlowIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowFdbDestMac",
+        "implied": 1
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3FlowFdbTable."
+  },
+  "f3FlowFdbDestMac": {
+    "name": "f3FlowFdbDestMac",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The MAC address for matching a frame destination MAC address."
+  },
+  "f3FlowFdbDestPort": {
+    "name": "f3FlowFdbDestPort",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the destination port for a frame with a matching destination MAC address as specified in f3FlowFdbDestMac."
+  },
+  "f3FlowFdbAction": {
+    "name": "f3FlowFdbAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningAction",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the action for this Forwarding Entry."
+  },
+  "f3FlowFdbEntryType": {
+    "name": "f3FlowFdbEntryType",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningEntryType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the FDB entry type."
+  },
+  "f3MPFlowStaticFwdTable": {
+    "name": "f3MPFlowStaticFwdTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to Fwd."
+  },
+  "f3MPFlowStaticFwdEntry": {
+    "name": "f3MPFlowStaticFwdEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmMPFlowIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowStaticFwdMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3MPFlowFwdTable."
+  },
+  "f3MPFlowStaticFwdMacAddress": {
+    "name": "f3MPFlowStaticFwdMacAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object describes Assigned/learned MAC address."
+  },
+  "f3MPFlowStaticFwdFP": {
+    "name": "f3MPFlowStaticFwdFP",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object describes Assigned/learned MAC address related to."
+  },
+  "f3MPFlowStaticFwdControlAction": {
+    "name": "f3MPFlowStaticFwdControlAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningAction",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The action is read only as Forward that means the MAC address is always forwarded."
+  },
+  "f3MPFlowStaticFwdValid": {
+    "name": "f3MPFlowStaticFwdValid",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This Object describe it whether valid."
+  },
+  "f3MPFlowStaticFwdStorageType": {
+    "name": "f3MPFlowStaticFwdStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this conceptual row."
+  },
+  "f3MPFlowStaticFwdRowStatus": {
+    "name": "f3MPFlowStaticFwdRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3MPFlowFwdRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with cmFlowRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3MPFlowFwdRowStatus object may be modified if the associated instance of this object is equal to active(1). Note that flow creation and deletion is only supported with access port in connection-oriented evpl mode."
+  },
+  "f3MPFlowFDBTable": {
+    "name": "f3MPFlowFDBTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to FDB."
+  },
+  "f3MPFlowFDBEntry": {
+    "name": "f3MPFlowFDBEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmMPFlowIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowFDBMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3MPFlowFwdTable."
+  },
+  "f3MPFlowFDBMacAddress": {
+    "name": "f3MPFlowFDBMacAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object describes Assigned/learned MAC address."
+  },
+  "f3MPFlowFDBFP": {
+    "name": "f3MPFlowFDBFP",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object describes Assigned/learned MAC address related to."
+  },
+  "f3MPFlowFDBType": {
+    "name": "f3MPFlowFDBType",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningEntryType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object describes the static or dynamic type for the relate mac."
+  },
+  "f3MPFlowFDBControlAction": {
+    "name": "f3MPFlowFDBControlAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningAction",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The action is read only as Forward that means the MAC address is always forwarded."
+  },
+  "f3FwdTSizeProfileTable": {
+    "name": "f3FwdTSizeProfileTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to FwdTSizeProfile."
+  },
+  "f3FwdTSizeProfileEntry": {
+    "name": "f3FwdTSizeProfileEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FwdTSizeProfileIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3FwdTSizeProfileTable."
+  },
+  "f3FwdTSizeProfileIndex": {
+    "name": "f3FwdTSizeProfileIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An integer index value used to uniquely identify this f3FwdTSizeProfileEntry."
+  },
+  "f3FwdTSizeProfileName": {
+    "name": "f3FwdTSizeProfileName",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "his object allows SNMP management entities to provide a name identifier with the f3FwdTSizeProfileEntry."
+  },
+  "f3FwdTSizeProfileTableSize": {
+    "name": "f3FwdTSizeProfileTableSize",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object descpribes Maximum number of MAC Table Entries for the profile."
+  },
+  "f3MultiGroupRegistrationTable": {
+    "name": "f3MultiGroupRegistrationTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to MultiGroupRegistration."
+  },
+  "f3MultiGroupRegistrationEntry": {
+    "name": "f3MultiGroupRegistrationEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmMPFlowIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRMulticastAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3MultiGroupRegistrationTable."
+  },
+  "f3MGRMulticastAddress": {
+    "name": "f3MGRMulticastAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object describes MG Group MAC address."
+  },
+  "f3MGRFPList": {
+    "name": "f3MGRFPList",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object describes the fplist."
+  },
+  "f3MGRGroupAction": {
+    "name": "f3MGRGroupAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "it is only be forward for egx7.1."
+  },
+  "f3MGRGroupType": {
+    "name": "f3MGRGroupType",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LearningEntryType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object describes the group type is static or dynamic."
+  },
+  "f3MGRGroupValid": {
+    "name": "f3MGRGroupValid",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "For GroupType as STATIC, if it is in Petra B, it is true; Otherwise it is false."
+  },
+  "f3MGRGroupStorageType": {
+    "name": "f3MGRGroupStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is a conceptual row."
+  },
+  "f3MGRGroupRowStatus": {
+    "name": "f3MGRGroupRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3MGRGroupRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with cmFlowRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3MGRGroupRowStatus object may be modified if the associated instance of this object is equal to active(1). Note that flow creation and deletion is only supported with access port in connection-oriented evpl mode."
+  },
+  "f3MGRFPMemberTable": {
+    "name": "f3MGRFPMemberTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to MGRFPMember."
+  },
+  "f3MGRFPMemberEntry": {
+    "name": "f3MGRFPMemberEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmMPFlowIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRMulticastAddress",
+        "implied": 0
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRFPIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3MGRFPMemberTable."
+  },
+  "f3MGRFPIndex": {
+    "name": "f3MGRFPIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object describes the relate Flow point."
+  },
+  "f3MGRFPIndexRowStatus": {
+    "name": "f3MGRFPIndexRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3MGRFPIndexRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with cmFlowRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3MGRFPIndexRowStatus object may be modified if the associated instance of this object is equal to active(1). Note that flow creation and deletion is only supported with access port in connection-oriented evpl mode."
+  },
+  "networkElementBridgeParamsTable": {
+    "name": "networkElementBridgeParamsTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Entries may be auto discovered, or can be explicitly created by SNMP Manager. Each remotely discovered shelf is represented as a row in this table."
+  },
+  "networkElementBridgeParamsEntry": {
+    "name": "networkElementBridgeParamsEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "networkElementBridgeParamsEntry",
+      "module": "F3-BRIDGE-MIB",
+      "object": "networkElementEntry"
+    },
+    "status": "current",
+    "description": "A conceptual row in the networkElementBridgeParamsTable."
+  },
+  "neBridgeParamsRtrvMacAction": {
+    "name": "neBridgeParamsRtrvMacAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RetrieveMacAction",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Before reading infomation from f3MPFlowFDBTable, neBridgeParamsRtrvMacAction should be operate firstly. This object can help enhance the effciency for reading f3MPFlowFDBTable."
+  },
+  "f3FlowLearningStatsTable": {
+    "name": "f3FlowLearningStatsTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table extends cmFlowStatsTable to provide parameters for Learninig control configuration."
+  },
+  "f3FlowLearningStatsEntry": {
+    "name": "f3FlowLearningStatsEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "f3FlowLearningStatsEntry",
+      "module": "F3-BRIDGE-MIB",
+      "object": "cmFlowStatsEntry"
+    },
+    "status": "current",
+    "description": "A conceptual row in the f3FlowLearningStatsTable."
+  },
+  "f3FlowLearningStatsMacTableFlushes": {
+    "name": "f3FlowLearningStatsMacTableFlushes",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies current counter for number of times the MAC Table has been flushed of Dynacmic entries."
+  },
+  "f3FlowLearningStatsFDStaticBlock": {
+    "name": "f3FlowLearningStatsFDStaticBlock",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies current counter for number of frames discarded due to a static entry in Mac Table."
+  },
+  "f3FlowLearningStatsFDHairPin": {
+    "name": "f3FlowLearningStatsFDHairPin",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies current counter for number of frames discarded because destination Port is the ingress flowpoint or destination Port is in the same Split Horizon Group."
+  },
+  "f3FlowLearningStatsFDNoDest": {
+    "name": "f3FlowLearningStatsFDNoDest",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies current counter for number of frames discarded because no destination Port is available due to secondaryStates of BLCK. The counter is currently not supported and will return 0 value."
+  },
+  "f3FlowLearningStatsMacTableDiscards": {
+    "name": "f3FlowLearningStatsMacTableDiscards",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies current counter for total number of MAC Table entries that have been or would have been learned, but have been failed due to a lack of storage space in the Filtering Database."
+  },
+  "f3FlowLearningHistoryTable": {
+    "name": "f3FlowLearningHistoryTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table extends cmFlowHistoryTable to provide parameters for Learninig control configuration."
+  },
+  "f3FlowLearningHistoryEntry": {
+    "name": "f3FlowLearningHistoryEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "f3FlowLearningHistoryEntry",
+      "module": "F3-BRIDGE-MIB",
+      "object": "cmFlowHistoryEntry"
+    },
+    "status": "current",
+    "description": "A conceptual row in the f3FlowLearningHistoryTable."
+  },
+  "f3FlowLearningHistoryMacTableFlushes": {
+    "name": "f3FlowLearningHistoryMacTableFlushes",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies history bin for number of times the MAC Table has been flushed of Dynacmic entries."
+  },
+  "f3FlowLearningHistoryFDStaticBlock": {
+    "name": "f3FlowLearningHistoryFDStaticBlock",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies history bin for number of frames discarded due to a static entry in Mac Table."
+  },
+  "f3FlowLearningHistoryFDHairPin": {
+    "name": "f3FlowLearningHistoryFDHairPin",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies history bin for number of frames discarded because destination Port is the ingress flowpoint or destination Port is in the same Split Horizon Group."
+  },
+  "f3FlowLearningHistoryFDNoDest": {
+    "name": "f3FlowLearningHistoryFDNoDest",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies history bin for number of frames discarded because no destination Port is available due to secondaryStates of BLCK. The counter is currently not supported and will return 0 value."
+  },
+  "f3FlowLearningHistoryMacTableDiscards": {
+    "name": "f3FlowLearningHistoryMacTableDiscards",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Specifies history bin for total number of MAC Table entries that have been or would have been learned, but have been failed due to a lack of storage space in the Filtering Database."
+  },
+  "f3BridgeCompliances": {
+    "name": "f3BridgeCompliances",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.1",
+    "class": "objectidentity"
+  },
+  "f3BridgeGroups": {
+    "name": "f3BridgeGroups",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2",
+    "class": "objectidentity"
+  },
+  "f3BridgeCompliance": {
+    "name": "f3BridgeCompliance",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "f3FlowLearningConfigGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3FlowStaticFwdEntGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3FlowLearningStatsGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3FlowLearningHistoryGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3FlowFdbGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3MPFlowStaticFwdGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3MPFlowFDBGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3FwdTSizeProfileGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3MGGroupFPGroup",
+        "module": "F3-BRIDGE-MIB"
+      },
+      {
+        "object": "f3NetworkElementBridgeParamsGroup",
+        "module": "F3-BRIDGE-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Describes the requirements for conformance to the F3-BRIDGE-MIB compliance."
+  },
+  "f3FlowLearningConfigGroup": {
+    "name": "f3FlowLearningConfigGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigAccIfLearningCtrl"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigNetIfLearningCtrl"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigAccMaxFwdEntries"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigNetMaxFwdEntries"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigAccIfProtectLearningCtrl"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigNetIfProtectLearningCtrl"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigAgingTimer"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigTableFullAction"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningConfigAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the Flow Learning Config group."
+  },
+  "f3FlowStaticFwdEntGroup": {
+    "name": "f3FlowStaticFwdEntGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowStaticFwdEntDestPort"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowStaticFwdEntAction"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowStaticFwdEntStorageType"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowStaticFwdEntRowStatus"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowStaticFwdValid"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the Flow Static Forwarding group."
+  },
+  "f3FlowLearningStatsGroup": {
+    "name": "f3FlowLearningStatsGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningStatsMacTableFlushes"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningStatsFDStaticBlock"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningStatsFDHairPin"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningStatsFDNoDest"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningStatsMacTableDiscards"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the Flow Learning Statistics group."
+  },
+  "f3FlowLearningHistoryGroup": {
+    "name": "f3FlowLearningHistoryGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningHistoryMacTableFlushes"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningHistoryFDStaticBlock"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningHistoryFDHairPin"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningHistoryFDNoDest"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowLearningHistoryMacTableDiscards"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the Flow Learning History group."
+  },
+  "f3FlowFdbGroup": {
+    "name": "f3FlowFdbGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowFdbDestPort"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowFdbAction"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FlowFdbEntryType"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the Flow Forwarding group."
+  },
+  "f3MPFlowStaticFwdGroup": {
+    "name": "f3MPFlowStaticFwdGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowStaticFwdMacAddress"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowStaticFwdFP"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowStaticFwdControlAction"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowStaticFwdValid"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowStaticFwdStorageType"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowStaticFwdRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the MPFlow Static Fwd group."
+  },
+  "f3MPFlowFDBGroup": {
+    "name": "f3MPFlowFDBGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowFDBMacAddress"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowFDBFP"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowFDBType"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MPFlowFDBControlAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the MPFlow FDB group."
+  },
+  "f3FwdTSizeProfileGroup": {
+    "name": "f3FwdTSizeProfileGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FwdTSizeProfileIndex"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FwdTSizeProfileName"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3FwdTSizeProfileTableSize"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the f3FwdTSizeProfileGroup."
+  },
+  "f3MGGroupFPGroup": {
+    "name": "f3MGGroupFPGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRMulticastAddress"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRFPList"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRGroupAction"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRGroupType"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRGroupValid"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRGroupRowStatus"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRFPIndex"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRFPIndexRowStatus"
+      },
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "f3MGRGroupStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the f3MGGroupFPGroup."
+  },
+  "f3NetworkElementBridgeParamsGroup": {
+    "name": "f3NetworkElementBridgeParamsGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.26.3.2.10",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-BRIDGE-MIB",
+        "object": "neBridgeParamsRtrvMacAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the f3FwdTSizeProfileGroup."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/F3-BRIDGE-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:53:14 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "F3-BRIDGE-MIB"
+  }
+}

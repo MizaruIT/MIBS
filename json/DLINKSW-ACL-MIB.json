@@ -1,0 +1,5127 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex",
+      "InterfaceIndexOrZero"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressPrefixLength",
+      "InetAddressIPv6"
+    ],
+    "Q-BRIDGE-MIB": [
+      "VlanId",
+      "VlanIdOrNone"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "Integer32",
+      "iso",
+      "Counter32",
+      "NOTIFICATION-TYPE",
+      "Gauge32",
+      "Unsigned32",
+      "Bits",
+      "IpAddress",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "OBJECT-IDENTITY",
+      "OBJECT-TYPE",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "MacAddress",
+      "DisplayString",
+      "RowStatus"
+    ]
+  },
+  "dlinkSwAclMIB": {
+    "name": "dlinkSwAclMIB",
+    "oid": "1.3.6.1.4.1.171.14.28",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-11-26 00:00",
+        "description": "Add DEFVAL for nodes dAclIpAccessRuleSrcPort,dAclIpAccessRuleQosPrecedence etc. And correct description of node dAclReSeqIncrement."
+      },
+      {
+        "revision": "2015-07-10 00:00",
+        "description": "Add nodes to support vlan range, traffic class, l4 port mask operator, and mask for some nodes."
+      },
+      {
+        "revision": "2014-01-21 00:00",
+        "description": "Obsolete nodes dAclMacAccessRuleLlcDSAP, dAclMacAccessRuleLlcSSAP and dAclMacAccessRuleLlcCntl."
+      },
+      {
+        "revision": "2013-11-13 00:00",
+        "description": "Add 'deny-cpu'option for DlinkAclRuleType."
+      },
+      {
+        "revision": "2013-08-20 00:00",
+        "description": "Add nodes for counter function, access list remark, access list id, and some rule items."
+      },
+      {
+        "revision": "2013-02-08 00:00",
+        "description": "This is the first version of the MIB file for 'ACL' functionality."
+      }
+    ],
+    "lastupdated": "201511260000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "The Structure of Access Control List Information for the proprietary enterprise."
+  },
+  "DlinkAclRuleType": {
+    "name": "DlinkAclRuleType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "permit": 1,
+          "deny": 2,
+          "deny-cpu": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The action type when the packets match the access profile. permit(1)- Specifies that packets that match the access rule are permitted to be forwarded by the switch. deny(2) - Specifies that packets that match the access rule are not permitted to be forwarded by the switch and will be filtered. deny-cpu(3)- Specifies that packet that match the access rule are prevented to be copied to CPU and redirected to CPU. And the hardware forwarding behavior should not be affected. "
+  },
+  "DlinkAclPortOperatorType": {
+    "name": "DlinkAclPortOperatorType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "eq": 2,
+          "gt": 3,
+          "lt": 4,
+          "neq": 5,
+          "range": 6,
+          "mask": 7
+        }
+      }
+    },
+    "status": "current",
+    "description": " The type of UDP/TCP port operator indicates how a packet's TCP/UDP source or destination port number is compared. none(1) - No comparison. eq (2)- equal gt (3)- greater than. lt (4)- less than. neq(5)- not equal range(6)- compares the port value between two numbers. mask(7)- check the bit corresponding to bit value 1, ignore the bit corresponding to bit value 0. "
+  },
+  "TcpFlag": {
+    "name": "TcpFlag",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "urgent": 0,
+        "acknowledge": 1,
+        "push": 2,
+        "reset": 3,
+        "synchronize": 4,
+        "finish": 5
+      }
+    },
+    "status": "current",
+    "description": "The TCP flag fields. Each bit defined as follow: urgent(0) - urgent. acknowledge(1) - acknowledge. push(2) - push, reset(3) - reset. synchronize(4) - synchronize. finish (5) - finish. "
+  },
+  "dAclMIBNotifications": {
+    "name": "dAclMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.28.0",
+    "class": "objectidentity"
+  },
+  "dAclMIBObjects": {
+    "name": "dAclMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.28.1",
+    "class": "objectidentity"
+  },
+  "dAclMIBConformance": {
+    "name": "dAclMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.28.2",
+    "class": "objectidentity"
+  },
+  "dAclGeneral": {
+    "name": "dAclGeneral",
+    "oid": "1.3.6.1.4.1.171.14.28.1.1",
+    "class": "objectidentity"
+  },
+  "dAclReSeqTable": {
+    "name": "dAclReSeqTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table consists of a list of information about how re-sequencing the rules in access lists. "
+  },
+  "dAclReSeqEntry": {
+    "name": "dAclReSeqEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclReSeqAccessListName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry appears in this table for controlling the re-sequence of an access-list."
+  },
+  "dAclReSeqAccessListName": {
+    "name": "dAclReSeqAccessListName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the name of an access list."
+  },
+  "dAclReSeqStartingNumber": {
+    "name": "dAclReSeqStartingNumber",
+    "oid": "1.3.6.1.4.1.171.14.28.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates the initial value of sequence number of the corresponding access list."
+  },
+  "dAclReSeqIncrement": {
+    "name": "dAclReSeqIncrement",
+    "oid": "1.3.6.1.4.1.171.14.28.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates the number that the sequence numbers step. If the increment value is 5 and the beginning sequence number is 20, the subsequent sequence numbers are 25, 30, 35, 40, and so on."
+  },
+  "dAclMac": {
+    "name": "dAclMac",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2",
+    "class": "objectidentity"
+  },
+  "dAclMacAccessListNumber": {
+    "name": "dAclMacAccessListNumber",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the number of entries present in the MAC access list table."
+  },
+  "dAclMacAccessListTable": {
+    "name": "dAclMacAccessListTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains information about MAC access list."
+  },
+  "dAclMacAccessListEntry": {
+    "name": "dAclMacAccessListEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry defined in dAclMacAccessListTable. An entry is created/removed when an MAC access list is created/deleted."
+  },
+  "dAclMacAccessListName": {
+    "name": "dAclMacAccessListName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The name of the MAC access list."
+  },
+  "dAclMacAccessListRowStatus": {
+    "name": "dAclMacAccessListRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object allows the dynamic creation and deletion of a MAC access list."
+  },
+  "dAclMacAccessListId": {
+    "name": "dAclMacAccessListId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The number of the MAC access list. If user specify value zero(0) for this node, agent will assign a number for it. After the table created, this node should not be changed."
+  },
+  "dAclMacAccessListCounterEnabled": {
+    "name": "dAclMacAccessListCounterEnabled",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the counter state of the access list is enabled('true') or disabled('false'). And the counter state just for the all interface that applied the access list in dAclMacAccessGroupTable. "
+  },
+  "dAclMacAccessListClearStatAction": {
+    "name": "dAclMacAccessListClearStatAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to clear statistics of the access list when set to 'clear'. No action is taken if this object is set to 'noOp'. The 'clear' action just for the all interface that applied the access list in dAclMacAccessGroupTable. When read, the value 'noOp' is returned."
+  },
+  "dAclMacAccessListRemark": {
+    "name": "dAclMacAccessListRemark",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The description of the MAC access list."
+  },
+  "dAclMacAccessRuleTable": {
+    "name": "dAclMacAccessRuleTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table consists of a list of rules for the MAC access list."
+  },
+  "dAclMacAccessRuleEntry": {
+    "name": "dAclMacAccessRuleEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleSn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined dAclMacAccessRuleTable. The first instance identifier index value identifies the dAclMacAccessListEntry that a MAC access rule (dAclMacAccessRuleEntry) belongs to. An entry is removed from this table when its corresponding dAclMacAccessListEntry is deleted."
+  },
+  "dAclMacAccessRuleSn": {
+    "name": "dAclMacAccessRuleSn",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Specifies the sequence number of this rule. The lower the number is, the higher the priority of the rule. The special value of 0 means the sequence number will be automatically determined by the agent."
+  },
+  "dAclMacAccessRuleRowStatus": {
+    "name": "dAclMacAccessRuleRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclMacAccessRuleAction": {
+    "name": "dAclMacAccessRuleAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclRuleType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the result of the packet examination is to permit or deny or prevent to CPU. "
+  },
+  "dAclMacAccessRuleSrcMacAddr": {
+    "name": "dAclMacAccessRuleSrcMacAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a source MAC address."
+  },
+  "dAclMacAccessRuleSrcMacWildcard": {
+    "name": "dAclMacAccessRuleSrcMacWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of source MAC addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any source MAC address is specified. When the value of all '00'Hs indicates host source MAC address is specified."
+  },
+  "dAclMacAccessRuleDstMacAddr": {
+    "name": "dAclMacAccessRuleDstMacAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a destination MAC address."
+  },
+  "dAclMacAccessRuleDstMacWildcard": {
+    "name": "dAclMacAccessRuleDstMacWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of destination MAC addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any destination MAC address is specified. When the value of all '00'Hs indicates host destination MAC address is specified."
+  },
+  "dAclMacAccessRulePacketType": {
+    "name": "dAclMacAccessRulePacketType",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "ethernet": 2,
+          "llc": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the Ethernet frame type. The value of none (1) means the frame type is not specified."
+  },
+  "dAclMacAccessRuleEthernetType": {
+    "name": "dAclMacAccessRuleEthernetType",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the Ethernet type for an Ethernet II or SNAP packet. The special value of -1 means the Ethernet type value is not specified. It is only meaningful when the dAclMacAccessRulePacketType is 'ethernet'."
+  },
+  "dAclMacAccessRuleLlcDSAP": {
+    "name": "dAclMacAccessRuleLlcDSAP",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "obsolete",
+    "description": "Specifies the DSAP value for the LLC packet. If the value is -1, it means the DSAP number is not specified. It is only meaningful when the dAclMacAccessRulePacketType is 'llc'."
+  },
+  "dAclMacAccessRuleLlcSSAP": {
+    "name": "dAclMacAccessRuleLlcSSAP",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "obsolete",
+    "description": "Specifies the SSAP value for the LLC packet. If the value is -1, it means the SSAP number is not specified. It is only meaningful when the dAclMacAccessRulePacketType is 'llc'."
+  },
+  "dAclMacAccessRuleLlcCntl": {
+    "name": "dAclMacAccessRuleLlcCntl",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "obsolete",
+    "description": "Specifies the control field for the LLC packet. If the value is -1, it means the SSAP number is not specified. It is only meaningful when the dAclMacAccessRulePacketType is 'llc'."
+  },
+  "dAclMacAccessRuleDot1p": {
+    "name": "dAclMacAccessRuleDot1p",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the priority value. The value of -1 means the priority is not specified."
+  },
+  "dAclMacAccessRuleInnerDot1p": {
+    "name": "dAclMacAccessRuleInnerDot1p",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the inner priority value. The value of -1 means the inner priority is not specified."
+  },
+  "dAclMacAccessRuleVlanID": {
+    "name": "dAclMacAccessRuleVlanID",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the VLAN ID. A value of zero indicates the VLAN ID is not specified. This node and dAclMacAccessRuleVlanRangeMin/dAclMacAccessRuleVlanRangeMax cannot be specified at same time in a row."
+  },
+  "dAclMacAccessRuleInnerVlanID": {
+    "name": "dAclMacAccessRuleInnerVlanID",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the inner VLAN ID. A value of zero indicates the inner VLAN ID is not specified."
+  },
+  "dAclMacAccessRuleTimeName": {
+    "name": "dAclMacAccessRuleTimeName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the name of time-period profile associated with the access-list delineating its activation period. The value 'NULL' means that this rule is not bound with any Time mechanism."
+  },
+  "dAclMacAccessRuleEthernetTypeMask": {
+    "name": "dAclMacAccessRuleEthernetTypeMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for ethernet type defined by dAclMacAccessRuleEthernetType. Valid values are from 0x0000 to 0xFFFF. Default value is 0xFFFF. This node is valid only for the dAclMacAccessRuleEthernetType specified."
+  },
+  "dAclMacAccessRuleDot1pMask": {
+    "name": "dAclMacAccessRuleDot1pMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for priority defined by dAclMacAccessRuleDot1p. Valid values are from 0x00 to 0x07. Default value is 0x07. This node is valid only for the dAclMacAccessRuleDot1p specified."
+  },
+  "dAclMacAccessRuleInnerDot1pMask": {
+    "name": "dAclMacAccessRuleInnerDot1pMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for inner priority defined by dAclMacAccessRuleInnerDot1p. Valid values are from 0x00 to 0x07. Default value is 0x07. This node is valid only for the dAclMacAccessRuleInnerDot1p specified."
+  },
+  "dAclMacAccessRuleVlanIDMask": {
+    "name": "dAclMacAccessRuleVlanIDMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for VLAN ID defined by dAclMacAccessRuleVlanID. Valid values are from 0x0000 to 0x0FFF. This node and dAclMacAccessRuleVlanRangeMin/dAclMacAccessRuleVlanRangeMax cannot be specified at same time in a row. Default value is 0x0FFF. This node is valid only for the dAclMacAccessRuleVlanID specified."
+  },
+  "dAclMacAccessRuleInnerVlanIDMask": {
+    "name": "dAclMacAccessRuleInnerVlanIDMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for inner VLAN ID defined by dAclMacAccessRuleInnerVlanID. Valid values are from 0x0000 to 0x0FFF. Default value is 0x0FFF. This node is valid only for the dAclMacAccessRuleInnerVlanID specified."
+  },
+  "dAclMacAccessRuleVlanRangeMin": {
+    "name": "dAclMacAccessRuleVlanRangeMin",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the minimum outer VLAN ID of a VLAN range. A value of zero indicates the VLAN range is not specified. This node and dAclMacAccessRuleVlanID/dAclMacAccessRuleVlanIDMask cannot be specified at same time in a row. This node is valid only for the dAclMacAccessRuleVlanRangeMax specified."
+  },
+  "dAclMacAccessRuleVlanRangeMax": {
+    "name": "dAclMacAccessRuleVlanRangeMax",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.3.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the maximum outer VLAN ID of a VLAN range. A value of zero indicates the VLAN range is not specified. This node and dAclMacAccessRuleVlanID/dAclMacAccessRuleVlanIDMask cannot be specified at same time in a row. This node is valid only for the dAclMacAccessRuleVlanRangeMin specified."
+  },
+  "dAclMacAccessGroupTable": {
+    "name": "dAclMacAccessGroupTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table represents a list of MAC access group configuration."
+  },
+  "dAclMacAccessGroupEntry": {
+    "name": "dAclMacAccessGroupEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessGroupIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessGroupApplyDirection",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in dAclMacAccessGroupTable contains interface specific MAC access list association."
+  },
+  "dAclMacAccessGroupIfIndex": {
+    "name": "dAclMacAccessGroupIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the ifIndex of the interface. Only physical port is valid interface."
+  },
+  "dAclMacAccessGroupApplyDirection": {
+    "name": "dAclMacAccessGroupApplyDirection",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates whether this access list is to be attached to ingress or egress direction."
+  },
+  "dAclMacAccessGroupRowStatus": {
+    "name": "dAclMacAccessGroupRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclMacAccessGroupAclName": {
+    "name": "dAclMacAccessGroupAclName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of the MAC access list to be applied. "
+  },
+  "dAclMacAccessGroupAclId": {
+    "name": "dAclMacAccessGroupAclId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.2.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ID of the MAC access list to be applied. User maybe specify access list ID(by this object) or name (by dAclMacAccessGroupAclName) to be applied. If both access list ID and name are specified, the access list name specified by dAclMacAccessGroupAclName will be take. "
+  },
+  "dAclIp": {
+    "name": "dAclIp",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3",
+    "class": "objectidentity"
+  },
+  "dAclIpAccessListNumber": {
+    "name": "dAclIpAccessListNumber",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the number of entries present in the IP access list table."
+  },
+  "dAclIpAccessListTable": {
+    "name": "dAclIpAccessListTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains IP access list configuration."
+  },
+  "dAclIpAccessListEntry": {
+    "name": "dAclIpAccessListEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry defined in dAclIpAccessListTable. An entry is created/removed when an IP access list is created/deleted."
+  },
+  "dAclIpAccessListName": {
+    "name": "dAclIpAccessListName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The name of the IP access list."
+  },
+  "dAclIpAccessListRowStatus": {
+    "name": "dAclIpAccessListRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object allows the dynamic creation and deletion of an IP access list."
+  },
+  "dAclIpAccessExtended": {
+    "name": "dAclIpAccessExtended",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the IP access list is extended ('true') or standard ('false'). A standard ip access list means only IP address related i.e. source or destination IP address is specified for the filter. For an extended IP access list, more fields can be chosen for the filter."
+  },
+  "dAclIpAccessListId": {
+    "name": "dAclIpAccessListId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The number of the IP access list. If user specify value zero(0) for this node, agent will assign a number for it. After the table created, this node should not be changed."
+  },
+  "dAclIpAccessListCounterEnabled": {
+    "name": "dAclIpAccessListCounterEnabled",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the counter state of the access list is enabled('true') or disabled('false'). And the counter just for the all interface that applied the access list in dAclIpAccessGroupTable."
+  },
+  "dAclIpAccessListClearStatAction": {
+    "name": "dAclIpAccessListClearStatAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to clear statistics of the access list when set to 'clear'. No action is taken if this object is set to 'noOp'. The 'clear' action just for the all interface that applied the access list in dAclIpAccessGroupTable. When read, the value 'noOp' is returned."
+  },
+  "dAclIpAccessListRemark": {
+    "name": "dAclIpAccessListRemark",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The description of the IP access list."
+  },
+  "dAclIpAccessRuleTable": {
+    "name": "dAclIpAccessRuleTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of IP access rules for IP access lists."
+  },
+  "dAclIpAccessRuleEntry": {
+    "name": "dAclIpAccessRuleEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleSn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined dAclIpAccessRuleTable. The first instance identifier index value identifies the dAclIpAccessListEntry that an IP access rule (dAclIpAccessRuleEntry) belongs to. An entry is removed from this table when its corresponding dAclIpAccessRuleEntry is deleted."
+  },
+  "dAclIpAccessRuleSn": {
+    "name": "dAclIpAccessRuleSn",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Specifies the sequence number of this rule. The lower the number is, the higher the priority of the rule. The special value of 0 means the sequence number will be automatically determined by the agent."
+  },
+  "dAclIpAccessRuleRowStatus": {
+    "name": "dAclIpAccessRuleRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclIpAccessRuleAction": {
+    "name": "dAclIpAccessRuleAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclRuleType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the result of the packet examination is to permit or deny or prevent to CPU."
+  },
+  "dAclIpAccessRuleProtocol": {
+    "name": "dAclIpAccessRuleProtocol",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "userDefine": 1,
+          "tcp": 2,
+          "udp": 3,
+          "icmp": 4,
+          "gre": 5,
+          "esp": 6,
+          "eigrp": 7,
+          "igmp": 8,
+          "ospf": 9,
+          "pim": 10,
+          "vrrp": 11,
+          "ipinip": 12,
+          "pcp": 13
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the IP protocol."
+  },
+  "dAclIpAccessRuleUserDefProtocol": {
+    "name": "dAclIpAccessRuleUserDefProtocol",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the user defined protocol ID when the dAclIpAccessRuleProtocol is 'userDefine (1)'. The value of -1 means the user defined protocol ID is not specified."
+  },
+  "dAclIpAccessRuleSrcAddr": {
+    "name": "dAclIpAccessRuleSrcAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a source IP address."
+  },
+  "dAclIpAccessRuleSrcWildcard": {
+    "name": "dAclIpAccessRuleSrcWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of source IP addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any IP source address is specified. When the value of all '00'Hs indicates host IP source address is specified."
+  },
+  "dAclIpAccessRuleDstAddr": {
+    "name": "dAclIpAccessRuleDstAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a destination IP address."
+  },
+  "dAclIpAccessRuleDstWildcard": {
+    "name": "dAclIpAccessRuleDstWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of destination IP addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any IP destination address is specified. When the value of all '00'Hs indicates host IP destination address is specified."
+  },
+  "dAclIpAccessRuleSrcOperator": {
+    "name": "dAclIpAccessRuleSrcOperator",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclPortOperatorType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates how a packet's source TCP/UDP port number is compared. When the value of this object is eq(2),gt(3),lt(4) or neq(5) uses the dAclIpAccessRuleSrcPort as an operand which is the only one needed. When the value of this object is range(6) needs 2 operands. One is dAclIpAccessRuleSrcPort, which is the starting port number of the range, and the other operand is dAclIpAccessRuleSrcPortRange, which is the ending port number of the range. When the value of this object is mask(7) needs 2 operands. One is dAclIpAccessRuleSrcPort, the other operand is dAclIpAccRuleSrcPortMask. This object is used for TCP/UDP protocol only, hence when the object 'dAclIpAccessRuleProtocol' is set to other than TCP/UDP, the object has to be 'none(1)'."
+  },
+  "dAclIpAccessRuleSrcPort": {
+    "name": "dAclIpAccessRuleSrcPort",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the source port number of TCP/UDP protocol. If the value is -1, it means the value is not specified. If the dAclIpAccessRuleSrcOperator object in the same row is range(6), this object will be the starting port number of the port range. This object only can be configured dAclIpAccessRuleSrcOperator in the same row is not 'none(1)'."
+  },
+  "dAclIpAccessRuleSrcPortRange": {
+    "name": "dAclIpAccessRuleSrcPortRange",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The source port number of the TCP/UDP protocol. If the dAclIpAccessRuleSrcOperator object in the same row is range(6), this object will be the ending port number of the port range. The value of -1 means the ending port number is not specified."
+  },
+  "dAclIpAccessRuleDstOperator": {
+    "name": "dAclIpAccessRuleDstOperator",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclPortOperatorType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates how a packet's TCP/UDP destination port number is compared. When the value of this object is eq(2),gt(3),lt(4) or neq(5) uses the dAclIpAccessRuleSrcPort as an operand which is the only one needed. When the value of this object is range(6) needs 2 operands. One is dAclIpAccessRuleSrcPort, which is the starting port number of the range, and the other operand is dAclIpAccessRuleDstPortRange, which is the ending port number of the range. When the value of this object is mask(7) needs 2 operands. One is dAclIpAccessRuleDstPort, the other operand is dAclIpAccRuleDstPortMask. This object is used for TCP/UDP protocol only, hence when the object 'dAclIpAccessRuleProtocol' is set to other than TCP/UDP, the object has to be 'none(1)'."
+  },
+  "dAclIpAccessRuleDstPort": {
+    "name": "dAclIpAccessRuleDstPort",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the destination port number of TCP/UDP protocol. If the value is -1, it means the value is not specified. If the dAclIpAccessRuleDstOperator object in the same row is range(6), this object will be the starting port number of the port range. This object only can be configured dAclIpAccessRuleDstOperator in the same row is not 'none(1)'."
+  },
+  "dAclIpAccessRuleDstPortRange": {
+    "name": "dAclIpAccessRuleDstPortRange",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The destination port number of the TCP/UDP protocol. If the dAclIpAccessRuleDstOperator object in the same row is range(6), this object will be the ending port number of the port range. The value of -1 means the ending port number is not specified."
+  },
+  "dAclIpAccessRuleQosPrecedence": {
+    "name": "dAclIpAccessRuleQosPrecedence",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of precedence. The value of -1 means the value is not specified or not applicable. dAclIpAccessRuleQosPrecedence and dAclIpAccessRuleQosDscp cannot be specified at same time in a row."
+  },
+  "dAclIpAccessRuleQosTos": {
+    "name": "dAclIpAccessRuleQosTos",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of type of service. The value of -1 means the value is not specified or not applicable. dAclIpAccessRuleQosTos and dAclIpAccessRuleQosDscp cannot be specified at same time in a row."
+  },
+  "dAclIpAccessRuleQosDscp": {
+    "name": "dAclIpAccessRuleQosDscp",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of DSCP code. The value of -1 means the value is not specified or not applicable. Neither dAclIpAccessRuleQosPrecedence nor dAclIpAccessRuleQosTos cannot be specified with dAclIpAccessRuleQosDscp at same time in a row. "
+  },
+  "dAclIpAccessRuleIcmpType": {
+    "name": "dAclIpAccessRuleIcmpType",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the type of ICMP protocol. If the value is -1, it means the value is not specified. This object is used for ICMP protocol only, hence when the object 'dAclIpAccessRuleProtocol' is set to other than ICMP, the object has to be -1."
+  },
+  "dAclIpAccessRuleIcmpCode": {
+    "name": "dAclIpAccessRuleIcmpCode",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the code of ICMP protocol. If the value is -1, it means the value is not specified. This object is used for ICMP protocol only, hence when the object 'dAclIpAccessRuleProtocol' is set to other than ICMP, the object has to be -1."
+  },
+  "dAclIpAccessRuleTimeName": {
+    "name": "dAclIpAccessRuleTimeName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the name of time-period profile associated with the access-list delineating its activation period. The value 'NULL' means that this rule is not bound with any Time mechanism."
+  },
+  "dAclIpAccRuleTcpFlag": {
+    "name": "dAclIpAccRuleTcpFlag",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TcpFlag",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the TCP flag fields. This node is available only for TCP protocol. The default value for this node is empty set, which means no TCP flag values are set. "
+  },
+  "dAclIpAccRuleFragments": {
+    "name": "dAclIpAccRuleFragments",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the Packet fragment filtering status is enabled('true') or disabled('false'). "
+  },
+  "dAclIpAccRuleUserDefProtocolMask": {
+    "name": "dAclIpAccRuleUserDefProtocolMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for protocol ID defined by dAclIpAccessRuleUserDefProtocol. Valid values are from 0x00 to 0xFF. Default value is 0xFF. This node is valid only for the dAclIpAccessRuleUserDefProtocol specified."
+  },
+  "dAclIpAccRuleSrcPortMask": {
+    "name": "dAclIpAccRuleSrcPortMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for L4 source port defined by dAclIpAccessRuleSrcPort. Valid values are from 0x0 to 0xFFFF. Default value is 0xFFFF. This object only can be configured dAclIpAccessRuleSrcOperator in the same row is 'mask(7)'. This node is valid only for the dAclIpAccessRuleSrcPort specified."
+  },
+  "dAclIpAccRuleDstPortMask": {
+    "name": "dAclIpAccRuleDstPortMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for L4 destination port defined by dAclIpAccessRuleDstPort. Valid values are from 0x0 to 0xFFFF. Default value is 0xFFFF. This object only can be configured dAclIpAccessRuleDstOperator in the same row is 'mask(7)'. This node is valid only for the dAclIpAccessRuleDstPort specified."
+  },
+  "dAclIpAccRuleQosPrecedenceMask": {
+    "name": "dAclIpAccRuleQosPrecedenceMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for ip precedence defined by dAclIpAccessRuleQosPrecedence. Valid values are from 0x0 to 0x7. Default value is 0x7. This node is valid only for the dAclIpAccessRuleQosPrecedence specified."
+  },
+  "dAclIpAccRuleQosTosMask": {
+    "name": "dAclIpAccRuleQosTosMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for type of service defined by dAclIpAccessRuleQosTos. Valid values are from 0x0 to 0xF. Default value is 0xF. This node is valid only for the dAclIpAccessRuleQosTos specified."
+  },
+  "dAclIpAccRuleQosDscpMask": {
+    "name": "dAclIpAccRuleQosDscpMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.3.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for DSCP code defined by dAclIpAccessRuleQosDscp. Valid values are from 0x0 to 0x3F. Default value is 0x3F. This node is valid only for the dAclIpAccessRuleQosDscp specified."
+  },
+  "dAclIpAccessGroupTable": {
+    "name": "dAclIpAccessGroupTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table represents a list of IP access group configuration."
+  },
+  "dAclIpAccessGroupEntry": {
+    "name": "dAclIpAccessGroupEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessGroupIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessGroupApplyDirection",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in dAclIpAccessGroupTable contains interface specific IP access list association."
+  },
+  "dAclIpAccessGroupIfIndex": {
+    "name": "dAclIpAccessGroupIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the ifIndex of the interface. Only physical port is valid interface."
+  },
+  "dAclIpAccessGroupApplyDirection": {
+    "name": "dAclIpAccessGroupApplyDirection",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates whether this access list is to be attached to ingress or egress direction."
+  },
+  "dAclIpAccessGroupStatus": {
+    "name": "dAclIpAccessGroupStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclIpAccessGroupAclName": {
+    "name": "dAclIpAccessGroupAclName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of the IP access list to be applied."
+  },
+  "dAclIpAccessGroupAclId": {
+    "name": "dAclIpAccessGroupAclId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.3.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ID of the IP access list to be applied. User maybe specify access list ID(by this object) or name (by dAclIpAccessGroupAclName) to be applied. If both access list ID and name are specified, the access list name specified by dAclIpAccessGroupAclName will be take. "
+  },
+  "dAclIPv6": {
+    "name": "dAclIPv6",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4",
+    "class": "objectidentity"
+  },
+  "dAclIPv6AccessListNumber": {
+    "name": "dAclIPv6AccessListNumber",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the number of entries present in the IPv6 access list table."
+  },
+  "dAclIPv6AccessListTable": {
+    "name": "dAclIPv6AccessListTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains IPv6 access list configuration."
+  },
+  "dAclIPv6AccessListEntry": {
+    "name": "dAclIPv6AccessListEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry defined in dAclIPv6AccessListTable. An entry is created/removed when an IPv6 access list is created/deleted."
+  },
+  "dAclIPv6AccessListName": {
+    "name": "dAclIPv6AccessListName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The name of the IPv6 access list."
+  },
+  "dAclIPv6AccessListRowStatus": {
+    "name": "dAclIPv6AccessListRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object allows the dynamic creation and deletion of an IPv6 access list."
+  },
+  "dAclIPv6AccessExtended": {
+    "name": "dAclIPv6AccessExtended",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the IPv6 access list is extended ('true') or standard ('false'). A standard ip access list means only IPv6 address related i.e. source or destination IPv6 address is specified for the filter. For an extended IPv6 access list, more fields can be chosen for the filter."
+  },
+  "dAclIPv6AccessListId": {
+    "name": "dAclIPv6AccessListId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The number of the IPv6 access list."
+  },
+  "dAclIPv6AccessListCounterEnabled": {
+    "name": "dAclIPv6AccessListCounterEnabled",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the counter state of the access list is enabled('true') or disabled('false'). And the counter just for the all interface that applied the access list in dAclIPv6AccessGroupTable."
+  },
+  "dAclIPv6AccessListClearStatAction": {
+    "name": "dAclIPv6AccessListClearStatAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to clear statistics of the access list when set to 'clear'. No action is taken if this object is set to 'noOp'. The 'clear' action just for the all interface that applied the access list in dAclIPv6AccessGroupTable. When read, the value 'noOp' is returned."
+  },
+  "dAclIPv6AccessListRemark": {
+    "name": "dAclIPv6AccessListRemark",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The description of the IPv6 access list."
+  },
+  "dAclIPv6AccessRuleTable": {
+    "name": "dAclIPv6AccessRuleTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of IPv6 access rules for IPv6 access lists."
+  },
+  "dAclIPv6AccessRuleEntry": {
+    "name": "dAclIPv6AccessRuleEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleSn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined dAclIPv6AccessRuleTable. The first instance identifier index value identifies the dAclIPv6AccessListEntry that an IPv6 access rule (dAclIPv6AccessRuleEntry) belongs to. An entry is removed from this table when its corresponding dAclIPv6AccessRuleEntry is deleted."
+  },
+  "dAclIPv6AccessRuleSn": {
+    "name": "dAclIPv6AccessRuleSn",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Specifies the sequence number of this rule. The lower the number is, the higher the priority of the rule. The special value of 0 means the sequence number will be automatically determined by the agent."
+  },
+  "dAclIPv6AccessRuleRowStatus": {
+    "name": "dAclIPv6AccessRuleRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclIPv6AccessRuleAction": {
+    "name": "dAclIPv6AccessRuleAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclRuleType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the result of the packet examination is to permit or deny or prevent to CPU."
+  },
+  "dAclIPv6AccessRuleProtocol": {
+    "name": "dAclIPv6AccessRuleProtocol",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "userDefine": 1,
+          "tcp": 2,
+          "udp": 3,
+          "icmp": 4,
+          "esp": 5,
+          "pcp": 6,
+          "sctp": 7
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the IP protocol."
+  },
+  "dAclIPv6AccessRuleUserDefProtocol": {
+    "name": "dAclIPv6AccessRuleUserDefProtocol",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the user defined protocol ID when the dAclIPv6AccessRuleProtocol is 'userDefine (1)'. The value of -1 means the user defined protocol ID is not specified."
+  },
+  "dAclIPv6AccessRuleSrcAddr": {
+    "name": "dAclIPv6AccessRuleSrcAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv6",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a source IPv6 address."
+  },
+  "dAclIPv6AccessRuleSrcPrefixLen": {
+    "name": "dAclIPv6AccessRuleSrcPrefixLen",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the length in bits of source IPv6 address will be matched. In other words, the value of 0 indicates any source IPv6 address is specified. When the value of 128 indicates host IPv6 source address is specified."
+  },
+  "dAclIPv6AccessRuleDstAddr": {
+    "name": "dAclIPv6AccessRuleDstAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressIPv6",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a destination IPv6 address."
+  },
+  "dAclIPv6AccessRuleDstPrefixLen": {
+    "name": "dAclIPv6AccessRuleDstPrefixLen",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the length in bits of destination IPv6 address will be matched. In other words, the value of 0 indicates any destination IPv6 address is specified. When the value of 128 indicates host IPv6 destination address is specified."
+  },
+  "dAclIPv6AccessRuleSrcOperator": {
+    "name": "dAclIPv6AccessRuleSrcOperator",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclPortOperatorType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates how a packet's TCP/UDP source port number is compared. When the value of this object is eq(2),gt(3),lt(4) or neq(5) uses the dAclIPv6AccessRuleSrcPort as an operand which is the only one needed. When the value of this object is range(6) needs 2 operands. One is dAclIPv6AccessRuleSrcPort, which is the starting port number of the range, and the other operand is dAclIPv6AccessRuleSrcPortRange, which is the ending port number of the range. When the value of this object is mask(7) needs 2 operands. One is dAclIPv6AccessRuleSrcPort, the other operand is dAclIPv6AccessRuleSrcPortMask. This object is used for TCP/UDP protocol only, hence when the object 'dAclIPv6AccessRuleProtocol' is set to other than TCP/UDP, the object has to be 'none(1)'."
+  },
+  "dAclIPv6AccessRuleSrcPort": {
+    "name": "dAclIPv6AccessRuleSrcPort",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the source port number of TCP/UDP protocol. If the value is -1, it means the value is not specified. If the dAclIPv6AccessRuleSrcOperator object in the same row is range(6), this object will be the starting port number of the port range. This object only can be configured dAclIPv6AccessRuleSrcOperator in the same row is not 'none(1)'."
+  },
+  "dAclIPv6AccessRuleSrcPortRange": {
+    "name": "dAclIPv6AccessRuleSrcPortRange",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The source port number of the TCP/UDP protocol. If the dAclIPv6AccessRuleSrcOperator object in the same row is range(6), this object will be the ending port number of the port range. The value of -1 means the ending port number is not specified."
+  },
+  "dAclIPv6AccessRuleDstOperator": {
+    "name": "dAclIPv6AccessRuleDstOperator",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclPortOperatorType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates how a packet's TCP/UDP destination port number is compared. When the value of this object is eq(2),gt(3),lt(4) or neq(5) uses the dAclIPv6AccessRuleDstPort as an operand which is the only one needed. When the value of this object is range(6) needs 2 operands. One is dAclIPv6AccessRuleDstPort, which is the starting port number of the range, and the other operand is dAclIPv6AccessRuleDstPortRange, which is the ending port number of the range. When the value of this object is mask(7) needs 2 operands. One is dAclIPv6AccessRuleDstPort, the other operand is dAclIPv6AccessRuleDstPortMask. This object is used for TCP/UDP protocol only, hence when the object 'dAclIPv6AccessRuleProtocol' is set to other than TCP/UDP, the object has to be 'none(1)'."
+  },
+  "dAclIPv6AccessRuleDstPort": {
+    "name": "dAclIPv6AccessRuleDstPort",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the destination port number of TCP/UDP protocol. If the value is -1, it means the value is not specified. If the dAclIPv6AccessRuleDstOperator object in the same row is range(6), this object will be the starting port number of the port range. This object only can be configured dAclIPv6AccessRuleDstOperator in the same row is not 'none(1)'."
+  },
+  "dAclIPv6AccessRuleDstPortRange": {
+    "name": "dAclIPv6AccessRuleDstPortRange",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The destination port number of the TCP/UDP protocol. If the dAclIPv6AccessRuleDstOperator object in the same row is range(6), this object will be the ending port number of the port range. The value of -1 means the ending port number is not specified."
+  },
+  "dAclIPv6AccessRuleDscp": {
+    "name": "dAclIPv6AccessRuleDscp",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the matching DSCP code value in IPv6 header. The value of -1 means the DSCP value is not specified."
+  },
+  "dAclIPv6AccessRuleIcmpType": {
+    "name": "dAclIPv6AccessRuleIcmpType",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the type of ICMP protocol. The value of -1 means the ICMP type is not specified. This object is used for ICMP protocol only, hence when the object 'dAclIPv6AccessRuleProtocol' is set to other than ICMP, the object has to be -1."
+  },
+  "dAclIPv6AccessRuleIcmpCode": {
+    "name": "dAclIPv6AccessRuleIcmpCode",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the code of ICMP protocol. If the value is -1, it means the value is not specified. This object is used for ICMP protocol only, hence when the object 'dAclIPv6AccessRuleProtocol' is set to other than ICMP, the object has to be -1."
+  },
+  "dAclIPv6AccessRuleTimeName": {
+    "name": "dAclIPv6AccessRuleTimeName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the name of time-period profile associated with the access-list delineating its activation period. The value 'NULL' means that this rule is not bound with any Time mechanism."
+  },
+  "dAclIPv6AccRuleTcpFlag": {
+    "name": "dAclIPv6AccRuleTcpFlag",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TcpFlag",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the TCP flag fields. And this node is available only for TCP protocol. The default value for this node is empty set, which means no TCP flag values are set. "
+  },
+  "dAclIPv6AccRuleFragments": {
+    "name": "dAclIPv6AccRuleFragments",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the Packet fragment filtering status is enabled('true') or disabled('false')."
+  },
+  "dAclIPv6AccRuleFlowLabel": {
+    "name": "dAclIPv6AccRuleFlowLabel",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 1048575
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the Flow label value. The value of -1 means the flow-label value is not specified. "
+  },
+  "dAclIPv6AccRuleTrafficClass": {
+    "name": "dAclIPv6AccRuleTrafficClass",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the matching traffic class value in IPv6 header. The value of -1 means the traffic class value is not specified. This node and dAclIPv6AccessRuleDscp cannot be specified at same time in a row. "
+  },
+  "dAclIPv6AccRuleUserDefProtocolMask": {
+    "name": "dAclIPv6AccRuleUserDefProtocolMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for protocol ID defined by dAclIPv6AccessRuleUserDefProtocol. Valid values are from 0x00 to 0xFF. Default value is 0xFF. This node is valid only for the dAclIPv6AccessRuleUserDefProtocol specified."
+  },
+  "dAclIPv6AccRuleSrcPortMask": {
+    "name": "dAclIPv6AccRuleSrcPortMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for L4 source port defined by dAclIPv6AccessRuleSrcPort. Valid values are from 0x0 to 0xFFFF. Default value is 0xFFFF. This object only can be configured dAclIPv6AccessRuleSrcOperator in the same row is 'mask(7)'. This node is valid only for the dAclIPv6AccessRuleSrcPort specified."
+  },
+  "dAclIPv6AccRuleDstPortMask": {
+    "name": "dAclIPv6AccRuleDstPortMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for L4 destination port defined by dAclIPv6AccessRuleDstPort. Valid values are from 0x0 to 0xFFFF. Default value is 0xFFFF. This object only can be configured dAclIPv6AccessRuleDstOperator in the same row is 'mask(7)'. This node is valid only for the dAclIPv6AccessRuleDstPort specified."
+  },
+  "dAclIPv6AccRuleDscpMask": {
+    "name": "dAclIPv6AccRuleDscpMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for DSCP code defined by dAclIPv6AccessRuleDscp. Valid values are from 0x0 to 0x3F. Default value is 0x3F. This node is valid only for the dAclIPv6AccessRuleDscp specified."
+  },
+  "dAclIPv6AccRuleFlowLabelMask": {
+    "name": "dAclIPv6AccRuleFlowLabelMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 3,
+            "max": 3
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for Flow label value defined by dAclIPv6AccRuleFlowLabel. Valid values are from 0x0 to 0xFFFFF. Default value is 0xFFFFF. This node is valid only for the dAclIPv6AccRuleFlowLabel specified."
+  },
+  "dAclIPv6AccRuleTrafficClassMask": {
+    "name": "dAclIPv6AccRuleTrafficClassMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.3.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for traffic class defined by dAclIPv6AccRuleTrafficClass. Valid values are from 0x0 to 0xFF. Default value is 0xFF. This node is valid only for the dAclIPv6AccRuleTrafficClass specified."
+  },
+  "dAclIPv6AccessGroupTable": {
+    "name": "dAclIPv6AccessGroupTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table represents a list of IPv6 access group configuration."
+  },
+  "dAclIPv6AccessGroupEntry": {
+    "name": "dAclIPv6AccessGroupEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessGroupIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpv6AccessGroupApplyDirection",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in dAclIPv6AccessGroupTable contains interface specific IPv6 access list association."
+  },
+  "dAclIPv6AccessGroupIfIndex": {
+    "name": "dAclIPv6AccessGroupIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the ifIndex of the interface. Only physical port is valid interface."
+  },
+  "dAclIpv6AccessGroupApplyDirection": {
+    "name": "dAclIpv6AccessGroupApplyDirection",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates whether this ACL access list is to be attached to ingress or egress direction."
+  },
+  "dAclIPv6AccessGroupStatus": {
+    "name": "dAclIPv6AccessGroupStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclIPv6AccessGroupAclName": {
+    "name": "dAclIPv6AccessGroupAclName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of the IPv6 access list to be applied."
+  },
+  "dAclIPv6AccessGroupAclId": {
+    "name": "dAclIPv6AccessGroupAclId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.4.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ID of the IPv6 access list to be applied. User maybe specify access list ID(by this object) or name (by dAclIPv6AccessGroupAclName) to be applied. If both access list ID and name are specified, the access list name specified by dAclIPv6AccessGroupAclName will be take. "
+  },
+  "dAclExpert": {
+    "name": "dAclExpert",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5",
+    "class": "objectidentity"
+  },
+  "dAclExpertAccessListNumber": {
+    "name": "dAclExpertAccessListNumber",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the number of entries present in the extended expert access list table."
+  },
+  "dAclExpertAccessListTable": {
+    "name": "dAclExpertAccessListTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains information about extended expert access list."
+  },
+  "dAclExpertAccessListEntry": {
+    "name": "dAclExpertAccessListEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry defined in dAclExpertAccessListTable. An entry is created/removed when an extended expert access list is created/deleted."
+  },
+  "dAclExpertAccessListName": {
+    "name": "dAclExpertAccessListName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The name of the extended expert access list."
+  },
+  "dAclExpertAccessListRowStatus": {
+    "name": "dAclExpertAccessListRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object allows the dynamic creation and deletion of an extended expert access list."
+  },
+  "dAclExpertAccessListId": {
+    "name": "dAclExpertAccessListId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The number of the extended expert access list."
+  },
+  "dAclExpertAccessListCounterEnabled": {
+    "name": "dAclExpertAccessListCounterEnabled",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the counter state of the access list is enabled('true') or disabled('false'). And the counter just for the all interface that applied the access list in dAclExpertAccessGroupTable."
+  },
+  "dAclExpertAccessListClearStatAction": {
+    "name": "dAclExpertAccessListClearStatAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to clear statistics of the access list when set to 'clear'. No action is taken if this object is set to 'noOp'. The 'clear' action just for the all interface that applied the access list in dAclExpertAccessGroupTable. When read, the value 'noOp' is returned."
+  },
+  "dAclExpertAccessListRemark": {
+    "name": "dAclExpertAccessListRemark",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The description of the Expert access list."
+  },
+  "dAclExpertAccessRuleTable": {
+    "name": "dAclExpertAccessRuleTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table consists of a list of rules for the extended expert access list."
+  },
+  "dAclExpertAccessRuleEntry": {
+    "name": "dAclExpertAccessRuleEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined ddAclExpertAccessRuleTable. The first instance identifier index value identifies the dAclExpertAccessListEntry that a extended expert access rule (dAclExpertAccessRuleEntry) belongs to. An entry is removed from this table when its corresponding dAclExpertAccessListEntry is deleted."
+  },
+  "dAclExpertAccRuleSn": {
+    "name": "dAclExpertAccRuleSn",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Specifies the sequence number of this rule. The lower the number is, the higher the priority of the rule. The special value of 0 means the sequence number will be automatically determined by the agent."
+  },
+  "dAclExpertAccRuleRowStatus": {
+    "name": "dAclExpertAccRuleRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclExpertAccRuleAction": {
+    "name": "dAclExpertAccRuleAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclRuleType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the result of the packet examination is to permit or deny or prevent to CPU."
+  },
+  "dAclExpertAccRuleProtocol": {
+    "name": "dAclExpertAccRuleProtocol",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "userDefine": 1,
+          "tcp": 2,
+          "udp": 3,
+          "icmp": 4,
+          "gre": 5,
+          "esp": 6,
+          "eigrp": 7,
+          "igmp": 8,
+          "ospf": 9,
+          "pim": 10,
+          "vrrp": 11,
+          "ipinip": 12,
+          "pcp": 13
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the IP protocol."
+  },
+  "dAclExpertAccRuleUserDefProtocol": {
+    "name": "dAclExpertAccRuleUserDefProtocol",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the user defined protocol ID when the dAclExpertAccRuleProtocol is 'userDefine (1)'. The value of -1 means the user defined protocol ID is not specified."
+  },
+  "dAclExpertAccRuleSrcIpAddr": {
+    "name": "dAclExpertAccRuleSrcIpAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a source IP address."
+  },
+  "dAclExpertAccRuleSrcIpWildcard": {
+    "name": "dAclExpertAccRuleSrcIpWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of source IP addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any IP source address is specified. When the value of all '00'Hs indicates host IP source address is specified."
+  },
+  "dAclExpertAccRuleSrcMacAddr": {
+    "name": "dAclExpertAccRuleSrcMacAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a source MAC address."
+  },
+  "dAclExpertAccRuleSrcMacWildcard": {
+    "name": "dAclExpertAccRuleSrcMacWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of source MAC addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any source MAC address is specified. When the value of all '00'Hs indicates host source MAC address is specified."
+  },
+  "dAclExpertAccRuleSrcOperator": {
+    "name": "dAclExpertAccRuleSrcOperator",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclPortOperatorType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates how a packet's source TCP/UDP port number is compared. When the value of this object is eq(2),gt(3),lt(4) or neq(5) uses the dAclExpertAccsRuleSrcPort as an operand which is the only one needed. When the value of this object is range(6) needs 2 operands. One is dAclExpertAccsRuleSrcPort, which is the starting port number of the range, and the other operand is dAclExpertAccsRuleSrcPortRange, which is the ending port number of the range. When the value of this object is mask(7) needs 2 operands. One is dAclExpertAccsRuleSrcPort, the other operand is dAclExpertAccsRuleSrcPortMask. This object is used for TCP/UDP protocol only, hence when the object 'dAclExpertAccRuleProtocol' is set to other than TCP/UDP, the object has to be 'none(1)'."
+  },
+  "dAclExpertAccRuleSrcPort": {
+    "name": "dAclExpertAccRuleSrcPort",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the source port number of TCP/UDP protocol. If the value is -1, it means the value is not specified. If the dAclExpertAccsRuleSrcOperator object in the same row is range(6), this object will be the starting port number of the port range. This object only can be configured dAclExpertAccsRuleSrcOperator in the same row is not 'none(1)'."
+  },
+  "dAclExpertAccRuleSrcPortRange": {
+    "name": "dAclExpertAccRuleSrcPortRange",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The source port number of the TCP/UDP protocol. If the dAclExpertAccsRuleSrcOperator object in the same row is range(6), this object will be the ending port number of the port range. The value of -1 means the ending port number is not specified."
+  },
+  "dAclExpertAccRuleDstIpAddr": {
+    "name": "dAclExpertAccRuleDstIpAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a destination IP address."
+  },
+  "dAclExpertAccRuleDstIpWildcard": {
+    "name": "dAclExpertAccRuleDstIpWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of destination IP addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any IP destination address is specified. When the value of all '00'Hs indicates host IP destination address is specified."
+  },
+  "dAclExpertAccRuleDstMacAddr": {
+    "name": "dAclExpertAccRuleDstMacAddr",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies a destination MAC address."
+  },
+  "dAclExpertAccRuleDstMacWildcard": {
+    "name": "dAclExpertAccRuleDstMacWildcard",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is a wildcard bitmap to specify a group of destination MAC addresses. The bit value 1 indicates the corresponding bit will be ignored. The bit value 0 indicates the corresponding bit will be checked. In other words, when the value of all 'ff'Hs indicates any destination MAC address is specified. When the value of all '00'Hs indicates host destination MAC address is specified."
+  },
+  "dAclExpertAccRuleDstOperator": {
+    "name": "dAclExpertAccRuleDstOperator",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkAclPortOperatorType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates how a packet's TCP/UDP destination port number is compared. When the value of this object is eq(2),gt(3),lt(4) or neq(5) uses the dAclExpertAccsRuleDstPort as an operand which is the only one needed. When the value of this object is range(6) needs 2 operands. One is dAclExpertAccsRuleDstPort, which is the starting port number of the range, and the other operand is dAclExpertAccsRuleDstPortRange, which is the ending port number of the range. When the value of this object is mask(7) needs 2 operands. One is dAclExpertAccsRuleDstPort, the other operand is dAclExpertAccsRuleDstPortMask. This object is used for TCP/UDP protocol only, hence when the object 'dAclExpertAccRuleProtocol' is set to other than TCP/UDP, the object has to be 'none(1)'."
+  },
+  "dAclExpertAccRuleDstPort": {
+    "name": "dAclExpertAccRuleDstPort",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the destination port number of TCP/UDP protocol. If the value is -1, it means the value is not specified. If the dAclExpertAccsRuleDstOperator object in the same row is range(6), this object will be the starting port number of the port range. This object only can be configured dAclExpertAccsRuleDstOperator in the same row is not 'none(1)'."
+  },
+  "dAclExpertAccRuleDstPortRange": {
+    "name": "dAclExpertAccRuleDstPortRange",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The destination port number of the TCP/UDP protocol. If the dAclExpertAccsRuleDstOperator object in the same row is range(6), this object will be the ending port number of the port range. The value of -1 means the ending port number is not specified."
+  },
+  "dAclExpertAccRuleVlanID": {
+    "name": "dAclExpertAccRuleVlanID",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the VLAN ID. A value of zero indicates the VLAN ID is not specified."
+  },
+  "dAclExpertAccRuleInnerVlanID": {
+    "name": "dAclExpertAccRuleInnerVlanID",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the inner VLAN ID. A value of zero indicates the inner VLAN ID is not specified."
+  },
+  "dAclExpertAccRuleQosPrecedence": {
+    "name": "dAclExpertAccRuleQosPrecedence",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of precedence. The value of -1 means the value is not specified or not applicable. dAclExpertAccRuleQosPrecedence and dAclExpertAccRuleQosDscp cannot be specified at same time in a row."
+  },
+  "dAclExpertAccRuleQosTos": {
+    "name": "dAclExpertAccRuleQosTos",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of type of service. The value of -1 means the value is not specified or not applicable. dAclExpertAccRuleQosTos and dAclExpertAccRuleQosDscp cannot be specified at same time in a row."
+  },
+  "dAclExpertAccRuleQosDscp": {
+    "name": "dAclExpertAccRuleQosDscp",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of DSCP code. The value of -1 means the value is not specified or not applicable. Neither dAclExpertAccRuleQosPrecedence nor dAclExpertAccRuleQosTos can be specified with dAclExpertAccRuleQosDscp at same time in a row."
+  },
+  "dAclExpertAccRuleIcmpType": {
+    "name": "dAclExpertAccRuleIcmpType",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the type of ICMP protocol. If the value is -1, it means the value is not specified. This object is used for ICMP protocol only, hence when the object 'dAclExpertAccRuleProtocol' is set to other than ICMP, the object has to be -1."
+  },
+  "dAclExpertAccRuleIcmpCode": {
+    "name": "dAclExpertAccRuleIcmpCode",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the code of ICMP protocol. If the value is -1, it means the value is not specified. This object is used for ICMP protocol only, hence when the object 'dAclExpertAccRuleProtocol' is set to other than ICMP, the object has to be -1."
+  },
+  "dAclExpertAccRuleTimeName": {
+    "name": "dAclExpertAccRuleTimeName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the name of time-period profile associated with the access-list delineating its activation period. The value 'NULL' means that this rule is not bound with any Time mechanism."
+  },
+  "dAclExpertAccRuleTcpFlag": {
+    "name": "dAclExpertAccRuleTcpFlag",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TcpFlag",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the TCP flag fields. This node is available only for TCP protocol. The default value for this node is empty set, which means no TCP flag values are set. "
+  },
+  "dAclExpertAccRuleFragments": {
+    "name": "dAclExpertAccRuleFragments",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the Packet fragment filtering status is enabled('true') or disabled('false')."
+  },
+  "dAclExpertAccRuleOuterCos": {
+    "name": "dAclExpertAccRuleOuterCos",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of inner priority. The value of -1 means the value is not specified or not applicable. "
+  },
+  "dAclExpertAccRuleInnerCos": {
+    "name": "dAclExpertAccRuleInnerCos",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.31",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the value of inner priority, the node is availabe just for the node dAclExpertAccRuleOuterCos be specified. The value of -1 means the value is not specified or not applicable. "
+  },
+  "dAclExpertAccRuleUserDefProtocolMask": {
+    "name": "dAclExpertAccRuleUserDefProtocolMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.32",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for protocol ID defined by dAclExpertAccRuleUserDefProtocol. Valid values are from 0x00 to 0xFF. Default value is 0xFF. This node is valid only for the dAclExpertAccRuleUserDefProtocol specified."
+  },
+  "dAclExpertAccRuleSrcPortMask": {
+    "name": "dAclExpertAccRuleSrcPortMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.33",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for L4 source port defined by dAclExpertAccRuleSrcPort. Valid values are from 0x0 to 0xFFFF. Default value is 0xFFFF. This object only can be configured dAclExpertAccRuleSrcOperator in the same row is 'mask(7)'. "
+  },
+  "dAclExpertAccRuleDstPortMask": {
+    "name": "dAclExpertAccRuleDstPortMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.34",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for L4 destination port defined by dAclExpertAccRuleDstPort. Valid values are from 0x0 to 0xFFFF. Default value is 0xFFFF. This object only can be configured dAclExpertAccRuleDstOperator in the same row is 'mask(7)'."
+  },
+  "dAclExpertAccRuleVlanIDMask": {
+    "name": "dAclExpertAccRuleVlanIDMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.35",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for VLAN ID defined by dAclExpertAccRuleVlanID. Valid values are from 0x0000 to 0x0FFF. This node and dAclExpertAccRuleVlanRangeMin/dAclExpertAccRuleVlanRangeMax cannot be specified at same time in a row. Default value is 0x0FFF. This node is valid only for the dAclExpertAccRuleVlanID specified."
+  },
+  "dAclExpertAccRuleInnerVlanIDMask": {
+    "name": "dAclExpertAccRuleInnerVlanIDMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.36",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for inner VLAN ID defined by dAclExpertAccRuleInnerVlanID. Valid values are from 0x0000 to 0x0FFF. Default value is 0x0FFF. This node is valid only for the dAclExpertAccRuleInnerVlanID specified."
+  },
+  "dAclExpertAccRuleQosPrecedenceMask": {
+    "name": "dAclExpertAccRuleQosPrecedenceMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.37",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for ip precedence defined by dAclExpertAccRuleQosPrecedence. Valid values are from 0x0 to 0x7. Default value is 0x7. This node is valid only for the dAclExpertAccRuleQosPrecedence specified."
+  },
+  "dAclExpertAccRuleQosTosMask": {
+    "name": "dAclExpertAccRuleQosTosMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.38",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for type of service defined by dAclExpertAccRuleQosTos. Valid values are from 0x0 to 0xF. Default value is 0xF. This node is valid only for the dAclExpertAccRuleQosTos specified."
+  },
+  "dAclExpertAccRuleQosDscpMask": {
+    "name": "dAclExpertAccRuleQosDscpMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.39",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for DSCP code defined by dAclExpertAccRuleQosDscp. Valid values are from 0x0 to 0x3F. Default value is 0x3F. This node is valid only for the dAclExpertAccRuleQosDscp specified."
+  },
+  "dAclExpertAccRuleOuterCosMask": {
+    "name": "dAclExpertAccRuleOuterCosMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.40",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for priority defined by dAclExpertAccRuleOuterCos. Valid values are from 0x00 to 0x07. Default value is 0x07. This node is valid only for the dAclExpertAccRuleOuterCos specified."
+  },
+  "dAclExpertAccRuleInnerCosMask": {
+    "name": "dAclExpertAccRuleInnerCosMask",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.41",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 1
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the mask for inner priority defined by dAclExpertAccRuleInnerCos. Valid values are from 0x00 to 0x07. Default value is 0x07. This node is valid only for the dAclExpertAccRuleInnerCos specified."
+  },
+  "dAclExpertAccRuleVlanRangeMin": {
+    "name": "dAclExpertAccRuleVlanRangeMin",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.42",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the minimum outer VLAN ID of a VLAN range. A value of zero indicates the VLAN range is not specified. This node and dAclMacAccessRuleVlanID/dAclMacAccessRuleVlanIDMask cannot be specified at same time in a row. This node is valid only for the dAclExpertAccRuleVlanRangeMax specified."
+  },
+  "dAclExpertAccRuleVlanRangeMax": {
+    "name": "dAclExpertAccRuleVlanRangeMax",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.3.1.43",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Specifies the maximum outer VLAN ID of a VLAN range. A value of zero indicates the VLAN range is not specified. This node and dAclMacAccessRuleVlanID/dAclMacAccessRuleVlanIDMask cannot be specified at same time in a row. This node is valid only for the dAclExpertAccRuleVlanRangeMin specified."
+  },
+  "dAclExpertAccessGroupTable": {
+    "name": "dAclExpertAccessGroupTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table represents a list of extended expert access group configuration."
+  },
+  "dAclExpertAccessGroupEntry": {
+    "name": "dAclExpertAccessGroupEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessGroupIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessGroupApplyDirection",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in dAclExpertAccessGroupTable contains interface specific extended expert access list association."
+  },
+  "dAclExpertAccessGroupIfIndex": {
+    "name": "dAclExpertAccessGroupIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the ifIndex of the interface. Only physical port is valid interface."
+  },
+  "dAclExpertAccessGroupApplyDirection": {
+    "name": "dAclExpertAccessGroupApplyDirection",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates whether this ACL access list is to be attached to ingress or egress direction."
+  },
+  "dAclExpertAccessGroupRowStatus": {
+    "name": "dAclExpertAccessGroupRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclExpertAccessGroupAclName": {
+    "name": "dAclExpertAccessGroupAclName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of the Expert access list to be applied."
+  },
+  "dAclExpertAccessGroupAclId": {
+    "name": "dAclExpertAccessGroupAclId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.5.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The ID of the Expert access list to be applied. User maybe specify access list ID(by this object) or name (by dAclExpertAccessGroupAclName) to be applied. If both access list ID and name are specified, the access list name specified by dAclExpertAccessGroupAclName will be take. "
+  },
+  "dAclVlan": {
+    "name": "dAclVlan",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6",
+    "class": "objectidentity"
+  },
+  "dAclVlanSubMapTable": {
+    "name": "dAclVlanSubMapTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of sub-map configuration. The first instance identifier index value (dAclVlanAccMapName) identifies the entry(dAclVlanSubMapEntry) belongs to. A VLAN access map can contain multiple sub-maps, the packet that matches a sub-map (that is packet permitted by the associated access-list) will take the action specified for the same entry. No further check against the next sub-maps is done. If the packet does not match a sub-map, then the next sub-map will be checked. The checking sequence is determined by the value of dAclVlanAccSubMapSeq for a same VLAN acess map."
+  },
+  "dAclVlanSubMapEntry": {
+    "name": "dAclVlanSubMapEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccMapName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccSubMapSeq",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined dAclVlanSubMapTable. "
+  },
+  "dAclVlanAccMapName": {
+    "name": "dAclVlanAccMapName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object is used to specify the name of an VLAN acess map."
+  },
+  "dAclVlanAccSubMapSeq": {
+    "name": "dAclVlanAccSubMapSeq",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the sequence number of a VLAN access rule. The value range is 1 to 65535. The value of 0 indicates the number is not specified and sequence number will be automatically assigned. "
+  },
+  "dAclVlanAccSubMapRowStatus": {
+    "name": "dAclVlanAccSubMapRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclVlanAccSubMapMatchAclName": {
+    "name": "dAclVlanAccSubMapMatchAclName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the name of MAC/IP/IPv6 ACL which will be associated."
+  },
+  "dAclVlanAccessSubMapAction": {
+    "name": "dAclVlanAccessSubMapAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "forward": 2,
+          "drop": 3,
+          "redirect": 4
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the action when the packet that matches a sub-map (that is packet permitted by the associated access-list). "
+  },
+  "dAclVlanAccSubMapRedirectIfIndex": {
+    "name": "dAclVlanAccSubMapRedirectIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates ifIndex of the interface the packet will be redirected. When the dAclVlanAccessAction in the same row is set to other than 'redirect', the object has to be zero, which indicates the redirected interface is not specified or not applicable."
+  },
+  "dAclVlanAccSubMapMatchAclId": {
+    "name": "dAclVlanAccSubMapMatchAclId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the ID of MAC/IP/IPv6 ACL access list which will be associated. User may specify access list ID(by this object) or name (by dAclVlanAccSubMapMatchAclName) to be applied. If both access list ID and name are specified, the access list name specified by dAclVlanAccSubMapMatchAclName will be take. "
+  },
+  "dAclVlanFilterTable": {
+    "name": "dAclVlanFilterTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table represents a list of VLAN access map configuration."
+  },
+  "dAclVlanFilterEntry": {
+    "name": "dAclVlanFilterEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanFilterVlanId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in dAclVlanFilterTable contains vlan-specific VLAN access map association."
+  },
+  "dAclVlanFilterVlanId": {
+    "name": "dAclVlanFilterVlanId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the VLAN ID of the entry. "
+  },
+  "dAclVlanFilterRowStatus": {
+    "name": "dAclVlanFilterRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dAclVlanFilterVlanAccMapName": {
+    "name": "dAclVlanFilterVlanAccMapName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of the access list to be applied for the VLAN. NULL value indicates the access list is not specified."
+  },
+  "dAclVlanAccessMapTable": {
+    "name": "dAclVlanAccessMapTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of VLAN access map configuration. "
+  },
+  "dAclVlanAccessMapEntry": {
+    "name": "dAclVlanAccessMapEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccMapName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined dAclVlanAccessMapTable. "
+  },
+  "dAclVlanAccessMapCounterEnabled": {
+    "name": "dAclVlanAccessMapCounterEnabled",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the counter state of the VLAN access map is enabled('true') or disabled('false'). The counter state setting just for the all VLAN interface that applied the access map in dAclVlanFilterTable."
+  },
+  "dAclVlanAccessMapClearStatAction": {
+    "name": "dAclVlanAccessMapClearStatAction",
+    "oid": "1.3.6.1.4.1.171.14.28.1.6.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to clear statistics of the VLAN access map when set to 'clear'. No action is taken if this object is set to 'noOp'. The 'clear' action just for the all entry that applied the VLAN access map in dAclVlanFilterTable. When read, the value 'noOp' is returned."
+  },
+  "dAclCounter": {
+    "name": "dAclCounter",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7",
+    "class": "objectidentity"
+  },
+  "dAclAccessGroupCounterTable": {
+    "name": "dAclAccessGroupCounterTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maintains counter information associated with a specific access list rule in the access rule table. Please refer to the dAclMacAccessRuleTable, dAclIpAccessRuleTable, dAclIPv6AccessRuleTable and dAclExpertAccessRuleTable for detailed ACL rule information. "
+  },
+  "dAclAccessGroupCounterEntry": {
+    "name": "dAclAccessGroupCounterEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclAccessGroupCounterAccListId",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclAccessGroupCounterAccRuleSn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined dAclAccessGroupCounterTable. "
+  },
+  "dAclAccessGroupCounterAccListId": {
+    "name": "dAclAccessGroupCounterAccListId",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ID of an access list which access group counter enabled. the access list was defined by the tables: dAclMacAccessListTable, dAclIpAccessListTable, dAclIPv6AccessListTable, dAclExpertAccessListTable."
+  },
+  "dAclAccessGroupCounterAccRuleSn": {
+    "name": "dAclAccessGroupCounterAccRuleSn",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Specifies the sequence number of this rule entry as related to the dAclAccessGroupCounterAccListId."
+  },
+  "dAclAccessGroupCounterIngressStat": {
+    "name": "dAclAccessGroupCounterIngressStat",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of matched packets for the access rule applied on inbound of all interface in dAclMacAccessGroupTable, dAclIpAccessGroupTable, dAclIPv6AccessGroupTable, or dAclExpertAccessGroupTable. "
+  },
+  "dAclAccessGroupCounterEgressStat": {
+    "name": "dAclAccessGroupCounterEgressStat",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of matched packets for the access rule applied on outbound of all interface in dAclMacAccessGroupTable, dAclIpAccessGroupTable, dAclIPv6AccessGroupTable, or dAclExpertAccessGroupTable. "
+  },
+  "dAclVlanFilterCounterTable": {
+    "name": "dAclVlanFilterCounterTable",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table maintains counter information associated with a specific access sub map in the dAclVlanSubMapTable. "
+  },
+  "dAclVlanFilterCounterEntry": {
+    "name": "dAclVlanFilterCounterEntry",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanFilterCounterAccMapName",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanFilterCounterSubMapSeq",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is defined dAclVlanFilterCounterTable. "
+  },
+  "dAclVlanFilterCounterAccMapName": {
+    "name": "dAclVlanFilterCounterAccMapName",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The name of a VLAN access map which counter enabled. the VLAN access map was defined by the dAclVlanSubMapTable. "
+  },
+  "dAclVlanFilterCounterSubMapSeq": {
+    "name": "dAclVlanFilterCounterSubMapSeq",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the sequence number of a VLAN access sub map. the vlan sub map sequence number was defined by the dAclVlanSubMapTable."
+  },
+  "dAclVlanFilterCounterStatistics": {
+    "name": "dAclVlanFilterCounterStatistics",
+    "oid": "1.3.6.1.4.1.171.14.28.1.7.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the total number of matched packets for the sub map that applied on all VLAN interface in dAclVlanFilterTable."
+  },
+  "dAclCompliances": {
+    "name": "dAclCompliances",
+    "oid": "1.3.6.1.4.1.171.14.28.2.1",
+    "class": "objectidentity"
+  },
+  "dAclCompliance": {
+    "name": "dAclCompliance",
+    "oid": "1.3.6.1.4.1.171.14.28.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dAclGenGroup",
+        "module": "DLINKSW-ACL-MIB"
+      },
+      {
+        "object": "dAclMacGroup",
+        "module": "DLINKSW-ACL-MIB"
+      },
+      {
+        "object": "dAclIpGroup",
+        "module": "DLINKSW-ACL-MIB"
+      },
+      {
+        "object": "dAclIPv6Group",
+        "module": "DLINKSW-ACL-MIB"
+      },
+      {
+        "object": "dAclExpertGroup",
+        "module": "DLINKSW-ACL-MIB"
+      },
+      {
+        "object": "dAclVlanFilterGroup",
+        "module": "DLINKSW-ACL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-ACL-MIB."
+  },
+  "dAclGroups": {
+    "name": "dAclGroups",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2",
+    "class": "objectidentity"
+  },
+  "dAclGenGroup": {
+    "name": "dAclGenGroup",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclReSeqStartingNumber"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclReSeqIncrement"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing general access list configuration."
+  },
+  "dAclMacGroup": {
+    "name": "dAclMacGroup",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListNumber"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListId"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListCounterEnabled"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListClearStatAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessListRemark"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleSrcMacAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleSrcMacWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleDstMacAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleDstMacWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRulePacketType"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleEthernetType"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleLlcDSAP"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleLlcSSAP"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleLlcCntl"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleDot1p"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleInnerDot1p"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleVlanID"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleInnerVlanID"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessRuleTimeName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessGroupRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessGroupAclName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclMacAccessGroupAclId"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing MAC access list configuration."
+  },
+  "dAclIpGroup": {
+    "name": "dAclIpGroup",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListNumber"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessExtended"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListId"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListCounterEnabled"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListClearStatAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessListRemark"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleProtocol"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleUserDefProtocol"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleSrcAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleSrcWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleDstAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleDstWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleSrcOperator"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleSrcPort"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleSrcPortRange"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleDstOperator"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleDstPort"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleDstPortRange"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleQosPrecedence"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleQosTos"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleQosDscp"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleIcmpType"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleIcmpCode"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessRuleTimeName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccRuleTcpFlag"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccRuleFragments"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessGroupStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessGroupAclName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIpAccessGroupAclId"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing IP access list configuration."
+  },
+  "dAclIPv6Group": {
+    "name": "dAclIPv6Group",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListNumber"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessExtended"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListId"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListCounterEnabled"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListClearStatAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessListRemark"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleProtocol"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleUserDefProtocol"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleSrcAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleSrcPrefixLen"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleDstAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleDstPrefixLen"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleSrcOperator"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleSrcPort"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleSrcPortRange"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleDstOperator"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleDstPort"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleDstPortRange"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleDscp"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleIcmpType"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleIcmpCode"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessRuleTimeName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessGroupStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessGroupAclName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccessGroupAclId"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccRuleTcpFlag"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccRuleFragments"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclIPv6AccRuleFlowLabel"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing IPv6 access list configuration."
+  },
+  "dAclExpertGroup": {
+    "name": "dAclExpertGroup",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListNumber"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListId"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListCounterEnabled"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListClearStatAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessListRemark"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleProtocol"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleUserDefProtocol"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSrcIpAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSrcIpWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSrcMacAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSrcMacWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSrcOperator"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSrcPort"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleSrcPortRange"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleDstIpAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleDstIpWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleDstMacAddr"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleDstMacWildcard"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleDstOperator"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleDstPort"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleDstPortRange"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleVlanID"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleInnerVlanID"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleQosPrecedence"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleQosTos"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleQosDscp"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleIcmpType"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleIcmpCode"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleTimeName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessGroupRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessGroupAclName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccessGroupAclId"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleTcpFlag"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleFragments"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleOuterCos"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclExpertAccRuleInnerCos"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing extended expert access list configuration."
+  },
+  "dAclVlanFilterGroup": {
+    "name": "dAclVlanFilterGroup",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccSubMapRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccSubMapMatchAclName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccessSubMapAction"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccSubMapRedirectIfIndex"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanFilterRowStatus"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanFilterVlanAccMapName"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccSubMapMatchAclId"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccessMapCounterEnabled"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanAccessMapClearStatAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing VLAN access map configuration."
+  },
+  "dAclCounterGroup": {
+    "name": "dAclCounterGroup",
+    "oid": "1.3.6.1.4.1.171.14.28.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclAccessGroupCounterIngressStat"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclAccessGroupCounterEgressStat"
+      },
+      {
+        "module": "DLINKSW-ACL-MIB",
+        "object": "dAclVlanFilterCounterStatistics"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing ACL counter information."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-ACL-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:58:00 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-ACL-MIB"
+  }
+}

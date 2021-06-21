@@ -1,0 +1,3893 @@
+{
+  "imports": {
+    "class": "imports",
+    "ENTITY-MIB": [
+      "PhysicalIndexOrZero"
+    ],
+    "FC-MGMT-MIB": [
+      "FcAddressIdOrZero",
+      "FcNameIdOrZero"
+    ],
+    "HCNUM-TC": [
+      "ZeroBasedCounter64"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetPortNumber",
+      "InetAddress"
+    ],
+    "RMON2-MIB": [
+      "ZeroBasedCounter32"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Unsigned32",
+      "Counter32",
+      "Counter64",
+      "TimeTicks",
+      "OBJECT-TYPE",
+      "Gauge32",
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "iso",
+      "Integer32",
+      "transmission",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "MibIdentifier",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "TimeStamp",
+      "StorageType",
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "isnsMgmtMIB": {
+    "name": "isnsMgmtMIB",
+    "oid": "1.3.6.1.2.1.10.4371",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2006-01-31 00:00",
+        "description": "Initial version of iSNS Management Module. This MIB published as RFC XXXX."
+      }
+    ],
+    "lastupdated": "200601310000Z",
+    "organization": "IETF IPS Working Group",
+    "contactinfo": " Attn: Kevin Gibbons McDATA Corporation 4555 Great America Pkwy Santa Clara, CA 95054-1208 USA Tel: +1 408 567-5765 Fax: +1 408 567-0063 Email: kevin.gibbons@mcdata.com G.D. Ramkumar McDATA Corporation 4555 Great America Pkwy Santa Clara, CA 95054-1208 USA Tel: +1 408-567-5614 Fax: +1 408 567-0063 Email: gramkumar@stanfordalumni.org Scott Kipp McDATA Corporation 4 McDATA Pkwy Broomfield, CO 80021 USA Tel: +1 720-558-3452 Fax: +1 720-558-8999 Email: scott.kipp@mcdata.com ",
+    "description": "This module defines management information specific to internet Storage Name Service (iSNS) management. Copyright (C) The Internet Society 2006. This version of this MIB module is part of RFC XXXX; see the RFC itself for full legal notices."
+  },
+  "IsnsDiscoveryDomainSetId": {
+    "name": "IsnsDiscoveryDomainSetId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The unique Discovery Domain Set Identifier associated with a Discovery Domain Set (DDS).",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsDdsStatusId": {
+    "name": "IsnsDdsStatusId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "enabled": 0
+      }
+    },
+    "status": "current",
+    "description": "The bitmap indicating the status of a Discovery Domain Set (DDS) registered in the iSNS. Bit Status --------- --------- 0 enabled If bit(0) is set to true then the DDS is Enabled. Otherwise the DDS is disabled.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsDiscoveryDomainId": {
+    "name": "IsnsDiscoveryDomainId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The unique Discovery Domain Identifier (DD_ID) associated with each Discovery Domain (DD). This can be used to uniquely index and reference a DD. New storage nodes are automatically added to the default DD if isnsSrvrInstDfltDdDdsStatus is set to inDefaultDdAndDds.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "DdFeatureBitmapId": {
+    "name": "DdFeatureBitmapId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "bootlist": 0
+      }
+    },
+    "status": "current",
+    "description": "The bitmap indicating the types of features each Discovery Domain (DD) has. Bit Status --------- --------- 0 Boot List Boot List: this feature indicates that the targets in this DD provide boot capabilities for the member initiators. Setting the bit to true (1) indicates the feature is enabled. Otherwise it is disabled.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsDdDdsModificationBitmap": {
+    "name": "IsnsDdDdsModificationBitmap",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "snmpEnabled": 0,
+        "controlNode": 1,
+        "targetIscsiNode": 2,
+        "initiatorIscsiNode": 3,
+        "targetIfcpNode": 4,
+        "initiatorIfcpNode": 5
+      }
+    },
+    "status": "current",
+    "description": "The methods that can be used to modify the Discovery Domain and Discovery Domain Sets in the iSNS Server instance. Although this MIB does not allow modification of DD's and DDS's, SNMP may be used to modify them via another MIB. Bit Field Flag Description --------- ------------------------------------ 0 SNMP protocol is allowed to modify DD's/DDS's 1 Control Nodes are allowed 2 Target iSCSI Nodes are allowed 3 Initiator iSCSI Nodes are allowed 4 Target iFCP Ports are allowed 5 Initiator iFCP Ports are allowed Setting a bit to true (1) indicates the feature is enabled. Otherwise it is disabled.",
+    "reference": "RFC 4171, Section 2.4"
+  },
+  "IsnsEntityIndexId": {
+    "name": "IsnsEntityIndexId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "This textual convention is used as an identifier for the unique integer Entity Index associated with a storage entity that is registered in an iSNS Server. The index is unique within an iSNS Server instance.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsEntityProtocolId": {
+    "name": "IsnsEntityProtocolId",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noProtocol": 1,
+          "iSCSI": 2,
+          "iFCP": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type of protocol that is supported by this entity. Type Value Entity Type ---------- ----------- 1 No Protocol 2 iSCSI 3 iFCP All Others As in the iSNS Specification ",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsPortalGroupIndexId": {
+    "name": "IsnsPortalGroupIndexId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The identifier for the unique integer Portal Group Index associated with a iSNS registered Portal Group object.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsPortalIndexId": {
+    "name": "IsnsPortalIndexId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The identifier for the unique integer Portal Index associated with a storage portal.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsPortalPortTypeId": {
+    "name": "IsnsPortalPortTypeId",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "udp": 1,
+          "tcp": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The UDP or TCP port type being used by a Portal for an Entity.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsPortalGroupTagIdOrZero": {
+    "name": "IsnsPortalGroupTagIdOrZero",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The Portal Group Tag (PGT) TC for iSCSI Portal Group objects registered in the iSNS. The value of zero indicates a NULL value, or no association, between the associated Portal and iSCSI Node.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsPortalSecurityBitmapId": {
+    "name": "IsnsPortalSecurityBitmapId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "tunnelModePreferred": 0,
+        "transportModePreferred": 1,
+        "pfsEnabled": 2,
+        "agressiveModeEnabled": 3,
+        "mainModeEnabled": 4,
+        "ikeIpsecEnabled": 5,
+        "bitmapVALID": 6
+      }
+    },
+    "status": "current",
+    "description": "Indicates security attribute settings for the Portal as registered in the Portal Security Bitmap attribute. The valid bit must be set in order for this attribute to contain valid information. The definition of the bitmap is based on the iSNS Specification [iSNS]. The representation of each bit setting (0 or 1) is indicated below. Bit Field Flag Description --------- ------------------------------------ 0 1 = Tunnel Mode Preferred; 0 = No Preference 1 1 = Transport Mode Preferred; 0 = No Preference 2 1 = PFS Enabled; 0 = PFS Disabled 3 1 = Aggressive Mode Enabled; 0 = Disabled 4 1 = Main Mode Enabled; 0 = MM Disabled 5 1 = IKE/IPSec Enabled; 0 = IKE/IPSec Disabled 6 1 = Bitmap VALID; 0 = INVALID ",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsNodeIndexId": {
+    "name": "IsnsNodeIndexId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The identifier for the unique integer Node Index associated with a storage node. In order to support objects that have key identifiers whose maximum length is longer than the maximum SNMP supported length, the iSNS server provides secondary non-zero integer index identifiers. These indexes SHALL be persistent for as long as the server is active. Furthermore, index values for recently deregistered objects SHOULD NOT be reused in the short term.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsNodeIndexIdOrZero": {
+    "name": "IsnsNodeIndexIdOrZero",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "The identifier for the unique integer Node Index associated with a storage node, or the value zero. In order to support objects that have key identifiers whose maximum length is longer than the maximum SNMP supported length, the iSNS server provides secondary non-zero integer index identifiers. These indexes SHALL be persistent for as long as the server is active. Furthermore, index values for recently deregistered objects SHOULD NOT be reused in the short term.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsNodeTypeId": {
+    "name": "IsnsNodeTypeId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "control": 0,
+        "initiator": 1,
+        "target": 2
+      }
+    },
+    "status": "current",
+    "description": "The Node Type bit-map defines the functions of this node. The definitiions of each setting are defined in the iSNS Specification [iSNS]. Bit Node Type --------- --------- 0 Control 1 Initiator 2 Target ",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsCosBitmapId": {
+    "name": "IsnsCosBitmapId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "class3": 0,
+        "class2": 1
+      }
+    },
+    "status": "current",
+    "description": "This bit-map indicates the Fibre Channel Class of Service types that are supported by the registered port. Bit Field Flag Description --------- ---------------- 0 Fibre Channel Class 3 Supported 1 Fibre Channel Class 2 Supported Setting a bit to true (1) indicates the class of service is supported.",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsScnBitmapId": {
+    "name": "IsnsScnBitmapId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "initiatorAndSelfOnly": 0,
+        "targetAndSelfOnly": 1,
+        "managementRegistrationScn": 2,
+        "registeredObjectRemoved": 3,
+        "registeredObjectAdded": 4,
+        "registeredObjectUpdated": 5,
+        "ddOrDdsMemberRemoved": 6,
+        "ddOrDdsMemberAdded": 7
+      }
+    },
+    "status": "current",
+    "description": "The State Change Notification (SCN) bitmap for a node as defined in the iSNS Specification [iSNS]. A set bit (1) indicates the type of SCN for the bitmap as follows: Bit Field Flag Description --------- ---------------- 0 INITIATOR AND SELF INFORMATION ONLY 1 TARGET AND SELF INFORMATION ONLY 2 MANAGEMENT REGISTRATION/SCN 3 REGISTERED OBJECT REMOVED 4 REGISTERED OBJECT ADDED 5 REGISTERED OBJECT UPDATED 6 DD/DDS MEMBER REMOVED (MGT REG/SCN ONLY) 7 DD/DDS MEMBER ADDED (MGT REG/SCN ONLY) ",
+    "reference": "RFC 4171, Section 6"
+  },
+  "IsnsSrvrDscvryMthdId": {
+    "name": "IsnsSrvrDscvryMthdId",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "dhcp": 0,
+        "slp": 1,
+        "multicastGroupHb": 2,
+        "broadcastHb": 3,
+        "cfgdServerList": 4,
+        "other": 5
+      }
+    },
+    "status": "current",
+    "description": "This bitamp is used to indicate the iSNS Server discovery methods that are supported and enabled on an iSNS Server. The options are DHCP, SLP, multicast group iSNS heartbeat, broadcast group iSNS heartbeat, configured server list, and other. The iSNS Server may also support additional discovery methods not indicated. The bitmap also is used to indicate the type of discovery being used by an iSNS Client instance. If being used, the configured server list for a specific iSNS client is specified in isnsClntSrvrCfgTable table. If used, the multicast group is specified in isnsClntInstDiscMcGrp."
+  },
+  "isnsObj": {
+    "name": "isnsObj",
+    "oid": "1.3.6.1.2.1.10.4371.1",
+    "class": "objectidentity"
+  },
+  "isnsConformance": {
+    "name": "isnsConformance",
+    "oid": "1.3.6.1.2.1.10.4371.2",
+    "class": "objectidentity"
+  },
+  "isnsSrvrInfo": {
+    "name": "isnsSrvrInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1",
+    "class": "objectidentity"
+  },
+  "isnsSrvrInstTable": {
+    "name": "isnsSrvrInstTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides a list of the iSNS Server instances that are managed through the same SNMP context."
+  },
+  "isnsSrvrInstEntry": {
+    "name": "isnsSrvrInstEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This is a row in the iSNS Server instance table. The number of rows is dependent on the number of iSNS Server instances that are being managed through same SNMP context."
+  },
+  "isnsSrvrInstIndex": {
+    "name": "isnsSrvrInstIndex",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This managed object uniquely identifies the iSNS Server being managed by the SNMP context, and is the key for this table. This is an instance index for each iSNS Server being managed. The value of this managed object is used elsewhere in the MIB to reference specific iSNS Servers."
+  },
+  "isnsSrvrInstName": {
+    "name": "isnsSrvrInstName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A non-unique name that can be assigned to the iSNS Server instance. If not configured, the value is an empty string."
+  },
+  "isnsSrvrInstIsnsVersion": {
+    "name": "isnsSrvrInstIsnsVersion",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "draft-ietf-ips-iSNS-22.txt",
+    "status": "current",
+    "description": "The iSNS version value as contained in messages received from the current primary server. The header of each iSNSP message contains the iSNS version of the sender. If unknown the reported value is 0."
+  },
+  "isnsSrvrInstVendorInfo": {
+    "name": "isnsSrvrInstVendorInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If this server instance is utilizing the product of a particular 'vendor', then this managed object contains that vendor's name and version. Otherwise, it contains the empty string. The format of the string is as follows: Vendor Name, Vendor Version, Vendor Defined Information. Field Description --------- ---------------- Vendor Name The name of the vendor (if one exists) Vendor Version The version of the vendor product Vendor Defined This follows the second comma in the string, if one exists, and is vendor defined "
+  },
+  "isnsSrvrInstPhyIndex": {
+    "name": "isnsSrvrInstPhyIndex",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "draft-ietf-ips-iSNS-22.txt",
+    "status": "current",
+    "description": "An index indicating the location of this iSNS Server within a larger entity, if one exists. If the iSNS Server instance is not part of a larger entity, then the value is 0."
+  },
+  "isnsSrvrInstTcpPort": {
+    "name": "isnsSrvrInstTcpPort",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the TCP port this iSNS instance is accepting iSNSP messages on, generally the iSNS well known port. The well known TCP port for iSNSP is 3205. If TCP is not supported by this server instance, then the value is 0."
+  },
+  "isnsSrvrInstUdpPort": {
+    "name": "isnsSrvrInstUdpPort",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the UDP port this iSNS instance is accepting iSNSP messages on, generally the iSNS well known port. The well known UDP port for iSNSP is 3205. If UDP is not supported by this server instance, then the value is 0."
+  },
+  "isnsSrvrInstDiscontinuityTime": {
+    "name": "isnsSrvrInstDiscontinuityTime",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion that this iSNS server became active or suffered a discontinuity."
+  },
+  "isnsSrvrInstRole": {
+    "name": "isnsSrvrInstRole",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notSet": 0,
+          "server": 1,
+          "serverNotPrimary": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current operational mode of this iSNS Server instance. Value Description --------- ---------------- notSet The iSNS Server role is not configured. server The iSNS Server instance is operating as a primary iSNS Server. serverNotPrimary The iSNS Server instance can be a primary iSNS Server, but is not currently acting as a primary."
+  },
+  "isnsSrvrInstDiscMthdsEnbld": {
+    "name": "isnsSrvrInstDiscMthdsEnbld",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsSrvrDscvryMthdId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the discovery methods currently supported and enabled on this iSNS Server instance. This bitmap can be used by a client to determine what discovery methods should be used for this iSNS Server. Additional methods of discovery may also be supported."
+  },
+  "isnsSrvrInstDiscMcGrpType": {
+    "name": "isnsSrvrInstDiscMcGrpType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of Inet address in isnsSrvrInstDiscMcGrp. If not set, then the value is unknown(0)."
+  },
+  "isnsSrvrInstDiscMcGrp": {
+    "name": "isnsSrvrInstDiscMcGrp",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The multicast group that iSNS Heartbeat messages are sent to if multicast based discovery has been enabled for this server instance. If not configured, then the value is an empty string."
+  },
+  "isnsSrvrInstEsiNonRespThrshld": {
+    "name": "isnsSrvrInstEsiNonRespThrshld",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 3.4",
+    "status": "current",
+    "description": "ESI Non-Response Threshold - the number of ESI messages that will be sent without receiving a response before an entity is deregistered from the iSNS database. If 0 then Entities will never be deregistered due to non-receipt of ESI messages."
+  },
+  "isnsSrvrInstEnblCntrlNdeMgtScn": {
+    "name": "isnsSrvrInstEnblCntrlNdeMgtScn",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "true",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 3.4",
+    "status": "current",
+    "description": "Whether enable Management SCN for Control Node - enable the option for a control node to register for and receive Management SCNs sent by this server."
+  },
+  "isnsSrvrInstCntrlNodeAuth": {
+    "name": "isnsSrvrInstCntrlNodeAuth",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "anyNode": 1,
+          "viewNodes": 2,
+          "noSnmpAccess": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 3.4",
+    "status": "current",
+    "description": "Control Nodes can be configured to receive management SCNs indicating network updates, including information on modification to DDs and DDSs. This managed object indicates if SNMP has access to control node information and, if it does, which type of storage nodes can register with the server instance as a control node. Possible values for this managed object are: Value Description --------- ---------------- anyNode Any storage node MAY register as a control node viewNodes Specified nodes MAY register as control nodes, SNMP view only noSnmpAccess Control node information is not accessible via SNMP If only specified nodes are allowed to register as control nodes, and SNMP is allowed to modify the list of control nodes, then they SHALL be listed in the isnsCntlNodeIscsiTable and isnsCntlNodeFcPortTable. If SNMP is not allowed to view or modify the list of control nodes, then this managed object SHALL be set to noSnmpAccess."
+  },
+  "isnsSrvrInstDfltDdDdsStatus": {
+    "name": "isnsSrvrInstDfltDdDdsStatus",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inNoDomain": 1,
+          "inDefaultDdAndDds": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "inNoDomain",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 3.4",
+    "status": "current",
+    "description": "This indicates the Discovery Domain (DD) and Discovery Domain Set (DDS) membership status for a new device when registerd in the iSNS Server instance. Either the new device will not be in a DD/DDS, or will be placed into a default DD and default DDS. The default setting is inNoDomain."
+  },
+  "isnsSrvrInstUpdateDdDdsSpprtd": {
+    "name": "isnsSrvrInstUpdateDdDdsSpprtd",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsDdDdsModificationBitmap",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 3.4",
+    "status": "current",
+    "description": "The methods that this iSNS Server instance supports to modify Discovery Domains and Discovery Domain Sets. Bit Field Flag Description --------- ------------------------------------ 0 SNMP protocol is allowed to modify DD's/DDS's 1 Control Nodes are allowed 2 Target iSCSI Nodes are allowed 3 Initiator iSCSI Nodes are allowed 4 Target iFCP Ports are allowed 5 Initiator iFCP Ports are allowed If a bit is true (1) then the flag is enabled. If no method to change a DD is supported, then the bitmap is set to 0. Two methods generally supported are SNMP and Control Nodes."
+  },
+  "isnsSrvrInstUpdateDdDdsEnbld": {
+    "name": "isnsSrvrInstUpdateDdDdsEnbld",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsDdDdsModificationBitmap",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Sec 2.2.2 and 3.4",
+    "status": "current",
+    "description": "This indicates the methods this server instance allows for modifying Discovery Domains and Discovery Domain Sets. Bit Field Flag Description --------- ------------------------------------ 0 SNMP protocol is allowed to modify DD's/DDS's 1 Control Nodes are allowed 2 Target iSCSI Nodes are allowed 3 Initiator iSCSI Nodes are allowed 4 Target iFCP Ports are allowed 5 Initiator iFCP Ports are allowed If a bit is true (1) then the mode is enabled. If no methods to change a DD are enabled, then the bitmap is set to 0."
+  },
+  "isnsNumObjTable": {
+    "name": "isnsNumObjTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table providing the number of registered objects of each type in the iSNS Server instance. This table is optional to implement. The number of entries is dependent upon the number of iSNS Server instances being managed."
+  },
+  "isnsNumObjEntry": {
+    "name": "isnsNumObjEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "isnsNumObjEntry",
+      "module": "ISNS-MGMT-MIB",
+      "object": "isnsSrvrInstEntry"
+    },
+    "status": "current",
+    "description": "Entry of an iSNS Server instance."
+  },
+  "isnsNumDds": {
+    "name": "isnsNumDds",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current total number of Discovery Domain Sets in this iSNS instance. This is the number of rows in the isnsSrvrDdsTable."
+  },
+  "isnsNumDd": {
+    "name": "isnsNumDd",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current total number of Discovery Domains in this iSNS instance. This is the number of rows in the isnsSrvrDdTable."
+  },
+  "isnsNumEntities": {
+    "name": "isnsNumEntities",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current number of Entities registered in this iSNS Server instance. This is the number of rows in the isnsRegEntityTable for this instance."
+  },
+  "isnsNumPortals": {
+    "name": "isnsNumPortals",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current total number of Portals registered in iSNS. This is the number of rows in isnsRegPortalTable."
+  },
+  "isnsNumPortalGroups": {
+    "name": "isnsNumPortalGroups",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current total number of Portal Groups registered in iSNS. This is the number of rows in isnsRegPgTable."
+  },
+  "isnsNumIscsiNodes": {
+    "name": "isnsNumIscsiNodes",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current total number of iSCSI node entries registered in the iSNS. This is the number rows in isnsRegIscsiNodeTable."
+  },
+  "isnsNumFcPorts": {
+    "name": "isnsNumFcPorts",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current total number of FC Port entries registered in the iSNS. This is the number of rows in isnsRegFcPortTable."
+  },
+  "isnsNumFcNodes": {
+    "name": "isnsNumFcNodes",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current total number of FC node entries registered in the iSNS. This is the number of rows in isnsRegFcNodeTable."
+  },
+  "isnsCntlNodeInfo": {
+    "name": "isnsCntlNodeInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4",
+    "class": "objectidentity"
+  },
+  "isnsCntlNodeIscsiTable": {
+    "name": "isnsCntlNodeIscsiTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Specified iSCSI Nodes that can register as control nodes. The number of rows is dependent on the number of possible iSCSI Control Nodes, and if SNMP is enabled to view control node information, as indicated by isnsSrvrInstCntrlNodeAuth. This table is accesible and usable to view the set of control nodes if isnsSrvrInstCntrlNodeAuth is set to the viewNodes or modifyNodes value."
+  },
+  "isnsCntlNodeIscsiEntry": {
+    "name": "isnsCntlNodeIscsiEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsCntlNodeIscsiNodeIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This is an iSCSI Control Node entry for a specific iSNS server instance."
+  },
+  "isnsCntlNodeIscsiNodeIdx": {
+    "name": "isnsCntlNodeIscsiNodeIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsNodeIndexId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The iSCSI Index for the storage node authorized to act as a control node."
+  },
+  "isnsCntlNodeIscsiNodeName": {
+    "name": "isnsCntlNodeIscsiNodeName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 223
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The iSCSI Name of the initiator or target associated with the storage node. The iSCSI Name can not be longer then 223 bytes. The iSNS Server internal maximum size is 224 bytes to provide NULL termination. This is the iSCSI Node Name for the storage node authorized to act as a control node."
+  },
+  "isnsCntlNodeFcPortTable": {
+    "name": "isnsCntlNodeFcPortTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Specified FC Ports that can register as control nodes. The number of rows is dependent on the number of possible FC Port Control Nodes, and if SNMP is enabled to view control node information, as indicated by isnsSrvrInstCntrlNodeAuth. This table is accesible and usable to view and/or modify the set of control nodes if isnsSrvrInstCntrlNodeAuth is set to the viewNodes or modifyNodes value."
+  },
+  "isnsCntlNodeFcPortEntry": {
+    "name": "isnsCntlNodeFcPortEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsCntlNodeFcPortName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "FC Port control node entry."
+  },
+  "isnsCntlNodeFcPortName": {
+    "name": "isnsCntlNodeFcPortName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.4.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The FC Port WWN that can be a control node for the specified iSNS Server. Zero is not a valid value for this managed object. This managed object, combined with the isnsSrvrInstIndex, is the key for this table."
+  },
+  "isnsDdsInfo": {
+    "name": "isnsDdsInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5",
+    "class": "objectidentity"
+  },
+  "isnsDdsTable": {
+    "name": "isnsDdsTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing configuration information for each Discovery Domain Set (DDS) registered in the iSNS Server instance. The number of rows in the table is dependent on the number of DDSs registered in the specified iSNS server instance."
+  },
+  "isnsDdsEntry": {
+    "name": "isnsDdsEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdsId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one Discovery Domain Set (DDS) registered in the iSNS Server instance."
+  },
+  "isnsDdsId": {
+    "name": "isnsDdsId",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsDiscoveryDomainSetId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ID that refers to this Discovery Domain Set and index to the table."
+  },
+  "isnsDdsSymbolicName": {
+    "name": "isnsDdsSymbolicName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Discovery Domain Set Symbolic Name field contains a unique variable-length description (up to 255 bytes) that is associated with the DDS. If a Symbolic Name is not provided, then one will be generated by the iSNS server."
+  },
+  "isnsDdsStatus": {
+    "name": "isnsDdsStatus",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsDdsStatusId",
+      "class": "type"
+    },
+    "default": {
+      "value": {
+        "type": "Bits",
+        "class": "type",
+        "bits": {
+          "enabled": 0
+        }
+      },
+      "format": "bits"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The bitmap indicating the status of a Discovery Domain Set (DDS) registered in the iSNS. Bit Status --------- --------- 0 enabled If bit(0) is set to true then the DDS is Enabled. If set to false then the DDS is disabled."
+  },
+  "isnsDdsMemberTable": {
+    "name": "isnsDdsMemberTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing Discovery Domains (DDs) that have been assigned to specific Discovery Domain Sets (DDSs). The number of rows in the table is dependent on the number of DD to DDS relationships in the iSNS instance."
+  },
+  "isnsDdsMemberEntry": {
+    "name": "isnsDdsMemberEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdsId",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdsMemberDdId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The mapping of one Discovery Domain (DD) to a Discovery Domain Set (DDS). This indicates the DD is a member of the DDS."
+  },
+  "isnsDdsMemberDdId": {
+    "name": "isnsDdsMemberDdId",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.5.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsDiscoveryDomainId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ID that identifies the Discovery Domain which is a member of the Discovery Domain Set."
+  },
+  "isnsDdInfo": {
+    "name": "isnsDdInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6",
+    "class": "objectidentity"
+  },
+  "isnsDdTable": {
+    "name": "isnsDdTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing configuration information for each Discovery Domain (DD) registered in the iSNS. The number of rows in the table is dependent on the number of DDs registered in the iSNS instance."
+  },
+  "isnsDdEntry": {
+    "name": "isnsDdEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on a Discovery Domain (DD) registered in the iSNS Server instance."
+  },
+  "isnsDdId": {
+    "name": "isnsDdId",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsDiscoveryDomainId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The ID that refers to this Discovery Domain, and the index to the table."
+  },
+  "isnsDdSymbolicName": {
+    "name": "isnsDdSymbolicName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Discovery Domain Symbolic Name field contains a unique variable-length description (up to 255 bytes) that is associated with the DD."
+  },
+  "isnsDdFeatures": {
+    "name": "isnsDdFeatures",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DdFeatureBitmapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Discovery Domain Features field contains a bitmap indicating the features of this DD. Bit DD Feature --------- --------- 0 Boot List Boot List: this feature indicates that the targets in this DD provide boot capabilities for the member initiators. By default no DD features are enabled."
+  },
+  "isnsDdIscsiMemberTable": {
+    "name": "isnsDdIscsiMemberTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing iSCSI node indexes that have been assigned to specific DDs in this iSNS Server instance. The number of rows in the table is dependent on the number of relationships between iSCSI Nodes and DDs registered in the iSNS instance."
+  },
+  "isnsDdIscsiMemberEntry": {
+    "name": "isnsDdIscsiMemberEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdId",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberIscsiIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The mapping of one iSCSI Node to a Discovery Domain to indicate membership in the DD. The indexes are the iSNS server instance, the DD ID of the Discovery Domain, and the iSCSI Node Index of the iSCSI Node."
+  },
+  "isnsDdMemberIscsiIdx": {
+    "name": "isnsDdMemberIscsiIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsNodeIndexId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSCSI node index for this member node entry. This index is used to uniquely indicate this table entry, and provides a 1 to 1 mapping to a node name. The iSCSI node name is too long to be used for an index directly. The iSCSI node index used for a specific iSCSI node name MUST be indentical in all DDs, and is persistent across server reinitializations when the iSCSI node is a member of a Discovery Domain (DD)."
+  },
+  "isnsDdMemberIscsiName": {
+    "name": "isnsDdMemberIscsiName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 223
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSCSI Name associated with the storage node. The iSCSI Name can not be longer then 223 bytes. The iSNS server internal maximum size is 224 bytes to provide NULL termination. This is the iSCSI Name for the storage node that is a member of the DD. This value maps 1 to 1 to the isnsDdMemberIscsiIdx node index. The iSCSI Name field is too long to be easily used for an index directly. The node index used for a specific node name is only persistent across iSNS Server reinitializations for nodes that are in a Discovery Domain (DD) or are registered control nodes. This value is only required during row creation if the storage node is not yet registered in the iSNS Server instance. If the storage node is not yet registered, then the iSCSI Name MUST be provided with the iSCSI node index during row creation in order to create the 1 to 1 mapping."
+  },
+  "isnsDdMemberIsRegistered": {
+    "name": "isnsDdMemberIsRegistered",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6.11",
+    "status": "current",
+    "description": "This indicates whether this member of the DD is currently registered in the iSNS Server instance. iSCSI Storage Node members do not need to be currently registered in order for their iSCSI Name and Index to be added to a DD."
+  },
+  "isnsDdPortalMemberTable": {
+    "name": "isnsDdPortalMemberTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "A table containing currently registered and unregistered portal objects that have been explicitly assigned to specific DDs. Explicit assignment of a portal to a DD is only done when a specific set of portals are prefered for use within a DD. Otherwise, for iSCSI, the Portal Group Object should be used for identifying which portals provide access to which storage nodes. The number of rows in the table is dependent on the number of explicit relationships between portals and DDs registered in the iSNS."
+  },
+  "isnsDdPortalMemberEntry": {
+    "name": "isnsDdPortalMemberEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdId",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry indicates an explicit addition of a portal to a discovery domain. The explicit addition of an entity portal to a discovery domain indicates the portal is preferred for access to nodes of the entity for this discovery domain. Registered Portal Group objects are used in iSCSI to indicate mapping of portals to nodes across all discovery domains. Portals that have been explicitly mapped a discovery domain will be returned as part of a query that is scoped to that discovery domain. If no portal of an entity has been explicitly mapped to a discovery domain, then all portals of the entity that provide access to a storage node are returned as part of a query. The table indexes are the server instance, the DD ID of the Discovery Domain, and the Portal Index of the portal."
+  },
+  "isnsDdMemberPortalIdx": {
+    "name": "isnsDdMemberPortalIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalIndexId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The index for a portal explicitly contained in the discovery domain. The Portal Index used for a specific portal IP-address and port number pair is only persistent across reboots for portals that have been explicitly added to a Discovery Domain (DD). If a portal is not explicitly registered in any DD, then the index used for a portal can change after a server reinitialization."
+  },
+  "isnsDdMemberPortalAddrType": {
+    "name": "isnsDdMemberPortalAddrType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of Inet address in isnsDdMemberPortalAddr."
+  },
+  "isnsDdMemberPortalAddr": {
+    "name": "isnsDdMemberPortalAddr",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Inet Address for the portal."
+  },
+  "isnsDdMemberPortalPortType": {
+    "name": "isnsDdMemberPortalPortType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalPortTypeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port type for the portal, either UDP or TCP."
+  },
+  "isnsDdMemberPortalPort": {
+    "name": "isnsDdMemberPortalPort",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port number for the portal. Whether the portal type is TCP or UDP is indicated by isnsDdPortalPortType."
+  },
+  "isnsDdMemberPortalIsRegistered": {
+    "name": "isnsDdMemberPortalIsRegistered",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6.11",
+    "status": "current",
+    "description": "This indicates whether this member of the DD is currently registered in the iSNS Server instance. Portals that are DD members do not need to be currently registered in order for them to be added to a DD."
+  },
+  "isnsDdFcPortMemberTable": {
+    "name": "isnsDdFcPortMemberTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing FC Port World Wide Names (WWN) that have been assigned to specific DDs. The number of rows in the table is dependent on the number of relationships between FC Ports and DDs registered in the iSNS."
+  },
+  "isnsDdFcPortMemberEntry": {
+    "name": "isnsDdFcPortMemberEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdId",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberFcPortName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The association of one FC Port with a Discovery Domain. Membership of an FC Port in a Discovery Domain is indicated by creating a row for the appropriate DD ID and FC Port WWN."
+  },
+  "isnsDdMemberFcPortName": {
+    "name": "isnsDdMemberFcPortName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Port WWN the FC Port that is a member of the DD. The value MUST be a valid FC WWN, as per the FC-GS standard. This managed object, combined with the isnsSrvrInstIndex and isnsDdId are the key for this table. Zero is not a valid value for this managed object."
+  },
+  "isnsDdMemberFcIsRegistered": {
+    "name": "isnsDdMemberFcIsRegistered",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.6.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6.11",
+    "status": "current",
+    "description": "This indicates whether this member of the DD is currently registered in the iSNS Server instance."
+  },
+  "isnsReg": {
+    "name": "isnsReg",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7",
+    "class": "objectidentity"
+  },
+  "isnsRegEntityInfo": {
+    "name": "isnsRegEntityInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1",
+    "class": "objectidentity"
+  },
+  "isnsRegEntityTable": {
+    "name": "isnsRegEntityTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing registered Entity objects in each iSNS server instance. The number of entries in the table is dependent on the number of Entity objects registered in the iSNS Server instances. All Entity objects are registered in the iSNS using the iSNS protocol."
+  },
+  "isnsRegEntityEntry": {
+    "name": "isnsRegEntityEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one registered Entity object in an iSNS server instance."
+  },
+  "isnsRegEntityIdx": {
+    "name": "isnsRegEntityIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsEntityIndexId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Entity Index for this entity. This integer based index is assigned by the iSNS Server when an Entity is initially registered. The Entity Index can be used to represent a registered Entity object in situations where the Entity EID would be too long/unwieldy."
+  },
+  "isnsRegEntityEID": {
+    "name": "isnsRegEntityEID",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The EID is a unique registered Entity object identifier, as specified in the iSNS Specification. This is the iSNS Entity Identifier for the registered Entity object."
+  },
+  "isnsRegEntityProtocol": {
+    "name": "isnsRegEntityProtocol",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsEntityProtocolId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The type of protocol that is supported by this entity. Additional values may be assigned by IANA. Type Value Entity Type ---------- ----------- 1 No Protocol 2 iSCSI 3 iFCP All Others As assigned by IANA "
+  },
+  "isnsRegEntityMgtAddrType": {
+    "name": "isnsRegEntityMgtAddrType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of Inet address in isnsRegEntityMgtAddr."
+  },
+  "isnsRegEntityMgtAddr": {
+    "name": "isnsRegEntityMgtAddr",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSNS Management IP Address for the registred Entity object."
+  },
+  "isnsRegEntityTimestamp": {
+    "name": "isnsRegEntityTimestamp",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSNS Entity Registration Timestamp for the registred Entity object. This is the most recent date and time that the registered Entity object, and associated registered objects contained in the Entity, were registered or updated."
+  },
+  "isnsRegEntityVersionMin": {
+    "name": "isnsRegEntityVersionMin",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSNS Entity Protocol Version Range minimum value. A value of x'FF' is a wildcard value indicating no minimum to the protocol versions supported by this Entity. Entity registrations with isnsRegEntityProtocol set to No Protocol always have a minimum version of 0."
+  },
+  "isnsRegEntityVersionMax": {
+    "name": "isnsRegEntityVersionMax",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSNS Entity Protocol Version Range maximum value. A value of x'FF' is a wildcard value indicating no maximum to the protocol versions supported by this Entity. Entity registrations with isnsRegEntityProtocol set to No Protocol always have a maximum version of 0."
+  },
+  "isnsRegEntityRegPeriod": {
+    "name": "isnsRegEntityRegPeriod",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSNS Entity Status Inquiry (ESI) registration period which indicates the maximum time, in seconds, that the registration will be maintained without receipt of an iSNSP message from the entity. If the Registration Period is set to 0, then the Entity SHALL NOT be deregistered due to no contact with the entity."
+  },
+  "isnsRegEntityNumObjTable": {
+    "name": "isnsRegEntityNumObjTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing information on the number of registered objects associated with a registered Entity in the iSNS server instance. This table is optional to implement. The number of entries in the table is dependent on the number of registered Entity objects in the iSNS."
+  },
+  "isnsRegEntityNumObjEntry": {
+    "name": "isnsRegEntityNumObjEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on the number of registered objects associated with a registered Entity object in an iSNS Server instance."
+  },
+  "isnsRegEntityInfoNumPortals": {
+    "name": "isnsRegEntityInfoNumPortals",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of Portals associated with this Entity."
+  },
+  "isnsRegEntityInfoNumPortalGroups": {
+    "name": "isnsRegEntityInfoNumPortalGroups",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of Portal Groups associated with this Entity."
+  },
+  "isnsRegEntityInfoNumIscsiNodes": {
+    "name": "isnsRegEntityInfoNumIscsiNodes",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of iSCSI Storage Nodes associated with this Entity."
+  },
+  "isnsRegEntityInfoNumFcPorts": {
+    "name": "isnsRegEntityInfoNumFcPorts",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of FC Ports associated with this Entity."
+  },
+  "isnsRegEntityInfoNumFcNodes": {
+    "name": "isnsRegEntityInfoNumFcNodes",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of FC Nodes associated with this Entity."
+  },
+  "isnsRegPortalInfo": {
+    "name": "isnsRegPortalInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2",
+    "class": "objectidentity"
+  },
+  "isnsRegPortalTable": {
+    "name": "isnsRegPortalTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing the registered Portals in the iSNS. The number of entries is dependent on the number of Portals registered in the iSNS."
+  },
+  "isnsRegPortalEntry": {
+    "name": "isnsRegPortalEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityIdx",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalPrtlIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one registered Entity Portal in the iSNS. The Entity Index is part of the table index to quickly find Portals that support a specific Entity."
+  },
+  "isnsRegPortalPrtlIdx": {
+    "name": "isnsRegPortalPrtlIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalIndexId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Portal Index for this node. The index is created by the iSNS Server for mapping between registered objects. The Portal Index used for a specific portal IP-address and port number pair is only persistent across reboots for portals that have been explicitly added to a Discovery Domain (DD). If a portal is not explicitly registered in any DD, then the index used for a portal can change after a server reinitialization."
+  },
+  "isnsRegPortalAddrType": {
+    "name": "isnsRegPortalAddrType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of Inet address in isnsRegPortalAddr."
+  },
+  "isnsRegPortalAddr": {
+    "name": "isnsRegPortalAddr",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Inet Address for this Portal as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegPortalPortType": {
+    "name": "isnsRegPortalPortType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalPortTypeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port type for this Portal, either UDP or TCP, as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegPortalPort": {
+    "name": "isnsRegPortalPort",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port number for this Portal as defined in the iSNS Specification [iSNS]. Whether the Portal type is TCP or UDP is indicated by isnsRegPortalPortType."
+  },
+  "isnsRegPortalSymName": {
+    "name": "isnsRegPortalSymName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The optional Symbolic Name for this Portal as defined in the iSNS Specification [iSNS]. If not provided then the string SHALL be zero length."
+  },
+  "isnsRegPortalEsiInterval": {
+    "name": "isnsRegPortalEsiInterval",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Entity Status Inquiry (ESI) Interval for this Portal as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegPortalEsiPortType": {
+    "name": "isnsRegPortalEsiPortType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalPortTypeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port type for the ESI Port, either UDP or TCP, as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegPortalEsiPort": {
+    "name": "isnsRegPortalEsiPort",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The TCP or UDP port number used for ESI monitoring. Whether the port type is TCP or UDP is indicated by isnsRegPortalEsiPortType."
+  },
+  "isnsRegPortalScnPortType": {
+    "name": "isnsRegPortalScnPortType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalPortTypeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port type for the SCN Port, either UDP or TCP, as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegPortalScnPort": {
+    "name": "isnsRegPortalScnPort",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The TCP or UDP port used to receive SCN messages from the iSNS Server. Whether the port type is TCP or UDP is indicated by isnsRegPortalScnPortType."
+  },
+  "isnsRegPortalSecurityInfo": {
+    "name": "isnsRegPortalSecurityInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.2.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalSecurityBitmapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "Indicates security attribute settings for the Portal as registered in the Portal Security Bitmap attribute. The bit for bitmapVALID must be set in order for this attribute to contain valid information. Setting a bit to true (1) indicates the feature is enabled."
+  },
+  "isnsRegPortalGroupInfo": {
+    "name": "isnsRegPortalGroupInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3",
+    "class": "objectidentity"
+  },
+  "isnsRegPgTable": {
+    "name": "isnsRegPgTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing the registered Portal Groups (PGs) in the iSNS Server instance. The number of entries is dependent on the number of Portal Groups registered in the iSNS."
+  },
+  "isnsRegPgEntry": {
+    "name": "isnsRegPgEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityIdx",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one registered Portal Group in the iSNS server instance. The Entity Index is part of the table index to quickly find Portal Groups that support Portals and iSCSI Storage Nodes in a specific Entity."
+  },
+  "isnsRegPgIdx": {
+    "name": "isnsRegPgIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalGroupIndexId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The PG Index for this node. The index is created by the iSNS Server instance for uniquely identifying registered objects. The PG object is registered at the same time a Portal or Storage Node is registered using the iSNS protocol."
+  },
+  "isnsRegPgIscsiNodeIdx": {
+    "name": "isnsRegPgIscsiNodeIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsNodeIndexId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSCSI Node Index for the node associated with this PG. This index can be used to reference the isnsRegIscsiNodeTable."
+  },
+  "isnsRegPgIscsiName": {
+    "name": "isnsRegPgIscsiName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 223
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The iSCSI Name of the initiator or target associated with the storage node. The iSCSI Name can not be longer then 223 bytes. The iSNS Server internal maximum size is 224 bytes to provide NULL termination. This is the PG iSCSI Name that uniquely identifies the iSCSI Storage Node that is associated with this PG."
+  },
+  "isnsRegPgPortalPrtlIdx": {
+    "name": "isnsRegPgPortalPrtlIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalIndexId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Portal Index for the Portal associated with this PG. This index can be used to reference the isnsRegPortalTable."
+  },
+  "isnsRegPgPortalAddrType": {
+    "name": "isnsRegPgPortalAddrType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of Inet address in isnsRegPgPortalAddr."
+  },
+  "isnsRegPgPortalAddr": {
+    "name": "isnsRegPgPortalAddr",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Inet Address for the Portal that is associated with the PG."
+  },
+  "isnsRegPgPortalPortType": {
+    "name": "isnsRegPgPortalPortType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalPortTypeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port type, either UDP or TCP, for the Portal that is associated with this registered PG object."
+  },
+  "isnsRegPgPortalPort": {
+    "name": "isnsRegPgPortalPort",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The port number for the Portal that is associated with this registered PG object. Whether the Portal type is TCP or UDP is indicated by isnsRegPgPortalPortType."
+  },
+  "isnsRegPgPGT": {
+    "name": "isnsRegPgPGT",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.3.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsPortalGroupTagIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Portal Group Tag (PGT) for the registered iSCSI Portal Group object in an iSNS Server instance. This indicates the tag value that the Portal uses for access to the iSCSI Storage Node. The PGT is used for coordinated access between multiple Portals, as described in the iSCSI Specification [iSCSI]. The value of zero indicates a NULL value, or no association."
+  },
+  "isnsRegIscsiNodeInfo": {
+    "name": "isnsRegIscsiNodeInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4",
+    "class": "objectidentity"
+  },
+  "isnsRegIscsiNodeTable": {
+    "name": "isnsRegIscsiNodeTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing the registered iSCSI Nodes in the iSNS server instance. Storage devices register using the iSNS protocol. While a device cannot be registered in an iSNS server using SNMP, an entry can be deleted in order to remove 'stale' entries. The number of entries is related to the number of iSCSI nodes registered in the iSNS."
+  },
+  "isnsRegIscsiNodeEntry": {
+    "name": "isnsRegIscsiNodeEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityIdx",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegIscsiNodeIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one iSCSI node that has been registered in the iSNS Server instance. The RowStatus managed object provides a method to delete registered nodes that were not properly deregistered / removed through iSNSP. New rows cannot be added using SNMP."
+  },
+  "isnsRegIscsiNodeIdx": {
+    "name": "isnsRegIscsiNodeIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsNodeIndexId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Node Index for this node. The index is created by the iSNS Server for mapping between registered objects. The index used for a specific node name is only persistent across reboots for nodes that have been registered in a Discovery Domain (DD). If a node is not registered in any DD, then the index used for a node can change after a server reinitialization."
+  },
+  "isnsRegIscsiNodeName": {
+    "name": "isnsRegIscsiNodeName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 223
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSCSI Name of the initiator or target associated with the storage node. The iSCSI Name can not be longer then 223 bytes. The iSNS Server internal maximum size is 224 bytes to provide NULL termination. This is the iSCSI Name that uniquely identifies the initiator, initiator/target, target, or control node in the network."
+  },
+  "isnsRegIscsiNodeType": {
+    "name": "isnsRegIscsiNodeType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsNodeTypeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Node Type bit-map defining the functions of this iSCSI node. Bit Node Type --------- --------- All Others RESERVED 29 Control 30 Initiator 31 Target "
+  },
+  "isnsRegIscsiNodeAlias": {
+    "name": "isnsRegIscsiNodeAlias",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Alias name of the iSCSI node. This is a variable-length text-based description of up to 255 bytes."
+  },
+  "isnsRegIscsiNodeScnBitmap": {
+    "name": "isnsRegIscsiNodeScnBitmap",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsScnBitmapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The State Change Notification (SCN) bitmap for a node. Bit Field Flag Description --------- ---------------- 0 INITIATOR AND SELF INFORMATION ONLY 1 TARGET AND SELF INFORMATION ONLY 2 MANAGEMENT REGISTRATION/SCN 3 REGISTERED OBJECT REMOVED 4 REGISTERED OBJECT ADDED 5 REGISTERED OBJECT UPDATED 6 DD/DDS MEMBER REMOVED (MGT REG/SCN ONLY) 7 DD/DDS MEMBER ADDED (MGT REG/SCN ONLY) Setting a bit to true (1) indicates the flag is enabled."
+  },
+  "isnsRegIscsiNodeWwnToken": {
+    "name": "isnsRegIscsiNodeWwnToken",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "This contains an optional globally unique 64-bit integer value that can be used to represent the World Wide Node Name of the iSCSI device in a Fibre Channel fabric. This identifier is used during the device registration process, and MUST conform to the requirements in [FC-FS]. The value of zero for this managed object indicates that a Node WWN token has not been assigned."
+  },
+  "isnsRegIscsiNodeAuthMethod": {
+    "name": "isnsRegIscsiNodeAuthMethod",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.4.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "This attribute contains a null-terminated string containing UTF-8 text listing the iSCSI authentication methods enabled for this iSCSI Node, in order of preference. The text values used to identify iSCSI authentication methods are embedded in this string attribute and delineated by a comma. The text values are identical to those found in the main iSCSI draft; additional vendor-specific text values are also possible."
+  },
+  "isnsRegFcPortInfo": {
+    "name": "isnsRegFcPortInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5",
+    "class": "objectidentity"
+  },
+  "isnsRegFcPortTable": {
+    "name": "isnsRegFcPortTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Information on registered FC Ports in the iSNS."
+  },
+  "isnsRegFcPortEntry": {
+    "name": "isnsRegFcPortEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityIdx",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortWwpn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one FC Port that has been registered in iSNS."
+  },
+  "isnsRegFcPortWwpn": {
+    "name": "isnsRegFcPortWwpn",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port's World Wide Port Name as defined in the iSNS Specification [iSNS]. The value of zero is not valid for this managed object."
+  },
+  "isnsRegFcPortID": {
+    "name": "isnsRegFcPortID",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcAddressIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port's Port ID as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcPortType": {
+    "name": "isnsRegFcPortType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port Port Type as defined in the iSNS Specification [iSNS] and the Fibre Channel Generic Services [FC-GS] Specification. Current values are as shown below: unknown (0), nPort (1), nlPort (2), fNlPort (3), fPort (129), -- x'81' flPort (130), -- x'82' ePort (132), -- x'84' bPort (133), -- x'85' mFcpPort (65297), -- x'FF11' iFcpPort (65298), -- x'FF12' unknownEnd (65535) ."
+  },
+  "isnsRegFcPortSymName": {
+    "name": "isnsRegFcPortSymName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The optional FC Port Port Symbolic Name as defined in the iSNS Specification [iSNS]. If not provided then the string SHALL be zero length."
+  },
+  "isnsRegFcPortFabricPortWwn": {
+    "name": "isnsRegFcPortFabricPortWwn",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Fabric Port WWN for this entry as defined in the iSNS Specification [iSNS]. The value of zero for this managed object indicates that the Fabric Port WWN is not known, or has not yet been registered with the iSNS Server."
+  },
+  "isnsRegFcPortHA": {
+    "name": "isnsRegFcPortHA",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcAddressIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port Hard Address as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcPortAddrType": {
+    "name": "isnsRegFcPortAddrType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of Inet address in the isnsRegFcPortAddr."
+  },
+  "isnsRegFcPortAddr": {
+    "name": "isnsRegFcPortAddr",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port Inet Address as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcPortFcCos": {
+    "name": "isnsRegFcPortFcCos",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsCosBitmapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port Class of Service as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcPortFc4Types": {
+    "name": "isnsRegFcPortFc4Types",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 32,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port FC-4 Types as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcPortFc4Descr": {
+    "name": "isnsRegFcPortFc4Descr",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port FC-4 Descriptors as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcPortFc4Features": {
+    "name": "isnsRegFcPortFc4Features",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 128,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Port FC-4 Features as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcPortScnBitmap": {
+    "name": "isnsRegFcPortScnBitmap",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsScnBitmapId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The State Change Notification (SCN) bitmap for a FC Port. Bit Field Flag Description --------- ---------------- 0 INITIATOR AND SELF INFORMATION ONLY 1 TARGET AND SELF INFORMATION ONLY 2 MANAGEMENT REGISTRATION/SCN 3 REGISTERED OBJECT REMOVED 4 REGISTERED OBJECT ADDED 5 REGISTERED OBJECT UPDATED 6 DD/DDS MEMBER REMOVED (MGT REG/SCN ONLY) 7 DD/DDS MEMBER ADDED (MGT REG/SCN ONLY) Setting a bit to true (1) indicates the flag is enabled."
+  },
+  "isnsRegFcPortRole": {
+    "name": "isnsRegFcPortRole",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsNodeTypeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Node Type bit-map defining the functions of this FC Port. Bit Node Type --------- --------- All Others RESERVED 29 Control 30 Initiator 31 Target "
+  },
+  "isnsRegFcPortFcNodeWwn": {
+    "name": "isnsRegFcPortFcNodeWwn",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Node WWN of the FC Node that has been associated with this FC Port as defined in the iSNS Specification [iSNS]. This managed object may contain the value of zero prior to a device registering this value with the iSNS Server."
+  },
+  "isnsRegFcPortPpnWwn": {
+    "name": "isnsRegFcPortPpnWwn",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.5.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The Permanent Port Name attribute is the FC Port Name WWPN of the first Storage Node registered in the iSNS Database that is associated with a particular FC Device (FC Node). The PPN of all subsequent Storage Node registrations that are associated with that FC Device (FC Node) SHALL be set to the FC Port Name WWPN of the first Storage Node, as defined in the iSNS Specification [iSNS]. This managed object may contain the value of zero prior to a device registering this value with the iSNS Server"
+  },
+  "isnsRegFcNodeInfo": {
+    "name": "isnsRegFcNodeInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6",
+    "class": "objectidentity"
+  },
+  "isnsRegFcNodeTable": {
+    "name": "isnsRegFcNodeTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing the registered FC Nodes in the iSNS."
+  },
+  "isnsRegFcNodeEntry": {
+    "name": "isnsRegFcNodeEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeWwn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one registered FC node that has been regisered in the iSNS."
+  },
+  "isnsRegFcNodeWwn": {
+    "name": "isnsRegFcNodeWwn",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "FcNameIdOrZero",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Node World Wide Node Name as defined in the iSNS Specification [iSNS]. The value of zero is not valid for this managed object."
+  },
+  "isnsRegFcNodeSymName": {
+    "name": "isnsRegFcNodeSymName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The optional FC Node Symbolic Name of the node as defined in the iSNS Specification [iSNS]. This is a variable-length text-based description. If not provided then the string SHALL be zero length."
+  },
+  "isnsRegFcNodeAddrType": {
+    "name": "isnsRegFcNodeAddrType",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of Inet address in isnsRegFcNodeAddr."
+  },
+  "isnsRegFcNodeAddr": {
+    "name": "isnsRegFcNodeAddr",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The FC Node Inet address of the node as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcNodeIPA": {
+    "name": "isnsRegFcNodeIPA",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "This managed object identifies the FC Initial Process Associator of the node as defined in the iSNS Specification [iSNS]."
+  },
+  "isnsRegFcNodeProxyIscsiName": {
+    "name": "isnsRegFcNodeProxyIscsiName",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 223
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 4171, Section 6",
+    "status": "current",
+    "description": "The iSCSI Name used to represent the FC Node in the IP network. It is used as a pointer to the matching iSCSI Name entry in the iSNS Server. Its value is usually registered by an FC-iSCSI gateway connecting the IP network to the fabric containing the FC device."
+  },
+  "isnsRegFcNodeInfoTable": {
+    "name": "isnsRegFcNodeInfoTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing basic information on registered FC Nodes in the iSNS. The number of entries in the table is dependent on the number of FC Nodes registered in the iSNS."
+  },
+  "isnsRegFcNodeInfoEntry": {
+    "name": "isnsRegFcNodeInfoEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeWwn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one FC Node that has been registered in the iSNS."
+  },
+  "isnsRegFcNodeInfoNumFcPorts": {
+    "name": "isnsRegFcNodeInfoNumFcPorts",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of FC Ports associated with this FC Node."
+  },
+  "isnsRegFcNodePortTable": {
+    "name": "isnsRegFcNodePortTable",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing the mapping of registered FC Nodes to associated registered iFCP Ports and registered Entity objects in the iSNS Server instance."
+  },
+  "isnsRegFcNodePortEntry": {
+    "name": "isnsRegFcNodePortEntry",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIndex",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeWwn",
+        "implied": 0
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortWwpn",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information on one mapping from an FC Port and Entity to an FC node registered in the iSNS."
+  },
+  "isnsRegFcNodePortEntityEIdx": {
+    "name": "isnsRegFcNodePortEntityEIdx",
+    "oid": "1.3.6.1.2.1.10.4371.1.1.7.6.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IsnsEntityIndexId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Entity Index for the registered Entity object associated with the FC Port and FC Node."
+  },
+  "isnsNotification": {
+    "name": "isnsNotification",
+    "oid": "1.3.6.1.2.1.10.4371.1.3",
+    "class": "objectidentity"
+  },
+  "isnsNotificationInfo": {
+    "name": "isnsNotificationInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.1",
+    "class": "objectidentity"
+  },
+  "isnsInstInfo": {
+    "name": "isnsInstInfo",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Textual information about the iSNS Server or client notification. An example is: iSNS Client Started, or iSNS Server Started, information that would be included in the appropriate notification."
+  },
+  "isnsAddrTypeNotifctn": {
+    "name": "isnsAddrTypeNotifctn",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The type of Inet address in isnsSrvrAddrNotifctn."
+  },
+  "isnsAddrNotifctn": {
+    "name": "isnsAddrNotifctn",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Identifies the IP address of the iSNS Server."
+  },
+  "isnsTcpPortNotifctn": {
+    "name": "isnsTcpPortNotifctn",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Indicates the TCP port the iSNS Server is using, or 0 if TCP based registrations are not supported."
+  },
+  "isnsUdpPortNotifctn": {
+    "name": "isnsUdpPortNotifctn",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Indicates the UDP port the iSNS Server is using, or 0 if UDP based registrations are not supported."
+  },
+  "isnsNotificationPrefix": {
+    "name": "isnsNotificationPrefix",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.0",
+    "class": "objectidentity"
+  },
+  "isnsServerStart": {
+    "name": "isnsServerStart",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsInstInfo"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsAddrTypeNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsAddrNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsTcpPortNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsUdpPortNotifctn"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is sent when an iSNS Server begins operation. The notification provides the following: isnsInstInfo : iSNS Server textual information isnsAddrTypeNotifctn : iSNS Server address type isnsAddrNotifctn : iSNS Server address isnsTcpPortNotifctn : iSNS Server TCP Port isnsUdpPortNotifctn : iSNS Server UDP Port "
+  },
+  "isnsServerShutdown": {
+    "name": "isnsServerShutdown",
+    "oid": "1.3.6.1.2.1.10.4371.1.3.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsInstInfo"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsAddrTypeNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsAddrNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsTcpPortNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsUdpPortNotifctn"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is sent when an iSNS Server is shutdown. The notification provides the following: isnsInstInfo : iSNS Server textual information isnsAddrTypeNotifctn : iSNS Server address type isnsAddrNotifctn : iSNS Server address isnsTcpPortNotifctn : iSNS Server TCP Port isnsUdpPortNotifctn : iSNS Server UDP Port "
+  },
+  "isnsGroups": {
+    "name": "isnsGroups",
+    "oid": "1.3.6.1.2.1.10.4371.2.1",
+    "class": "objectidentity"
+  },
+  "isnsServerAttributesGroup": {
+    "name": "isnsServerAttributesGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstIsnsVersion"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstVendorInfo"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstPhyIndex"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstTcpPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstUdpPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstDiscontinuityTime"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstRole"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstDiscMthdsEnbld"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstDiscMcGrpType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstDiscMcGrp"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstCntrlNodeAuth"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstEsiNonRespThrshld"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstEnblCntrlNdeMgtScn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstDfltDdDdsStatus"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstUpdateDdDdsSpprtd"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsSrvrInstUpdateDdDdsEnbld"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Server attributes."
+  },
+  "isnsServerNumObjGroup": {
+    "name": "isnsServerNumObjGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumDds"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumDd"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumEntities"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumPortals"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumPortalGroups"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumIscsiNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumFcPorts"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsNumFcNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumPortals"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumPortalGroups"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumIscsiNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumFcPorts"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumFcNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeInfoNumFcPorts"
+      }
+    ],
+    "status": "current",
+    "description": "Managed objects indicating the number of registered objects in an iSNS Server or the number of registered objects associated with a registered Entity. These managed objects are optional to implement."
+  },
+  "isnsServerIscsiCntlNodeGroup": {
+    "name": "isnsServerIscsiCntlNodeGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsCntlNodeIscsiNodeName"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Server iSCSI control node managed objects."
+  },
+  "isnsServerIscsiDdsDdObjGroup": {
+    "name": "isnsServerIscsiDdsDdObjGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdsSymbolicName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdsStatus"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdSymbolicName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdFeatures"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberIscsiName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberIsRegistered"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalIsRegistered"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Server DDS and DD managed objects for iSCSI."
+  },
+  "isnsServerIfcpDdsDdObjGroup": {
+    "name": "isnsServerIfcpDdsDdObjGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdsSymbolicName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdsStatus"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdSymbolicName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdFeatures"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberPortalIsRegistered"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsDdMemberFcIsRegistered"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Server DDS and DD managed objects for iFCP."
+  },
+  "isnsServerRegIscsiObjGroup": {
+    "name": "isnsServerRegIscsiObjGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityEID"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityProtocol"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityMgtAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityMgtAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityTimestamp"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityVersionMin"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityVersionMax"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityRegPeriod"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumPortals"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumPortalGroups"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumIscsiNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumFcPorts"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumFcNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalSymName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalEsiInterval"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalEsiPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalEsiPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalScnPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalScnPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalSecurityInfo"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgIscsiNodeIdx"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgIscsiName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgPortalPrtlIdx"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgPortalAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgPortalAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgPortalPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgPortalPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPgPGT"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegIscsiNodeName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegIscsiNodeType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegIscsiNodeAlias"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegIscsiNodeScnBitmap"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegIscsiNodeWwnToken"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegIscsiNodeAuthMethod"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Server registered iSCSI managed objects."
+  },
+  "isnsServerRegIfcpObjGroup": {
+    "name": "isnsServerRegIfcpObjGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityEID"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityProtocol"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityMgtAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityMgtAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityTimestamp"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityVersionMin"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityVersionMax"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityRegPeriod"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumPortals"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumPortalGroups"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumIscsiNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumFcPorts"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegEntityInfoNumFcNodes"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalSymName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalEsiInterval"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalEsiPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalEsiPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalScnPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalScnPort"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegPortalSecurityInfo"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortID"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortSymName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortFabricPortWwn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortHA"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortFcCos"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortFc4Types"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortFc4Descr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortFc4Features"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortScnBitmap"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortRole"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortFcNodeWwn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcPortPpnWwn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeSymName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeAddrType"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeAddr"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeIPA"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodeProxyIscsiName"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsRegFcNodePortEntityEIdx"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Server registered iFCP managed objects."
+  },
+  "isnsNotificationObjGroup": {
+    "name": "isnsNotificationObjGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsInstInfo"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsAddrTypeNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsAddrNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsTcpPortNotifctn"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsUdpPortNotifctn"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Notification managed objects."
+  },
+  "isnsServerNotificationGroup": {
+    "name": "isnsServerNotificationGroup",
+    "oid": "1.3.6.1.2.1.10.4371.2.1.9",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsServerStart"
+      },
+      {
+        "module": "ISNS-MGMT-MIB",
+        "object": "isnsServerShutdown"
+      }
+    ],
+    "status": "current",
+    "description": "iSNS Server Notification managed objects."
+  },
+  "isnsCompliances": {
+    "name": "isnsCompliances",
+    "oid": "1.3.6.1.2.1.10.4371.2.2",
+    "class": "objectidentity"
+  },
+  "isnsIscsiServerComplianceV1": {
+    "name": "isnsIscsiServerComplianceV1",
+    "oid": "1.3.6.1.2.1.10.4371.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "isnsServerAttributesGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsServerIscsiCntlNodeGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsServerIscsiDdsDdObjGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsServerRegIscsiObjGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsNotificationObjGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsServerNotificationGroup",
+        "module": "ISNS-MGMT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Initial compliance statement for an iSNS Server providing support to iSCSI clients."
+  },
+  "isnsIfcpServerComplianceV1": {
+    "name": "isnsIfcpServerComplianceV1",
+    "oid": "1.3.6.1.2.1.10.4371.2.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "isnsServerAttributesGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsServerIfcpDdsDdObjGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsServerRegIfcpObjGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsNotificationObjGroup",
+        "module": "ISNS-MGMT-MIB"
+      },
+      {
+        "object": "isnsServerNotificationGroup",
+        "module": "ISNS-MGMT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Initial compliance statement for an iSNS Server providing support to iFCP Clients."
+  },
+  "isnsServerComplianceV1": {
+    "name": "isnsServerComplianceV1",
+    "oid": "1.3.6.1.2.1.10.4371.2.2.3",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "isnsServerNumObjGroup",
+        "module": "ISNS-MGMT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "This set of groups is required for full implementation by an iSNS Server if it has the resources to keep track of the number of registered objects in iSNS Server instances over time."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ISNS-MGMT-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:32:01 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ISNS-MGMT-MIB"
+  }
+}

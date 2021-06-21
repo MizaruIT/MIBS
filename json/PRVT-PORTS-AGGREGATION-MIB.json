@@ -1,0 +1,696 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "ifAdminStatus",
+      "ifOperStatus",
+      "ifIndex"
+    ],
+    "PRVT-SWITCH-MIB": [
+      "configL2IfaceUnit",
+      "switch",
+      "configL2IfacePort",
+      "configL2IfaceSlot"
+    ],
+    "Q-BRIDGE-MIB": [
+      "PortList"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Unsigned32",
+      "Integer32",
+      "OBJECT-IDENTITY",
+      "Counter32",
+      "iso",
+      "Bits",
+      "Gauge32",
+      "MibIdentifier",
+      "NOTIFICATION-TYPE",
+      "TimeTicks",
+      "Counter64",
+      "IpAddress",
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "DisplayString"
+    ]
+  },
+  "prvtPortsAggregationMib": {
+    "name": "prvtPortsAggregationMib",
+    "oid": "1.3.6.1.4.1.738.1.5.106",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2008-09-20 00:00",
+        "description": "Added notifications for aggregation members."
+      },
+      {
+        "revision": "2005-02-16 00:00",
+        "description": "Fixed spelling errors and changed the contact info."
+      },
+      {
+        "revision": "2004-10-29 00:00",
+        "description": "Added aggregationLacpPortKey"
+      },
+      {
+        "revision": "2003-05-06 00:00",
+        "description": "Moved to SMI-V2."
+      },
+      {
+        "revision": "2002-12-24 00:00",
+        "description": "Added enabling and disabling for LACP."
+      },
+      {
+        "revision": "2002-11-11 00:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "200809200000Z",
+    "organization": "BATM Advanced Communication",
+    "contactinfo": " BATM/Telco Systems Support team Email: For North America: techsupport@telco.com For North Europe: support@batm.de, info@batm.de For the rest of the world: techsupport@telco.com",
+    "description": "The Ports Aggregation MIB module for managing switch or ipSwitch static and dynamic port aggregation."
+  },
+  "portsAggregation": {
+    "name": "portsAggregation",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1",
+    "class": "objectidentity"
+  },
+  "portsAggregationConfig": {
+    "name": "portsAggregationConfig",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2",
+    "class": "objectidentity"
+  },
+  "portsAggregationTraps": {
+    "name": "portsAggregationTraps",
+    "oid": "1.3.6.1.4.1.738.1.5.106.3",
+    "class": "objectidentity"
+  },
+  "maxAggregatorId": {
+    "name": "maxAggregatorId",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum allowed aggregator ID for this unit."
+  },
+  "aggregationLacpSystemPriority": {
+    "name": "aggregationLacpSystemPriority",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The LACP system priority."
+  },
+  "portsAggregationTable": {
+    "name": "portsAggregationTable",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the status of all the trunks in the system It can contain two major types: static and dynamic trunks."
+  },
+  "portsAggregationEntry": {
+    "name": "portsAggregationEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-PORTS-AGGREGATION-MIB",
+        "object": "aggregatorId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Ports aggregation entry."
+  },
+  "aggregatorId": {
+    "name": "aggregatorId",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The internal trunk ID."
+  },
+  "aggregatorIfIndex": {
+    "name": "aggregatorIfIndex",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The interface index from MIB-II ifTable."
+  },
+  "aggregatorType": {
+    "name": "aggregatorType",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "staticTrunk": 1,
+          "protocol-802-1ad": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable describes the trunk type."
+  },
+  "aggregatorName": {
+    "name": "aggregatorName",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The aggregator's name."
+  },
+  "aggregatorPortsMembers": {
+    "name": "aggregatorPortsMembers",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortList",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ports that are members of this trunk."
+  },
+  "aggregatorPortsActive": {
+    "name": "aggregatorPortsActive",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortList",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The active ports that are members of this trunk."
+  },
+  "aggregatorL2DropEvents": {
+    "name": "aggregatorL2DropEvents",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of events in which packets were dropped by the probe due to lack of resources. Note that this number is not necessarily the number of packets dropped; it is just the number of times this condition has been detected."
+  },
+  "aggregatorL2Octets": {
+    "name": "aggregatorL2Octets",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of octets of data (including those in bad packets) received on the network (excluding framing bits but including FCS octets). This object can be used as a reasonable estimate of Ethernet utilization. If greater precision is desired, the etherStatsPkts and etherStatsOctets objects should be sampled before and after a common interval. The differences in the sampled values are Pkts and Octets, respectively, and the number of seconds in the interval is Interval. These values are used to calculate the Utilization as follows: Pkts * (9.6 + 6.4) + (Octets * .8) Utilization = Interval * 10,000 The result of this equation is the Ethernet segment utilization which is the percent utilization of the ethernet segment on a 0 to 100 percent scale."
+  },
+  "aggregatorL2Pkts": {
+    "name": "aggregatorL2Pkts",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets, broadcast packets, and multicast packets) received."
+  },
+  "aggregatorL2BroadcastPkts": {
+    "name": "aggregatorL2BroadcastPkts",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of good packets received that were directed to the broadcast address. Note that this does not include multicast packets."
+  },
+  "aggregatorL2MulticastPkts": {
+    "name": "aggregatorL2MulticastPkts",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of good packets received that were directed to a multicast address. Note that this number does not include packets directed to the broadcast address."
+  },
+  "aggregatorL2CRCAlignErrors": {
+    "name": "aggregatorL2CRCAlignErrors",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that had a length (excluding framing bits, but including FCS octets) of between 64 and 1518 octets, inclusive, but had either a bad Frame Check Sequence (FCS) with an integral number of octets (FCS Error) or a bad FCS with a non-integral number of octets (Alignment Error)."
+  },
+  "aggregatorL2UndersizePkts": {
+    "name": "aggregatorL2UndersizePkts",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were less than 64 octets long (excluding framing bits, but including FCS octets) and were otherwise well formed."
+  },
+  "aggregatorL2OversizePkts": {
+    "name": "aggregatorL2OversizePkts",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were longer than 1518 octets (excluding framing bits, but including FCS octets) and were otherwise well formed."
+  },
+  "aggregatorL2Fragments": {
+    "name": "aggregatorL2Fragments",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were less than 64 octets in length (excluding framing bits but including FCS octets) and had either a bad Frame Check Sequence (FCS) with an integral number of octets (FCS Error) or a bad FCS with a non-integral number of octets (Alignment Error). Note that it is entirely normal for etherStatsFragments to increment. This is because it counts both runts (which are normal occurrences due to collisions) and noise hits."
+  },
+  "aggregatorL2Jabbers": {
+    "name": "aggregatorL2Jabbers",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets received that were longer than 1518 octets (excluding framing bits, but including FCS octets), and had either a bad Frame Check Sequence (FCS) with an integral number of octets (FCS Error) or a bad FCS with a non-integral number of octets (Alignment Error). Note that this definition of jabber is different from the definition in IEEE-802.3 section 8.2.1.5 (10BASE5) and section 10.3.1.4 (10BASE2). These documents define jabber as the condition in which any packet exceeds 20 ms. The allowed range to detect jabber is between 20 ms and 150 ms."
+  },
+  "aggregatorL2Collisions": {
+    "name": "aggregatorL2Collisions",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The best estimate of the total number of collisions on this Ethernet segment. The value returned will depend on the RMON probe's location. Sections 8.2.1.3 (10BASE-5) and 10.3.1.3 (10BASE-2) of IEEE standard 802.3 states that a station must detect a collision in the receive mode if three or more stations are transmitting simultaneously. A repeater port must detect a collision when two or more stations are transmitting simultaneously. Thus a probe placed on a repeater port could record more collisions than a probe connected to a station on the same segment would. Probe location plays a much smaller role when considering 10BASE-T. Section 14.2.1.4 (10BASE-T) of IEEE standard 802.3 defines a collision as the simultaneous presence of signals on the DO and RD circuits (transmitting and receiving at the same time). A 10BASE-T station can only detect collisions when it is transmitting. Thus probes placed on a station and a repeater, should report the same number of collisions. Note also that an RMON probe inside a repeater should ideally report collisions between the repeater and one or more other hosts (transmit collisions as defined by IEEE 802.3k) plus receiver collisions observed on any coaxial segments to which the repeater is connected."
+  },
+  "aggregatorL2Pkts64Octets": {
+    "name": "aggregatorL2Pkts64Octets",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were 64 octets in length (excluding framing bits but including FCS octets)."
+  },
+  "aggregatorL2Pkts65to127Octets": {
+    "name": "aggregatorL2Pkts65to127Octets",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 65 and 127 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "aggregatorL2Pkts128to255Octets": {
+    "name": "aggregatorL2Pkts128to255Octets",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 128 and 255 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "aggregatorL2Pkts256to511Octets": {
+    "name": "aggregatorL2Pkts256to511Octets",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 256 and 511 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "aggregatorL2Pkts512to1023Octets": {
+    "name": "aggregatorL2Pkts512to1023Octets",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 512 and 1023 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "aggregatorL2Pkts1024to1518Octets": {
+    "name": "aggregatorL2Pkts1024to1518Octets",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.3.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of packets (including bad packets) received that were between 1024 and 1518 octets in length inclusive (excluding framing bits but including FCS octets)."
+  },
+  "aggregationLacpSystemEnable": {
+    "name": "aggregationLacpSystemEnable",
+    "oid": "1.3.6.1.4.1.738.1.5.106.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This value enable/disable the LACP system globaly"
+  },
+  "portsAggregationConfigTable": {
+    "name": "portsAggregationConfigTable",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains only the static (created by management) port trunk configuration."
+  },
+  "portsAggregationConfigEntry": {
+    "name": "portsAggregationConfigEntry",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-SWITCH-MIB",
+        "object": "configL2IfaceUnit",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-SWITCH-MIB",
+        "object": "configL2IfaceSlot",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-SWITCH-MIB",
+        "object": "configL2IfacePort",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Port aggregation config entry."
+  },
+  "staticAggregationID": {
+    "name": "staticAggregationID",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " A number representing the aggregation group that this port belongs to. 0 means that this port does not belong to any static group."
+  },
+  "dynamicAggregationID": {
+    "name": "dynamicAggregationID",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " A number representing the aggregation group that this port belongs to. 0 means that this port does not belong to any dynamic group"
+  },
+  "aggregationType": {
+    "name": "aggregationType",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "static": 2,
+          "protocol-802-1adAcive": 3,
+          "protocol-802-1adPassive": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specifies the aggregation type of the interface - disable(1) if the port does not belong to a group, static(2) if the port belongs to a static group, and protocol-802-1adAcive(3) or protocol-802-1adPassive(4) if the interface is part of a dynamic group."
+  },
+  "aggregationLacpPortPriority": {
+    "name": "aggregationLacpPortPriority",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "LACP priority for a port"
+  },
+  "aggregationLacpPortKey": {
+    "name": "aggregationLacpPortKey",
+    "oid": "1.3.6.1.4.1.738.1.5.106.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "LACP identification key for a port"
+  },
+  "lagMemberLinkUp": {
+    "name": "lagMemberLinkUp",
+    "oid": "1.3.6.1.4.1.738.1.5.106.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifAdminStatus"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifOperStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when lag link becomes up. The first ifIndex indicates the id of the trunk interface. The second one shows the port member with link status change"
+  },
+  "lagMemberLinkDown": {
+    "name": "lagMemberLinkDown",
+    "oid": "1.3.6.1.4.1.738.1.5.106.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifAdminStatus"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifOperStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when lag link becomes down. The first ifIndex indicates the id of the trunk interface. The second one shows the port member with link status change"
+  },
+  "lagMemberAdd": {
+    "name": "lagMemberAdd",
+    "oid": "1.3.6.1.4.1.738.1.5.106.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a new port is added to a lag link. The first ifIndex indicates the id of the trunk interface. The second one shows the added port member"
+  },
+  "lagMemberRemove": {
+    "name": "lagMemberRemove",
+    "oid": "1.3.6.1.4.1.738.1.5.106.3.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when a port is removed from a lag. The first ifIndex indicates the id of the trunk interface. The second one shows the removed port member"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PRVT-PORTS-AGGREGATION-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:52:33 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PRVT-PORTS-AGGREGATION-MIB"
+  }
+}

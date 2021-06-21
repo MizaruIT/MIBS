@@ -1,0 +1,4403 @@
+-- Ericsson Television Limited Standard MIB disclaimer
+-- ###################################################
+-- SNMP MIBs for Ericsson Television Limited products are developed 
+-- primarily for use by Ericsson Television Limited control solutions.
+-- Where MIBs are provided to a third party or other non-Ericsson 
+-- Television Limited person, for the purposes of their development 
+-- of a non-Ericsson Television Limited control or monitoring solution, 
+-- they are provided free of charge, and without obligation on the
+-- part of Ericsson Television Limited to offer priority support, or
+-- changes to suit the third party.
+-- *
+-- *  Project Name     : TT1260 Professional Receiver
+-- *  Task/Module Name : SNMP MIB definition
+-- *  File Name        : ETV-TT1260-MIB.mib
+-- *  Author           : Tony Mountifield
+-- *  Date Originated  : 21 Feb 2003
+-- *
+-- *  Description      : This is the definition for the TT1260-specific MIB
+-- *
+-- *****************************************************************************
+-- *
+-- * Change History :
+-- *
+-- * 21-02-2003	AM  Release Version
+-- * 21-03-2003 AM  Add enumeration of unknown(1) to videoFrameRate,
+-- *		    videoProfile and videoAspectRatio, moving the existing
+-- *		    values up by 1.
+-- *		    Corrected order of enumerations for EthHSD encapsulation.
+-- * 31-03-2003	AM  Added note to description of Factory Calibration objects.
+-- *		    Corrected range of audioPtsAdjustment.
+-- *		    Corrected range of inSatSetupSymbolRate.
+-- *		    Added full set of OFDM Band Plan names.
+-- *		    Added enumeration of none(1) to OFDM FEC rates, and moved
+-- *		    the existing enumerations up by one.
+-- * 31-03-2003	AM  *** VERSION 3.0.0 SOFTWARE RELEASE OF TT1260 ***
+-- * 22-05-2003	AM  Renamed ipSubnetMask to subnetMask to void collision
+-- *		    with the IP Input Card MIB.
+-- * 13-06-2003	AM  Added videoAfdState and videoAfdValue for reporting
+-- *		    the Active Format Descriptor.
+-- * 20-11-2003 GS  Added ASI packet length
+-- * 14-01-2004 GS  Added temperature and EBNO alarms
+-- * 19-04-2004 AM  Added gain select and roll off for 4-input Sat card.        
+-- * 14-04-2005 JJM Added LSD format and baud rate
+-- * 08-03-2006 JJM Added Director 5 status parameters
+-- * 07-09-2007 DJC Updated inOfdmSetup* enums to reflect changes to
+-- *                 snmp_tt1_0059.c
+-- * 07-11-2007 JJM Updated serviceTrackingMode to include flush mode
+-- ****************************************************************************
+
+ETV-TT1260-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    NetworkAddress, IpAddress, Counter, Gauge, TimeTicks
+	FROM RFC1155-SMI
+    OBJECT-TYPE
+	FROM RFC-1212
+    modules
+	FROM ETV-Base-MIB
+    PIDNumber, Uint32, Uint16, Uint8
+	FROM ETV-Types-TC;
+
+DisplayString ::= OCTET STRING
+
+tt1260 OBJECT IDENTIFIER
+-- This is the MIB for the Ericsson Television TT1260 Professional 4:2:2 receiver.
+-- 
+-- Objects in this MIB correspond to items in the TT1260 Data Store. Writable
+-- objects cause Data Store items to be updated, which may cause a change
+-- in the operation of the receiver. Read-only objects fetch data as required
+-- from the Data Store.
+    ::= { modules 200 }
+
+configuration OBJECT IDENTIFIER
+-- This section contains MIB objects related to the general configuration
+-- of the receiver. Some of this information is also available in the
+-- ETVGeneral Configuration MIB
+
+    ::= { tt1260 1 }
+
+hostname OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Hostname of the receiver on the network."
+    ::= { configuration 1 }
+
+ipAddress OBJECT-TYPE
+    SYNTAX    IpAddress
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "IP address of the receiver on the network."
+    ::= { configuration 2 }
+
+subnetMask OBJECT-TYPE
+    SYNTAX    IpAddress
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Subnet mask of the network to which the receiver is connected."
+    ::= { configuration 3 }
+
+defaultGatewayIpAddress OBJECT-TYPE
+    SYNTAX    IpAddress
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Default gateway to which packets should be sent that are not destined
+        for the local network."
+    ::= { configuration 4 }
+
+dnsServerIpAddress OBJECT-TYPE
+    SYNTAX    IpAddress
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "IP address of the DNS server to used."
+    ::= { configuration 5 }
+
+unitId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Electronic Serial Number of this receiver"
+    ::= { configuration 6 }
+
+dateTime OBJECT-TYPE
+    SYNTAX    OCTET STRING
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Date and time from the receiver's real-time clock or input stream"
+    ::= { configuration 7 }
+
+serviceHealth OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Value indicating the health of the receiver. A combination of bits
+        as follows:
+         1 = video task failed
+         2 = audio1 task failed
+         4 = audio2 task failed
+         8 = service model builder task failed
+        16 = brain task failed
+        32 = indirectly monitored task failed"
+    ::= { configuration 8 }
+
+serialRemoteType OBJECT-TYPE
+    SYNTAX    INTEGER { ttv232(1), nds232(2), nds485(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Mode of the serial remote-control interface:
+        ttv232 = Tandberg protocol over RS-232 (point to point)
+        nds232 = NDS remote protocol over RS-232 (point to point)
+        nds485 = NDS remote protocol over RS-485 (multi-drop)"
+    ::= { configuration 9 }
+
+serialRemoteAddress OBJECT-TYPE
+    SYNTAX    INTEGER (0..999)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "The address of this receiver when using NDS multi-drop protocol"
+    ::= { configuration 10 }
+
+controlMode OBJECT-TYPE
+    SYNTAX    INTEGER { fp(1), serial(2), ncp(3), snmp(4), web(5) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "The source of remote control of the TT1260:
+        
+        fp = front panel buttons
+        serial = RS-232 / RS-485 serial
+        ncp = over-air using Director
+        snmp = via Ethernet using SNMP
+        web = via Ethernet using a Web Browser
+        
+        This mode may always be written to using SNMP"
+    ::= { configuration 11 }
+
+serviceTrackingMode OBJECT-TYPE
+    SYNTAX    INTEGER { monitor(1), hunt(2), flush(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Controls the action if the selected service is no longer found in the
+        Transport Stream:
+        
+        monitor = just reports Service Not Found
+        hunt = receiver will search the Transport Stream for other services
+        flush = reports service not found and flushes service component PIDs"
+    ::= { configuration 12 }
+
+inputContent OBJECT IDENTIFIER
+-- This section contains MIB objects describing the content being received
+-- in the Transport Stream and the services selected from it
+    ::= { tt1260 2 }
+
+inNetworkInformation OBJECT IDENTIFIER
+    ::= { inputContent 1 }
+
+inTransportStreamId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The Transport Stream Identifier"
+    ::= { inNetworkInformation 1 }
+
+inNetworkId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The Network Identifier from the NIT"
+    ::= { inNetworkInformation 2 }
+
+inOriginalNetworkId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The Original Netwrk Identifier from the SDT"
+    ::= { inNetworkInformation 3 }
+
+inSiType OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), dvb(2), atsc(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The type of SI: DVB (European) or ATSC (American)"
+    ::= { inNetworkInformation 4 }
+--------------------------------------------------
+--
+-- ## CA Node 
+--
+--
+-- inCaInformation
+--------------------------------------------------
+
+inCaInformation OBJECT IDENTIFIER
+    ::= { inputContent 2 }
+
+-- Definition of the table for inCaTable
+inCaTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF InCaEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Table of CA systems carried in the Transport Stream"
+    ::= { inCaInformation 1 }
+
+-- Definition of the table for inCaMultipleServiceDescramblingTable
+inCaMultipleServiceDescramblingTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF InCaMSD_entry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Multi Service Descrambling control table"
+    ::= { inCaInformation 2 }
+
+-- Definition of the rows in inCaTable
+inCaEntry OBJECT-TYPE
+    SYNTAX    InCaEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Row in table of CA systems"
+    INDEX { inCaSystemId }
+    ::= { inCaTable 1 }
+
+-- Definition of the rows in inCaMultidescramble
+inCaMultidescrableEntry OBJECT-TYPE
+    SYNTAX    InCaMSD_entry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Row in table of MSD"
+    INDEX { inCaMSD_Index }
+    ::= { inCaMultipleServiceDescramblingTable 1 }
+
+-- Definition of Row data for inCaEntry
+InCaEntry ::= SEQUENCE {
+    inCaSystemId Uint16,
+    inCaEmmPid   PIDNumber,
+    inCaData     OCTET STRING
+}
+
+-- Definition of Row data for InCaMSD_entry
+InCaMSD_entry ::= SEQUENCE {
+    inCaMSD_Index	Uint16,
+    inCaMSD_Service_ID	Uint16,
+    inCaMSD_Service_Name DisplayString (SIZE(0..32))
+}
+
+--------------------------------------------
+-- The items in the row data for inCaEntry
+--------------------------------------------
+inCaSystemId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "CA System ID"
+    ::= { inCaEntry 1 }
+
+inCaEmmPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID number of EMMs for the current CA system"
+    ::= { inCaEntry 2 }
+
+inCaData OBJECT-TYPE
+    SYNTAX    OCTET STRING
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Data from the CA descriptor for the current CA system"
+    ::= { inCaEntry 3 }
+
+-----------------------------------------------
+-- The items in the row data for inCaMSD_entry
+-----------------------------------------------
+inCaMSD_Index OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "CA System ID"
+    ::= { inCaMultidescrableEntry 1 }
+    
+inCaMSD_Service_ID OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Service ID"
+    ::= { inCaMultidescrableEntry 2 }
+    
+inCaMSD_Service_Name OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Name of the service"
+    ::= { inCaMultidescrableEntry 3 }
+
+--------------------------------------------------
+--
+--
+-- InServiceTable
+--
+--------------------------------------------------
+
+inServiceTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF InServiceEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Table of all services available in the Transport Stream"
+    ::= { inputContent 3 }
+
+inServiceEntry OBJECT-TYPE
+    SYNTAX    InServiceEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    INDEX { inServiceId }
+    ::= { inServiceTable 1 }
+
+InServiceEntry ::= SEQUENCE {
+    inServiceId       Uint16,
+    inServicePmtPid   PIDNumber,
+    inServiceName     DisplayString (SIZE(0..32)),
+    inServiceProvider DisplayString (SIZE(0..32)),
+    inServiceType     INTEGER
+}
+
+inServiceId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Service ID"
+    ::= { inServiceEntry 1 }
+
+inServicePmtPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the PMT for the service"
+    ::= { inServiceEntry 2 }
+
+inServiceName OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Name of the service"
+    ::= { inServiceEntry 3 }
+
+inServiceProvider OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Name of the service provider"
+    ::= { inServiceEntry 4 }
+
+inServiceType OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), video(2), audio(3), data(4), mosaic(5), other(6)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Type of the service:
+         unknown - not defined in stream
+         video - TV service
+         audio - Radio service
+         data - Data-only service
+         mosaic -Mosaic service
+         other - none of the above"
+    ::= { inServiceEntry 5 }
+
+selectedService OBJECT IDENTIFIER
+-- Information describing the actual service selected from the available
+-- services
+    ::= { inputContent 4 }
+
+selectedServiceReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userSi(2), brainSiFullInfo(3), brainSiSidsOnly(4),
+                        fav(5) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the means by which the current service was selected"
+    ::= { selectedService 1 }
+
+selectedServiceId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Service ID of the desired service.
+        This object should be written to (SNMP Set) to select a service"
+    ::= { selectedService 2 }
+
+selectedServiceName OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Name of the selected service"
+    ::= { selectedService 3 }
+
+selectedProviderName OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Name of the provider of the selected service"
+    ::= { selectedService 4 }
+
+selectedServiceType OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), video(2), audio(3), data(4), mosaic(5), other(6)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Type of the selected service: unknown, video, audio, data, mosaic or
+        other"
+    ::= { selectedService 5 }
+
+selectedInSiFlag OBJECT-TYPE
+    SYNTAX    INTEGER { false(1), true(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Flag indicating whether the selected service is described in the SI
+        data"
+    ::= { selectedService 6 }
+
+selectedServiceFoundId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Service ID for the selected service - filled in when the service is
+        found."
+    ::= { selectedService 7 }
+
+selectedServicePcrPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the PCR for the selected service"
+    ::= { selectedService 8 }
+
+selectedServiceComponentTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF SelectedServiceComponentEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Table listing all the available components in the selected service"
+    ::= { selectedService 9 }
+
+selectedServiceComponentEntry OBJECT-TYPE
+    SYNTAX    SelectedServiceComponentEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Row in component table"
+    INDEX { selSrvComponentPid }
+    ::= { selectedServiceComponentTable 1 }
+
+SelectedServiceComponentEntry ::= SEQUENCE {
+    selSrvComponentPid  PIDNumber,
+    selSrvComponentType INTEGER
+}
+
+selSrvComponentPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the component stream"
+    ::= { selectedServiceComponentEntry 1 }
+
+selSrvComponentType OBJECT-TYPE
+    SYNTAX    INTEGER { video(1), audio(2), lsd(3), hsd(4), vbi(5), ttxt(6), dvbsub(7)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Type of the component stream"
+    ::= { selectedServiceComponentEntry 2 }
+
+selectedServiceAudioExtTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF SelectedServiceAudioExtEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Table listing extra information for the available audio components
+        in the selected service"
+    ::= { selectedService 10 }
+
+selectedServiceAudioExtEntry OBJECT-TYPE
+    SYNTAX    SelectedServiceAudioExtEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Row with extra information for audio components"
+    INDEX { selSrvAudioPid }
+    ::= { selectedServiceAudioExtTable 1 }
+
+SelectedServiceAudioExtEntry ::= SEQUENCE {
+    selSrvAudioPid       PIDNumber,
+    selSrvAudioFormat    INTEGER,
+    selSrvAudioLanguage  INTEGER,
+    selSrvAudioLanguage2 INTEGER
+}
+
+selSrvAudioPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the audio stream"
+    ::= { selectedServiceAudioExtEntry 1 }
+
+selSrvAudioFormat OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), mpeg2(2), ac3(3), linear(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Encoding format of the audio stream"
+    ::= { selectedServiceAudioExtEntry 2 }
+
+selSrvAudioLanguage OBJECT-TYPE
+    SYNTAX    INTEGER { abkhazian(1), achinese(2), acoli(3), adangme(4), afar(5),
+                        afrihili(6), afrikaans(7), afroAsiatic(8), akan(9), akkadian(10),
+                        albanian(11), aleut(12), algonquian(13), altaic(14), amharic(15),
+                        apache(16), arabic(17), aramaic(18), arapaho(19), araucanian(20),
+                        arawak(21), armenian(22), artificial(23), assamese(24), athapascan(25),
+                        austronesian(26), avaric(27), avestan(28), awadhi(29), aymara(30),
+                        azerbaijani(31), aztec(32), balinese(33), baltic(34), baluchi(35),
+                        bambara(36), bamileke(37), banda(38), bantu(39), basa(40),
+                        bashkir(41), basque(42), beja(43), bemba(44), bengali(45),
+                        berber(46), bhojpuri(47), bihari(48), bikol(49), bini(50),
+                        bislama(51), braj(52), breton(53), buginese(54), bulgarian(55),
+                        buriat(56), burmese(57), byelorussian(58), caddo(59), carib(60),
+                        catalan(61), caucasian(62), cebuano(63), celtic(64), chagatai(65),
+                        chamorro(66), chechen(67), cherokee(68), cheyenne(69), chibcha(70),
+                        chinese(71), chinookJargon(72), choctaw(73), churchSlavic(74),
+                        chuvash(75), coptic(76), cornish(77), corsican(78), cree(79),
+                        creek(80), cushitic(81), croatian(82), czech(83), dakota(84),
+                        danish(85), dari(86), delaware(87), dinka(88), divehi(89),
+                        dogri(90), dravidian(91), duala(92), dutch(93), dyula(94),
+                        dzongkha(95), efik(96), egyptian(97), ekajuk(98), elamite(99),
+                        english(100), eskimo(101), esperanto(102), estonian(103),
+                        ewe(104), ewondo(105), fang(106), fanti(107), faroese(108),
+                        fijian(109), finnish(110), finnoUgrian(111), flemish(112),
+                        fon(113), french(114), frisian(115), fulah(116), ga(117),
+                        gaelicScots(118), gallician(119), gallegan(120), ganda(121),
+                        gayo(122), geez(123), georgian(124), german(125), germanic(126),
+                        gilbertese(127), gondi(128), gothic(129), grebo(130), greek(131),
+                        greenlandic(132), guarani(133), gujarati(134), haida(135),
+                        hausa(136), hawaiian(137), hebrew(138), herero(139), hiligaynon(140),
+                        himachali(141), hindi(142), hiri(143), hungarian(144), hupa(145),
+                        iban(146), icelandic(147), igbo(148), ijo(149), iloko(150),
+                        indic(151), indoEuropean(152), indonesian(153), interlingua(154),
+                        interlingue(155), inuktitut(156), inupiak(157), iranian(158),
+                        irish(159), iroquoian(160), italian(161), japanese(162),
+                        javanese(163), judeoArabic(164), judeoPersian(165), kabyle(166),
+                        kachin(167), kamba(168), kannada(169), kanuri(170), karaKalpak(171),
+                        karen(172), kashmiri(173), kawi(174), kazakh(175), khasi(176),
+                        khmer(177), khoisan(178), khotanese(179), kikuyu(180), kinyarwanda(181),
+                        kirghiz(182), komi(183), kongo(184), konkani(185), korean(186),
+                        kpelle(187), kru(188), kuanyama(189), kumyk(190), kurdish(191),
+                        kurukh(192), kusaie(193), kutenai(194), ladino(195), lahnda(196),
+                        lamba(197), lao(198), lappish(199), latin(200), latvian(201),
+                        letzeburgesch(202), lezghian(203), lingala(204), lithuanian(205),
+                        lozi(206), lubaKatanga(207), luiseno(208), lunda(209), luo(210),
+                        luxembourgian(211), macedonian(212), madurese(213), magahi(214),
+                        maithili(215), makasar(216), malagasy(217), malay(218), malayalam(219),
+                        maltese(220), mandingo(221), manipuri(222), manobo(223),
+                        manx(224), maori(225), marathi(226), mari(227), marshall(228),
+                        marwari(229), masai(230), mayan(231), mende(232), micmac(233),
+                        minangkabau(234), miscellaneous(235), mohawk(236), moldavian(237),
+                        monKmer(238), mongo(239), mongolian(240), mossi(241), multiple(242),
+                        munda(243), nauru(244), navajo(245), ndebeleNorth(246), ndebeleSouth(247),
+                        ndongo(248), nepali(249), newari(250), nigerKordofanian(251),
+                        niloSaharan(252), niuean(253), norseOld(254), northAmericanIndian(255),
+                        norwegian(256), norwegianNynorsk(257), norwegianBokmal(258),
+                        nubian(259), nyamwezi(260), nyanja(261), nyankole(262), nyoro(263),
+                        nzima(264), occitan(265), ojibwa(266), oriya(267), oromo(268),
+                        osage(269), ossetic(270), otomian(271), pahlavi(272), palauan(273),
+                        pali(274), pampanga(275), pangasinan(276), panjabi(277),
+                        papiamento(278), papuanAustralian(279), persian(280), phoenician(281),
+                        polish(282), ponape(283), portuguese(284), prakrit(285),
+                        punjabi(286), pushto(287), quechua(288), rhaetoRomance(289),
+                        rajasthani(290), rarotongan(291), romance(292), romanian(293),
+                        romanish(294), romany(295), rundi(296), russian(297), ruthenian(298),
+                        salishan(299), samaritanAramaic(300), sami(301), samoan(302),
+                        sandawe(303), sango(304), sanskrit(305), sardinian(306),
+                        scots(307), selkup(308), semitic(309), serboCroatian(310),
+                        serer(311), shan(312), shona(313), sidamo(314), siksika(315),
+                        sindhi(316), singhalese(317), sinoTibetan(318), siouan(319),
+                        slavic(320), siswant(321), slovak(322), slovenian(323), sogdian(324),
+                        somali(325), songhai(326), sorbian(327), sothoNorth(328),
+                        sothoSouth(329), southAmericanIndian(330), spanish(331),
+                        srananTongo(332), sukuma(333), sumerian(334), sudanese(335),
+                        susu(336), swahili(337), swazi(338), swedish(339), syriac(340),
+                        tadzhik(341), tagalog(342), tahitian(343), tajik(344), tamashek(345),
+                        tamil(346), tatar(347), telugu(348), tereno(349), thai(350),
+                        tibetan(351), tigre(352), tigrinya(353), timne(354), tivi(355),
+                        tlingit(356), tonga(357), truk(358), tsimshian(359), tsonga(360),
+                        tswana(361), tumbuka(362), turkish(363), turkishottoman(364),
+                        turkmen(365), tuvinian(366), twi(367), ugaritic(368), uighur(369),
+                        ukrainian(370), umbundu(371), undetermined(372), urdu(373),
+                        uzbek(374), vai(375), venda(376), vietnamese(377), votic(378),
+                        wakashan(379), walamo(380), walloon(381), waray(382), washo(383),
+                        welsh(384), wolof(385), xhosa(386), yakut(387), yao(388),
+                        yap(389), yiddish(390), yoruba(391), zapotec(392), zenaga(393),
+                        zhuang(394), zulu(395), zuni(396), backSoundFeed(397), main(398),
+                        aux(399), intSound(400), audio1(401), audio2(402), audio3(403),
+                        audio4(404), audio5(405), audio6(406), audio7(407), audio8(408),
+                        audio9(409), audio10(410), audio11(411), audio12(412), audio13(413),
+                        audio14(414), audio15(415), audio16(416), undefined(417)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "First language of the audio stream"
+    ::= { selectedServiceAudioExtEntry 3 }
+
+selSrvAudioLanguage2 OBJECT-TYPE
+    SYNTAX    INTEGER { abkhazian(1), achinese(2), acoli(3), adangme(4), afar(5),
+                        afrihili(6), afrikaans(7), afroAsiatic(8), akan(9), akkadian(10),
+                        albanian(11), aleut(12), algonquian(13), altaic(14), amharic(15),
+                        apache(16), arabic(17), aramaic(18), arapaho(19), araucanian(20),
+                        arawak(21), armenian(22), artificial(23), assamese(24), athapascan(25),
+                        austronesian(26), avaric(27), avestan(28), awadhi(29), aymara(30),
+                        azerbaijani(31), aztec(32), balinese(33), baltic(34), baluchi(35),
+                        bambara(36), bamileke(37), banda(38), bantu(39), basa(40),
+                        bashkir(41), basque(42), beja(43), bemba(44), bengali(45),
+                        berber(46), bhojpuri(47), bihari(48), bikol(49), bini(50),
+                        bislama(51), braj(52), breton(53), buginese(54), bulgarian(55),
+                        buriat(56), burmese(57), byelorussian(58), caddo(59), carib(60),
+                        catalan(61), caucasian(62), cebuano(63), celtic(64), chagatai(65),
+                        chamorro(66), chechen(67), cherokee(68), cheyenne(69), chibcha(70),
+                        chinese(71), chinookJargon(72), choctaw(73), churchSlavic(74),
+                        chuvash(75), coptic(76), cornish(77), corsican(78), cree(79),
+                        creek(80), cushitic(81), croatian(82), czech(83), dakota(84),
+                        danish(85), dari(86), delaware(87), dinka(88), divehi(89),
+                        dogri(90), dravidian(91), duala(92), dutch(93), dyula(94),
+                        dzongkha(95), efik(96), egyptian(97), ekajuk(98), elamite(99),
+                        english(100), eskimo(101), esperanto(102), estonian(103),
+                        ewe(104), ewondo(105), fang(106), fanti(107), faroese(108),
+                        fijian(109), finnish(110), finnoUgrian(111), flemish(112),
+                        fon(113), french(114), frisian(115), fulah(116), ga(117),
+                        gaelicScots(118), gallician(119), gallegan(120), ganda(121),
+                        gayo(122), geez(123), georgian(124), german(125), germanic(126),
+                        gilbertese(127), gondi(128), gothic(129), grebo(130), greek(131),
+                        greenlandic(132), guarani(133), gujarati(134), haida(135),
+                        hausa(136), hawaiian(137), hebrew(138), herero(139), hiligaynon(140),
+                        himachali(141), hindi(142), hiri(143), hungarian(144), hupa(145),
+                        iban(146), icelandic(147), igbo(148), ijo(149), iloko(150),
+                        indic(151), indoEuropean(152), indonesian(153), interlingua(154),
+                        interlingue(155), inuktitut(156), inupiak(157), iranian(158),
+                        irish(159), iroquoian(160), italian(161), japanese(162),
+                        javanese(163), judeoArabic(164), judeoPersian(165), kabyle(166),
+                        kachin(167), kamba(168), kannada(169), kanuri(170), karaKalpak(171),
+                        karen(172), kashmiri(173), kawi(174), kazakh(175), khasi(176),
+                        khmer(177), khoisan(178), khotanese(179), kikuyu(180), kinyarwanda(181),
+                        kirghiz(182), komi(183), kongo(184), konkani(185), korean(186),
+                        kpelle(187), kru(188), kuanyama(189), kumyk(190), kurdish(191),
+                        kurukh(192), kusaie(193), kutenai(194), ladino(195), lahnda(196),
+                        lamba(197), lao(198), lappish(199), latin(200), latvian(201),
+                        letzeburgesch(202), lezghian(203), lingala(204), lithuanian(205),
+                        lozi(206), lubaKatanga(207), luiseno(208), lunda(209), luo(210),
+                        luxembourgian(211), macedonian(212), madurese(213), magahi(214),
+                        maithili(215), makasar(216), malagasy(217), malay(218), malayalam(219),
+                        maltese(220), mandingo(221), manipuri(222), manobo(223),
+                        manx(224), maori(225), marathi(226), mari(227), marshall(228),
+                        marwari(229), masai(230), mayan(231), mende(232), micmac(233),
+                        minangkabau(234), miscellaneous(235), mohawk(236), moldavian(237),
+                        monKmer(238), mongo(239), mongolian(240), mossi(241), multiple(242),
+                        munda(243), nauru(244), navajo(245), ndebeleNorth(246), ndebeleSouth(247),
+                        ndongo(248), nepali(249), newari(250), nigerKordofanian(251),
+                        niloSaharan(252), niuean(253), norseOld(254), northAmericanIndian(255),
+                        norwegian(256), norwegianNynorsk(257), norwegianBokmal(258),
+                        nubian(259), nyamwezi(260), nyanja(261), nyankole(262), nyoro(263),
+                        nzima(264), occitan(265), ojibwa(266), oriya(267), oromo(268),
+                        osage(269), ossetic(270), otomian(271), pahlavi(272), palauan(273),
+                        pali(274), pampanga(275), pangasinan(276), panjabi(277),
+                        papiamento(278), papuanAustralian(279), persian(280), phoenician(281),
+                        polish(282), ponape(283), portuguese(284), prakrit(285),
+                        punjabi(286), pushto(287), quechua(288), rhaetoRomance(289),
+                        rajasthani(290), rarotongan(291), romance(292), romanian(293),
+                        romanish(294), romany(295), rundi(296), russian(297), ruthenian(298),
+                        salishan(299), samaritanAramaic(300), sami(301), samoan(302),
+                        sandawe(303), sango(304), sanskrit(305), sardinian(306),
+                        scots(307), selkup(308), semitic(309), serboCroatian(310),
+                        serer(311), shan(312), shona(313), sidamo(314), siksika(315),
+                        sindhi(316), singhalese(317), sinoTibetan(318), siouan(319),
+                        slavic(320), siswant(321), slovak(322), slovenian(323), sogdian(324),
+                        somali(325), songhai(326), sorbian(327), sothoNorth(328),
+                        sothoSouth(329), southAmericanIndian(330), spanish(331),
+                        srananTongo(332), sukuma(333), sumerian(334), sudanese(335),
+                        susu(336), swahili(337), swazi(338), swedish(339), syriac(340),
+                        tadzhik(341), tagalog(342), tahitian(343), tajik(344), tamashek(345),
+                        tamil(346), tatar(347), telugu(348), tereno(349), thai(350),
+                        tibetan(351), tigre(352), tigrinya(353), timne(354), tivi(355),
+                        tlingit(356), tonga(357), truk(358), tsimshian(359), tsonga(360),
+                        tswana(361), tumbuka(362), turkish(363), turkishottoman(364),
+                        turkmen(365), tuvinian(366), twi(367), ugaritic(368), uighur(369),
+                        ukrainian(370), umbundu(371), undetermined(372), urdu(373),
+                        uzbek(374), vai(375), venda(376), vietnamese(377), votic(378),
+                        wakashan(379), walamo(380), walloon(381), waray(382), washo(383),
+                        welsh(384), wolof(385), xhosa(386), yakut(387), yao(388),
+                        yap(389), yiddish(390), yoruba(391), zapotec(392), zenaga(393),
+                        zhuang(394), zulu(395), zuni(396), backSoundFeed(397), main(398),
+                        aux(399), intSound(400), audio1(401), audio2(402), audio3(403),
+                        audio4(404), audio5(405), audio6(406), audio7(407), audio8(408),
+                        audio9(409), audio10(410), audio11(411), audio12(412), audio13(413),
+                        audio14(414), audio15(415), audio16(416), undefined(417)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Second language of the audio stream"
+    ::= { selectedServiceAudioExtEntry 4 }
+
+selectedServiceDVBsubExtTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF SelectedServiceDVBsubExtEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Table listing extra information for the available DVB subtitle components
+        in the selected service"
+    ::= { selectedService 11 }
+
+selectedServiceDVBsubExtEntry OBJECT-TYPE
+    SYNTAX    SelectedServiceDVBsubExtEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Row with extra information for DVB subtitle components"
+    INDEX { selSrvDvbsubPid }
+    ::= { selectedServiceDVBsubExtTable 1 }
+
+SelectedServiceDVBsubExtEntry ::= SEQUENCE {
+    selSrvDvbsubPid        PIDNumber,
+    selSrvDvbsubLanguage   INTEGER,
+    selSrvDvbsubType       Uint8,
+    selSrvDvbsubCompPageId Uint16,
+    selSrvDvbsubAncPageId  Uint16
+}
+
+selSrvDvbsubPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the DVB subtitles stream"
+    ::= { selectedServiceDVBsubExtEntry 1 }
+
+selSrvDvbsubLanguage OBJECT-TYPE
+    SYNTAX    INTEGER { abkhazian(1), achinese(2), acoli(3), adangme(4), afar(5),
+                        afrihili(6), afrikaans(7), afroAsiatic(8), akan(9), akkadian(10),
+                        albanian(11), aleut(12), algonquian(13), altaic(14), amharic(15),
+                        apache(16), arabic(17), aramaic(18), arapaho(19), araucanian(20),
+                        arawak(21), armenian(22), artificial(23), assamese(24), athapascan(25),
+                        austronesian(26), avaric(27), avestan(28), awadhi(29), aymara(30),
+                        azerbaijani(31), aztec(32), balinese(33), baltic(34), baluchi(35),
+                        bambara(36), bamileke(37), banda(38), bantu(39), basa(40),
+                        bashkir(41), basque(42), beja(43), bemba(44), bengali(45),
+                        berber(46), bhojpuri(47), bihari(48), bikol(49), bini(50),
+                        bislama(51), braj(52), breton(53), buginese(54), bulgarian(55),
+                        buriat(56), burmese(57), byelorussian(58), caddo(59), carib(60),
+                        catalan(61), caucasian(62), cebuano(63), celtic(64), chagatai(65),
+                        chamorro(66), chechen(67), cherokee(68), cheyenne(69), chibcha(70),
+                        chinese(71), chinookJargon(72), choctaw(73), churchSlavic(74),
+                        chuvash(75), coptic(76), cornish(77), corsican(78), cree(79),
+                        creek(80), cushitic(81), croatian(82), czech(83), dakota(84),
+                        danish(85), dari(86), delaware(87), dinka(88), divehi(89),
+                        dogri(90), dravidian(91), duala(92), dutch(93), dyula(94),
+                        dzongkha(95), efik(96), egyptian(97), ekajuk(98), elamite(99),
+                        english(100), eskimo(101), esperanto(102), estonian(103),
+                        ewe(104), ewondo(105), fang(106), fanti(107), faroese(108),
+                        fijian(109), finnish(110), finnoUgrian(111), flemish(112),
+                        fon(113), french(114), frisian(115), fulah(116), ga(117),
+                        gaelicScots(118), gallician(119), gallegan(120), ganda(121),
+                        gayo(122), geez(123), georgian(124), german(125), germanic(126),
+                        gilbertese(127), gondi(128), gothic(129), grebo(130), greek(131),
+                        greenlandic(132), guarani(133), gujarati(134), haida(135),
+                        hausa(136), hawaiian(137), hebrew(138), herero(139), hiligaynon(140),
+                        himachali(141), hindi(142), hiri(143), hungarian(144), hupa(145),
+                        iban(146), icelandic(147), igbo(148), ijo(149), iloko(150),
+                        indic(151), indoEuropean(152), indonesian(153), interlingua(154),
+                        interlingue(155), inuktitut(156), inupiak(157), iranian(158),
+                        irish(159), iroquoian(160), italian(161), japanese(162),
+                        javanese(163), judeoArabic(164), judeoPersian(165), kabyle(166),
+                        kachin(167), kamba(168), kannada(169), kanuri(170), karaKalpak(171),
+                        karen(172), kashmiri(173), kawi(174), kazakh(175), khasi(176),
+                        khmer(177), khoisan(178), khotanese(179), kikuyu(180), kinyarwanda(181),
+                        kirghiz(182), komi(183), kongo(184), konkani(185), korean(186),
+                        kpelle(187), kru(188), kuanyama(189), kumyk(190), kurdish(191),
+                        kurukh(192), kusaie(193), kutenai(194), ladino(195), lahnda(196),
+                        lamba(197), lao(198), lappish(199), latin(200), latvian(201),
+                        letzeburgesch(202), lezghian(203), lingala(204), lithuanian(205),
+                        lozi(206), lubaKatanga(207), luiseno(208), lunda(209), luo(210),
+                        luxembourgian(211), macedonian(212), madurese(213), magahi(214),
+                        maithili(215), makasar(216), malagasy(217), malay(218), malayalam(219),
+                        maltese(220), mandingo(221), manipuri(222), manobo(223),
+                        manx(224), maori(225), marathi(226), mari(227), marshall(228),
+                        marwari(229), masai(230), mayan(231), mende(232), micmac(233),
+                        minangkabau(234), miscellaneous(235), mohawk(236), moldavian(237),
+                        monKmer(238), mongo(239), mongolian(240), mossi(241), multiple(242),
+                        munda(243), nauru(244), navajo(245), ndebeleNorth(246), ndebeleSouth(247),
+                        ndongo(248), nepali(249), newari(250), nigerKordofanian(251),
+                        niloSaharan(252), niuean(253), norseOld(254), northAmericanIndian(255),
+                        norwegian(256), norwegianNynorsk(257), norwegianBokmal(258),
+                        nubian(259), nyamwezi(260), nyanja(261), nyankole(262), nyoro(263),
+                        nzima(264), occitan(265), ojibwa(266), oriya(267), oromo(268),
+                        osage(269), ossetic(270), otomian(271), pahlavi(272), palauan(273),
+                        pali(274), pampanga(275), pangasinan(276), panjabi(277),
+                        papiamento(278), papuanAustralian(279), persian(280), phoenician(281),
+                        polish(282), ponape(283), portuguese(284), prakrit(285),
+                        punjabi(286), pushto(287), quechua(288), rhaetoRomance(289),
+                        rajasthani(290), rarotongan(291), romance(292), romanian(293),
+                        romanish(294), romany(295), rundi(296), russian(297), ruthenian(298),
+                        salishan(299), samaritanAramaic(300), sami(301), samoan(302),
+                        sandawe(303), sango(304), sanskrit(305), sardinian(306),
+                        scots(307), selkup(308), semitic(309), serboCroatian(310),
+                        serer(311), shan(312), shona(313), sidamo(314), siksika(315),
+                        sindhi(316), singhalese(317), sinoTibetan(318), siouan(319),
+                        slavic(320), siswant(321), slovak(322), slovenian(323), sogdian(324),
+                        somali(325), songhai(326), sorbian(327), sothoNorth(328),
+                        sothoSouth(329), southAmericanIndian(330), spanish(331),
+                        srananTongo(332), sukuma(333), sumerian(334), sudanese(335),
+                        susu(336), swahili(337), swazi(338), swedish(339), syriac(340),
+                        tadzhik(341), tagalog(342), tahitian(343), tajik(344), tamashek(345),
+                        tamil(346), tatar(347), telugu(348), tereno(349), thai(350),
+                        tibetan(351), tigre(352), tigrinya(353), timne(354), tivi(355),
+                        tlingit(356), tonga(357), truk(358), tsimshian(359), tsonga(360),
+                        tswana(361), tumbuka(362), turkish(363), turkishottoman(364),
+                        turkmen(365), tuvinian(366), twi(367), ugaritic(368), uighur(369),
+                        ukrainian(370), umbundu(371), undetermined(372), urdu(373),
+                        uzbek(374), vai(375), venda(376), vietnamese(377), votic(378),
+                        wakashan(379), walamo(380), walloon(381), waray(382), washo(383),
+                        welsh(384), wolof(385), xhosa(386), yakut(387), yao(388),
+                        yap(389), yiddish(390), yoruba(391), zapotec(392), zenaga(393),
+                        zhuang(394), zulu(395), zuni(396), backSoundFeed(397), main(398),
+                        aux(399), intSound(400), audio1(401), audio2(402), audio3(403),
+                        audio4(404), audio5(405), audio6(406), audio7(407), audio8(408),
+                        audio9(409), audio10(410), audio11(411), audio12(412), audio13(413),
+                        audio14(414), audio15(415), audio16(416), undefined(417)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Language of the DVB subtitles stream"
+    ::= { selectedServiceDVBsubExtEntry 2 }
+
+selSrvDvbsubType OBJECT-TYPE
+    SYNTAX    Uint8
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Type of the DVB subtitles stream"
+    ::= { selectedServiceDVBsubExtEntry 3 }
+
+selSrvDvbsubCompPageId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Composition Page ID for the DVB Subtitles stream"
+    ::= { selectedServiceDVBsubExtEntry 4 }
+
+selSrvDvbsubAncPageId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Ancillary Page ID for the DVB Subtitles stream"
+    ::= { selectedServiceDVBsubExtEntry 5 }
+
+selectedComponents OBJECT IDENTIFIER
+    ::= { inputContent 5 }
+
+selectedVideo OBJECT IDENTIFIER
+    ::= { selectedComponents 1 }
+
+selVideoReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current video PID selection:
+        
+        none = no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedVideo 1 }
+
+selVideoPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected video stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedVideo 2 }
+
+selectedAudio1 OBJECT IDENTIFIER
+    ::= { selectedComponents 2 }
+
+selAudio1Reason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current audio1 PID selection:
+        
+        none = no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedAudio1 1 }
+
+selAudio1Pid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected audio1 stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedAudio1 2 }
+
+selAudio1MpegLanguage OBJECT-TYPE
+    SYNTAX    INTEGER { abkhazian(1), achinese(2), acoli(3), adangme(4), afar(5),
+                        afrihili(6), afrikaans(7), afroAsiatic(8), akan(9), akkadian(10),
+                        albanian(11), aleut(12), algonquian(13), altaic(14), amharic(15),
+                        apache(16), arabic(17), aramaic(18), arapaho(19), araucanian(20),
+                        arawak(21), armenian(22), artificial(23), assamese(24), athapascan(25),
+                        austronesian(26), avaric(27), avestan(28), awadhi(29), aymara(30),
+                        azerbaijani(31), aztec(32), balinese(33), baltic(34), baluchi(35),
+                        bambara(36), bamileke(37), banda(38), bantu(39), basa(40),
+                        bashkir(41), basque(42), beja(43), bemba(44), bengali(45),
+                        berber(46), bhojpuri(47), bihari(48), bikol(49), bini(50),
+                        bislama(51), braj(52), breton(53), buginese(54), bulgarian(55),
+                        buriat(56), burmese(57), byelorussian(58), caddo(59), carib(60),
+                        catalan(61), caucasian(62), cebuano(63), celtic(64), chagatai(65),
+                        chamorro(66), chechen(67), cherokee(68), cheyenne(69), chibcha(70),
+                        chinese(71), chinookJargon(72), choctaw(73), churchSlavic(74),
+                        chuvash(75), coptic(76), cornish(77), corsican(78), cree(79),
+                        creek(80), cushitic(81), croatian(82), czech(83), dakota(84),
+                        danish(85), dari(86), delaware(87), dinka(88), divehi(89),
+                        dogri(90), dravidian(91), duala(92), dutch(93), dyula(94),
+                        dzongkha(95), efik(96), egyptian(97), ekajuk(98), elamite(99),
+                        english(100), eskimo(101), esperanto(102), estonian(103),
+                        ewe(104), ewondo(105), fang(106), fanti(107), faroese(108),
+                        fijian(109), finnish(110), finnoUgrian(111), flemish(112),
+                        fon(113), french(114), frisian(115), fulah(116), ga(117),
+                        gaelicScots(118), gallician(119), gallegan(120), ganda(121),
+                        gayo(122), geez(123), georgian(124), german(125), germanic(126),
+                        gilbertese(127), gondi(128), gothic(129), grebo(130), greek(131),
+                        greenlandic(132), guarani(133), gujarati(134), haida(135),
+                        hausa(136), hawaiian(137), hebrew(138), herero(139), hiligaynon(140),
+                        himachali(141), hindi(142), hiri(143), hungarian(144), hupa(145),
+                        iban(146), icelandic(147), igbo(148), ijo(149), iloko(150),
+                        indic(151), indoEuropean(152), indonesian(153), interlingua(154),
+                        interlingue(155), inuktitut(156), inupiak(157), iranian(158),
+                        irish(159), iroquoian(160), italian(161), japanese(162),
+                        javanese(163), judeoArabic(164), judeoPersian(165), kabyle(166),
+                        kachin(167), kamba(168), kannada(169), kanuri(170), karaKalpak(171),
+                        karen(172), kashmiri(173), kawi(174), kazakh(175), khasi(176),
+                        khmer(177), khoisan(178), khotanese(179), kikuyu(180), kinyarwanda(181),
+                        kirghiz(182), komi(183), kongo(184), konkani(185), korean(186),
+                        kpelle(187), kru(188), kuanyama(189), kumyk(190), kurdish(191),
+                        kurukh(192), kusaie(193), kutenai(194), ladino(195), lahnda(196),
+                        lamba(197), lao(198), lappish(199), latin(200), latvian(201),
+                        letzeburgesch(202), lezghian(203), lingala(204), lithuanian(205),
+                        lozi(206), lubaKatanga(207), luiseno(208), lunda(209), luo(210),
+                        luxembourgian(211), macedonian(212), madurese(213), magahi(214),
+                        maithili(215), makasar(216), malagasy(217), malay(218), malayalam(219),
+                        maltese(220), mandingo(221), manipuri(222), manobo(223),
+                        manx(224), maori(225), marathi(226), mari(227), marshall(228),
+                        marwari(229), masai(230), mayan(231), mende(232), micmac(233),
+                        minangkabau(234), miscellaneous(235), mohawk(236), moldavian(237),
+                        monKmer(238), mongo(239), mongolian(240), mossi(241), multiple(242),
+                        munda(243), nauru(244), navajo(245), ndebeleNorth(246), ndebeleSouth(247),
+                        ndongo(248), nepali(249), newari(250), nigerKordofanian(251),
+                        niloSaharan(252), niuean(253), norseOld(254), northAmericanIndian(255),
+                        norwegian(256), norwegianNynorsk(257), norwegianBokmal(258),
+                        nubian(259), nyamwezi(260), nyanja(261), nyankole(262), nyoro(263),
+                        nzima(264), occitan(265), ojibwa(266), oriya(267), oromo(268),
+                        osage(269), ossetic(270), otomian(271), pahlavi(272), palauan(273),
+                        pali(274), pampanga(275), pangasinan(276), panjabi(277),
+                        papiamento(278), papuanAustralian(279), persian(280), phoenician(281),
+                        polish(282), ponape(283), portuguese(284), prakrit(285),
+                        punjabi(286), pushto(287), quechua(288), rhaetoRomance(289),
+                        rajasthani(290), rarotongan(291), romance(292), romanian(293),
+                        romanish(294), romany(295), rundi(296), russian(297), ruthenian(298),
+                        salishan(299), samaritanAramaic(300), sami(301), samoan(302),
+                        sandawe(303), sango(304), sanskrit(305), sardinian(306),
+                        scots(307), selkup(308), semitic(309), serboCroatian(310),
+                        serer(311), shan(312), shona(313), sidamo(314), siksika(315),
+                        sindhi(316), singhalese(317), sinoTibetan(318), siouan(319),
+                        slavic(320), siswant(321), slovak(322), slovenian(323), sogdian(324),
+                        somali(325), songhai(326), sorbian(327), sothoNorth(328),
+                        sothoSouth(329), southAmericanIndian(330), spanish(331),
+                        srananTongo(332), sukuma(333), sumerian(334), sudanese(335),
+                        susu(336), swahili(337), swazi(338), swedish(339), syriac(340),
+                        tadzhik(341), tagalog(342), tahitian(343), tajik(344), tamashek(345),
+                        tamil(346), tatar(347), telugu(348), tereno(349), thai(350),
+                        tibetan(351), tigre(352), tigrinya(353), timne(354), tivi(355),
+                        tlingit(356), tonga(357), truk(358), tsimshian(359), tsonga(360),
+                        tswana(361), tumbuka(362), turkish(363), turkishottoman(364),
+                        turkmen(365), tuvinian(366), twi(367), ugaritic(368), uighur(369),
+                        ukrainian(370), umbundu(371), undetermined(372), urdu(373),
+                        uzbek(374), vai(375), venda(376), vietnamese(377), votic(378),
+                        wakashan(379), walamo(380), walloon(381), waray(382), washo(383),
+                        welsh(384), wolof(385), xhosa(386), yakut(387), yao(388),
+                        yap(389), yiddish(390), yoruba(391), zapotec(392), zenaga(393),
+                        zhuang(394), zulu(395), zuni(396), backSoundFeed(397), main(398),
+                        aux(399), intSound(400), audio1(401), audio2(402), audio3(403),
+                        audio4(404), audio5(405), audio6(406), audio7(407), audio8(408),
+                        audio9(409), audio10(410), audio11(411), audio12(412), audio13(413),
+                        audio14(414), audio15(415), audio16(416), undefined(417)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { selectedAudio1 3 }
+
+selAudio1MpegLanguage2 OBJECT-TYPE
+    SYNTAX    INTEGER { abkhazian(1), achinese(2), acoli(3), adangme(4), afar(5),
+                        afrihili(6), afrikaans(7), afroAsiatic(8), akan(9), akkadian(10),
+                        albanian(11), aleut(12), algonquian(13), altaic(14), amharic(15),
+                        apache(16), arabic(17), aramaic(18), arapaho(19), araucanian(20),
+                        arawak(21), armenian(22), artificial(23), assamese(24), athapascan(25),
+                        austronesian(26), avaric(27), avestan(28), awadhi(29), aymara(30),
+                        azerbaijani(31), aztec(32), balinese(33), baltic(34), baluchi(35),
+                        bambara(36), bamileke(37), banda(38), bantu(39), basa(40),
+                        bashkir(41), basque(42), beja(43), bemba(44), bengali(45),
+                        berber(46), bhojpuri(47), bihari(48), bikol(49), bini(50),
+                        bislama(51), braj(52), breton(53), buginese(54), bulgarian(55),
+                        buriat(56), burmese(57), byelorussian(58), caddo(59), carib(60),
+                        catalan(61), caucasian(62), cebuano(63), celtic(64), chagatai(65),
+                        chamorro(66), chechen(67), cherokee(68), cheyenne(69), chibcha(70),
+                        chinese(71), chinookJargon(72), choctaw(73), churchSlavic(74),
+                        chuvash(75), coptic(76), cornish(77), corsican(78), cree(79),
+                        creek(80), cushitic(81), croatian(82), czech(83), dakota(84),
+                        danish(85), dari(86), delaware(87), dinka(88), divehi(89),
+                        dogri(90), dravidian(91), duala(92), dutch(93), dyula(94),
+                        dzongkha(95), efik(96), egyptian(97), ekajuk(98), elamite(99),
+                        english(100), eskimo(101), esperanto(102), estonian(103),
+                        ewe(104), ewondo(105), fang(106), fanti(107), faroese(108),
+                        fijian(109), finnish(110), finnoUgrian(111), flemish(112),
+                        fon(113), french(114), frisian(115), fulah(116), ga(117),
+                        gaelicScots(118), gallician(119), gallegan(120), ganda(121),
+                        gayo(122), geez(123), georgian(124), german(125), germanic(126),
+                        gilbertese(127), gondi(128), gothic(129), grebo(130), greek(131),
+                        greenlandic(132), guarani(133), gujarati(134), haida(135),
+                        hausa(136), hawaiian(137), hebrew(138), herero(139), hiligaynon(140),
+                        himachali(141), hindi(142), hiri(143), hungarian(144), hupa(145),
+                        iban(146), icelandic(147), igbo(148), ijo(149), iloko(150),
+                        indic(151), indoEuropean(152), indonesian(153), interlingua(154),
+                        interlingue(155), inuktitut(156), inupiak(157), iranian(158),
+                        irish(159), iroquoian(160), italian(161), japanese(162),
+                        javanese(163), judeoArabic(164), judeoPersian(165), kabyle(166),
+                        kachin(167), kamba(168), kannada(169), kanuri(170), karaKalpak(171),
+                        karen(172), kashmiri(173), kawi(174), kazakh(175), khasi(176),
+                        khmer(177), khoisan(178), khotanese(179), kikuyu(180), kinyarwanda(181),
+                        kirghiz(182), komi(183), kongo(184), konkani(185), korean(186),
+                        kpelle(187), kru(188), kuanyama(189), kumyk(190), kurdish(191),
+                        kurukh(192), kusaie(193), kutenai(194), ladino(195), lahnda(196),
+                        lamba(197), lao(198), lappish(199), latin(200), latvian(201),
+                        letzeburgesch(202), lezghian(203), lingala(204), lithuanian(205),
+                        lozi(206), lubaKatanga(207), luiseno(208), lunda(209), luo(210),
+                        luxembourgian(211), macedonian(212), madurese(213), magahi(214),
+                        maithili(215), makasar(216), malagasy(217), malay(218), malayalam(219),
+                        maltese(220), mandingo(221), manipuri(222), manobo(223),
+                        manx(224), maori(225), marathi(226), mari(227), marshall(228),
+                        marwari(229), masai(230), mayan(231), mende(232), micmac(233),
+                        minangkabau(234), miscellaneous(235), mohawk(236), moldavian(237),
+                        monKmer(238), mongo(239), mongolian(240), mossi(241), multiple(242),
+                        munda(243), nauru(244), navajo(245), ndebeleNorth(246), ndebeleSouth(247),
+                        ndongo(248), nepali(249), newari(250), nigerKordofanian(251),
+                        niloSaharan(252), niuean(253), norseOld(254), northAmericanIndian(255),
+                        norwegian(256), norwegianNynorsk(257), norwegianBokmal(258),
+                        nubian(259), nyamwezi(260), nyanja(261), nyankole(262), nyoro(263),
+                        nzima(264), occitan(265), ojibwa(266), oriya(267), oromo(268),
+                        osage(269), ossetic(270), otomian(271), pahlavi(272), palauan(273),
+                        pali(274), pampanga(275), pangasinan(276), panjabi(277),
+                        papiamento(278), papuanAustralian(279), persian(280), phoenician(281),
+                        polish(282), ponape(283), portuguese(284), prakrit(285),
+                        punjabi(286), pushto(287), quechua(288), rhaetoRomance(289),
+                        rajasthani(290), rarotongan(291), romance(292), romanian(293),
+                        romanish(294), romany(295), rundi(296), russian(297), ruthenian(298),
+                        salishan(299), samaritanAramaic(300), sami(301), samoan(302),
+                        sandawe(303), sango(304), sanskrit(305), sardinian(306),
+                        scots(307), selkup(308), semitic(309), serboCroatian(310),
+                        serer(311), shan(312), shona(313), sidamo(314), siksika(315),
+                        sindhi(316), singhalese(317), sinoTibetan(318), siouan(319),
+                        slavic(320), siswant(321), slovak(322), slovenian(323), sogdian(324),
+                        somali(325), songhai(326), sorbian(327), sothoNorth(328),
+                        sothoSouth(329), southAmericanIndian(330), spanish(331),
+                        srananTongo(332), sukuma(333), sumerian(334), sudanese(335),
+                        susu(336), swahili(337), swazi(338), swedish(339), syriac(340),
+                        tadzhik(341), tagalog(342), tahitian(343), tajik(344), tamashek(345),
+                        tamil(346), tatar(347), telugu(348), tereno(349), thai(350),
+                        tibetan(351), tigre(352), tigrinya(353), timne(354), tivi(355),
+                        tlingit(356), tonga(357), truk(358), tsimshian(359), tsonga(360),
+                        tswana(361), tumbuka(362), turkish(363), turkishottoman(364),
+                        turkmen(365), tuvinian(366), twi(367), ugaritic(368), uighur(369),
+                        ukrainian(370), umbundu(371), undetermined(372), urdu(373),
+                        uzbek(374), vai(375), venda(376), vietnamese(377), votic(378),
+                        wakashan(379), walamo(380), walloon(381), waray(382), washo(383),
+                        welsh(384), wolof(385), xhosa(386), yakut(387), yao(388),
+                        yap(389), yiddish(390), yoruba(391), zapotec(392), zenaga(393),
+                        zhuang(394), zulu(395), zuni(396), backSoundFeed(397), main(398),
+                        aux(399), intSound(400), audio1(401), audio2(402), audio3(403),
+                        audio4(404), audio5(405), audio6(406), audio7(407), audio8(408),
+                        audio9(409), audio10(410), audio11(411), audio12(412), audio13(413),
+                        audio14(414), audio15(415), audio16(416), undefined(417)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { selectedAudio1 4 }
+
+selAudio1Format OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), mpeg2(2), ac3(3), linear(4) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { selectedAudio1 5 }
+
+selectedAudio2 OBJECT IDENTIFIER
+    ::= { selectedComponents 3 }
+
+selAudio2Reason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current audio2 PID selection:
+        
+        none = no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedAudio2 1 }
+
+selAudio2Pid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected audio2 stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedAudio2 2 }
+
+selAudio2MpegLanguage OBJECT-TYPE
+    SYNTAX    INTEGER { abkhazian(1), achinese(2), acoli(3), adangme(4), afar(5),
+                        afrihili(6), afrikaans(7), afroAsiatic(8), akan(9), akkadian(10),
+                        albanian(11), aleut(12), algonquian(13), altaic(14), amharic(15),
+                        apache(16), arabic(17), aramaic(18), arapaho(19), araucanian(20),
+                        arawak(21), armenian(22), artificial(23), assamese(24), athapascan(25),
+                        austronesian(26), avaric(27), avestan(28), awadhi(29), aymara(30),
+                        azerbaijani(31), aztec(32), balinese(33), baltic(34), baluchi(35),
+                        bambara(36), bamileke(37), banda(38), bantu(39), basa(40),
+                        bashkir(41), basque(42), beja(43), bemba(44), bengali(45),
+                        berber(46), bhojpuri(47), bihari(48), bikol(49), bini(50),
+                        bislama(51), braj(52), breton(53), buginese(54), bulgarian(55),
+                        buriat(56), burmese(57), byelorussian(58), caddo(59), carib(60),
+                        catalan(61), caucasian(62), cebuano(63), celtic(64), chagatai(65),
+                        chamorro(66), chechen(67), cherokee(68), cheyenne(69), chibcha(70),
+                        chinese(71), chinookJargon(72), choctaw(73), churchSlavic(74),
+                        chuvash(75), coptic(76), cornish(77), corsican(78), cree(79),
+                        creek(80), cushitic(81), croatian(82), czech(83), dakota(84),
+                        danish(85), dari(86), delaware(87), dinka(88), divehi(89),
+                        dogri(90), dravidian(91), duala(92), dutch(93), dyula(94),
+                        dzongkha(95), efik(96), egyptian(97), ekajuk(98), elamite(99),
+                        english(100), eskimo(101), esperanto(102), estonian(103),
+                        ewe(104), ewondo(105), fang(106), fanti(107), faroese(108),
+                        fijian(109), finnish(110), finnoUgrian(111), flemish(112),
+                        fon(113), french(114), frisian(115), fulah(116), ga(117),
+                        gaelicScots(118), gallician(119), gallegan(120), ganda(121),
+                        gayo(122), geez(123), georgian(124), german(125), germanic(126),
+                        gilbertese(127), gondi(128), gothic(129), grebo(130), greek(131),
+                        greenlandic(132), guarani(133), gujarati(134), haida(135),
+                        hausa(136), hawaiian(137), hebrew(138), herero(139), hiligaynon(140),
+                        himachali(141), hindi(142), hiri(143), hungarian(144), hupa(145),
+                        iban(146), icelandic(147), igbo(148), ijo(149), iloko(150),
+                        indic(151), indoEuropean(152), indonesian(153), interlingua(154),
+                        interlingue(155), inuktitut(156), inupiak(157), iranian(158),
+                        irish(159), iroquoian(160), italian(161), japanese(162),
+                        javanese(163), judeoArabic(164), judeoPersian(165), kabyle(166),
+                        kachin(167), kamba(168), kannada(169), kanuri(170), karaKalpak(171),
+                        karen(172), kashmiri(173), kawi(174), kazakh(175), khasi(176),
+                        khmer(177), khoisan(178), khotanese(179), kikuyu(180), kinyarwanda(181),
+                        kirghiz(182), komi(183), kongo(184), konkani(185), korean(186),
+                        kpelle(187), kru(188), kuanyama(189), kumyk(190), kurdish(191),
+                        kurukh(192), kusaie(193), kutenai(194), ladino(195), lahnda(196),
+                        lamba(197), lao(198), lappish(199), latin(200), latvian(201),
+                        letzeburgesch(202), lezghian(203), lingala(204), lithuanian(205),
+                        lozi(206), lubaKatanga(207), luiseno(208), lunda(209), luo(210),
+                        luxembourgian(211), macedonian(212), madurese(213), magahi(214),
+                        maithili(215), makasar(216), malagasy(217), malay(218), malayalam(219),
+                        maltese(220), mandingo(221), manipuri(222), manobo(223),
+                        manx(224), maori(225), marathi(226), mari(227), marshall(228),
+                        marwari(229), masai(230), mayan(231), mende(232), micmac(233),
+                        minangkabau(234), miscellaneous(235), mohawk(236), moldavian(237),
+                        monKmer(238), mongo(239), mongolian(240), mossi(241), multiple(242),
+                        munda(243), nauru(244), navajo(245), ndebeleNorth(246), ndebeleSouth(247),
+                        ndongo(248), nepali(249), newari(250), nigerKordofanian(251),
+                        niloSaharan(252), niuean(253), norseOld(254), northAmericanIndian(255),
+                        norwegian(256), norwegianNynorsk(257), norwegianBokmal(258),
+                        nubian(259), nyamwezi(260), nyanja(261), nyankole(262), nyoro(263),
+                        nzima(264), occitan(265), ojibwa(266), oriya(267), oromo(268),
+                        osage(269), ossetic(270), otomian(271), pahlavi(272), palauan(273),
+                        pali(274), pampanga(275), pangasinan(276), panjabi(277),
+                        papiamento(278), papuanAustralian(279), persian(280), phoenician(281),
+                        polish(282), ponape(283), portuguese(284), prakrit(285),
+                        punjabi(286), pushto(287), quechua(288), rhaetoRomance(289),
+                        rajasthani(290), rarotongan(291), romance(292), romanian(293),
+                        romanish(294), romany(295), rundi(296), russian(297), ruthenian(298),
+                        salishan(299), samaritanAramaic(300), sami(301), samoan(302),
+                        sandawe(303), sango(304), sanskrit(305), sardinian(306),
+                        scots(307), selkup(308), semitic(309), serboCroatian(310),
+                        serer(311), shan(312), shona(313), sidamo(314), siksika(315),
+                        sindhi(316), singhalese(317), sinoTibetan(318), siouan(319),
+                        slavic(320), siswant(321), slovak(322), slovenian(323), sogdian(324),
+                        somali(325), songhai(326), sorbian(327), sothoNorth(328),
+                        sothoSouth(329), southAmericanIndian(330), spanish(331),
+                        srananTongo(332), sukuma(333), sumerian(334), sudanese(335),
+                        susu(336), swahili(337), swazi(338), swedish(339), syriac(340),
+                        tadzhik(341), tagalog(342), tahitian(343), tajik(344), tamashek(345),
+                        tamil(346), tatar(347), telugu(348), tereno(349), thai(350),
+                        tibetan(351), tigre(352), tigrinya(353), timne(354), tivi(355),
+                        tlingit(356), tonga(357), truk(358), tsimshian(359), tsonga(360),
+                        tswana(361), tumbuka(362), turkish(363), turkishottoman(364),
+                        turkmen(365), tuvinian(366), twi(367), ugaritic(368), uighur(369),
+                        ukrainian(370), umbundu(371), undetermined(372), urdu(373),
+                        uzbek(374), vai(375), venda(376), vietnamese(377), votic(378),
+                        wakashan(379), walamo(380), walloon(381), waray(382), washo(383),
+                        welsh(384), wolof(385), xhosa(386), yakut(387), yao(388),
+                        yap(389), yiddish(390), yoruba(391), zapotec(392), zenaga(393),
+                        zhuang(394), zulu(395), zuni(396), backSoundFeed(397), main(398),
+                        aux(399), intSound(400), audio1(401), audio2(402), audio3(403),
+                        audio4(404), audio5(405), audio6(406), audio7(407), audio8(408),
+                        audio9(409), audio10(410), audio11(411), audio12(412), audio13(413),
+                        audio14(414), audio15(415), audio16(416), undefined(417)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { selectedAudio2 3 }
+
+selAudio2MpegLanguage2 OBJECT-TYPE
+    SYNTAX    INTEGER { abkhazian(1), achinese(2), acoli(3), adangme(4), afar(5),
+                        afrihili(6), afrikaans(7), afroAsiatic(8), akan(9), akkadian(10),
+                        albanian(11), aleut(12), algonquian(13), altaic(14), amharic(15),
+                        apache(16), arabic(17), aramaic(18), arapaho(19), araucanian(20),
+                        arawak(21), armenian(22), artificial(23), assamese(24), athapascan(25),
+                        austronesian(26), avaric(27), avestan(28), awadhi(29), aymara(30),
+                        azerbaijani(31), aztec(32), balinese(33), baltic(34), baluchi(35),
+                        bambara(36), bamileke(37), banda(38), bantu(39), basa(40),
+                        bashkir(41), basque(42), beja(43), bemba(44), bengali(45),
+                        berber(46), bhojpuri(47), bihari(48), bikol(49), bini(50),
+                        bislama(51), braj(52), breton(53), buginese(54), bulgarian(55),
+                        buriat(56), burmese(57), byelorussian(58), caddo(59), carib(60),
+                        catalan(61), caucasian(62), cebuano(63), celtic(64), chagatai(65),
+                        chamorro(66), chechen(67), cherokee(68), cheyenne(69), chibcha(70),
+                        chinese(71), chinookJargon(72), choctaw(73), churchSlavic(74),
+                        chuvash(75), coptic(76), cornish(77), corsican(78), cree(79),
+                        creek(80), cushitic(81), croatian(82), czech(83), dakota(84),
+                        danish(85), dari(86), delaware(87), dinka(88), divehi(89),
+                        dogri(90), dravidian(91), duala(92), dutch(93), dyula(94),
+                        dzongkha(95), efik(96), egyptian(97), ekajuk(98), elamite(99),
+                        english(100), eskimo(101), esperanto(102), estonian(103),
+                        ewe(104), ewondo(105), fang(106), fanti(107), faroese(108),
+                        fijian(109), finnish(110), finnoUgrian(111), flemish(112),
+                        fon(113), french(114), frisian(115), fulah(116), ga(117),
+                        gaelicScots(118), gallician(119), gallegan(120), ganda(121),
+                        gayo(122), geez(123), georgian(124), german(125), germanic(126),
+                        gilbertese(127), gondi(128), gothic(129), grebo(130), greek(131),
+                        greenlandic(132), guarani(133), gujarati(134), haida(135),
+                        hausa(136), hawaiian(137), hebrew(138), herero(139), hiligaynon(140),
+                        himachali(141), hindi(142), hiri(143), hungarian(144), hupa(145),
+                        iban(146), icelandic(147), igbo(148), ijo(149), iloko(150),
+                        indic(151), indoEuropean(152), indonesian(153), interlingua(154),
+                        interlingue(155), inuktitut(156), inupiak(157), iranian(158),
+                        irish(159), iroquoian(160), italian(161), japanese(162),
+                        javanese(163), judeoArabic(164), judeoPersian(165), kabyle(166),
+                        kachin(167), kamba(168), kannada(169), kanuri(170), karaKalpak(171),
+                        karen(172), kashmiri(173), kawi(174), kazakh(175), khasi(176),
+                        khmer(177), khoisan(178), khotanese(179), kikuyu(180), kinyarwanda(181),
+                        kirghiz(182), komi(183), kongo(184), konkani(185), korean(186),
+                        kpelle(187), kru(188), kuanyama(189), kumyk(190), kurdish(191),
+                        kurukh(192), kusaie(193), kutenai(194), ladino(195), lahnda(196),
+                        lamba(197), lao(198), lappish(199), latin(200), latvian(201),
+                        letzeburgesch(202), lezghian(203), lingala(204), lithuanian(205),
+                        lozi(206), lubaKatanga(207), luiseno(208), lunda(209), luo(210),
+                        luxembourgian(211), macedonian(212), madurese(213), magahi(214),
+                        maithili(215), makasar(216), malagasy(217), malay(218), malayalam(219),
+                        maltese(220), mandingo(221), manipuri(222), manobo(223),
+                        manx(224), maori(225), marathi(226), mari(227), marshall(228),
+                        marwari(229), masai(230), mayan(231), mende(232), micmac(233),
+                        minangkabau(234), miscellaneous(235), mohawk(236), moldavian(237),
+                        monKmer(238), mongo(239), mongolian(240), mossi(241), multiple(242),
+                        munda(243), nauru(244), navajo(245), ndebeleNorth(246), ndebeleSouth(247),
+                        ndongo(248), nepali(249), newari(250), nigerKordofanian(251),
+                        niloSaharan(252), niuean(253), norseOld(254), northAmericanIndian(255),
+                        norwegian(256), norwegianNynorsk(257), norwegianBokmal(258),
+                        nubian(259), nyamwezi(260), nyanja(261), nyankole(262), nyoro(263),
+                        nzima(264), occitan(265), ojibwa(266), oriya(267), oromo(268),
+                        osage(269), ossetic(270), otomian(271), pahlavi(272), palauan(273),
+                        pali(274), pampanga(275), pangasinan(276), panjabi(277),
+                        papiamento(278), papuanAustralian(279), persian(280), phoenician(281),
+                        polish(282), ponape(283), portuguese(284), prakrit(285),
+                        punjabi(286), pushto(287), quechua(288), rhaetoRomance(289),
+                        rajasthani(290), rarotongan(291), romance(292), romanian(293),
+                        romanish(294), romany(295), rundi(296), russian(297), ruthenian(298),
+                        salishan(299), samaritanAramaic(300), sami(301), samoan(302),
+                        sandawe(303), sango(304), sanskrit(305), sardinian(306),
+                        scots(307), selkup(308), semitic(309), serboCroatian(310),
+                        serer(311), shan(312), shona(313), sidamo(314), siksika(315),
+                        sindhi(316), singhalese(317), sinoTibetan(318), siouan(319),
+                        slavic(320), siswant(321), slovak(322), slovenian(323), sogdian(324),
+                        somali(325), songhai(326), sorbian(327), sothoNorth(328),
+                        sothoSouth(329), southAmericanIndian(330), spanish(331),
+                        srananTongo(332), sukuma(333), sumerian(334), sudanese(335),
+                        susu(336), swahili(337), swazi(338), swedish(339), syriac(340),
+                        tadzhik(341), tagalog(342), tahitian(343), tajik(344), tamashek(345),
+                        tamil(346), tatar(347), telugu(348), tereno(349), thai(350),
+                        tibetan(351), tigre(352), tigrinya(353), timne(354), tivi(355),
+                        tlingit(356), tonga(357), truk(358), tsimshian(359), tsonga(360),
+                        tswana(361), tumbuka(362), turkish(363), turkishottoman(364),
+                        turkmen(365), tuvinian(366), twi(367), ugaritic(368), uighur(369),
+                        ukrainian(370), umbundu(371), undetermined(372), urdu(373),
+                        uzbek(374), vai(375), venda(376), vietnamese(377), votic(378),
+                        wakashan(379), walamo(380), walloon(381), waray(382), washo(383),
+                        welsh(384), wolof(385), xhosa(386), yakut(387), yao(388),
+                        yap(389), yiddish(390), yoruba(391), zapotec(392), zenaga(393),
+                        zhuang(394), zulu(395), zuni(396), backSoundFeed(397), main(398),
+                        aux(399), intSound(400), audio1(401), audio2(402), audio3(403),
+                        audio4(404), audio5(405), audio6(406), audio7(407), audio8(408),
+                        audio9(409), audio10(410), audio11(411), audio12(412), audio13(413),
+                        audio14(414), audio15(415), audio16(416), undefined(417)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { selectedAudio2 4 }
+
+selAudio2Format OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), mpeg2(2), ac3(3), linear(4) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { selectedAudio2 5 }
+
+selectedLowSpeedData OBJECT IDENTIFIER
+    ::= { selectedComponents 4 }
+
+selLsdReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current low-speed data PID selection:
+        
+        none = no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedLowSpeedData 1 }
+
+selLsdPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected low-speed data stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedLowSpeedData 2 }       
+
+selectedHighSpeedData OBJECT IDENTIFIER
+    ::= { selectedComponents 5 }
+
+selHsdReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current high-speed data PID selection:
+        
+        none = no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedHighSpeedData 1 }
+
+selHsdPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected high-speed data stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedHighSpeedData 2 }
+
+selectedVbi OBJECT IDENTIFIER
+    ::= { selectedComponents 6 }
+
+selVbiReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current VBI PID selection:
+        
+        none = no selection
+        user-pid =PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedVbi 1 }
+
+selVbiPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected VBI stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedVbi 2 }
+
+selectedDvbsub OBJECT IDENTIFIER
+    ::= { selectedComponents 7 }
+
+selDvbsubReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current DVB subtitles PID selection:
+        
+        none = no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedDvbsub 1 }
+
+selDvbsubPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected DVB subtitles stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedDvbsub 2 }
+
+selectedTtxt OBJECT IDENTIFIER
+    ::= { selectedComponents 8 }
+
+selTtxtReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current teletext PID selection:
+        
+        none = no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedTtxt 1 }
+
+selTtxtPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected teletext stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedTtxt 2 }
+
+selectedPcr OBJECT IDENTIFIER
+    ::= { selectedComponents 9 }
+
+selPcrReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current PCR PID selection:
+        
+        none = no selection
+        user-pid =PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedPcr 1 }
+
+selPcrPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected PCR stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedPcr 2 }
+
+selectedEtherHighSpeedData OBJECT IDENTIFIER
+    ::= { selectedComponents 10 }
+
+selEthHsdReason OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), userPid(2), userSi(3), autoSi(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the reason for the current ethernet high-speed data PID selection:
+        
+        none =no selection
+        user-pid = PID overriden by user
+        user-si = PID selected manually by user from list in SI
+        auto-si = PID selected automatically from SI"
+    ::= { selectedEtherHighSpeedData 1 }
+
+selEthHsdPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the selected ethernet high-speed data stream.
+        This object may be written to (SNMP Set) to select a PID manually,
+        overriding the SI"
+    ::= { selectedEtherHighSpeedData 2 }
+
+userSelectedComponents OBJECT IDENTIFIER
+-- Keeps a record of the last user-selected PID for each service element
+    ::= { inputContent 6 }
+
+userVideoPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected video stream"
+    ::= { userSelectedComponents 1 }
+
+userAudio1 OBJECT IDENTIFIER
+    ::= { userSelectedComponents 2 }
+
+userAudio1Pid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected audio1 stream"
+    ::= { userAudio1 1 }
+
+userAudio1Format OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), mpeg2(2), ac3(3), linear(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Encoding format of the last user-selected audio1 stream"
+    ::= { userAudio1 2 }
+
+userAudio2 OBJECT IDENTIFIER
+    ::= { userSelectedComponents 3 }
+
+userAudio2Pid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected audio2 stream"
+    ::= { userAudio2 1 }
+
+userAudio2Format OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), mpeg2(2), ac3(3), linear(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Encoding format of the last user-selected audio2 stream"
+    ::= { userAudio2 2 }
+
+userLsdPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected low-speed data stream"
+    ::= { userSelectedComponents 4 }
+
+userHsdPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected high-speed data stream"
+    ::= { userSelectedComponents 5 }
+
+userVbiPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected VBI stream"
+    ::= { userSelectedComponents 6 }
+
+userTtxtPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected teletext stream"
+    ::= { userSelectedComponents 7 }
+
+userDvbsubPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected DVB subtitles stream"
+    ::= { userSelectedComponents 8 }
+
+userPcrPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected PCR stream"
+    ::= { userSelectedComponents 9 }
+
+userEtherHsdPid OBJECT-TYPE
+    SYNTAX    PIDNumber
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "PID of the last user-selected high-speed data stream"
+    ::= { userSelectedComponents 10 }      
+     
+userLsdType OBJECT-TYPE
+    SYNTAX    INTEGER { ttvFormat2(1), dvbDataBroadcast(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Format of the last user-selected low-speed data stream:
+        
+        ttvFormat2 = TandbergTV Proprietry Format #2
+        dvbDataBroadcast = DVB Asynchronous Data Broadcast Format"
+    ::= { userSelectedComponents 11 }   
+       
+userLsdBaud OBJECT-TYPE
+    SYNTAX    INTEGER { baud1200(1), baud2400(2), baud4800(3), baud9600(4), baud19200(5), baud38400(6) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates the baud rate for the current low-speed data PID selection
+        if the current format is the DVB Asynchronous Data Broadcast Format:
+        
+        baud1200  = 1200
+        baud2400  = 2400
+        baud4800  = 4800
+        baud9600  = 9600
+        baud19200 = 19200
+        baud38400 = 38400"
+    ::= { userSelectedComponents 12 }      
+
+decoder OBJECT IDENTIFIER
+-- This section contains MIB objects describing the decoded components:
+-- video, audio, data, etc.
+    ::= { tt1260 3 }
+
+video OBJECT IDENTIFIER
+    ::= { decoder 1 }
+
+videoStatus OBJECT IDENTIFIER
+    ::= { video 1 }
+
+videoState OBJECT-TYPE
+    SYNTAX    INTEGER { running(1), stopped(2), error(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Current state of the video: running, stopped, error"
+    ::= { videoStatus 1 }
+
+videoHorizRes OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Horizontal resolution of the video stream (pixels)"
+    ::= { videoStatus 2 }
+
+videoVertRes OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Vertical resolution of the video stream (pixels)"
+    ::= { videoStatus 3 }
+
+videoFrameRate OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), f25hz(2), f30hz(3), f50hz(4), f60hz(5), f29hz97(6),
+                        f59hz94(7) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Frame rate of the video stream"
+    ::= { videoStatus 4 }
+
+videoProfile OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), pr420(2), pr422(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Profile of the video stream: 4:2:0 or 4:2:2"
+    ::= { videoStatus 5 }
+
+videoAspectRatio OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), aspect16x9(2), aspect4x3(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Aspect ratio of the video stream"
+    ::= { videoStatus 6 }
+
+videoRateBufferLevel OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Video rate buffer level, as a percentage"
+    ::= { videoStatus 7 }
+
+videoBitrate OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Video bit rate, in bits/second"
+    ::= { videoStatus 8 }
+
+videoFramesyncStatus OBJECT-TYPE
+    SYNTAX    INTEGER { notlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Lock status of the video frame sync"
+    ::= { videoStatus 9 }
+
+videoFramesyncSignal OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Flag indicating presence or absence of the video frame sync"
+    ::= { videoStatus 10 }
+
+videoAfdState OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates whether an Active Format Descriptor is present"
+    ::= { videoStatus 11 }
+
+videoAfdValue OBJECT-TYPE
+    SYNTAX    INTEGER(0..7)
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Value sent in the Active Format Descriptor"
+    ::= { videoStatus 12 }
+
+videoSetup OBJECT IDENTIFIER
+    ::= { video 2 }
+
+videoDefaultStandard OBJECT-TYPE
+    SYNTAX    INTEGER { ntsc525(1), pal625(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Default video output standard: NTSC 525lines or PAL 625 lines"
+    ::= { videoSetup 1 }
+
+video525OutputStandard OBJECT-TYPE
+    SYNTAX    INTEGER { palBgi(1), palN(2), palNComb(3), ntscM(4), palM(5), pal525(6)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Colour encoding standard for 525-line output"
+    ::= { videoSetup 2 }
+
+video625OutputStandard OBJECT-TYPE
+    SYNTAX    INTEGER { palBgi(1), palN(2), palNComb(3), ntscM(4), palM(5), pal525(6)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Colour encoding standard for 625-line output"
+    ::= { videoSetup 3 }
+
+videoMonitorAspectRatio OBJECT-TYPE
+    SYNTAX    INTEGER { aspect4x3(1), aspect16x9(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Aspect ratio of the video output: 4x3 or 16x9"
+    ::= { videoSetup 4 }
+
+videoStopMode OBJECT-TYPE
+    SYNTAX    INTEGER { freezeFrame(1), black(2), nosync(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Output action when video not available:
+        
+        freeze frame = keep showing last video frame
+        black = show frame of all black
+        nosync = turn off sync on output"
+    ::= { videoSetup 5 }
+
+videoTestPattern OBJECT-TYPE
+    SYNTAX    INTEGER (0..20)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Enable and select a video test pattern to output:
+        
+        0 = none
+        1 - 10 = PAL 625-line tests
+        11 - 20 = NTSC 525-line tests"
+    ::= { videoSetup 6 }
+
+videoDelay420 OBJECT-TYPE
+    SYNTAX    INTEGER (0..199)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "4:2:0 Video delay (ms)"
+    ::= { videoSetup 7 }
+
+videoDelay422 OBJECT-TYPE
+    SYNTAX    INTEGER (0..199)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "4:2:2 Video delay (ms)"
+    ::= { videoSetup 8 }
+
+video525StartLine OBJECT-TYPE
+    SYNTAX    INTEGER (22..23)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Start line for 525-line video: 22 or 23"
+    ::= { videoSetup 9 }
+
+videoOutputLevel OBJECT-TYPE
+    SYNTAX    INTEGER (70..130)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video output level (percent): 70 to 130"
+    ::= { videoSetup 10 }
+
+videoOutputCalibration OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video output level calibration offset (percent): 100 = normal
+        THIS IS A FACTORY-ONLY PARAMETER AND DOES NOT APPEAR
+        ON PRODUCTION UNITS"
+    ::= { videoSetup 11 }
+
+videoOutputOffset OBJECT-TYPE
+    SYNTAX    INTEGER (0..255)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video output offset: 0 (min) to 255 (max) 
+        THIS IS A FACTORY-ONLY PARAMETER AND DOES NOT APPEAR
+        ON PRODUCTION UNITS"
+    ::= { videoSetup 12 }
+
+videoFramesyncEnable OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video Frame Sync (Genlock) disable/enable"
+    ::= { videoSetup 13 }
+
+videoFramesyncOffsetPal OBJECT-TYPE
+    SYNTAX    INTEGER (-16384..16383)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video Frame Sync offset for PAL (-16384 to +16383)"
+    ::= { videoSetup 14 }
+
+videoFramesyncOffsetNtsc OBJECT-TYPE
+    SYNTAX    INTEGER (-16384..16383)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video Frame Sync offset for NTSC (-16384 to +16383)"
+    ::= { videoSetup 15 }
+
+videoEdhEnable OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video Error Detection and Handling disable/enable"
+    ::= { videoSetup 16 }
+
+videoEmbeddedAudioDid OBJECT-TYPE
+    SYNTAX    INTEGER { did0x1fb(1), did0x1fd(2), did0x2f9(3), did0x2ff(4) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Embedded Audio Data ID"
+    ::= { videoSetup 17 }
+
+videoEmbeddedAudioChan OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), audio1(2), audio2(3), audio1and2(4) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Embedded Audio Channel"
+    ::= { videoSetup 18 }
+
+videoFrequency OBJECT-TYPE
+    SYNTAX    INTEGER (0..15)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Video frequency (0 to 15, default 8)
+        THIS IS A FACTORY-ONLY PARAMETER AND DOES NOT APPEAR
+        ON PRODUCTION UNITS"
+    ::= { videoSetup 19 }
+
+videoPTSConformance OBJECT-TYPE
+    SYNTAX    INTEGER { strictFSAdj(1),strict(2), normal(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "When set to compliant, Synchronisation is strict (within 1 mS). 
+        PTS stream must be linear, continous and jitter free.
+        When in non compliant mode synchronisation is less strict (as per user manual), but streams with poor 
+        lineararity or discontinuities are tollerated"
+    ::= { videoSetup 20 }
+
+teletext OBJECT IDENTIFIER
+    ::= { decoder 2 }
+
+teletextStatus OBJECT IDENTIFIER
+    ::= { teletext 1 }
+
+teletextState OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Teletext present/absent"
+    ::= { teletextStatus 1 }
+
+teletextSetup OBJECT IDENTIFIER
+    ::= { teletext 2 }
+
+vbi OBJECT IDENTIFIER
+    ::= { decoder 3 }
+
+vbiStatus OBJECT IDENTIFIER
+    ::= { vbi 1 }
+
+vbiState OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether a decoded VBI data stream is present"
+    ::= { vbiStatus 1 }
+
+vbiContent OBJECT IDENTIFIER
+-- This section indicates the absence or presence of each kind of VBI
+-- data
+    ::= { vbiStatus 2 }
+
+vbiContentCcvc OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Closed Captioning"
+    ::= { vbiContent 1 }
+
+vbiContentWss OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Wide Screen Signalling"
+    ::= { vbiContent 2 }
+
+vbiContentAmol OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI AMOL 1 & 2 Captioning"
+    ::= { vbiContent 3 }
+
+vbiContentVidx OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Video Index"
+    ::= { vbiContent 4 }
+
+vbiContentVps OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Video Programming System"
+    ::= { vbiContent 5 }
+
+vbiContentTtxt OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Teletext"
+    ::= { vbiContent 6 }
+
+vbiContentVits OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Vertical Interval Test Signal"
+    ::= { vbiContent 7 }
+
+vbiContentGcr OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Ghost Cancellation Reference"
+    ::= { vbiContent 8 }
+
+vbiContentVitc OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Vertical Interval Time Code"
+    ::= { vbiContent 9 }
+
+ vbiContentMono OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Monochrome 4:2:2 samples"
+    ::= { vbiContent 10 }
+
+vbiContentNABTS OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2), inserted(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI NABTS content"
+    ::= { vbiContent 11 }
+    
+vbiLinesTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF VbiLinesEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Table listing the content of each VBI line"
+    ::= { vbiStatus 3 }
+
+vbiLinesEntry OBJECT-TYPE
+    SYNTAX    VbiLinesEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    INDEX { vbiLine  }
+    ::= { vbiLinesTable 1 }
+
+VbiLinesEntry ::= SEQUENCE {
+    vbiLine         INTEGER,
+    vbiLineContents INTEGER
+}
+
+vbiLine OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI line number"
+    ::= { vbiLinesEntry 1 }
+
+vbiLineContents OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), ccvc(2), wss(3), amol(4), vidx(5), vps(6), ttxt(7),
+                        vits(8), gcr(9), vitc(10), mono(11), nabts(12) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Contents of VBI line"
+    ::= { vbiLinesEntry 2 }
+
+vbiSetup OBJECT IDENTIFIER
+    ::= { vbi 2 }
+
+vbiEnableCcvc OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Closed Captioning disable/enable"
+    ::= { vbiSetup 1 }
+
+vbiEnableWss OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabledDrivenFromVbiPid(2), enabledDrivenFromAspectRatio(3)}
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Wide Screen Signalling control"
+    ::= { vbiSetup 2 }
+
+vbiEnableAmol OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI AMOL 1 & 2 Captioning disable/enable"
+    ::= { vbiSetup 3 }
+
+vbiEnableVidx OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Video Index disable/enable"
+    ::= { vbiSetup 4 }
+
+vbiEnableVps OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Video Programming System disable/enable"
+    ::= { vbiSetup 5 }
+
+vbiEnableTtxt OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Teletext disable/enable"
+    ::= { vbiSetup 6 }
+
+vbiEnableVits OBJECT-TYPE
+    SYNTAX    INTEGER { itsNone(1), itsCcir(2), itsFccUk(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Vertical Interval Test Signal none/ccir(625)/fcc(525)"
+    ::= { vbiSetup 7 }
+
+vbiEnableGcr OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Ghost Cancellation Reference disable/enable"
+    ::= { vbiSetup 8 }
+
+vbiEnableVitc OBJECT-TYPE
+    SYNTAX    INTEGER { vitcNone(1), vitcGop(2), vitcPes(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Vertical Interval Time Code none/GOP/PES"
+    ::= { vbiSetup 9 }
+
+vbiEnableMono OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Monochrome 4:2:2 samples disable/enable"
+    ::= { vbiSetup 10 }
+
+vbiVitc625Line1 OBJECT-TYPE
+    SYNTAX    INTEGER (6..22)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "First line to carry VBI data in 625-line output"
+    ::= { vbiSetup 11 }
+
+vbiVitc625Line2 OBJECT-TYPE
+    SYNTAX    INTEGER (6..22)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Second line to carry VBI data in 625-line output"
+    ::= { vbiSetup 12 }
+
+vbiVitc525Line1 OBJECT-TYPE
+    SYNTAX    INTEGER (10..22)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "First line to carry VBI data in 525-line output"
+    ::= { vbiSetup 13 }
+
+vbiVitc525Line2 OBJECT-TYPE
+    SYNTAX    INTEGER (10..22)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Second line to carry VBI data in 525-line output"
+    ::= { vbiSetup 14 }
+
+vbiEnablePedestal OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI Pedestal disable/enable"
+    ::= { vbiSetup 15 }
+
+vbiEnableNABTS OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "VBI NABTS"
+    ::= { vbiSetup 16 }
+
+pcr OBJECT IDENTIFIER
+    ::= { decoder 4 }
+
+pcrStatus OBJECT IDENTIFIER
+    ::= { pcr 1 }
+
+pcrRecoveryStatus OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether a PCR was found in the incoming signal"
+    ::= { pcrStatus 1 }
+
+audio OBJECT IDENTIFIER
+    ::= { decoder 5 }
+
+audioStatusTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF AudioStatusEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Two-row table with information about decoded audio1 and audio2"
+    ::= { audio 1 }
+
+audioStatusEntry OBJECT-TYPE
+    SYNTAX    AudioStatusEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    INDEX { audioStatusIndex }
+    ::= { audioStatusTable 1 }
+
+AudioStatusEntry ::= SEQUENCE {
+    audioStatusIndex    INTEGER,
+    audioState          INTEGER,
+    audioSampleRate     Uint16,
+    audioBitrate        Uint16,
+    audioCodingStandard INTEGER,
+    audioMpegLayer      INTEGER,
+    audioMpegMode       INTEGER
+}
+
+audioStatusIndex OBJECT-TYPE
+    SYNTAX    INTEGER { audio1(1), audio2(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies the audio channel the row is for"
+    ::= { audioStatusEntry 1 }
+
+audioState OBJECT-TYPE
+    SYNTAX    INTEGER { running(1), stopped(2), error(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Current state of the audio: running, stopped or error"
+    ::= { audioStatusEntry 2 }
+
+audioSampleRate OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Sample rate of the audio stream (units = 100Hz)"
+    ::= { audioStatusEntry 3 }
+
+audioBitrate OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Bit rate of the audio stream (kbit/s)"
+    ::= { audioStatusEntry 4 }
+
+audioCodingStandard OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), mpeg2(2), ac3(3), linear(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Coding Standard (Format) of the audio stream: none, mpeg2, ac3 or linear"
+    ::= { audioStatusEntry 5 }
+
+audioMpegLayer OBJECT-TYPE
+    SYNTAX    INTEGER { layer1(1), layer2(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "MPEG Layer of the audio stream: layer 1 or layer 2"
+    ::= { audioStatusEntry 6 }
+
+audioMpegMode OBJECT-TYPE
+    SYNTAX    INTEGER { stereo(1), jointStereo(2), dualChan(3), singleChan(4)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "MPEG Mode of the audio stream: stereo, joint stereo, dual channel or
+        single channel"
+    ::= { audioStatusEntry 7 }
+
+audioSetupTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF AudioSetupEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "Two-row table for configuration of decoded audio1 and audio2"
+    ::= { audio 2 }
+
+audioSetupEntry OBJECT-TYPE
+    SYNTAX    AudioSetupEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    INDEX { audioSetupIndex }
+    ::= { audioSetupTable 1 }
+
+AudioSetupEntry ::= SEQUENCE {
+    audioSetupIndex       INTEGER,
+    audioOutputType       INTEGER,
+    audioOutputRouting    INTEGER,
+    audioClippingLevel    INTEGER (12..24),
+    audioDownmixMode      INTEGER,
+    audioPtsAdjustment    INTEGER (-495..495),
+    audioCalibrationLevel INTEGER (-50..40)
+}
+
+audioSetupIndex OBJECT-TYPE
+    SYNTAX    INTEGER { audio1(1), audio2(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies the audio channel the row is for"
+    ::= { audioSetupEntry 1 }
+
+audioOutputType OBJECT-TYPE
+    SYNTAX    INTEGER { analogue(1), iec958cons(2), iec958pro(3), iec958ac3cons(4)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Audio output type:analogue, consumer-grade iec958 digital, professional-grade
+        iec958 digital or consumer iec958 with Dolby ac3"
+    ::= { audioSetupEntry 2 }
+
+audioOutputRouting OBJECT-TYPE
+    SYNTAX    INTEGER { normal(1), mono(2), left(3), right(4) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Audio output routing: normal stereo, mono to L+R, mono to L only, mono
+        to R only"
+    ::= { audioSetupEntry 3 }
+
+audioClippingLevel OBJECT-TYPE
+    SYNTAX    INTEGER (12..24)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Audio output clipping level (12 to 24 dB)"
+    ::= { audioSetupEntry 4 }
+
+audioDownmixMode OBJECT-TYPE
+    SYNTAX    INTEGER { surroundStereo(1), normalStereo(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Audio stereo downmix mode:surround stereo or normal stereo"
+    ::= { audioSetupEntry 5 }
+
+audioPtsAdjustment OBJECT-TYPE
+    SYNTAX    INTEGER (-495..495)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Audio PTS (synchronisation) adjustment (-495 to +495, in steps of 5,
+        units = 0.1ms)"
+    ::= { audioSetupEntry 6 }
+
+audioCalibrationLevel OBJECT-TYPE
+    SYNTAX    INTEGER (-50..40)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Audio calibration level (-50 to +40, units unknown)
+        THIS IS A FACTORY-ONLY PARAMETER AND DOES NOT APPEAR
+        ON PRODUCTION UNITS"
+    ::= { audioSetupEntry 7 }
+
+data OBJECT IDENTIFIER
+    ::= { decoder 6 }
+
+async OBJECT IDENTIFIER
+    ::= { data 1 }
+
+asyncStatus OBJECT IDENTIFIER
+    ::= { async 1 }
+
+asyncState OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether an Async stream (low-speed data) is present"
+    ::= { asyncStatus 1 }
+
+asyncRate OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The data rate of the Async low-speed data (bits/sec)"
+    ::= { asyncStatus 2 }
+
+asyncSetup OBJECT IDENTIFIER
+    ::= { async 2 }
+
+asyncEnable OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Async low-speed data disable/enable"
+    ::= { asyncSetup 1 }
+
+sync OBJECT IDENTIFIER
+    ::= { data 2 }
+
+syncStatus OBJECT IDENTIFIER
+    ::= { sync 1 }
+
+syncState OBJECT-TYPE
+    SYNTAX    INTEGER { stopped(1), running(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether a Sync stream (high-speed data) is running"
+    ::= { syncStatus 1 }
+
+syncRate OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The data rate of the Sync high-speed data (bits/sec)"
+    ::= { syncStatus 2 }
+
+syncCardFitted OBJECT-TYPE
+    SYNTAX    INTEGER { missing(1), fitted(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether a Sync data card is fitted"
+    ::= { syncStatus 3 }
+
+syncPresent OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether a Sync stream (high-speed data) is present"
+    ::= { syncStatus 4 }
+
+syncSetup OBJECT IDENTIFIER
+    ::= { sync 2 }
+
+syncEnable OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Sync high-speed data disable/enable"
+    ::= { syncSetup 1 }
+
+etherHsd OBJECT IDENTIFIER
+    ::= { data 3 }
+
+etherHsdStatus OBJECT IDENTIFIER
+    ::= { etherHsd 1 }
+
+etherHsdState OBJECT-TYPE
+    SYNTAX    INTEGER { stopped(1), running(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether an Ethernet high-speed data stream is running"
+    ::= { etherHsdStatus 1 }
+
+etherHsdRate OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The data rate of the Ethernet high-speed data (bits/sec)"
+    ::= { etherHsdStatus 2 }
+
+etherHsdLostPackets OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Cumulative number of packets lost for Ethernet high-speed data"
+    ::= { etherHsdStatus 3 }
+
+etherHsdLostFrames OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       " Cumulative number of frames lost for Ethernet high-speed data"
+    ::= { etherHsdStatus 4 }
+
+etherHsdSetup OBJECT IDENTIFIER
+    ::= { etherHsd 2 }
+
+etherHsdEnable OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Ethernet high-speed data disable/enable"
+    ::= { etherHsdSetup 1 }
+
+etherHsdGatewayEnable OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Ethernet high-speed data gateway disable/enable"
+    ::= { etherHsdSetup 2 }
+
+etherHsdGatewayIpAddress OBJECT-TYPE
+    SYNTAX    IpAddress
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Ethernet high-speed data gateway IP address"
+    ::= { etherHsdSetup 3 }
+
+etherHsdEncapsulation OBJECT-TYPE
+    SYNTAX    INTEGER { pipe(1), mpe(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Ethernet high-speed data encapsulation type:Data piping / MPE"
+    ::= { etherHsdSetup 4 }
+
+ca OBJECT IDENTIFIER
+    ::= { decoder 7 }
+
+caStatus OBJECT IDENTIFIER
+    ::= { ca 1 }
+
+caState OBJECT-TYPE
+    SYNTAX    INTEGER { absent(1), present(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Shows whether CA data is present in the decoded stream"
+    ::= { caStatus 1 }
+
+caSystemId OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The CA System ID"
+    ::= { caStatus 2 }
+
+caStatusRas OBJECT IDENTIFIER
+    ::= { caStatus 3 }
+
+caRasDetected OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "RAS1 CA detected in the input stream"
+    ::= { caStatusRas 1 }
+
+caStatusTtvSigProt OBJECT IDENTIFIER
+    ::= { caStatus 4 }
+
+caTtvSigProtDetected OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "TTV Signal Protection CA detected in the input stream"
+    ::= { caStatusTtvSigProt 1 }
+
+caStatusCommonInterface OBJECT IDENTIFIER
+    ::= { caStatus 5 }
+
+caCommonInterfaceDetected OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Common Interface CA detected in the input stream"
+    ::= { caStatusCommonInterface 1 }
+
+caCommonInterfaceName OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Name of Common Interface CA module"
+    ::= { caStatusCommonInterface 2 }
+
+caCommonInterfaceStatus OBJECT-TYPE
+    SYNTAX    INTEGER { ok(1), rejected(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Status of Common Interface CA module"
+    ::= { caStatusCommonInterface 3 }
+
+caStatusVideoguard OBJECT IDENTIFIER
+    ::= { caStatus 6 }
+
+caVideoguardDetected OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Videoguard CA detected in the input stream"
+    ::= { caStatusVideoguard 1 }
+
+caVerifierVersion OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Version number of Videoguard CA Verifier"
+    ::= { caStatusVideoguard 2 }
+
+caStatusBiss OBJECT IDENTIFIER
+    ::= { caStatus 7 }
+
+caBissDetected OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "BISS CA detected in the input stream"
+    ::= { caStatusBiss 1 }
+
+caStatusDirector5 OBJECT IDENTIFIER
+    ::= { caStatus 8 }
+
+caDirector5Detected OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Director 5 TTVCA detected in the input stream"
+    ::= { caStatusDirector5 1 }  
+    
+caDirector5UniqueId OBJECT-TYPE
+    SYNTAX    DisplayString (SIZE(0..32))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Director 5 TTVCA unique hardware ID"
+    ::= { caStatusDirector5 2 }  
+    
+caDirector5Authorisation OBJECT-TYPE
+    SYNTAX    INTEGER { invalid(1), noECMs(2), authorised(3), notAuthorised(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Director 5 TTVCA authorisation status"
+    ::= { caStatusDirector5 3 } 
+    
+caSetup OBJECT IDENTIFIER
+    ::= { ca 2 }
+
+caSetupRas OBJECT IDENTIFIER
+    ::= { caSetup 1 }
+
+caRasDsngKey OBJECT-TYPE
+    SYNTAX    INTEGER (0..99999999)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "32-bit Scrambling Key for RAS CA in DSNG mode (0 to 99999999)"
+    ::= { caSetupRas 1 }
+
+caRasMode OBJECT-TYPE
+    SYNTAX    INTEGER { fixed(1), dsng(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "RAS Mode: fixed-key or DSNG mode"
+    ::= { caSetupRas 2 }
+
+caSetupTtvSigProt OBJECT IDENTIFIER
+    ::= { caSetup 2 }
+
+caTtvSigProtEnable OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "TTV Signal Protection CA disable/enable"
+    ::= { caSetupTtvSigProt 1 }
+
+caTtvSigProtKey OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "TTV Signal Protection CA Key (not yet used)"
+    ::= { caSetupTtvSigProt 2 }
+
+caSetupCommonInterface OBJECT IDENTIFIER
+    ::= { caSetup 3 }
+
+caSetupVideoguard OBJECT IDENTIFIER
+    ::= { caSetup 4 }
+
+caSetupBiss OBJECT IDENTIFIER
+    ::= { caSetup 5 }
+
+caBissKey OBJECT-TYPE
+    SYNTAX    OCTET STRING(SIZE(0|6))
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "48-bit key for BISS CA in Unscrambled Key Mode.
+        Reads as zero-length, since BISS prohibits reading back the key."
+    ::= { caSetupBiss 1 }
+
+caBissEncryptedKey OBJECT-TYPE
+    SYNTAX    OCTET STRING(SIZE(0|8))
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "64-bit encrypted key for BISS CA in Scrambled Key Mode (BISS-E).
+        Reads as zero-length, since BISS prohibits reading back the key."
+    ::= { caSetupBiss 2 }
+
+caBissMode OBJECT-TYPE
+    SYNTAX    INTEGER { unscram(1), scramFixed(2), scramTtv(3), scramUser1(4),
+                        scramUser2(5), off(6) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Encryption Mode for the BISS Key (none, fixed-key, ttv-mode, encrypted
+        with userid1, encrypted with userid2)"
+    ::= { caSetupBiss 3 }
+
+caBissUserid1 OBJECT-TYPE
+    SYNTAX    OCTET STRING(SIZE(0|7))
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "56-bit userid for encrypting BISS Key in user1 mode.
+        Reads as zero-length, since BISS prohibits reading back the ID."
+    ::= { caSetupBiss 4 }
+
+caBissUserid2 OBJECT-TYPE
+    SYNTAX    OCTET STRING(SIZE(0|7))
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "56-bit userid for encrypting BISS Key in user2 mode.
+        Reads as zero-length, since BISS prohibits reading back the ID."
+    ::= { caSetupBiss 5 }
+
+input OBJECT IDENTIFIER
+    ::= { tt1260 4 }
+
+inputStatus OBJECT IDENTIFIER
+    ::= { input 1 }
+
+inputTsLockState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), lock(2), unlock(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates whether input is locked to a Transport Stream"
+    ::= { inputStatus 1 }
+
+inputTsPacketLength OBJECT-TYPE
+    SYNTAX    Uint16
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Packet length of input Transport Stream (bytes)"
+    ::= { inputStatus 2 }
+
+inputTsBitrate OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Bit rate of input Transport Stream (bits/sec)"
+    ::= { inputStatus 3 }
+
+inputBerLevel OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Bit Error Rate of input signal (units = 1E-9)"
+    ::= { inputStatus 4 }
+
+inputMerLevel OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Modulation Error Ratio of input signal"
+    ::= { inputStatus 5 }
+
+inputCardType OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), asi(2), qpsk(3), ofdm(4), mcd(5), qam(6),
+                        g703(7), g037(8), atme3(9), atmds3(10), hd(11),
+                        qpskAsi(12), g037Pro(13), satS2(14), euroS2V0(133),
+                        eurpS2V1(134), euroS2V2(135) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Type of input card fitted: unknown/none, ASI, QPSK, MCD, OFDM, QAM(Newtec),
+        G703, G037 (IP), ATM_E3, ATM_DS3, SAT_HD, SAT_QPSK_ASI, G037_PRO, SAT_S2, EURO_S2 Variants"
+    ::= { inputStatus 6 }
+
+inputCardRetuneType OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), asi(2), qpsk(3), ofdm(4), mcd(5), qam(6),
+                        g703(7), g037(8), atme3(9), atmds3(10), hd(11),
+                        qpskAsi(12), g037Pro(13), satS2(14), euroS2V0(133),
+                        eurpS2V1(134), euroS2V2(135) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Type of input card fitted (according to retune parameters): unknown/none,
+        ASI, QPSK, MCD, OFDM, QAM(Newtec), G703, G037 (IP), ATM_E3, ATM_DS3,
+        SAT_HD, SAT_QPSK_ASI, G037_PRO, SAT_S2, EURO_S2 Variants"
+    ::= { inputStatus 7 }
+
+inputPerLevel OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Pre-Viterbi Error Ratio of input signal"
+    ::= { inputStatus 8 }
+
+
+inputSetup OBJECT IDENTIFIER
+    ::= { input 2 }
+
+inputCards OBJECT IDENTIFIER
+    ::= { input 3 }
+
+inputRetuneState OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "This variable is no longer used"
+    ::= { inputCards 1 }
+
+inputCardAsi OBJECT IDENTIFIER
+    ::= { inputCards 2 }
+
+inputCardAsiStatus OBJECT IDENTIFIER
+    ::= { inputCardAsi 1 }
+
+inputCardAsiLastlocked OBJECT-TYPE
+    SYNTAX    INTEGER { auto(1), input1(2), input2(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates to which of the two inputs the ASI card last locked"
+    ::= { inputCardAsiStatus 1 }
+
+inputCardAsiSetup OBJECT IDENTIFIER
+    ::= { inputCardAsi 2 }
+
+inputCardAsiInputSelect OBJECT-TYPE
+    SYNTAX    INTEGER { auto(1), input1(2), input2(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies on which of the two inputs the ASI card should look for a
+        Transport Stream, or that it should automatically select one."
+    ::= { inputCardAsiSetup 1 }
+
+inputCardSat OBJECT IDENTIFIER
+    ::= { inputCards 3 }
+
+inputCardSatStatus OBJECT IDENTIFIER
+    ::= { inputCardSat 1 }
+
+inSatBerMeasurement OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Bit Error Rate measurement (units = 1E-9)"
+    ::= { inputCardSatStatus 1 }
+
+inSatEbn0Margin OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Eb/N0 margin (units = 0.01dB)"
+    ::= { inputCardSatStatus 2 }
+
+inSatDecoderSync OBJECT-TYPE
+    SYNTAX    INTEGER { unlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates whether the satellite input is synchronised"
+    ::= { inputCardSatStatus 3 }
+
+inSatQpskExtraStatus OBJECT IDENTIFIER
+-- Extra information specific to the QPSK Input Card
+    ::= { inputCardSatStatus 4 }
+
+inQpskStatusRfLevel OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "QPSK Input RF level (0 to 255)"
+    ::= { inSatQpskExtraStatus 1 }
+
+inQpskStatusLockStatus OBJECT IDENTIFIER
+    ::= { inSatQpskExtraStatus 2 }
+
+inQpskStatusLockFull OBJECT-TYPE
+    SYNTAX    INTEGER { unlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Input fully locked"
+    ::= { inQpskStatusLockStatus 1 }
+
+inQpskStatusLockViterbi OBJECT-TYPE
+    SYNTAX    INTEGER { unlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Input viterbi lock"
+    ::= { inQpskStatusLockStatus 2 }
+
+inQpskStatusLockPhase OBJECT-TYPE
+    SYNTAX    INTEGER { unlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Input phase lock"
+    ::= { inQpskStatusLockStatus 3 }
+
+inQpskStatusLockS2 OBJECT-TYPE
+    SYNTAX    INTEGER { unlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Input s2 lock"
+    ::= { inQpskStatusLockStatus 4 }
+
+inQpskStatusLockS3 OBJECT-TYPE
+    SYNTAX    INTEGER { unlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Input s3 lock"
+    ::= { inQpskStatusLockStatus 5 }
+
+inQpskStatusLockedFrequency OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Locked frequency (kHz)"
+    ::= { inSatQpskExtraStatus 3 }
+
+inQpskStatusBer OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Bit Error Rate (pre-viterbi) (units = 1E-9)"
+    ::= { inSatQpskExtraStatus 4 }
+
+inQpskStatusPostBer OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Bit Error Rate (post-viterbi) (units = 1E-9)"
+    ::= { inSatQpskExtraStatus 5 }
+
+inQpskStatusSnr OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Signal to Noise Ratio"
+    ::= { inSatQpskExtraStatus 6 }
+
+inQpskStatusEbn0 OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Eb/N0 (units = 0.01dB)"
+    ::= { inSatQpskExtraStatus 7 }
+
+inQpskStatusEbn0Margin OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Eb/N0 margin (units = 0.01dB)"
+    ::= { inSatQpskExtraStatus 8 }
+
+inQpskStatusRsCorrectedErrs OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Number of Reed-Solomon corrected errors"
+    ::= { inSatQpskExtraStatus 9 }
+
+inQpskStatusRsUncorrectedErrs OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Number of Reed-Solomon uncorrected errors"
+    ::= { inSatQpskExtraStatus 10 }
+
+inQpskStatusCarrierFrequency OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "(Not yet used in the TT1260)"
+    ::= { inSatQpskExtraStatus 11 }
+
+inSatQamExtraStatus OBJECT IDENTIFIER
+-- Extra information specific to the QAM (Newtec) Input Card
+    ::= { inputCardSatStatus 5 }
+
+inQamStatusDecoderSync OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Decoder synchronisation state"
+    ::= { inSatQamExtraStatus 1 }
+
+inQamStatusReceiveLevel OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Receive level (units = 0.01dBm)"
+    ::= { inSatQamExtraStatus 2 }
+
+inQamStatusCoLevel OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "(Not yet used in the TT1260)"
+    ::= { inSatQamExtraStatus 3 }
+
+inQamStatusEbn0Est OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Eb/N0 estimate (units = 0.01dB)"
+    ::= { inSatQamExtraStatus 4 }
+
+inQamStatusCarrierFreqOffset OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Carrier frequency offset (Hz)"
+    ::= { inSatQamExtraStatus 5 }
+
+inQamStatusSymbolRateOffset OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "(Not yet used in the TT1260)"
+    ::= { inSatQamExtraStatus 6 }
+
+inQamStatusByteErrorRate OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "(Not yet used in the TT1260)"
+    ::= { inSatQamExtraStatus 7 }
+
+inQamStatusPrbsErrorRate OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "(Not yet used in the TT1260)"
+    ::= { inSatQamExtraStatus 8 }
+
+inQamStatusBer OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Bit Error Rate (units = 1E-9)"
+    ::= { inSatQamExtraStatus 9 }
+
+inQamStatusUncorrectedPackets OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Number of Reed-Solomon uncorrected errors"
+    ::= { inSatQamExtraStatus 10 }
+
+inQamStatusDeviceId OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "(Not yet used in the TT1260)"
+    ::= { inSatQamExtraStatus 11 }
+
+inQamStatusAlarmsWord OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "(Not yet used in the TT1260)"
+    ::= { inSatQamExtraStatus 12 }
+
+inSatS2ExtraStatus OBJECT IDENTIFIER
+-- Extra information specific to the S2 Input Card
+    ::= { inputCardSatStatus 6 }
+
+inS2StatusFecRate OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), fec12(2), fec23(3), fec34(4), fec56(5), fec67(6),
+                        fec78(7), fec89(8), fecAuto(9), fec032(10), fec045(11),
+						fec062(12), fec079(13), fec088(14), fec14(15), fec13(16),
+						fec25(17), fec35(18), fec45(19), fec910(20) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "S2 card FEC rate: none, 1-2, 2-3, 3-4, 5-6, 6-7, 7-8, 8-9, auto,
+	    1-4, 1-3, 2-5, 3-5, 4-5, 9-10"
+    ::= { inSatS2ExtraStatus 1 }
+
+    
+inS2StatusModulationType OBJECT-TYPE
+    SYNTAX    INTEGER { modBpsk(1), modQpsk(2), mod8psk(3), mod16qam(4), modAuto(5), mod16sqam(5), modAuto(7) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "S2 card Modulation type: BPSK, QPSK, 8PSK, 16QAM, auto, 16SQAM, auto dvb-s2"
+    ::= { inSatS2ExtraStatus 2 }
+	
+inS2StatusCNRatio OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "S2 card Signal to Noise ratio (units = 0.01dB)"
+    ::= { inSatS2ExtraStatus 3 }
+
+inS2StatusRfLevel OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "S2 card Input RF level (dBm)"
+    ::= { inSatS2ExtraStatus 4 }
+inputCardSatSetup OBJECT IDENTIFIER
+    ::= { inputCardSat 2 }
+
+inSatSetupInputSelect OBJECT-TYPE
+    SYNTAX    INTEGER { auto(1), input1(2), input2(3), input3(4), input4(5), input5(6), input6(7)}
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Selection of input 1, 2, 3, 4, 5 or 6 on satellite card"
+    ::= { inputCardSatSetup 1 }
+-------------------------------------------------------------------
+-- Definition of the Sat input table
+-------------------------------------------------------------------
+inSatSetupInputTable OBJECT-TYPE
+    SYNTAX    SEQUENCE OF InSatSetupInputEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { inputCardSatSetup 2 }
+
+inSatSetupInputEntry OBJECT-TYPE
+    SYNTAX    InSatSetupInputEntry
+    ACCESS    not-accessible
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    INDEX { inSatSetupInputIndex }
+    ::= { inSatSetupInputTable 1 }
+
+InSatSetupInputEntry ::= SEQUENCE {
+    inSatSetupInputIndex         INTEGER,
+    inSatSetupSymbolRate         INTEGER (1000000..45000000),
+    inSatSetupFecRate            INTEGER,
+    inSatSetupTuneFrequency      INTEGER (950000..2150000),
+    inSatSetupSatelliteFrequency Uint32,
+    inSatSetupLnbFrequency       Uint32,
+    inSatSetupSearchRange        Uint32,
+    inSatSetupPolarization       INTEGER,
+    inSatSetupModulationType     INTEGER,
+    inSatSetupLnbVoltage         INTEGER,
+    inSatSetupLnb22khz           INTEGER,
+    inSatSetupLnbBoost           INTEGER,
+    inSatSetupSpectrumSense      INTEGER,
+    inSatSetupGainSelect         INTEGER,
+    inSatSetupRollOff            INTEGER,
+    inSatSetupModulationMode     INTEGER,
+    inSatSetupOutputMode         INTEGER
+}
+
+inSatSetupInputIndex OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "No description yet"
+    ::= { inSatSetupInputEntry 1 }
+
+inSatSetupSymbolRate OBJECT-TYPE
+    SYNTAX    INTEGER (1000000..45000000)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite symbol rate (bits/sec)"
+    ::= { inSatSetupInputEntry 2 }
+
+inSatSetupFecRate OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), fec12(2), fec23(3), fec34(4), fec56(5), fec67(6),
+                        fec78(7), fec89(8), fecAuto(9) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite FEC rate: none, 1-2, 2-3, 3-4, 5-6, 6-7, 7-8, 8-9, auto"
+    ::= { inSatSetupInputEntry 3 }
+
+inSatSetupTuneFrequency OBJECT-TYPE
+    SYNTAX    INTEGER (950000..2150000)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Tune frequency (kHz)"
+    ::= { inSatSetupInputEntry 4 }
+
+inSatSetupSatelliteFrequency OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite frequency (kHz)"
+    ::= { inSatSetupInputEntry 5 }
+
+inSatSetupLnbFrequency OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "LNB frequency (kHz)"
+    ::= { inSatSetupInputEntry 6 }
+
+inSatSetupSearchRange OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite search range (kHz)"
+    ::= { inSatSetupInputEntry 7 }
+
+inSatSetupPolarization OBJECT-TYPE
+    SYNTAX    INTEGER { vertical(1), horizontal(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite polarization: vertical, horizontal"
+    ::= { inSatSetupInputEntry 8 }
+
+inSatSetupModulationType OBJECT-TYPE
+    SYNTAX    INTEGER { modBpsk(1), modQpsk(2), mod8psk(3), mod16qam(4), modAuto(5), mod16sqam(5), modAuto(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite modulation type: BPSK, QPSK, 8PSK, 16QAM, auto, 16SQAM, auto( dvb-s2 )"
+    ::= { inSatSetupInputEntry 9 }
+
+inSatSetupLnbVoltage OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "LNB voltage off/on"
+    ::= { inSatSetupInputEntry 10 }
+
+inSatSetupLnb22khz OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "LNB 22kHz disabled/enabled"
+    ::= { inSatSetupInputEntry 11 }
+
+inSatSetupLnbBoost OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), enabled(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "LNB Boost disabled/enabled"
+    ::= { inSatSetupInputEntry 12 }
+
+inSatSetupSpectrumSense OBJECT-TYPE
+    SYNTAX    INTEGER { auto(1), normal(2), inverted(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite spectrum sensing: auto, normal, inverted"
+    ::= { inSatSetupInputEntry 13 }
+
+inSatSetupGainSelect OBJECT-TYPE
+    SYNTAX    INTEGER { normal(1), high(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite gain selection: normal, high"
+    ::= { inSatSetupInputEntry 14 }
+
+inSatSetupRollOff OBJECT-TYPE
+    SYNTAX    INTEGER { roll35(1), roll20(2), roll25(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite roll-off: roll20=20%, roll35=35%, roll25=25%"
+    ::= { inSatSetupInputEntry 15 }
+
+inSatSetupModulationMode OBJECT-TYPE
+    SYNTAX    INTEGER { dvbs(1), dvbs2(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite modulation mode: dvbs, dvb-s2"
+    ::= { inSatSetupInputEntry 16 }
+
+inSatSetupOutputMode OBJECT-TYPE
+    SYNTAX    INTEGER { normal(1), constellation(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Satellite output mode: normal, constellation"
+    ::= { inSatSetupInputEntry 17 }
+
+inputCardOfdm OBJECT IDENTIFIER
+    ::= { inputCards 4 }
+
+inputCardOfdmStatus OBJECT IDENTIFIER
+    ::= { inputCardOfdm 1 }
+
+inOfdmStatusSignalLock OBJECT-TYPE
+    SYNTAX    INTEGER { unlocked(1), locked(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM signal lock status: unlocked, locked"
+    ::= { inputCardOfdmStatus 1 }
+
+inOfdmStatusMerValue OBJECT-TYPE
+    SYNTAX    INTEGER (0..6400)
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM MER value: 0.00 to 64.00 (units = 0.01)"
+    ::= { inputCardOfdmStatus 2 }
+
+inOfdmStatusMerValid OBJECT-TYPE
+    SYNTAX    INTEGER { invalid(1), valid(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "Indicates that the MER value is valid."
+    ::= { inputCardOfdmStatus 3 }
+
+inOfdmStatusPostViterbiBer OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM post-viterbi Bit Error Rate (post viterbi) (units = 1E-9)"
+    ::= { inputCardOfdmStatus 4 }
+
+inOfdmStatusPostRsErrors OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM post-viterbi Reed-Solomon errors"
+    ::= { inputCardOfdmStatus 5 }
+
+inOfdmStatusGuardInterval OBJECT-TYPE
+    SYNTAX    INTEGER { pkt132(1), pkt116(2), pkt18(3), pkt14(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM Guard Interval: 1/32, 1/16, 1/8, 1/4"
+    ::= { inputCardOfdmStatus 6 }
+
+inOfdmStatusCarrierMode OBJECT-TYPE
+    SYNTAX    INTEGER { ofdm2k(1), ofdm8k(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM Carrier Mode: 2K, 8K"
+    ::= { inputCardOfdmStatus 7 }
+
+inOfdmStatusSpectrumInvert OBJECT-TYPE
+    SYNTAX    INTEGER { normal(1), inverted(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM Spectrum Inversion: normal, inverted"
+    ::= { inputCardOfdmStatus 8 }
+
+inOfdmStatusHierarchyType OBJECT-TYPE
+    SYNTAX    INTEGER { nonHier(1), hier1(2), hier2(3), hier4(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM Hierarchy Type: none, alpha 1, alpha 2, alpha 4"
+    ::= { inputCardOfdmStatus 9 }
+
+inOfdmStatusModulationMode OBJECT-TYPE
+    SYNTAX    INTEGER { modNone(1), modQpsk(2), mod16qam(3), mod64qam(4) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM Modulation Mode: none, QPSK, 16QAM, 64QAM"
+    ::= { inputCardOfdmStatus 10 }
+
+inOfdmStatusHighCodeRate OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), rate12(2), rate23(3), rate34(4), rate56(5), rate78(6)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM High FEC Rate:none, 1/2, 2/3, 3/4, 5/6, 7/8"
+    ::= { inputCardOfdmStatus 11 }
+
+inOfdmStatusLowCodeRate OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), rate12(2), rate23(3), rate34(4), rate56(5), rate78(6)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM Low FEC Rate: none, 1/2, 2/3, 3/4, 5/6, 7/8"
+    ::= { inputCardOfdmStatus 12 }
+
+inOfdmStatusSupportedFeatures OBJECT IDENTIFIER
+    ::= { inputCardOfdmStatus 13 }
+
+inOfdmStatusSoftwareVersion OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card software version"
+    ::= { inOfdmStatusSupportedFeatures 1 }
+
+inOfdmStatusHardwareVersion OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card hardware version"
+    ::= { inOfdmStatusSupportedFeatures 2 }
+
+inOfdmStatusFeatureChanSp6MHz OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 6MHz channel spacing:unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 3 }
+
+inOfdmStatusFeatureChanSp7MHz OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 7MHz channel spacing:unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 4 }
+
+inOfdmStatusFeatureChanSp8MHz OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 8MHz channel spacing:unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 5 }
+
+inOfdmStatusFeatureChanSp12MHz OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 12MHz channel spacing:unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 6 }
+
+inOfdmStatusFeatureCarrier2k OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card carrier 2K: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 7 }
+
+inOfdmStatusFeatureCarrier8k OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card carrier 8K: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 8 }
+
+inOfdmStatusFeatureStep125kHz OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 125kHz steps: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 9 }
+
+inOfdmStatusFeatureStep166kHz OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 166kHz steps: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 10 }
+
+inOfdmStatusFeatureInvSpectrum OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card inverted spectrum:unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 11 }
+
+inOfdmStatusFeatureBasebandInp OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card baseband input: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 12 }
+
+inOfdmStatusFeatureRfInput OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card RF input: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 13 }
+
+inOfdmStatusFeatureIf70Input OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 70MHz IF input: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 14 }
+
+inOfdmStatusFeatureIf140Input OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card 140MHz IF input: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 15 }
+
+inOfdmStatusFeatureFreqError OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card Frequency Error: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 16 }
+
+inOfdmStatusFeatureSysClkError OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card System Clock Error:unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 17 }
+
+inOfdmStatusFeatureChanRipple OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card Channel Ripple: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 18 }
+
+inOfdmStatusFeatureHierarchy OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card Hierarchy: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 19 }
+
+inOfdmStatusFeatureFreqRange OBJECT-TYPE
+    SYNTAX    INTEGER { unsupported(1), supported(2) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card Frequency Range: unsupported, supported"
+    ::= { inOfdmStatusSupportedFeatures 20 }
+
+inputCardOfdmSetup OBJECT IDENTIFIER
+    ::= { inputCardOfdm 2 }
+
+inOfdmSetupTunerFreq OBJECT-TYPE
+    SYNTAX    INTEGER (40000..900000)
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card tuner frequency (kHz)"
+    ::= { inputCardOfdmSetup 1 }
+
+inOfdmSetupAutoDetect OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(0), enabled(1) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card tuner auto-detect: disabled/enabled"
+    ::= { inputCardOfdmSetup 2 }
+
+inOfdmSetupAutoDetectTimeout OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card auto-detect timeout (ms)"
+    ::= { inputCardOfdmSetup 3 }
+
+inOfdmSetupBandPlanNumber OBJECT-TYPE
+    SYNTAX    INTEGER { none(0), australia(1), europeVhf(2), europeCatv(3), italy(4),
+                        morocco(5), newZealand(6), china(7), oirt(8), ireland(9),
+                        southAfrica(10), frenchOvPta(11), france(12), japan(13),
+                        usa(14), ccir(15), uk(16) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card band plan number:
+         0 = no band plan set (tune by frequency)
+         1 = Australia
+         2 = Europe VHF
+         3 = Europe CATV
+         4 = Italy
+         5 = Morocco
+         6 = New Zealand
+         7 = China
+         8 = OIRT
+         9 = Ireland
+         10 = South Africa
+         11 = French Overseas PTA
+         12 = France
+         13 = Japan
+         14 = USA
+         15 = CCIR
+         16 = UK"
+    ::= { inputCardOfdmSetup 4 }
+
+inOfdmSetupBandPlanName OBJECT-TYPE
+    SYNTAX    DisplayString
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card band plan name (e.g. name of country)"
+    ::= { inputCardOfdmSetup 5 }
+
+inOfdmSetupChannelNumber OBJECT-TYPE
+    SYNTAX    Uint32
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+        "OFDM card channel number within band plan
+        0 to number of channels in plan minus 1
+        Reports 65535 when the current band plan is 0 (NONE)
+        E.g:
+        65535  NONE
+        0 - 57 Australia
+        0 - 10 Europe VHF
+        0 - 16 Europe CATV
+        0 -  9 Italy
+        0 -  6 Morocco
+        0 -  9 New Zealand
+        0 - 61 China
+        0 - 11 OIRT
+        0 -  8 Ireland
+        0 -  9 South Africa
+        0 -  5 French Ov. PTA
+        0 -  9 France
+        0 - 62 Japan
+        0 - 81 USA
+        0 - 48 CCIR
+        0 - 48 UK
+        See inOfdmSetupChannelName for the channel name"
+    ::= { inputCardOfdmSetup 6 }
+
+inOfdmSetupChannelName OBJECT-TYPE
+    SYNTAX    DisplayString
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card channel name within band plan as shown on the front panel
+        See inOfdmSetupChannelNumber for the channel number"
+    ::= { inputCardOfdmSetup 7 }
+
+inOfdmSetupStepSize OBJECT-TYPE
+    SYNTAX    INTEGER { step125khz(0), step166khz(1) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card step size: 125kHz or 166kHz"
+    ::= { inputCardOfdmSetup 8 }
+
+inOfdmSetupChannelSpacing OBJECT-TYPE
+    SYNTAX    INTEGER { sp6mhz(0), sp7mhz(1), sp8mhz(2), sp9mhz(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card channel spacing: 6MHz, 7MHz, 8MHz or 12MHz"
+    ::= { inputCardOfdmSetup 9 }
+
+inOfdmSetupGuardInterval OBJECT-TYPE
+    SYNTAX    INTEGER { pkt132(0), pkt116(1), pkt18(2), pkt14(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card guard interval: 1/32, 1/16, 1/8, 1/4"
+    ::= { inputCardOfdmSetup 10 }
+
+inOfdmSetupCarrierMode OBJECT-TYPE
+    SYNTAX    INTEGER { ofdm2k(0), ofdm8k(1) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card carrier mode: 2K, 8K"
+    ::= { inputCardOfdmSetup 11 }
+
+inOfdmSetupInputType OBJECT-TYPE
+    SYNTAX    INTEGER { baseband(0), rf(1), if70mhz(2), if140mhz(3) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card input type: baseband, RF, 70MHz IF, 140MHz, IF"
+    ::= { inputCardOfdmSetup 12 }
+
+inOfdmSetupSpectrumInvert OBJECT-TYPE
+    SYNTAX    INTEGER { normal(0), inverted(1) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card spectrum inversion: normal, inverted"
+    ::= { inputCardOfdmSetup 13 }
+
+inOfdmSetupHierarchyStream OBJECT-TYPE
+    SYNTAX    INTEGER { none(0), lowPriority(1), highPriority(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "OFDM card hierarchy stream: none, low priority, high priority"
+    ::= { inputCardOfdmSetup 14 }
+
+inputCardMcd OBJECT IDENTIFIER
+    ::= { inputCards 5 }
+
+inputCardMcdStatus OBJECT IDENTIFIER
+    ::= { inputCardMcd 1 }
+
+inputCardMcdSetup OBJECT IDENTIFIER
+    ::= { inputCardMcd 2 }
+
+asiOutput OBJECT IDENTIFIER
+    ::= { tt1260 5 }
+
+asiOutputStatus OBJECT IDENTIFIER
+    ::= { asiOutput 1 }
+
+asiOutputSetup OBJECT IDENTIFIER
+    ::= { asiOutput 2 }
+
+asiOutputMode OBJECT-TYPE
+    SYNTAX    INTEGER { disabled(1), encrypted(2), partiallyDecrypted(3), decrypted(4)
+                        }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "ASI output mode: disabled, encrypted, partially-decrypted, decrypted"
+    ::= { asiOutputSetup 1 }
+
+asiOutputPacketLength OBJECT-TYPE
+    SYNTAX    INTEGER { packet188(1), packet204(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "ASI output packet length: 188 byte, 204 byte,"
+    ::= { asiOutputSetup 2 }
+
+director OBJECT IDENTIFIER
+    ::= { tt1260 6 }
+
+directorStatus OBJECT IDENTIFIER
+    ::= { director 1 }
+
+directorDownloadStatus OBJECT-TYPE
+    SYNTAX    DisplayString(SIZE(0..16))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "NDS Director download status (text)"
+    ::= { directorStatus 1 }
+
+directorDownloadMessage OBJECT-TYPE
+    SYNTAX    DisplayString(SIZE(0..25))
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "NDS Director download message (text)"
+    ::= { directorStatus 2 }
+
+directorCardStatus OBJECT-TYPE
+    SYNTAX    INTEGER { removed(1), inserted(2), failed(3), invalid(4), paired(5)
+                        }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "NDS Director card status: removed, inserted, failed, invalid, paired"
+    ::= { directorStatus 3 }
+
+directorSetup OBJECT IDENTIFIER
+    ::= { director 2 }
+
+directorCustomerId OBJECT-TYPE
+    SYNTAX    Uint8
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "NDS Director customer ID
+        THIS IS A FACTORY-ONLY PARAMETER AND DOES NOT APPEAR
+        ON PRODUCTION UNITS"
+    ::= { directorSetup 1 }
+
+ncp OBJECT IDENTIFIER
+    ::= { tt1260 7 }
+
+ncpStatus OBJECT IDENTIFIER
+    ::= { ncp 1 }
+
+ncpSetup OBJECT IDENTIFIER
+    ::= { ncp 2 }
+
+alarmSources OBJECT IDENTIFIER
+    ::= { tt1260 8 }
+
+alarmLock OBJECT IDENTIFIER
+    ::= { alarmSources 1 }
+
+alarmLockAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a Lock alarm"
+    ::= { alarmLock 1 }
+
+alarmLockSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a Lock alarm"
+    ::= { alarmLock 2 }
+
+alarmLockState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the Lock Alarm"
+    ::= { alarmLock 3 }
+
+alarmBer OBJECT IDENTIFIER
+    ::= { alarmSources 2 }
+
+alarmBerAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a BER alarm"
+    ::= { alarmBer 1 }
+
+alarmBerSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a BER alarm"
+    ::= { alarmBer 2 }
+
+alarmBerState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the BER Alarm"
+    ::= { alarmBer 3 }
+
+alarmBerThreshold OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "The BER threshold at which to activated the BER alarm"
+    ::= { alarmBer 4 }
+
+alarmMer OBJECT IDENTIFIER
+    ::= { alarmSources 3 }
+
+alarmMerAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a MER alarm"
+    ::= { alarmMer 1 }
+
+alarmMerSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a MER alarm"
+    ::= { alarmMer 2 }
+
+alarmMerState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the MER Alarm"
+    ::= { alarmMer 3 }
+
+alarmMerThreshold OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "The MER threshold at which to activated the MER alarm"
+    ::= { alarmMer 4 }
+
+alarmVideo OBJECT IDENTIFIER
+    ::= { alarmSources 4 }
+
+alarmVideoAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a Video alarm"
+    ::= { alarmVideo 1 }
+
+alarmVideoSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a Video
+        alarm"
+    ::= { alarmVideo 2 }
+
+alarmVideoState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the Video Alarm"
+    ::= { alarmVideo 3 }
+
+alarmAudio1 OBJECT IDENTIFIER
+    ::= { alarmSources 5 }
+
+alarmAudio1Action OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a Audio1 alarm"
+    ::= { alarmAudio1 1 }
+
+alarmAudio1Summary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a Audio1
+        alarm"
+    ::= { alarmAudio1 2 }
+
+alarmAudio1State OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the Audio1 Alarm"
+    ::= { alarmAudio1 3 }
+
+alarmAudio2 OBJECT IDENTIFIER
+    ::= { alarmSources 6 }
+
+alarmAudio2Action OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a Audio2 alarm"
+    ::= { alarmAudio2 1 }
+
+alarmAudio2Summary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a Audio2
+        alarm"
+    ::= { alarmAudio2 2 }
+
+alarmAudio2State OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the Audio2 Alarm"
+    ::= { alarmAudio2 3 }
+
+alarmAsync OBJECT IDENTIFIER
+    ::= { alarmSources 7 }
+
+alarmAsyncAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on an Async Data alarm"
+    ::= { alarmAsync 1 }
+
+alarmAsyncSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on an Async
+        Data alarm"
+    ::= { alarmAsync 2 }
+
+alarmAsyncState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the Async Alarm"
+    ::= { alarmAsync 3 }
+
+alarmCa OBJECT IDENTIFIER
+    ::= { alarmSources 8 }
+
+alarmCaAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a CA alarm"
+    ::= { alarmCa 1 }
+
+alarmCaSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a CA alarm"
+    ::= { alarmCa 2 }
+
+alarmCaState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the CA Alarm"
+    ::= { alarmCa 3 }
+
+alarmVbi OBJECT IDENTIFIER
+    ::= { alarmSources 9 }
+
+alarmVbiAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a VBI alarm"
+    ::= { alarmVbi 1 }
+
+alarmVbiSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a VBI alarm"
+    ::= { alarmVbi 2 }
+
+alarmVbiState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the VBI Alarm"
+    ::= { alarmVbi 3 }
+
+alarmTemperature OBJECT IDENTIFIER
+    ::= { alarmSources 10 }
+
+alarmTemperatureAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on a Temperature alarm"
+    ::= { alarmTemperature 1 }
+
+alarmTemperatureSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a Temperature
+        alarm"
+    ::= { alarmTemperature 2 }
+
+alarmTemperatureState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the Temperature Alarm"
+    ::= { alarmTemperature 3 }
+
+alarmEbno OBJECT IDENTIFIER
+    ::= { alarmSources 11 }
+
+alarmEbnoAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on an EbNo threshold alarm"
+    ::= { alarmEbno 1 }
+
+alarmEbnoSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a EbNo threshold
+        alarm"
+    ::= { alarmEbno 2 }
+
+alarmEbnoState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the EbNo threshold Alarm"
+    ::= { alarmEbno 3 }
+
+alarmEbnoThreshold OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "The EbNo threshold at which to activate the EbNo threshold alarm"
+    ::= { alarmEbno 4 }
+    
+alarmPreBer OBJECT IDENTIFIER
+    ::= { alarmSources 12 }
+
+alarmPreBerAction OBJECT-TYPE
+    SYNTAX    INTEGER { none(1), relay1(2), relay2(3), relay3(4), relay4(5), relay5(6),
+                        relay6(7) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies which relay should be activated on an PreBER threshold alarm"
+    ::= { alarmPreBer 1 }
+
+alarmPreBerSummary OBJECT-TYPE
+    SYNTAX    INTEGER { off(1), on(2) }
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "Specifies whether the summary relay should be activated on a PreBER threshold
+        alarm"
+    ::= { alarmPreBer 2 }
+
+alarmPreBerState OBJECT-TYPE
+    SYNTAX    INTEGER { unknown(1), on(2), off(3) }
+    ACCESS    read-only
+    STATUS    mandatory
+    DESCRIPTION
+       "The current state of the PreBER threshold Alarm"
+    ::= { alarmPreBer 3 }
+
+alarmPreBerThreshold OBJECT-TYPE
+    SYNTAX    INTEGER
+    ACCESS    read-write
+    STATUS    mandatory
+    DESCRIPTION
+       "The PreBER threshold at which to activate the PreBER threshold alarm"
+    ::= { alarmPreBer 4 }
+
+custom OBJECT IDENTIFIER
+    ::= { tt1260 9 }
+
+presets OBJECT IDENTIFIER
+    ::= { tt1260 10 }
+
+END

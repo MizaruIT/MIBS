@@ -1,0 +1,231 @@
+    SR-COMMUNITY-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+        MODULE-IDENTITY, OBJECT-TYPE, Integer32, Counter32, UInteger32
+            FROM SNMPv2-SMI
+        RowStatus, TestAndIncr
+             FROM SNMPv2-TC
+        MemoryType, TransportLabel, AuthName, SnmpID
+             FROM V2ADMIN-MIB
+        MODULE-COMPLIANCE, OBJECT-GROUP
+            FROM SNMPv2-CONF;
+
+    srCommunityMIB MODULE-IDENTITY
+        LAST-UPDATED "9508121700"
+        ORGANIZATION "IETF SNMPv2 Working Group"
+        CONTACT-INFO
+              "snmpv2@tis.com
+              Full contact info to be provided . . ."
+        DESCRIPTION
+              "The MIB module for configuring SNMPv2 agents."
+        ::= { snmpResearchMIBs 33 }
+
+    --
+    -- Spin lock for modification of the srCommunityTable
+    --
+
+    srCommunitySpinLock OBJECT-TYPE
+        SYNTAX       TestAndIncr
+        MAX-ACCESS   read-write
+        STATUS       current
+        DESCRIPTION
+              "An advisory lock used to allow several cooperating SNMPv2
+              entities, all acting in a manager role, to coordinate their
+              use of SNMPv2 set operations to entries in the srCommunityTable.
+              A manager application should include the value of
+              srCommunitySpinLock in every set operation which accesses the
+              srCommunityTable.  Since this is an advisory lock, entities
+              acting in an agent role do not enforce the use of
+              srCommunitySpinLock."
+        ::= { srCommunityMIB 1 }
+
+    --
+    -- The srCommunityTable contains a database of community strings.
+    -- This table provides mappings between a community string, and the
+
+
+
+
+
+
+
+
+
+
+
+    -- parameters required for processing SNMPv2 messages.
+    --
+    -- Note that this table does not include an authSnmpID, as this
+    -- value will always be equal to the snmpID object of the agent
+    -- which implements the table.
+    --
+
+    srCommunityTable OBJECT-TYPE
+        SYNTAX       SEQUENCE OF SrCommunityEntry
+        MAX-ACCESS   not-accessible
+        STATUS       current
+        DESCRIPTION
+              "The database of community strings."
+        ::= { srCommunityMIB 2 }
+
+    srCommunityEntry OBJECT-TYPE
+        SYNTAX       SrCommunityEntry
+        MAX-ACCESS   not-accessible
+        STATUS       current
+        DESCRIPTION
+              "Information about a particular community string."
+        INDEX { srCommunityAuthSnmpID, IMPLIED srCommunityName }
+        ::= { srCommunityTable 1 }
+
+    SrCommunityEntry ::= SEQUENCE {
+        srCommunityAuthSnmpID          SnmpID,
+        srCommunityName                AuthName,
+        srCommunityGroupName           AuthName,
+        srCommunityContextSnmpID       SnmpID,
+        srCommunityContextName         AuthName,
+        srCommunityTransportLabel      TransportLabel,
+        srCommunityMemoryType          MemoryType,
+        srCommunityStatus              RowStatus
+    }
+
+    srCommunityAuthSnmpID OBJECT-TYPE
+        SYNTAX       SnmpID
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+              "The authSnmpID to which a community string maps. For
+              non-proxy and incoming proxy community strings, this
+              should always be equal to the local SNMPv2 entity's
+              snmpID object.  For outgoing proxy community strings,
+              this should be equal to the snmpID of the destination
+              SNMPv2 entity."
+        ::= { srCommunityEntry 1 }
+
+    srCommunityName OBJECT-TYPE
+        SYNTAX       OCTET STRING (SIZE(1..255))
+        MAX-ACCESS   not-accessible
+        STATUS       current
+        DESCRIPTION
+              "The community string for which a row in this table represents
+              a configuration.  This value is also used as an identityName
+              when mapping between community strings and identityNames."
+        ::= { srCommunityEntry 2 }
+
+    srCommunityGroupName OBJECT-TYPE
+        SYNTAX       AuthName
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+              "The SNMPv2 groupName to which a community string maps.
+              This object is used to determine access rights for a
+              community string through the acTable."
+        ::= { srCommunityEntry 3 }
+
+    srCommunityContextSnmpID OBJECT-TYPE
+        SYNTAX       SnmpID
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+              "The v2ContextSnmpID to which a community string maps.
+              This object specifies the snmpID of the context in
+              which management information is accessible to this community."
+        ::= { srCommunityEntry 4 }
+
+    srCommunityContextName OBJECT-TYPE
+        SYNTAX       AuthName
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+              "The v2ContextName to which a community string maps.
+              This object specifies the context in which management
+              information is accessible to this community."
+        ::= { srCommunityEntry 5 }
+
+    srCommunityTransportLabel OBJECT-TYPE
+        SYNTAX       TransportLabel
+
+
+
+
+
+
+
+
+
+
+
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+              "This object specifies a set of transport endpoints from which
+              an agent will accept management requests.  If a management
+              request containing this community is received on a transport
+              endpoint other than the transport endpoints identified
+              by this object, the request is deemed unauthentic.
+
+              The transports identified by this object are specified in
+              the transportTable.  Entries in the transportTable whose
+              transportLabel value are equal to this object are identified.
+
+              If the value of this object has zero-length, or if the
+              transportTable is not implemented, then transport endpoints
+              are not checked when authenticating messages containing
+              this community string."
+        ::= { srCommunityEntry 6 }
+
+    srCommunityMemoryType OBJECT-TYPE
+        SYNTAX       MemoryType
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+              "The storage type for this conceptual row in the
+              srCommunityTable.  Conceptual rows having the value 'permanent'
+              need not allow write-access to any columnar object in the
+              row."
+        ::= { srCommunityEntry 7 }
+
+    srCommunityStatus OBJECT-TYPE
+        SYNTAX       RowStatus
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+              "The status of this conceptual row in the srCommunityTable.
+
+              An entry in this table is not qualified for activation
+              until instance of all corresponding columns have been
+              initialized, either through default values, or through
+              Set operations."
+        ::= { srCommunityEntry 8 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    srCommunityGroup OBJECT-GROUP
+        OBJECTS {
+                 srCommunitySpinLock,
+                 srCommunityAuthSnmpID,
+                 srCommunityName,
+                 srCommunityGroupName,
+                 srCommunityContextSnmpID,
+                 srCommunityContextName,
+                 srCommunityTransportLabel,
+                 srCommunityMemoryType,
+                 srCommunityStatus
+                }
+        STATUS    current
+        DESCRIPTION
+              "A collection of objects providing for configuration of an
+              SNMPv1 or SNMPv2c agent."
+        ::= { srCommunityMIB 3 }
+
+END

@@ -1,0 +1,2116 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero",
+      "InterfaceIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddress",
+      "InetVersion",
+      "InetAddressPrefixLength",
+      "InetAddressType"
+    ],
+    "Q-BRIDGE-MIB": [
+      "VlanId"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MibIdentifier",
+      "iso",
+      "Bits",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "Unsigned32",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "TimeTicks",
+      "MODULE-IDENTITY",
+      "Gauge32",
+      "IpAddress",
+      "Counter64",
+      "OBJECT-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "RowStatus",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "dlinkSwIpMcastExtMIB": {
+    "name": "dlinkSwIpMcastExtMIB",
+    "oid": "1.3.6.1.4.1.171.14.55",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-05-02 00:00",
+        "description": "Initial revision of this MIB module."
+      },
+      {
+        "revision": "2014-06-16 00:00",
+        "description": "Modify 'dIpmcExtStaticMrouteTable ', 'dIpmcExtRpfTable',dIpmcExtGrpOutgoingPortTable and 'dIpmcExtGrpOutgoingPortTable'. Modify the description of objects in 'dIpmcExtIgmpIfStatTable', 'dIpmcExtPimIfStatTable', and 'dIpmcExtDvmrpIfStatTable'."
+      },
+      {
+        "revision": "2014-07-18 00:00",
+        "description": "Modify the OID of all rowstatus objects to 99."
+      },
+      {
+        "revision": "2014-08-01 00:00",
+        "description": "Remove objects IpmcExtStaticMrouteDistance and dIpmcExtRpfDistance because we don't have plan to implement these objects now. Add the description for setting the value of dIpmcExtStaticMrouteRpfAddr to zero."
+      }
+    ],
+    "lastupdated": "201408010000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "This MIB module defines objects for managing IP Multicast."
+  },
+  "dIpmcExtNotifications": {
+    "name": "dIpmcExtNotifications",
+    "oid": "1.3.6.1.4.1.171.14.55.0",
+    "class": "objectidentity"
+  },
+  "dIpmcExtObjects": {
+    "name": "dIpmcExtObjects",
+    "oid": "1.3.6.1.4.1.171.14.55.1",
+    "class": "objectidentity"
+  },
+  "dIpmcExtConformance": {
+    "name": "dIpmcExtConformance",
+    "oid": "1.3.6.1.4.1.171.14.55.2",
+    "class": "objectidentity"
+  },
+  "dIpmcExtMcastRouteEnabled": {
+    "name": "dIpmcExtMcastRouteEnabled",
+    "oid": "1.3.6.1.4.1.171.14.55.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "ipv4": 0,
+        "ipv6": 1
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates whether the specific multicast routing is enabled. This is the enhancement of the ipMcastEnabled in IPMCAST-MIB. If ipv4(0) bit is set to 1, then IPv4 multicast routing is enabled; If ipv6(1) bit is set to 1, then IPv6 multicast routing is enabled. "
+  },
+  "dIpmcExtIpv4McastTableLookupMode": {
+    "name": "dIpmcExtIpv4McastTableLookupMode",
+    "oid": "1.3.6.1.4.1.171.14.55.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ip": 1,
+          "mac": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the lookup mode of IPv4 multicast forwarding table. 'ip' - forwarding IP multicast packets based on IP. 'mac' - forwarding IP multicast packets based on MAC. "
+  },
+  "dIpmcExtClearStatisticsObjects": {
+    "name": "dIpmcExtClearStatisticsObjects",
+    "oid": "1.3.6.1.4.1.171.14.55.1.3",
+    "class": "objectidentity"
+  },
+  "dIpmcExtClearStatistics": {
+    "name": "dIpmcExtClearStatistics",
+    "oid": "1.3.6.1.4.1.171.14.55.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "igmp": 0,
+        "pim": 1,
+        "dvmrp": 2
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to clear the multicast protocol packet statistics when set to the corresponding bit to '1'. When read, '00'H (no enumerated values are set) is returned."
+  },
+  "dIpmcExtBoundaryTable": {
+    "name": "dIpmcExtBoundaryTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of interface-specific configuration about access lists to avoid leaking of the limited scoped multicast traffic in private domain across the domain boundary interfaces."
+  },
+  "dIpmcExtBoundaryEntry": {
+    "name": "dIpmcExtBoundaryEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtBoundaryVersion",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtBoundaryIfIdx",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtBoundaryAccessList",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtBoundaryApplyDirection",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is used to avoid leaking of the limited scoped multicast traffic in private domain across the domain boundary interfaces."
+  },
+  "dIpmcExtBoundaryVersion": {
+    "name": "dIpmcExtBoundaryVersion",
+    "oid": "1.3.6.1.4.1.171.14.55.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetVersion",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the IP protocol version of the entry. "
+  },
+  "dIpmcExtBoundaryIfIdx": {
+    "name": "dIpmcExtBoundaryIfIdx",
+    "oid": "1.3.6.1.4.1.171.14.55.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the ifIndex of the entry. Only VLAN interface is valid. "
+  },
+  "dIpmcExtBoundaryAccessList": {
+    "name": "dIpmcExtBoundaryAccessList",
+    "oid": "1.3.6.1.4.1.171.14.55.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the name of a standard IP access list which includes a list of permit or denied (*,G) or (S,G) entries."
+  },
+  "dIpmcExtBoundaryApplyDirection": {
+    "name": "dIpmcExtBoundaryApplyDirection",
+    "oid": "1.3.6.1.4.1.171.14.55.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inbound": 1,
+          "outbound": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The filtering setting for inbound direction filters the multicast user traffic arriving at the interface based on the specified access list. The filtering setting for outbound direction filters the PIM join message or IGMP join message arrive at the interface based on the specified access list."
+  },
+  "dIpmcExtBoundaryRowStatus": {
+    "name": "dIpmcExtBoundaryRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.55.1.4.1.99",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dIpmcExtStaticMrouteTable": {
+    "name": "dIpmcExtStaticMrouteTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table consists of a list of static multicast routes."
+  },
+  "dIpmcExtStaticMrouteEntry": {
+    "name": "dIpmcExtStaticMrouteEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtStaticMrouteSrcNetType",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtStaticMrouteSrcNetAddr",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtStaticMrouteSrcNetPreLen",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is used to configure a static multicast route."
+  },
+  "dIpmcExtStaticMrouteSrcNetType": {
+    "name": "dIpmcExtStaticMrouteSrcNetType",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the address type of the multicast source network."
+  },
+  "dIpmcExtStaticMrouteSrcNetAddr": {
+    "name": "dIpmcExtStaticMrouteSrcNetAddr",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the address of the multicast source network."
+  },
+  "dIpmcExtStaticMrouteSrcNetPreLen": {
+    "name": "dIpmcExtStaticMrouteSrcNetPreLen",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the prefix length of the multicast source network."
+  },
+  "dIpmcExtStaticMrouteRpfType": {
+    "name": "dIpmcExtStaticMrouteRpfType",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "neighborAddr": 1,
+          "interfaceId": 2
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the type of the RPF (Reverse Path Forwarding). neighborAddr - The RPF address for the route, a lookup in the routing table will be done to resolve the RPF interface. interfaceId - The interface which the reverse path forwarding to reach the network. "
+  },
+  "dIpmcExtStaticMrouteRpfAddr": {
+    "name": "dIpmcExtStaticMrouteRpfAddr",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the address of the RPF neighbor router. This object is meaningful when dIpmcExtStaticMrouteRpfType is 'neighborAddr'. If the value of this obejct is set to zero, it indicates that RPF check will be always failed for multicast traffic sent from the source network specified by this static multicast route. The InetAddressType, e.g., IPv4 or IPv6, is identified by the dIpmcExtStaticMrouteSrcNetType variable in the dIpmcExtStaticMrouteTable table. "
+  },
+  "dIpmcExtStaticMrouteRpfIfIndex": {
+    "name": "dIpmcExtStaticMrouteRpfIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the ifIndex of the interface where the RPF neighbor IP address is located. When set this object to ifIndex of null0, the RPF check result will always fail. This object is meaningful when dIpmcExtStaticMrouteRpfType is 'interfaceId'. "
+  },
+  "dIpmcExtStaticMrouteRowStatus": {
+    "name": "dIpmcExtStaticMrouteRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.55.1.5.1.99",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row, by which rows in this table can be created and destroyed. "
+  },
+  "dIpmcExtCtrlPktCpuFilterTable": {
+    "name": "dIpmcExtCtrlPktCpuFilterTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table consists of a list of information to filter layer 3 control packets. An entry appears in this table for each interface on which the filtering is configurable."
+  },
+  "dIpmcExtCtrlPktCpuFilterEntry": {
+    "name": "dIpmcExtCtrlPktCpuFilterEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtCtrlPktCpuFilterIfIdx",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry identifies the layer 3 control packets filtering on a capable interface."
+  },
+  "dIpmcExtCtrlPktCpuFilterIfIdx": {
+    "name": "dIpmcExtCtrlPktCpuFilterIfIdx",
+    "oid": "1.3.6.1.4.1.171.14.55.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ifIndex value that uniquely identifies the interface to which this entry is applicable."
+  },
+  "dIpmcExtCtrlPktCpuFilterV4Proto": {
+    "name": "dIpmcExtCtrlPktCpuFilterV4Proto",
+    "oid": "1.3.6.1.4.1.171.14.55.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "dvmrp": 0,
+        "pim": 1,
+        "igmpQuery": 2,
+        "ospf": 3,
+        "rip": 4,
+        "vrrp": 5
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates whether the IPv4 layer 3 control packets is filtered then not sent to the corresponding protocol stack. When the bit is '1', the corresponding IPv4 layer 3 control packets will be filtered. "
+  },
+  "dIpmcExtCtrlPktCpuFilterV6Proto": {
+    "name": "dIpmcExtCtrlPktCpuFilterV6Proto",
+    "oid": "1.3.6.1.4.1.171.14.55.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "pim": 0,
+        "mldQuery": 1,
+        "ospf": 2,
+        "ripng": 3,
+        "nd": 4
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates whether the IPv6 layer 3 control packets is filtered then not sent to the corresponding protocol stack. When the bit is '1', the corresponding IPv6 layer 3 control packets will be filtered. "
+  },
+  "dIpmcExtCtrlPktReplacePriTable": {
+    "name": "dIpmcExtCtrlPktReplacePriTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table consists of a list of Priority and DSCP values of control packets which are forwarded by software."
+  },
+  "dIpmcExtCtrlPktReplacePriEntry": {
+    "name": "dIpmcExtCtrlPktReplacePriEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtCtrlPktRepPriPotocol",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry consists of the Priority and DSCP values configured for a protocol."
+  },
+  "dIpmcExtCtrlPktRepPriPotocol": {
+    "name": "dIpmcExtCtrlPktRepPriPotocol",
+    "oid": "1.3.6.1.4.1.171.14.55.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "v4dvmrp": 1,
+          "v4pim": 2,
+          "igmpQuery": 3,
+          "v4ospf": 4,
+          "rip": 5,
+          "v4vrrp": 6,
+          "v6pim": 7,
+          "mld": 8,
+          "v6ospf": 9,
+          "ripng": 10,
+          "nd": 11
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the protocol type of the entry. "
+  },
+  "dIpmcExtCtrlPktRepDscp": {
+    "name": "dIpmcExtCtrlPktRepDscp",
+    "oid": "1.3.6.1.4.1.171.14.55.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the DSCP value to replace the DSCP field of the protocol control packets. The value of -1 indicates the replacing DSCP is not enabled. "
+  },
+  "dIpmcExtCtrlPktRepPriority": {
+    "name": "dIpmcExtCtrlPktRepPriority",
+    "oid": "1.3.6.1.4.1.171.14.55.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the Priority value to replace the Priority field of the protocol control packets. The value of -1 indicates the replacing Priority is not enabled. "
+  },
+  "dIpmcExtCtrlPktRepPriRowStatus": {
+    "name": "dIpmcExtCtrlPktRepPriRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.55.1.7.1.99",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The row status variable, used according to installation and removal conventions for conceptual rows."
+  },
+  "dIpmcExtRpfTable": {
+    "name": "dIpmcExtRpfTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table consists of Reverse Path Forwarding (RPF) information."
+  },
+  "dIpmcExtRpfEntry": {
+    "name": "dIpmcExtRpfEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfAddrType",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfAddr",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfRouteAddr",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfRoutePrefixLen",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry consists of Reverse Path Forwarding (RPF) information."
+  },
+  "dIpmcExtRpfAddrType": {
+    "name": "dIpmcExtRpfAddrType",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the type of the RPF address. "
+  },
+  "dIpmcExtRpfAddr": {
+    "name": "dIpmcExtRpfAddr",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the RPF address of the entry. "
+  },
+  "dIpmcExtRpfRouteAddr": {
+    "name": "dIpmcExtRpfRouteAddr",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the route that matched against the source. The InetAddressType, e.g., IPv4 or IPv6, is identified by the dIpmcExtRpfAddrType variable in the dIpmcExtRpfTable table. "
+  },
+  "dIpmcExtRpfRoutePrefixLen": {
+    "name": "dIpmcExtRpfRoutePrefixLen",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the prefix length of the route that matched against the source. "
+  },
+  "dIpmcExtRpfIfIndex": {
+    "name": "dIpmcExtRpfIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the ifIndex of the interface where the RPF neighbor IP address is located. A value of 0 indicates that this object is not applicable."
+  },
+  "dIpmcExtRpfNeighborAddr": {
+    "name": "dIpmcExtRpfNeighborAddr",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the RPF neighbor address. The InetAddressType, e.g., IPv4 or IPv6, is identified by the dIpmcExtRpfAddrType variable in the dIpmcExtRpfTable table. "
+  },
+  "dIpmcExtRpfType": {
+    "name": "dIpmcExtRpfType",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unicast": 1,
+          "static": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the origination of RPF information."
+  },
+  "dIpmcExtRpfMetricValid": {
+    "name": "dIpmcExtRpfMetricValid",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates whether the dIpmcExtRpfMetric of the entry is applicable."
+  },
+  "dIpmcExtRpfMetric": {
+    "name": "dIpmcExtRpfMetric",
+    "oid": "1.3.6.1.4.1.171.14.55.1.8.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the unicast routing metric. "
+  },
+  "dIpmcExtGrpOutgoingPortTable": {
+    "name": "dIpmcExtGrpOutgoingPortTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table containing information on the outgoing ports for IP multicast datagrams."
+  },
+  "dIpmcExtGrpOutgoingPortEntry": {
+    "name": "dIpmcExtGrpOutgoingPortEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingAddrType",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingVlanIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingGroupAddr",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingPfxLen",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingSrcAddr",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingSrcPfxLen",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingPort",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry contains the information about outgoing port to which IP multicast datagrams from particular sources to an IP multicast group address. "
+  },
+  "dIpmcExtGrpOutgoingAddrType": {
+    "name": "dIpmcExtGrpOutgoingAddrType",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A value indicating the address type of the group address "
+  },
+  "dIpmcExtGrpOutgoingVlanIndex": {
+    "name": "dIpmcExtGrpOutgoingVlanIndex",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanId",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This indicates the VLAN ID of the entry."
+  },
+  "dIpmcExtGrpOutgoingGroupAddr": {
+    "name": "dIpmcExtGrpOutgoingGroupAddr",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The IP multicast group address of the entry. "
+  },
+  "dIpmcExtGrpOutgoingPfxLen": {
+    "name": "dIpmcExtGrpOutgoingPfxLen",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The length in bits of the multicast group address. "
+  },
+  "dIpmcExtGrpOutgoingSrcAddr": {
+    "name": "dIpmcExtGrpOutgoingSrcAddr",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A value indicating the source address. The InetAddressType, e.g., IPv4 or IPv6, is identified by the dIpmcExtGrpOutgoingAddrType variable in the dIpmcExtGrpOutgoingPortTable table. "
+  },
+  "dIpmcExtGrpOutgoingSrcPfxLen": {
+    "name": "dIpmcExtGrpOutgoingSrcPfxLen",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The length in bits of the source address. "
+  },
+  "dIpmcExtGrpOutgoingPort": {
+    "name": "dIpmcExtGrpOutgoingPort",
+    "oid": "1.3.6.1.4.1.171.14.55.1.9.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ifIndex value of the outgpoing port. "
+  },
+  "dIpmcExtStatisticsObjects": {
+    "name": "dIpmcExtStatisticsObjects",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10",
+    "class": "objectidentity"
+  },
+  "dIpmcExtIgmpPortIfStatTable": {
+    "name": "dIpmcExtIgmpPortIfStatTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of statistics about IGMP."
+  },
+  "dIpmcExtIgmpPortIfStatEntry": {
+    "name": "dIpmcExtIgmpPortIfStatEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the dIpmcExtIgmpPortIfStatTable."
+  },
+  "dIpmcExtIgmpPortIfIndex": {
+    "name": "dIpmcExtIgmpPortIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the ifIndex."
+  },
+  "dIpmcExtIgmpPortIfV1RxReport": {
+    "name": "dIpmcExtIgmpPortIfV1RxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP v1 Report."
+  },
+  "dIpmcExtIgmpPortIfV1RxQuery": {
+    "name": "dIpmcExtIgmpPortIfV1RxQuery",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP v1 Query packets."
+  },
+  "dIpmcExtIgmpPortIfV1TxReport": {
+    "name": "dIpmcExtIgmpPortIfV1TxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP v1 Report packets ."
+  },
+  "dIpmcExtIgmpPortIfV1TxQuery": {
+    "name": "dIpmcExtIgmpPortIfV1TxQuery",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP v1 Query packets."
+  },
+  "dIpmcExtIgmpPortIfV2RxReport": {
+    "name": "dIpmcExtIgmpPortIfV2RxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP v2 Report packets."
+  },
+  "dIpmcExtIgmpPortIfV2RxQuery": {
+    "name": "dIpmcExtIgmpPortIfV2RxQuery",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP v2 Query packets."
+  },
+  "dIpmcExtIgmpPortIfV2RxLeave": {
+    "name": "dIpmcExtIgmpPortIfV2RxLeave",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP v2 Leave packets."
+  },
+  "dIpmcExtIgmpPortIfV2TxReport": {
+    "name": "dIpmcExtIgmpPortIfV2TxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP v2 Report packets."
+  },
+  "dIpmcExtIgmpPortIfV2TxQuery": {
+    "name": "dIpmcExtIgmpPortIfV2TxQuery",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP v2 Query packets."
+  },
+  "dIpmcExtIgmpPortIfV2TxLeave": {
+    "name": "dIpmcExtIgmpPortIfV2TxLeave",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP v2 Leave packets."
+  },
+  "dIpmcExtIgmpPortIfV3RxReport": {
+    "name": "dIpmcExtIgmpPortIfV3RxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP v3 Report packets."
+  },
+  "dIpmcExtIgmpPortIfV3RxQuery": {
+    "name": "dIpmcExtIgmpPortIfV3RxQuery",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP v3 Query packets."
+  },
+  "dIpmcExtIgmpPortIfV3TxReport": {
+    "name": "dIpmcExtIgmpPortIfV3TxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP v3 Report packets."
+  },
+  "dIpmcExtIgmpPortIfV3TxQuery": {
+    "name": "dIpmcExtIgmpPortIfV3TxQuery",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP v3 Query packets."
+  },
+  "dIpmcExtIgmpPortIfRxUnknown": {
+    "name": "dIpmcExtIgmpPortIfRxUnknown",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received IGMP packets which cannot be classified into current message type."
+  },
+  "dIpmcExtIgmpPortIfTxUnknown": {
+    "name": "dIpmcExtIgmpPortIfTxUnknown",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP packets which cannot be classified into current message type."
+  },
+  "dIpmcExtPimPortIfStatTable": {
+    "name": "dIpmcExtPimPortIfStatTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of statistics about PIM."
+  },
+  "dIpmcExtPimPortIfStatEntry": {
+    "name": "dIpmcExtPimPortIfStatEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfVersion",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the dIpmcExtPimPortIfStatTable."
+  },
+  "dIpmcExtPimPortIfIndex": {
+    "name": "dIpmcExtPimPortIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the ifIndex."
+  },
+  "dIpmcExtPimPortIfVersion": {
+    "name": "dIpmcExtPimPortIfVersion",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetVersion",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the IP protocol version of the entry."
+  },
+  "dIpmcExtPimPortIfRxHello": {
+    "name": "dIpmcExtPimPortIfRxHello",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Hello packets."
+  },
+  "dIpmcExtPimPortIfTxHello": {
+    "name": "dIpmcExtPimPortIfTxHello",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Hello packets."
+  },
+  "dIpmcExtPimPortIfRxRegister": {
+    "name": "dIpmcExtPimPortIfRxRegister",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Register packets."
+  },
+  "dIpmcExtPimPortIfTxRegister": {
+    "name": "dIpmcExtPimPortIfTxRegister",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Register packets."
+  },
+  "dIpmcExtPimPortIfRxRegisterStop": {
+    "name": "dIpmcExtPimPortIfRxRegisterStop",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Register-Stop packets."
+  },
+  "dIpmcExtPimPortIfTxRegisterStop": {
+    "name": "dIpmcExtPimPortIfTxRegisterStop",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Register-Stop packets."
+  },
+  "dIpmcExtPimPortIfRxJoinPrune": {
+    "name": "dIpmcExtPimPortIfRxJoinPrune",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Join/Prune packets."
+  },
+  "dIpmcExtPimPortIfTxJoinPrune": {
+    "name": "dIpmcExtPimPortIfTxJoinPrune",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Join/Prune packets."
+  },
+  "dIpmcExtPimPortIfRxBootstrap": {
+    "name": "dIpmcExtPimPortIfRxBootstrap",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Bootstrap packets."
+  },
+  "dIpmcExtPimPortIfTxBootstrap": {
+    "name": "dIpmcExtPimPortIfTxBootstrap",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Bootstrap packets."
+  },
+  "dIpmcExtPimPortIfRxAssert": {
+    "name": "dIpmcExtPimPortIfRxAssert",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Assert packets."
+  },
+  "dIpmcExtPimPortIfTxAssert": {
+    "name": "dIpmcExtPimPortIfTxAssert",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Assert packets."
+  },
+  "dIpmcExtPimPortIfRxGraft": {
+    "name": "dIpmcExtPimPortIfRxGraft",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Graft packets."
+  },
+  "dIpmcExtPimPortIfTxGraft": {
+    "name": "dIpmcExtPimPortIfTxGraft",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Graft packets."
+  },
+  "dIpmcExtPimPortIfRxGraftAck": {
+    "name": "dIpmcExtPimPortIfRxGraftAck",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Graft-Ack packets."
+  },
+  "dIpmcExtPimPortIfTxGraftAck": {
+    "name": "dIpmcExtPimPortIfTxGraftAck",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Graft-Ack packets."
+  },
+  "dIpmcExtPimPortIfRxCRpAdv": {
+    "name": "dIpmcExtPimPortIfRxCRpAdv",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM Candidate-RP-Advertisement packets."
+  },
+  "dIpmcExtPimPortIfTxCRpAdv": {
+    "name": "dIpmcExtPimPortIfTxCRpAdv",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM Candidate-RP-Advertisement packets."
+  },
+  "dIpmcExtPimPortIfRxStateRefresh": {
+    "name": "dIpmcExtPimPortIfRxStateRefresh",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM-DM State Refresh packets."
+  },
+  "dIpmcExtPimPortIfTxStateRefresh": {
+    "name": "dIpmcExtPimPortIfTxStateRefresh",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM-DM State Refresh packets."
+  },
+  "dIpmcExtPimPortIfRxUnknown": {
+    "name": "dIpmcExtPimPortIfRxUnknown",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM packets which cannot be classified into current message type."
+  },
+  "dIpmcExtPimPortIfTxUnknown": {
+    "name": "dIpmcExtPimPortIfTxUnknown",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.2.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted IGMP packets which cannot be classified into current message type."
+  },
+  "dIpmcExtDvmrpPortIfStatTable": {
+    "name": "dIpmcExtDvmrpPortIfStatTable",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains a list of statistics about DVMRP."
+  },
+  "dIpmcExtDvmrpPortIfStatEntry": {
+    "name": "dIpmcExtDvmrpPortIfStatEntry",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the dIpmcExtDvmrpPortIfStatTable."
+  },
+  "dIpmcExtDvmrpPortIfIndex": {
+    "name": "dIpmcExtDvmrpPortIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the ifIndex."
+  },
+  "dIpmcExtDvmrpPortIfRxProbe": {
+    "name": "dIpmcExtDvmrpPortIfRxProbe",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received DVMRP Probe packets."
+  },
+  "dIpmcExtDvmrpPortIfTxProbe": {
+    "name": "dIpmcExtDvmrpPortIfTxProbe",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted DVMRP Probe packets."
+  },
+  "dIpmcExtDvmrpPortIfRxReport": {
+    "name": "dIpmcExtDvmrpPortIfRxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received DVMRP Report packets."
+  },
+  "dIpmcExtDvmrpPortIfTxReport": {
+    "name": "dIpmcExtDvmrpPortIfTxReport",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted DVMRP Report packets."
+  },
+  "dIpmcExtDvmrpPortIfRxPrune": {
+    "name": "dIpmcExtDvmrpPortIfRxPrune",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received DVMRP Prune packets."
+  },
+  "dIpmcExtDvmrpPortIfTxPrune": {
+    "name": "dIpmcExtDvmrpPortIfTxPrune",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted DVMRP Prune packets."
+  },
+  "dIpmcExtDvmrpPortIfRxGraft": {
+    "name": "dIpmcExtDvmrpPortIfRxGraft",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received DVMRP Graft packets."
+  },
+  "dIpmcExtDvmrpPortIfTxGraft": {
+    "name": "dIpmcExtDvmrpPortIfTxGraft",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted DVMRP Graft packets."
+  },
+  "dIpmcExtDvmrpPortIfRxGraftAck": {
+    "name": "dIpmcExtDvmrpPortIfRxGraftAck",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received DVMRP Graft-Ack packets."
+  },
+  "dIpmcExtDvmrpPortIfTxGraftAck": {
+    "name": "dIpmcExtDvmrpPortIfTxGraftAck",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted DVMRP Graft-Ack packets."
+  },
+  "dIpmcExtDvmrpPortIfRxUnknown": {
+    "name": "dIpmcExtDvmrpPortIfRxUnknown",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of received PIM packets which cannot be classified into current message type."
+  },
+  "dIpmcExtDvmrpPortIfTxUnknown": {
+    "name": "dIpmcExtDvmrpPortIfTxUnknown",
+    "oid": "1.3.6.1.4.1.171.14.55.1.10.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates the number of transmitted PIM packets which cannot be classified into current message type."
+  },
+  "dIpmcExtCompliances": {
+    "name": "dIpmcExtCompliances",
+    "oid": "1.3.6.1.4.1.171.14.55.2.1",
+    "class": "objectidentity"
+  },
+  "dIpmcExtCompliance": {
+    "name": "dIpmcExtCompliance",
+    "oid": "1.3.6.1.4.1.171.14.55.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dIpmcExtGeneralCtrlGroup",
+        "module": "DLINKSW-IPMCAST-EXT-MIB"
+      },
+      {
+        "object": "dIpmcExtBoundaryGroup",
+        "module": "DLINKSW-IPMCAST-EXT-MIB"
+      },
+      {
+        "object": "dIpmcExtMrouteGroup",
+        "module": "DLINKSW-IPMCAST-EXT-MIB"
+      },
+      {
+        "object": "dIpmcExtRpfGroup",
+        "module": "DLINKSW-IPMCAST-EXT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-IPMCAST-EXT-MIB."
+  },
+  "dIpmcExtGroups": {
+    "name": "dIpmcExtGroups",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2",
+    "class": "objectidentity"
+  },
+  "dIpmcExtClearStatisticsGroup": {
+    "name": "dIpmcExtClearStatisticsGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtClearStatistics"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects clears the statistics of multicast protocol packets."
+  },
+  "dIpmcExtGeneralCtrlGroup": {
+    "name": "dIpmcExtGeneralCtrlGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtMcastRouteEnabled"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIpv4McastTableLookupMode"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides the multicast management."
+  },
+  "dIpmcExtBoundaryGroup": {
+    "name": "dIpmcExtBoundaryGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtBoundaryRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing information for the system's multicast scope zone boundaries."
+  },
+  "dIpmcExtMrouteGroup": {
+    "name": "dIpmcExtMrouteGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtStaticMrouteRpfType"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtStaticMrouteRpfAddr"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtStaticMrouteRpfIfIndex"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtStaticMrouteRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides the management of static multicast routes."
+  },
+  "dIpmcExtCtrlPktCpuFilterGroup": {
+    "name": "dIpmcExtCtrlPktCpuFilterGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtCtrlPktCpuFilterV4Proto"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtCtrlPktCpuFilterV6Proto"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing information about the layer 3 control packets filtering status."
+  },
+  "dIpmcExtCtrlPktReplacePriGroup": {
+    "name": "dIpmcExtCtrlPktReplacePriGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtCtrlPktRepDscp"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtCtrlPktRepPriority"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtCtrlPktRepPriRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing information about the Priority and DSCP values configured for specific control protocols."
+  },
+  "dIpmcExtRpfGroup": {
+    "name": "dIpmcExtRpfGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfIfIndex"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfNeighborAddr"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfType"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfMetricValid"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtRpfMetric"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides information about the Reverse Path Forwarding (RPF) for IP multicast."
+  },
+  "dIpmcExtOutgoingPortsInfoGroup": {
+    "name": "dIpmcExtOutgoingPortsInfoGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtGrpOutgoingPort"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides outgoing ports information for multicast group address."
+  },
+  "dIpmcExtIgmpStatisticsGroup": {
+    "name": "dIpmcExtIgmpStatisticsGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV1RxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV1RxQuery"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV1TxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV1TxQuery"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV2RxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV2RxQuery"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV2RxLeave"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV2TxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV2TxQuery"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV2TxLeave"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV3RxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV3RxQuery"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV3TxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfV3TxQuery"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfRxUnknown"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtIgmpPortIfTxUnknown"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides statistics information about the IGMP."
+  },
+  "dIpmcExtPimStatisticsGroup": {
+    "name": "dIpmcExtPimStatisticsGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.10",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxHello"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxHello"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxRegister"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxRegister"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxRegisterStop"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxRegisterStop"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxJoinPrune"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxJoinPrune"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxBootstrap"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxBootstrap"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxAssert"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxAssert"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxGraft"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxGraft"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxGraftAck"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxGraftAck"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxCRpAdv"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxCRpAdv"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxStateRefresh"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxStateRefresh"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfRxUnknown"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtPimPortIfTxUnknown"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides statistics information about the PIM."
+  },
+  "dIpmcExtDvmrpStatisticsGroup": {
+    "name": "dIpmcExtDvmrpStatisticsGroup",
+    "oid": "1.3.6.1.4.1.171.14.55.2.2.11",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfRxProbe"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfTxProbe"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfRxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfTxReport"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfRxPrune"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfTxPrune"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfRxGraft"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfTxGraft"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfRxGraftAck"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfTxGraftAck"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfRxUnknown"
+      },
+      {
+        "module": "DLINKSW-IPMCAST-EXT-MIB",
+        "object": "dIpmcExtDvmrpPortIfTxUnknown"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides statistics information about the DVMRP."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-IPMCAST-EXT-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:50:15 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-IPMCAST-EXT-MIB"
+  }
+}

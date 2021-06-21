@@ -1,0 +1,1053 @@
+ISHELF-FAC-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY,
+    IpAddress
+        FROM SNMPv2-SMI
+
+    RowStatus,
+    TruthValue,
+    MacAddress
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfFacility,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfAdminState,
+    IShelfBer,
+    IShelfCircuit,
+    IShelfEthernetPortMode,
+    IShelfLocation,
+    IShelfLabel,
+    IShelfLoopback,
+    IShelfOntLogicalId,
+    IShelfOntSubscriberLineCardIndex,
+    IShelfOperState,
+    IShelfT1FrameFormat,
+    IShelfT1Lbo,
+    IShelfT1LineCoding,
+    IShelfServiceType,
+    IShelfFacService,
+    IShelfFacMode
+        FROM ISHELF-TC
+    ;
+
+iShelfFacMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION "The MIB module for managing facilities provisioning."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 4 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfMdslFacilityTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX fac
+-- %CLICMDABBR mdsl
+-- %CLISHOWGROUP mdsl
+iShelfMdslFacilityTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfMdslFacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfFacility 1 }
+
+iShelfMdslFacilityEntry OBJECT-TYPE
+    SYNTAX      IShelfMdslFacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfMdslFacilityLocation }
+    ::= { iShelfMdslFacilityTable 1 }
+
+IShelfMdslFacilityEntry ::=
+    SEQUENCE {
+        iShelfMdslFacilityLocation
+            IShelfLocation,
+        iShelfMdslFacilityBer
+            IShelfBer,
+        iShelfMdslFacilityServiceType
+            IShelfFacService,
+        iShelfMdslFacilityMode
+            IShelfFacMode,
+        iShelfMdslFacilityLabel
+            IShelfLabel,
+        iShelfMdslFacilityRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP mdsl.1
+-- %CLISHOWGROUP mdsl.2
+iShelfMdslFacilityLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Location is Node/Shelf/Slot."
+    ::= { iShelfMdslFacilityEntry 1 }
+
+-- %CLICOLLABEL BER
+-- %CLISHOWGROUP mdsl.2
+iShelfMdslFacilityBer OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL { ber10neg5 }
+    ::= { iShelfMdslFacilityEntry 2 }
+    
+-- %CLICOLLABEL Service
+-- %CLISHOWGROUP mdsl.2
+iShelfMdslFacilityServiceType OBJECT-TYPE
+    SYNTAX      IShelfFacService
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Facility service type."
+    ::= { iShelfMdslFacilityEntry 3 }
+    
+-- %CLICOLLABEL Mode
+-- %CLISHOWGROUP mdsl.2
+iShelfMdslFacilityMode OBJECT-TYPE
+    SYNTAX      IShelfFacMode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Master/Slave mode."
+    ::= { iShelfMdslFacilityEntry 4 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP mdsl.1
+iShelfMdslFacilityLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is a user setable description of the facility."
+    ::= { iShelfMdslFacilityEntry 5 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP mdsl.1
+iShelfMdslFacilityRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfMdslFacilityEntry 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfT1XcvrFacilityTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX fac
+-- %CLICMDABBR t1xcvr
+-- %CLISHOWGROUP t1xcvr
+iShelfT1XcvrFacilityTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfT1XcvrFacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table defines T1 facilities typically used as circuit switched
+         uplinks to telephony switches."
+    ::= { iShelfFacility 2 }
+
+iShelfT1XcvrFacilityEntry OBJECT-TYPE
+    SYNTAX      IShelfT1XcvrFacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row is a separate T1 facility."
+    INDEX       { iShelfT1XcvrFacilityLocation,
+                  iShelfT1XcvrFacilityCircuit }
+    ::= { iShelfT1XcvrFacilityTable 1 }
+
+IShelfT1XcvrFacilityEntry ::=
+    SEQUENCE {
+        iShelfT1XcvrFacilityLocation
+            IShelfLocation,
+        iShelfT1XcvrFacilityCircuit
+            IShelfCircuit,
+        iShelfT1XcvrFacilityFrameFormat
+            IShelfT1FrameFormat,
+        iShelfT1XcvrFacilityLineCoding
+            IShelfT1LineCoding,
+        iShelfT1XcvrFacilityEnableAIS
+            TruthValue,
+        iShelfT1XcvrFacilityBer
+            IShelfBer,
+        iShelfT1XcvrFacilityLbo
+            IShelfT1Lbo,
+        iShelfT1XcvrFacilityLabel
+            IShelfLabel,
+        iShelfT1XcvrFacilityAdminState
+            IShelfAdminState,
+        iShelfT1XcvrFacilityOperState
+            IShelfOperState,
+        iShelfT1XcvrFacilityLoopbackConfig
+            IShelfLoopback,
+        iShelfT1XcvrFacilityLoopbackStatus
+            IShelfLoopback,
+        iShelfT1XcvrFacilityBattBack
+            IShelfAdminState,
+        iShelfT1XcvrFacilityRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Loc
+-- %CLISHOWGROUP t1xcvr.1
+-- %CLISHOWGROUP t1xcvr.2
+-- %CLISHOWGROUP t1xcvr.3
+-- %CLIWIDTH 6
+iShelfT1XcvrFacilityLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Location is Node/Shelf/Slot."
+    ::= { iShelfT1XcvrFacilityEntry 1 }
+
+-- %CLICOLLABEL Cir
+-- %CLISHOWGROUP t1xcvr.1
+-- %CLISHOWGROUP t1xcvr.2
+-- %CLISHOWGROUP t1xcvr.3
+-- %CLIWIDTH 6
+iShelfT1XcvrFacilityCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Circuit Number of the object. Depending on the T1 card type, either 1 or 4
+         circuits are supported per card."
+    ::= { iShelfT1XcvrFacilityEntry 2 }
+
+-- %CLICOLLABEL Frame
+-- %CLISHOWGROUP t1xcvr.2
+iShelfT1XcvrFacilityFrameFormat OBJECT-TYPE
+    SYNTAX      IShelfT1FrameFormat
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The framing format to be used for the T1 (ESF or SF)."
+    DEFVAL      { esf }
+    ::= { iShelfT1XcvrFacilityEntry 3 }
+
+-- %CLICOLLABEL LineCode
+-- %CLISHOWGROUP t1xcvr.2
+iShelfT1XcvrFacilityLineCoding OBJECT-TYPE
+    SYNTAX      IShelfT1LineCoding
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The line encoding to be used for the T1 (B8ZS or AMI)."
+    DEFVAL      { b8zs }
+    ::= { iShelfT1XcvrFacilityEntry 4 }
+
+-- %CLICOLLABEL EnAIS
+-- %CLISHOWGROUP t1xcvr.3
+iShelfT1XcvrFacilityEnableAIS OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Provides the ability to assert a downstream AIS signal if a fault
+         is detected from the upstream (ie, AIS asserted if LOS is detected)."
+    DEFVAL      { false }
+    ::= { iShelfT1XcvrFacilityEntry 5 }
+
+-- %CLICOLLABEL BER
+-- %CLISHOWGROUP t1xcvr.3
+iShelfT1XcvrFacilityBer OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Provides the ability to define the bit error rate at which the T1
+         will be alarmed."
+    DEFVAL      { ber10neg3 }
+    ::= { iShelfT1XcvrFacilityEntry 6 }
+
+-- %CLICOLLABEL LBO
+-- %CLISHOWGROUP t1xcvr.2
+iShelfT1XcvrFacilityLbo OBJECT-TYPE
+    SYNTAX      IShelfT1Lbo
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The line build out used for the T1. Supports both long and short
+         haul build out."
+    DEFVAL      { longhaul7dot5 }
+    ::= { iShelfT1XcvrFacilityEntry 7 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP t1xcvr.1
+iShelfT1XcvrFacilityLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is a user setable description of the facility."
+    ::= { iShelfT1XcvrFacilityEntry 8 }
+
+-- %CLICOLLABEL AdminSt
+-- %CLISHOWGROUP t1xcvr.1
+iShelfT1XcvrFacilityAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the desired administrative state of the
+         facility."
+    DEFVAL      { unlock }
+    ::= { iShelfT1XcvrFacilityEntry 9 }
+
+-- %CLICOLLABEL OperSt
+-- %CLISHOWGROUP t1xcvr.1
+iShelfT1XcvrFacilityOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates the current operational state of the
+         facility."
+    ::= { iShelfT1XcvrFacilityEntry 10 }
+
+-- %CLICOLLABEL LoopConfig
+-- %CLISHOWGROUP t1xcvr.3
+iShelfT1XcvrFacilityLoopbackConfig OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This provides the ability to initiate a loopback on the T1 for
+         test, diagnostic, or fault isolation purposes."
+    DEFVAL      { none }
+    ::= { iShelfT1XcvrFacilityEntry 11 }
+
+-- %CLICOLLABEL LoopStatus
+-- %CLISHOWGROUP t1xcvr.3
+iShelfT1XcvrFacilityLoopbackStatus OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates if a loopback is currently active. Note that a
+         loopback can be initiated by the far end (ie, by the switch)."
+    ::= { iShelfT1XcvrFacilityEntry 12 }
+    
+-- %CLICOLLABEL BattBack
+-- %CLISHOWGROUP t1xcvr.3
+iShelfT1XcvrFacilityBattBack OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Battery Backup. unlocked means battery backup enabled.
+         locked means battery backup disabled."
+    DEFVAL      { unlock }
+    ::= { iShelfT1XcvrFacilityEntry 13 }
+
+-- %CLISHOWGROUP t1xcvr.1
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfT1XcvrFacilityRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfT1XcvrFacilityEntry 14 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfFo155FacilityTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX fac
+-- %CLICMDABBR fo155
+-- %CLISHOWGROUP fo155
+iShelfFo155FacilityTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfFo155FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfFacility 3 }
+
+iShelfFo155FacilityEntry OBJECT-TYPE
+    SYNTAX      IShelfFo155FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfFo155FacilityLocation }
+    ::= { iShelfFo155FacilityTable 1 }
+
+IShelfFo155FacilityEntry ::=
+    SEQUENCE {
+        iShelfFo155FacilityLocation
+            IShelfLocation,
+        iShelfFo155FacilityLineBerFail
+            IShelfBer,
+        iShelfFo155FacilityLineBerDegrade
+            IShelfBer,
+        iShelfFo155FacilityLineServiceType
+            IShelfFacService,
+        iShelfFo155FacilityLabel
+            IShelfLabel,
+        iShelfFo155FacilityRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP fo155.1
+-- %CLISHOWGROUP fo155.2
+iShelfFo155FacilityLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Location is Node/Shelf/Slot."
+    ::= { iShelfFo155FacilityEntry 1 }
+
+-- %CLICOLLABEL LineBerFail
+-- %CLISHOWGROUP fo155.2
+iShelfFo155FacilityLineBerFail OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Signal fail bit error rate."
+    DEFVAL      { ber10neg5 }
+    ::= { iShelfFo155FacilityEntry 2 }
+
+-- %CLICOLLABEL LineBerDegrade
+-- %CLISHOWGROUP fo155.2
+iShelfFo155FacilityLineBerDegrade OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Signal degrade bit error rate."
+    DEFVAL      { ber10neg7 }
+    ::= { iShelfFo155FacilityEntry 3 }
+    
+-- %CLICOLLABEL Service
+-- %CLISHOWGROUP fo155.2
+iShelfFo155FacilityLineServiceType OBJECT-TYPE
+    SYNTAX      IShelfFacService
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Facility service type."
+    ::= { iShelfFo155FacilityEntry 4 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP fo155.1
+iShelfFo155FacilityLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is a user setable description of the facility."
+    ::= { iShelfFo155FacilityEntry 5 }
+
+-- %CLISHOWGROUP fo155.1
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfFo155FacilityRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfFo155FacilityEntry 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOc12FacilityTable - 
+-- 
+-- TODO - modify so that BERs apply on a per circuit basis instead of per facility.
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX fac
+-- %CLICMDABBR oc12
+-- %CLISHOWGROUP oc12
+iShelfOc12FacilityTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOc12FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfFacility 4 }
+
+iShelfOc12FacilityEntry OBJECT-TYPE
+    SYNTAX      IShelfOc12FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOc12FacilityLocation }
+    ::= { iShelfOc12FacilityTable 1 }
+
+IShelfOc12FacilityEntry ::=
+    SEQUENCE {
+        iShelfOc12FacilityLocation
+            IShelfLocation,
+        iShelfOc12FacilityLineBerFail
+            IShelfBer,
+        iShelfOc12FacilityPathBerFail
+            IShelfBer,
+        iShelfOc12FacilityLineBerDegrade
+            IShelfBer,
+        iShelfOc12FacilityLabel
+            IShelfLabel,
+        iShelfOc12FacilityAdminState
+            IShelfAdminState,
+        iShelfOc12FacilityOperState
+            IShelfOperState,
+        iShelfOc12FacilityLoopbackConfig
+            IShelfLoopback,
+        iShelfOc12FacilityLoopbackStatus
+            IShelfLoopback,
+        iShelfOc12FacilityRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP oc12.1
+-- %CLISHOWGROUP oc12.2
+iShelfOc12FacilityLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Location is Node/Shelf/Slot."
+    ::= { iShelfOc12FacilityEntry 1 }
+
+-- %CLICOLLABEL LineBerFail
+-- %CLISHOWGROUP oc12.2
+iShelfOc12FacilityLineBerFail OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { ber10neg5 }
+    ::= { iShelfOc12FacilityEntry 2 }
+
+-- %CLICOLLABEL PathBerFail
+-- %CLISHOWGROUP oc12.2
+iShelfOc12FacilityPathBerFail OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { ber10neg5 }
+    ::= { iShelfOc12FacilityEntry 3 }
+
+-- %CLICOLLABEL LineBerDegrade
+-- %CLISHOWGROUP oc12.2
+iShelfOc12FacilityLineBerDegrade OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { ber10neg7 }
+    ::= { iShelfOc12FacilityEntry 4 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP oc12.1
+iShelfOc12FacilityLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is a user setable description of the facility."
+    ::= { iShelfOc12FacilityEntry 5 }
+
+-- %CLICOLLABEL AdminSt
+-- %CLISHOWGROUP oc12.1
+iShelfOc12FacilityAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the desired administrative state of the
+         facility."
+    DEFVAL { unlock }
+    ::= { iShelfOc12FacilityEntry 6 }
+
+-- %CLICOLLABEL OperSt
+-- %CLISHOWGROUP oc12.1
+iShelfOc12FacilityOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates the current operational state of the
+         facility."
+    ::= { iShelfOc12FacilityEntry 7 }
+
+-- %CLICOLLABEL LoopConfig
+-- %CLISHOWGROUP oc12.2
+iShelfOc12FacilityLoopbackConfig OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL { none }
+    ::= { iShelfOc12FacilityEntry 8 }
+
+-- %CLICOLLABEL LoopStatus
+-- %CLISHOWGROUP oc12.2
+iShelfOc12FacilityLoopbackStatus OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOc12FacilityEntry 9 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP oc12.1
+iShelfOc12FacilityRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfOc12FacilityEntry 10 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOc48FacilityTable - 
+-- 
+-- TODO - modify so that BERs apply on a per circuit basis instead of per facility.
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX fac
+-- %CLICMDABBR oc48
+-- %CLISHOWGROUP oc48
+iShelfOc48FacilityTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOc48FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfFacility 5 }
+
+iShelfOc48FacilityEntry OBJECT-TYPE
+    SYNTAX      IShelfOc48FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOc48FacilityLocation }
+    ::= { iShelfOc48FacilityTable 1 }
+
+IShelfOc48FacilityEntry ::=
+    SEQUENCE {
+        iShelfOc48FacilityLocation
+            IShelfLocation,
+        iShelfOc48FacilityLineBerFail
+            IShelfBer,
+        iShelfOc48FacilityPathBerFail
+            IShelfBer,
+        iShelfOc48FacilityLineBerDegrade
+            IShelfBer,
+        iShelfOc48FacilityLabel
+            IShelfLabel,
+        iShelfOc48FacilityAdminState
+            IShelfAdminState,
+        iShelfOc48FacilityOperState
+            IShelfOperState,
+        iShelfOc48FacilityLoopbackConfig
+            IShelfLoopback,
+        iShelfOc48FacilityLoopbackStatus
+            IShelfLoopback,
+        iShelfOc48FacilityRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP oc48.1
+-- %CLISHOWGROUP oc48.2
+iShelfOc48FacilityLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Location is Node/Shelf/Slot."
+    ::= { iShelfOc48FacilityEntry 1 }
+
+-- %CLICOLLABEL LineBerFail
+-- %CLISHOWGROUP oc48.2
+iShelfOc48FacilityLineBerFail OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { ber10neg5 }
+    ::= { iShelfOc48FacilityEntry 2 }
+
+-- %CLICOLLABEL PathBerFail
+-- %CLISHOWGROUP oc48.2
+iShelfOc48FacilityPathBerFail OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { ber10neg5 }
+    ::= { iShelfOc48FacilityEntry 3 }
+
+-- %CLICOLLABEL LineBerDegrade
+-- %CLISHOWGROUP oc48.2
+iShelfOc48FacilityLineBerDegrade OBJECT-TYPE
+    SYNTAX      IShelfBer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { ber10neg7 }
+    ::= { iShelfOc48FacilityEntry 4 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP oc48.1
+iShelfOc48FacilityLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is a user setable description of the facility."
+    ::= { iShelfOc48FacilityEntry 5 }
+
+-- %CLICOLLABEL AdminSt
+-- %CLISHOWGROUP oc48.1
+iShelfOc48FacilityAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the desired administrative state of the
+         facility."
+    DEFVAL { unlock }
+    ::= { iShelfOc48FacilityEntry 6 }
+
+-- %CLICOLLABEL OperSt
+-- %CLISHOWGROUP oc48.1
+iShelfOc48FacilityOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates the current operational state of the
+         facility."
+    ::= { iShelfOc48FacilityEntry 7 }
+
+-- %CLICOLLABEL LoopConfig
+-- %CLISHOWGROUP oc48.2
+iShelfOc48FacilityLoopbackConfig OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL { none }
+    ::= { iShelfOc48FacilityEntry 8 }
+
+-- %CLICOLLABEL LoopStatus
+-- %CLISHOWGROUP oc48.2
+iShelfOc48FacilityLoopbackStatus OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOc48FacilityEntry 9 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP oc48.1
+iShelfOc48FacilityRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfOc48FacilityEntry 10 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntT1FacilityTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltOntT1Table 10000 ROW
+-- %CLICMDPREFIX fac
+-- %CLISHOWGROUP ontt1
+iShelfOntT1FacilityTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntT1FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "The provisioning definition of a T1 port on an ONT."
+    ::= { iShelfFacility 6 }
+
+iShelfOntT1FacilityEntry OBJECT-TYPE
+    SYNTAX      IShelfOntT1FacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row is a separate ONT T1 port."
+    INDEX       { iShelfOntT1FacilityLogicalId,
+                  iShelfOntT1FacilitySLCIndex,
+                  iShelfOntT1FacilityPort }
+    ::= { iShelfOntT1FacilityTable 1 }
+
+IShelfOntT1FacilityEntry ::=
+    SEQUENCE {
+        iShelfOntT1FacilityLogicalId
+            IShelfOntLogicalId,
+        iShelfOntT1FacilitySLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntT1FacilityPort
+            INTEGER,
+        iShelfOntT1FacilityFrameFormat
+            IShelfT1FrameFormat,
+        iShelfOntT1FacilityLineCoding
+            IShelfT1LineCoding,
+        iShelfOntT1FacilityLbo
+            IShelfT1Lbo,
+        iShelfOntT1FacilityServiceType
+            IShelfServiceType,
+        iShelfOntT1FacilityChannelCount
+            INTEGER,
+        iShelfOntT1FacilityConserveAdminState
+            IShelfAdminState,
+        iShelfOntT1FacilityLabel
+            IShelfLabel,
+        iShelfOntT1FacilityAdminState
+            IShelfAdminState,
+        iShelfOntT1FacilityOperState
+            IShelfOperState,
+        iShelfOntT1FacilityLoopbackConfig
+            IShelfLoopback,
+        iShelfOntT1FacilityLoopbackStatus
+            IShelfLoopback,
+        iShelfOntT1FacilityRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ontt1.1
+-- %CLISHOWGROUP ontt1.2
+-- %CLISHOWGROUP ontt1.3
+iShelfOntT1FacilityLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT that contains the T1 port."
+    ::= { iShelfOntT1FacilityEntry 1 }
+
+-- %CLISHOWGROUP ontt1.1
+iShelfOntT1FacilitySLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The expansion slot on the ONT that contains the T1 port."
+    ::= { iShelfOntT1FacilityEntry 2 }
+
+-- %CLICOLLABEL Port
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP ontt1.1
+iShelfOntT1FacilityPort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The ONT T1 port index."
+    ::= { iShelfOntT1FacilityEntry 3 }
+
+-- %CLISHOWGROUP ontt1.1
+iShelfOntT1FacilityFrameFormat OBJECT-TYPE
+    SYNTAX      IShelfT1FrameFormat
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The T1 framing format can be ESF or SF."
+    DEFVAL      { esf }
+    ::= { iShelfOntT1FacilityEntry 4 }
+
+-- %CLISHOWGROUP ontt1.1
+iShelfOntT1FacilityLineCoding OBJECT-TYPE
+    SYNTAX      IShelfT1LineCoding
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The T1 line coding can be B8ZS or AMI."
+    DEFVAL      { b8zs }
+    ::= { iShelfOntT1FacilityEntry 5 }
+
+-- %CLISHOWGROUP ontt1.1
+iShelfOntT1FacilityLbo OBJECT-TYPE
+    SYNTAX      IShelfT1Lbo
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The T1 line build out. The ONT T1 ports support short haul LBO."
+    DEFVAL      { shorthaul110 }
+    ::= { iShelfOntT1FacilityEntry 6 }
+
+-- %CLICOLLABEL Service
+-- %CLISHOWGROUP ontt1.1
+iShelfOntT1FacilityServiceType OBJECT-TYPE
+    SYNTAX      IShelfServiceType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The type of service provided by the T1 port."
+    DEFVAL      { voice }
+    ::= { iShelfOntT1FacilityEntry 7 }
+
+-- %CLICOLLABEL ChanCount
+-- %CLISHOWGROUP ontt1.2
+iShelfOntT1FacilityChannelCount OBJECT-TYPE
+    SYNTAX      INTEGER (1..24)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of channels or DS0s utilized for this service.
+         The attribute is ignored for unstructured and asynchronous service types."
+    DEFVAL      { 24 }
+    ::= { iShelfOntT1FacilityEntry 8 }
+
+-- %CLICOLLABEL CnsrvAd
+-- %CLISHOWGROUP ontt1.2
+iShelfOntT1FacilityConserveAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The conserve admin state is the administrative state of the port when the
+         ONT is operating on battery backup power. When operating on battery, locking
+         the state means battery conservation is active and the port will be shut down.
+         Unlocking the state means battery power is not conserved. The unlocked state
+         is used for a critical service that must remain operational if battery backup
+         power is active."
+    DEFVAL      { unlock }
+    ::= { iShelfOntT1FacilityEntry 9 }
+
+-- %CLISHOWGROUP ontt1.2
+iShelfOntT1FacilityLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is a user setable description of the facility."
+    ::= { iShelfOntT1FacilityEntry 10 }
+
+-- %CLISHOWGROUP ontt1.2
+iShelfOntT1FacilityAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the desired administrative state of the
+         facility."
+    DEFVAL      { unlock }
+    ::= { iShelfOntT1FacilityEntry 11 }
+
+-- %CLISHOWGROUP ontt1.2
+-- %DEEPOBJ osiOltOntT1OperState
+iShelfOntT1FacilityOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates the current operational state of the
+         facility."
+    ::= { iShelfOntT1FacilityEntry 12 }
+
+-- %CLICOLLABEL LoopbackCfg
+-- %CLISHOWGROUP ontt1.3
+iShelfOntT1FacilityLoopbackConfig OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The currently provisioned loopback state of the T1."
+    DEFVAL      { none }
+    ::= { iShelfOntT1FacilityEntry 13 }
+
+-- %DEEPOBJ osiOltOntT1CurrentLoopback
+-- %CLICOLLABEL LoopbackStatus
+-- %CLISHOWGROUP ontt1.3
+iShelfOntT1FacilityLoopbackStatus OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The actual loopback state of the T1. Note that some loopbacks
+         can be activated from the CPE device and would be reflected here."
+    ::= { iShelfOntT1FacilityEntry 14 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntT1FacilityRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfOntT1FacilityEntry 15 }
+
+END

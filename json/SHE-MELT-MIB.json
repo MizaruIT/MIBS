@@ -1,0 +1,2363 @@
+{
+  "imports": {
+    "class": "imports",
+    "AN-MIB": [
+      "she"
+    ],
+    "IF-MIB": [
+      "ifIndex",
+      "InterfaceIndex"
+    ],
+    "SHE-TC-MIB": [
+      "SheControlStatusType"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "OBJECT-TYPE",
+      "NOTIFICATION-TYPE",
+      "MibIdentifier",
+      "Bits",
+      "Unsigned32",
+      "MODULE-IDENTITY",
+      "iso",
+      "Counter64",
+      "Gauge32",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "Integer32",
+      "Counter32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "sheMelt": {
+    "name": "sheMelt",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2008-12-09 14:00",
+        "description": "First issue for SHE R3.7M."
+      },
+      {
+        "revision": "2009-01-21 10:00",
+        "description": "Update after review. Define more detailed measurment result types. "
+      },
+      {
+        "revision": "2009-03-13 11:36",
+        "description": "Remove wetting current settings."
+      },
+      {
+        "revision": "2009-04-28 14:16",
+        "description": "Correct definition of SheMeltTestResultValidType."
+      },
+      {
+        "revision": "2009-07-16 16:26",
+        "description": "Modify unit of foreignCurrent result parameters from mA to uA. "
+      }
+    ],
+    "lastupdated": "200907161600Z",
+    "organization": "Nokia Siemens Networks",
+    "contactinfo": "Gerd Barchmann COO BCS DSLAM RD SDE HW1 gerd.barchmann@nsn.com",
+    "description": " Definition of MELT (metallic line testing) feature control commands and results. New supported with R3.7M."
+  },
+  "SheMeltTestRequestIfStateType": {
+    "name": "SheMeltTestRequestIfStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "idle": 1,
+          "beingTested": 2,
+          "applyingTestTone": 3,
+          "idleTestSucceeded": 5,
+          "idleTestAborted": 6
+        }
+      }
+    },
+    "status": "current",
+    "description": "The MELT state of a port (IfIndex). idle -> no test running and test was never started since IU reset beingTested -> test is running applyingTestTone -> test tone activated on line testSucceeded(5) -> line idle and MELT was successful finished testAborted -> line idle and MELT aborted by operator or internal failure/timeout "
+  },
+  "SheMeltTestRequestIuStateType": {
+    "name": "SheMeltTestRequestIuStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "idle": 1,
+          "beingTested": 2,
+          "applyingTestTone": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The MELT state type of concerned IU. idle -> no port of this iu under test - new test could be started beingTested -> one port of this iu is currently under test - no new test could be started applyingTestTone -> one port of this iu has currently a test tone activated - no new test could be started "
+  },
+  "SheMeltControlReqType": {
+    "name": "SheMeltControlReqType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noRequest": 0,
+          "setMeltTestParameters": 1,
+          "startMeltTest": 2,
+          "stopMeltTest": 3,
+          "activateTestTone": 4,
+          "deactivateTestTone": 5,
+          "setMeltTestRequestTestToneIndex": 8,
+          "createMeltTestToneEntry": 10,
+          "modifyMeltTestToneEntry": 11,
+          "deleteMeltTestToneEntry": 12
+        }
+      }
+    },
+    "status": "current",
+    "description": "The type for MELT test commands."
+  },
+  "SheMeltControlReqResultType": {
+    "name": "SheMeltControlReqResultType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "meltRequestControlReqNotSupported": 2,
+          "commExecStarted": 30,
+          "paramFaulty": 31,
+          "requestBusy": 32,
+          "setDataFailed": 34,
+          "aswTimeout": 35,
+          "commandFailed": 36,
+          "commandSucceeded": 37
+        }
+      }
+    },
+    "status": "current",
+    "description": "The result type for MELT command."
+  },
+  "SheMeltTestResultStateType": {
+    "name": "SheMeltTestResultStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notTested": 0,
+          "testFailed": 1,
+          "testSucceeded": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Status of the information contained in MeltTestResultTable. Values: notTested -> port was not tested since reset, all results not valid testFailed -> port was tested but test failed, all results not valid testSucceeded -> port was tested successfuly, check single result valid information"
+  },
+  "SheMeltTestResultValidType": {
+    "name": "SheMeltTestResultValidType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "invalid": 0,
+          "valid": 1,
+          "aboveLimitOfMeasurementRange": 2,
+          "belowLimitOfMeasurementRange": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Valid information for each single MELT result value. Values: invalid -> the shown result is not valid (maybe the test could not run because of external conditions) valid -> trusted result aboveLimitOfMeasurementRange -> result is above HW measurement range belowLimitOfMeasurementRange -> result is below HW measurement range "
+  },
+  "SheMeltTestResultCheckPpaType": {
+    "name": "SheMeltTestResultCheckPpaType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notTested": 0,
+          "notDetected": 1,
+          "detectedRightPolarity": 2,
+          "detectedWrongPolarity": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Used for result of CheckPpa test."
+  },
+  "SheMeltTestResultCheckType": {
+    "name": "SheMeltTestResultCheckType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notTested": 0,
+          "notDetected": 1,
+          "detected": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Used for result of CheckSplitter and CheckIad test."
+  },
+  "SheMeltTestFrequencyType": {
+    "name": "SheMeltTestFrequencyType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 32000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "used for configuration of test frequency"
+  },
+  "SheMeltTestToneFrequencyType": {
+    "name": "SheMeltTestToneFrequencyType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 100,
+            "max": 4000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "used to configure used test tones"
+  },
+  "SheMeltTestToneIndexType": {
+    "name": "SheMeltTestToneIndexType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Used to identify a test tone set (assignment interface - test tone index)."
+  },
+  "SheMeltTestSignalLevelType": {
+    "name": "SheMeltTestSignalLevelType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -20,
+            "max": 3
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "used to configure test frequency and test tone level's"
+  },
+  "SheMeltTestResultCapacityType": {
+    "name": "SheMeltTestResultCapacityType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 100000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Valid value range for Capacity measurement."
+  },
+  "SheMeltTestResultResistanceType": {
+    "name": "SheMeltTestResultResistanceType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 20000000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Valid value range for resistance measurement."
+  },
+  "SheMeltTestResultACVoltageType": {
+    "name": "SheMeltTestResultACVoltageType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Valid value range for AC voltage measurement."
+  },
+  "SheMeltTestResultACVoltageFrequencyType": {
+    "name": "SheMeltTestResultACVoltageFrequencyType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 70
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Valid value range for AC voltage frequency measurement."
+  },
+  "SheMeltTestResultDCVoltageType": {
+    "name": "SheMeltTestResultDCVoltageType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -4000,
+            "max": 4000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Valid value range for DC voltage measurement."
+  },
+  "SheMeltTestResultForeignCurrentType": {
+    "name": "SheMeltTestResultForeignCurrentType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 40
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Valid value range for current measurement."
+  },
+  "SheMeltTestResultConductanceType": {
+    "name": "SheMeltTestResultConductanceType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10000000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Valid value range for conductance and Susceptance measurement."
+  },
+  "sheMeltTestRequestObjects": {
+    "name": "sheMeltTestRequestObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1",
+    "class": "objectidentity"
+  },
+  "sheMeltTestParameter": {
+    "name": "sheMeltTestParameter",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.1",
+    "class": "objectidentity"
+  },
+  "sheMeltTestParameterFreq1": {
+    "name": "sheMeltTestParameterFreq1",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestFrequencyType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1000,
+        "format": "decimal"
+      }
+    },
+    "units": "Hz",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This parameter contains the used frequency 1 for MELT impedance/admittance test."
+  },
+  "sheMeltTestRequestStateTable": {
+    "name": "sheMeltTestRequestStateTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Each entry in this table contains the testing status of each IfIndex. Only indeces of MELT feature supporting interfaces are listed in this table!"
+  },
+  "sheMeltTestRequestStateEntry": {
+    "name": "sheMeltTestRequestStateEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in sheMeltTestRequestIfTable."
+  },
+  "sheMeltTestRequestIfState": {
+    "name": "sheMeltTestRequestIfState",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestRequestIfStateType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "idle",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT status of this interface. Only one port of one IU could be under test at time. Ports on different IU's could be under test at the same time. Check the corresponding sheMeltTestRequestIuState for this precondition. NOTE: Wetting current injection will be autonomously interrupted, if MELT or testTone insertion is started (WC configuration himself via sheXdslMib or sheShdslMib) for this interface as long as the test is running. Forgetting to stop test tone insertion will inhibit wetting current!"
+  },
+  "sheMeltTestRequestIuState": {
+    "name": "sheMeltTestRequestIuState",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestRequestIuStateType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "idle",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT status of IU where this interface is located on. Every port must know whether this IU is under melt test already or not, in order to decide if the melt test request on this port can be accepted. Only one port of one IU could be under test at time. Ports on different IU's could be under test at the same time."
+  },
+  "sheMeltTestRequestTestToneIndex": {
+    "name": "sheMeltTestRequestTestToneIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneIndexType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This parameter points on a valid entry of sheMeltTestToneTable. These configuration is needed for test tone insertion on this line. One default profile with index 1 will always exist and is assigned per default to each line!"
+  },
+  "sheMeltTestRequestStateControl": {
+    "name": "sheMeltTestRequestStateControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3",
+    "class": "objectidentity"
+  },
+  "sheMeltTestRequestControlReq": {
+    "name": "sheMeltTestRequestControlReq",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltControlReqType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "setMeltTestParameters (1): sheMeltTestRequestControlParameterFreq1 startMeltTest (2): sheMeltTestRequestControlIndex stopMeltTest (3): sheMeltTestRequestControlIndex activateTestTone (4): sheMeltTestRequestControlIndex deactivateTestTone (5): sheMeltTestRequestControlIndex setMeltTestRequestTestToneIndex (8): sheMeltTestRequestControlIndex sheMeltTestRequestControlTestToneIndex"
+  },
+  "sheMeltTestRequestControlIndex": {
+    "name": "sheMeltTestRequestControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The interface index of the DSL central PPTP which should be configured."
+  },
+  "sheMeltTestRequestControlStatus": {
+    "name": "sheMeltTestRequestControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a control request."
+  },
+  "sheMeltTestRequestControlTimer": {
+    "name": "sheMeltTestRequestControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command."
+  },
+  "sheMeltTestRequestControlReqResult": {
+    "name": "sheMeltTestRequestControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltControlReqResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheMeltTestRequestControlReqTimeStamp": {
+    "name": "sheMeltTestRequestControlReqTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheMeltTestRequestControlTestToneIndex": {
+    "name": "sheMeltTestRequestControlTestToneIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table"
+  },
+  "sheMeltTestRequestControlParameterFreq1": {
+    "name": "sheMeltTestRequestControlParameterFreq1",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.1.3.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestFrequencyType",
+      "class": "type"
+    },
+    "units": "Hz",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Look at basic parameter group."
+  },
+  "sheMeltTestToneObjects": {
+    "name": "sheMeltTestToneObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2",
+    "class": "objectidentity"
+  },
+  "sheMeltTestToneTable": {
+    "name": "sheMeltTestToneTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Each entry in this table contains a set of parameters for test tone generation. These entries could be assigned to each interface. One default entry exist which could NOT be modified or deleted!"
+  },
+  "sheMeltTestToneEntry": {
+    "name": "sheMeltTestToneEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in sheMeltTestToneTable."
+  },
+  "sheMeltTestToneIndex": {
+    "name": "sheMeltTestToneIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This parameter is index of sheMeltTestToneTable. This configuration is needed for test tone insertion on the line. One default profile with index 1 will always exist and is assigned per default to each line!"
+  },
+  "sheMeltTestToneFreq1": {
+    "name": "sheMeltTestToneFreq1",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneFrequencyType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 800,
+        "format": "decimal"
+      }
+    },
+    "units": "Hz",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The test tone frequency 1 of test tone set."
+  },
+  "sheMeltTestToneFreq2": {
+    "name": "sheMeltTestToneFreq2",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneFrequencyType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 800,
+        "format": "decimal"
+      }
+    },
+    "units": "Hz",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The test tone frequency 2 of test tone set."
+  },
+  "sheMeltTestToneLevel": {
+    "name": "sheMeltTestToneLevel",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestSignalLevelType",
+      "class": "type"
+    },
+    "units": "dBm",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The test tone level of test tone set."
+  },
+  "sheMeltTestToneControl": {
+    "name": "sheMeltTestToneControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2",
+    "class": "objectidentity"
+  },
+  "sheMeltTestToneControlReq": {
+    "name": "sheMeltTestToneControlReq",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltControlReqType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "createMeltTestToneEntry (10): (index will autonomously generated by NE) sheMeltTestToneControlFreq1 sheMeltTestToneControlFreq2 sheMeltTestToneControlLevel modifyMeltTestToneEntry (11): sheMeltTestToneControlIndex sheMeltTestToneControlFreq1 sheMeltTestToneControlFreq2 sheMeltTestToneControlLevel deleteMeltTestToneEntry (12): sheMeltTestToneControlIndex "
+  },
+  "sheMeltTestToneControlIndex": {
+    "name": "sheMeltTestToneControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The table index of the TestToneTable which should be configured. Default tone-set 1 could not be modified or deleted!"
+  },
+  "sheMeltTestToneControlStatus": {
+    "name": "sheMeltTestToneControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a control request."
+  },
+  "sheMeltTestToneControlTimer": {
+    "name": "sheMeltTestToneControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command."
+  },
+  "sheMeltTestToneControlReqResult": {
+    "name": "sheMeltTestToneControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltControlReqResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheMeltTestToneControlReqTimeStamp": {
+    "name": "sheMeltTestToneControlReqTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheMeltTestToneControlFreq1": {
+    "name": "sheMeltTestToneControlFreq1",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneFrequencyType",
+      "class": "type"
+    },
+    "units": "Hz",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table"
+  },
+  "sheMeltTestToneControlFreq2": {
+    "name": "sheMeltTestToneControlFreq2",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestToneFrequencyType",
+      "class": "type"
+    },
+    "units": "Hz",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table"
+  },
+  "sheMeltTestToneControlLevel": {
+    "name": "sheMeltTestToneControlLevel",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.2.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestSignalLevelType",
+      "class": "type"
+    },
+    "units": "dBm",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table"
+  },
+  "sheMeltTestResultObjects": {
+    "name": "sheMeltTestResultObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3",
+    "class": "objectidentity"
+  },
+  "sheMeltTestResultTable": {
+    "name": "sheMeltTestResultTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Each entry in this table contains the testing results of each IfIndex. Only indeces of MELT feature supporting interfaces are listed in this table!"
+  },
+  "sheMeltTestResultEntry": {
+    "name": "sheMeltTestResultEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in sheMeltTestResultTable."
+  },
+  "sheMeltTestResultState": {
+    "name": "sheMeltTestResultState",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultStateType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "notTested",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result status of this interface. "
+  },
+  "sheMeltTestResultTimeStamp": {
+    "name": "sheMeltTestResultTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Timestamp of last executed MELT."
+  },
+  "sheMeltTestResultCapacityAB": {
+    "name": "sheMeltTestResultCapacityAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultCapacityType",
+      "class": "type"
+    },
+    "units": "nF",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for capacity a-wire - b-wire (ring - tip)."
+  },
+  "sheMeltTestResultCapacityABValid": {
+    "name": "sheMeltTestResultCapacityABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for capacitytest a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultCapacityAE": {
+    "name": "sheMeltTestResultCapacityAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultCapacityType",
+      "class": "type"
+    },
+    "units": "nF",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for capacity a-wire - E (ring - earth)."
+  },
+  "sheMeltTestResultCapacityAEValid": {
+    "name": "sheMeltTestResultCapacityAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for capacitytest a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultCapacityBE": {
+    "name": "sheMeltTestResultCapacityBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultCapacityType",
+      "class": "type"
+    },
+    "units": "nF",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for capacity b-wire - E (tip - earth)."
+  },
+  "sheMeltTestResultCapacityBEValid": {
+    "name": "sheMeltTestResultCapacityBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for capacitytest b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultResistanceAB": {
+    "name": "sheMeltTestResultResistanceAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultResistanceType",
+      "class": "type"
+    },
+    "units": "Ohms",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for resistance a-wire - b-wire (ring - tip). Note: The NMS should be able to show the values also in kOhms or MOhms for better readability."
+  },
+  "sheMeltTestResultResistanceABValid": {
+    "name": "sheMeltTestResultResistanceABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for resistancetest a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultResistanceBA": {
+    "name": "sheMeltTestResultResistanceBA",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultResistanceType",
+      "class": "type"
+    },
+    "units": "Ohms",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for resistance b-wire - a-wire (tip - ring). Note: The NMS should be able to show the values also in kOhms or MOhms for better readability."
+  },
+  "sheMeltTestResultResistanceBAValid": {
+    "name": "sheMeltTestResultResistanceBAValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for resistancetest b-wire - a-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultResistanceAE": {
+    "name": "sheMeltTestResultResistanceAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultResistanceType",
+      "class": "type"
+    },
+    "units": "Ohms",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for resistance a-wire - E (ring - earth). Note: The NMS should be able to show the values also in kOhms or MOhms for better readability."
+  },
+  "sheMeltTestResultResistanceAEValid": {
+    "name": "sheMeltTestResultResistanceAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for resistancetest a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultResistanceBE": {
+    "name": "sheMeltTestResultResistanceBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultResistanceType",
+      "class": "type"
+    },
+    "units": "Ohms",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for resistance b-wire - E (tip - earth). Note: The NMS should be able to show the values also in kOhms or MOhms for better readability."
+  },
+  "sheMeltTestResultResistanceBEValid": {
+    "name": "sheMeltTestResultResistanceBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for resistancetest b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageDcAB": {
+    "name": "sheMeltTestResultForeignVoltageDcAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultDCVoltageType",
+      "class": "type"
+    },
+    "units": "100 mV",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage DC a-wire - b-wire (ring - tip)."
+  },
+  "sheMeltTestResultForeignVoltageDcABValid": {
+    "name": "sheMeltTestResultForeignVoltageDcABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignDcVoltagetest a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageDcAE": {
+    "name": "sheMeltTestResultForeignVoltageDcAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultDCVoltageType",
+      "class": "type"
+    },
+    "units": "100 mV",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage DC a-wire - E (ring - earth)."
+  },
+  "sheMeltTestResultForeignVoltageDcAEValid": {
+    "name": "sheMeltTestResultForeignVoltageDcAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignDcVoltagetest a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageDcBE": {
+    "name": "sheMeltTestResultForeignVoltageDcBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultDCVoltageType",
+      "class": "type"
+    },
+    "units": "100 mV",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage DC b-wire - E (tip - earth)."
+  },
+  "sheMeltTestResultForeignVoltageDcBEValid": {
+    "name": "sheMeltTestResultForeignVoltageDcBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignDcVoltagetest b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageAcAB": {
+    "name": "sheMeltTestResultForeignVoltageAcAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultACVoltageType",
+      "class": "type"
+    },
+    "units": "100 mV",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage AC a-wire - b-wire (ring - tip)."
+  },
+  "sheMeltTestResultForeignVoltageAcABValid": {
+    "name": "sheMeltTestResultForeignVoltageAcABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignAcVoltage test a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageAcAE": {
+    "name": "sheMeltTestResultForeignVoltageAcAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultACVoltageType",
+      "class": "type"
+    },
+    "units": "100 mV",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage AC a-wire - E (ring - earth)."
+  },
+  "sheMeltTestResultForeignVoltageAcAEValid": {
+    "name": "sheMeltTestResultForeignVoltageAcAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignAcVoltagetest a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageAcBE": {
+    "name": "sheMeltTestResultForeignVoltageAcBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultACVoltageType",
+      "class": "type"
+    },
+    "units": "100 mV",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage AC b-wire - E (tip - earth)."
+  },
+  "sheMeltTestResultForeignVoltageAcBEValid": {
+    "name": "sheMeltTestResultForeignVoltageAcBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignAcVoltagetest b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageAcFrequencyAB": {
+    "name": "sheMeltTestResultForeignVoltageAcFrequencyAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultACVoltageFrequencyType",
+      "class": "type"
+    },
+    "units": "Hz",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage AC frequency a-wire - b-wire (ring - tip)."
+  },
+  "sheMeltTestResultForeignVoltageAcFrequencyABValid": {
+    "name": "sheMeltTestResultForeignVoltageAcFrequencyABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignAcVoltageFrequency test a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageAcFrequencyAE": {
+    "name": "sheMeltTestResultForeignVoltageAcFrequencyAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.31",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultACVoltageFrequencyType",
+      "class": "type"
+    },
+    "units": "Hz",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage AC frequency a-wire - earth (ring - earth)."
+  },
+  "sheMeltTestResultForeignVoltageAcFrequencyAEValid": {
+    "name": "sheMeltTestResultForeignVoltageAcFrequencyAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.32",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignAcVoltageFrequency test a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignVoltageAcFrequencyBE": {
+    "name": "sheMeltTestResultForeignVoltageAcFrequencyBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.33",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultACVoltageFrequencyType",
+      "class": "type"
+    },
+    "units": "Hz",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign voltage AC frequency b-wire - earth (tip - earth)."
+  },
+  "sheMeltTestResultForeignVoltageAcFrequencyBEValid": {
+    "name": "sheMeltTestResultForeignVoltageAcFrequencyBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.34",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignAcVoltageFrequency test b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignCurrentAB": {
+    "name": "sheMeltTestResultForeignCurrentAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.35",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultForeignCurrentType",
+      "class": "type"
+    },
+    "units": "uA",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign current test a-wire - b-wire (ring - tip)."
+  },
+  "sheMeltTestResultForeignCurrentABValid": {
+    "name": "sheMeltTestResultForeignCurrentABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.36",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignCurrenttest a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignCurrentAE": {
+    "name": "sheMeltTestResultForeignCurrentAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.37",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultForeignCurrentType",
+      "class": "type"
+    },
+    "units": "uA",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign current test a-wire - E (ring - earth)."
+  },
+  "sheMeltTestResultForeignCurrentAEValid": {
+    "name": "sheMeltTestResultForeignCurrentAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.38",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignCurrenttest a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultForeignCurrentBE": {
+    "name": "sheMeltTestResultForeignCurrentBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.39",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultForeignCurrentType",
+      "class": "type"
+    },
+    "units": "uA",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for foreign current test b-wire - E (tip - earth)."
+  },
+  "sheMeltTestResultForeignCurrentBEValid": {
+    "name": "sheMeltTestResultForeignCurrentBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.40",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for foreignCurrenttest b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultConductanceAB": {
+    "name": "sheMeltTestResultConductanceAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.41",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultConductanceType",
+      "class": "type"
+    },
+    "units": "100 nS",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for conductance test a-wire - b-wire (ring - tip)."
+  },
+  "sheMeltTestResultConductanceABValid": {
+    "name": "sheMeltTestResultConductanceABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.42",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for conductancetest a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultConductanceAE": {
+    "name": "sheMeltTestResultConductanceAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.43",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultConductanceType",
+      "class": "type"
+    },
+    "units": "100 nS",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for conductance test a-wire - earth (ring - earth)."
+  },
+  "sheMeltTestResultConductanceAEValid": {
+    "name": "sheMeltTestResultConductanceAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.44",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for conductancetest a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultConductanceBE": {
+    "name": "sheMeltTestResultConductanceBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.45",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultConductanceType",
+      "class": "type"
+    },
+    "units": "100 nS",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for conductance test b-wire - earth (tip - earth)."
+  },
+  "sheMeltTestResultConductanceBEValid": {
+    "name": "sheMeltTestResultConductanceBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.46",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for conductancetest b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultSusceptanceAB": {
+    "name": "sheMeltTestResultSusceptanceAB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.47",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultConductanceType",
+      "class": "type"
+    },
+    "units": "100 nS",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for susceptance test a-wire - b-wire (ring - tip)."
+  },
+  "sheMeltTestResultSusceptanceABValid": {
+    "name": "sheMeltTestResultSusceptanceABValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.48",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for susceptancetest a-wire - b-wire, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultSusceptanceAE": {
+    "name": "sheMeltTestResultSusceptanceAE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.49",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultConductanceType",
+      "class": "type"
+    },
+    "units": "100 nS",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for susceptance test a-wire - earth (ring - earth)."
+  },
+  "sheMeltTestResultSusceptanceAEValid": {
+    "name": "sheMeltTestResultSusceptanceAEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.50",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for susceptancetest a-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultSusceptanceBE": {
+    "name": "sheMeltTestResultSusceptanceBE",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.51",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultConductanceType",
+      "class": "type"
+    },
+    "units": "100 nS",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for susceptance test b-wire - earth (tip - earth)."
+  },
+  "sheMeltTestResultSusceptanceBEValid": {
+    "name": "sheMeltTestResultSusceptanceBEValid",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.52",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultValidType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "invalid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The valid information for susceptancetest b-wire - earth, if sheMeltTestResultState = testSucceeded. "
+  },
+  "sheMeltTestResultCheckPPA": {
+    "name": "sheMeltTestResultCheckPPA",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.53",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultCheckPpaType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "notTested",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for PPA test. "
+  },
+  "sheMeltTestResultCheckSplitter": {
+    "name": "sheMeltTestResultCheckSplitter",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.54",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultCheckType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "notTested",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for Splitter test. "
+  },
+  "sheMeltTestResultCheckIAD": {
+    "name": "sheMeltTestResultCheckIAD",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.3.1.1.55",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheMeltTestResultCheckType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "notTested",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MELT result for IAD test. "
+  },
+  "sheMeltNotifications": {
+    "name": "sheMeltNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.10",
+    "class": "objectidentity"
+  },
+  "sheMeltTestRequestParametersModified": {
+    "name": "sheMeltTestRequestParametersModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.10.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlReqTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestParameterFreq1"
+      }
+    ],
+    "status": "current",
+    "description": "The MELT testparameters are modified."
+  },
+  "sheMeltTestRequestStateModified": {
+    "name": "sheMeltTestRequestStateModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.10.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlReqTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestIfState"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestIuState"
+      }
+    ],
+    "status": "current",
+    "description": "The MELT state of an interface was modified by command or by NE."
+  },
+  "sheMeltTestRequestIfTestToneIndexModified": {
+    "name": "sheMeltTestRequestIfTestToneIndexModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.10.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlReqTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestTestToneIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The used test tone set of an interface (assignment interface - test tone index) was modified."
+  },
+  "sheMeltTestToneEntryCreated": {
+    "name": "sheMeltTestToneEntryCreated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.10.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlReqTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlFreq1"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlFreq2"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlLevel"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration trap for new created MELT testTone set."
+  },
+  "sheMeltTestToneEntryModified": {
+    "name": "sheMeltTestToneEntryModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.10.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlReqTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlFreq1"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlFreq2"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlLevel"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration trap for modified MELT testTone set."
+  },
+  "sheMeltTestToneEntryDeleted": {
+    "name": "sheMeltTestToneEntryDeleted",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.10.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlReqTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration trap for delete a MELT testTone set."
+  },
+  "sheMeltConformance": {
+    "name": "sheMeltConformance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.100",
+    "class": "objectidentity"
+  },
+  "sheMeltCompliances": {
+    "name": "sheMeltCompliances",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.100.1",
+    "class": "objectidentity"
+  },
+  "sheMeltMibCompliance": {
+    "name": "sheMeltMibCompliance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.100.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "sheMeltGroup",
+        "module": "SHE-MELT-MIB"
+      },
+      {
+        "object": "sheMeltControlGroup",
+        "module": "SHE-MELT-MIB"
+      },
+      {
+        "object": "sheMeltNotificationGroup",
+        "module": "SHE-MELT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheMeltGroups": {
+    "name": "sheMeltGroups",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.100.2",
+    "class": "objectidentity"
+  },
+  "sheMeltGroup": {
+    "name": "sheMeltGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.100.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestParameterFreq1"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestIfState"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestIuState"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestTestToneIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneFreq1"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneFreq2"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneLevel"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultState"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCapacityAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCapacityABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCapacityAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCapacityAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCapacityBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCapacityBEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceBA"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceBAValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultResistanceBEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageDcAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageDcABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageDcAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageDcAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageDcBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageDcBEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcBEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignCurrentAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignCurrentABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignCurrentAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignCurrentAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignCurrentBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignCurrentBEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultConductanceAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultConductanceABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultConductanceAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultConductanceAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultConductanceBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultConductanceBEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultSusceptanceAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultSusceptanceABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultSusceptanceAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultSusceptanceAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultSusceptanceBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultSusceptanceBEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCheckPPA"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCheckSplitter"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultCheckIAD"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcFrequencyAB"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcFrequencyABValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcFrequencyAE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcFrequencyAEValid"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcFrequencyBE"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestResultForeignVoltageAcFrequencyBEValid"
+      }
+    ],
+    "status": "current",
+    "description": " "
+  },
+  "sheMeltControlGroup": {
+    "name": "sheMeltControlGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.100.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlReq"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlStatus"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlTimer"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlReqResult"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlReqTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlTestToneIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestControlParameterFreq1"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlReq"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlIndex"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlStatus"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlTimer"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlReqResult"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlReqTimeStamp"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlFreq1"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlFreq2"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneControlLevel"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheMeltNotificationGroup": {
+    "name": "sheMeltNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.24.100.2.3",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestParametersModified"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestStateModified"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestRequestIfTestToneIndexModified"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneEntryCreated"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneEntryModified"
+      },
+      {
+        "module": "SHE-MELT-MIB",
+        "object": "sheMeltTestToneEntryDeleted"
+      }
+    ],
+    "status": "current",
+    "description": " "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SHE-MELT-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:23:38 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SHE-MELT-MIB"
+  }
+}

@@ -1,0 +1,838 @@
+{
+  "imports": {
+    "class": "imports",
+    "S5-ROOT-MIB": [
+      "s5Com"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "iso",
+      "Bits",
+      "Counter64",
+      "TimeTicks",
+      "Gauge32",
+      "Unsigned32",
+      "IpAddress",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "MODULE-IDENTITY",
+      "Counter32"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "MacAddress": {
+    "name": "MacAddress",
+    "class": "type",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 6,
+            "max": 6
+          }
+        ]
+      }
+    }
+  },
+  "PortSet": {
+    "name": "PortSet",
+    "class": "type",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 32,
+            "max": 32
+          }
+        ]
+      }
+    }
+  },
+  "s5SbsAuth": {
+    "name": "s5SbsAuth",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3",
+    "class": "objectidentity"
+  },
+  "s5SbsAuthSecurityLock": {
+    "name": "s5SbsAuthSecurityLock",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "locked": 2,
+          "notlocked": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "If s5SbsAuthSecurityLock is locked(2), the agent will refuse all requests to modify the 'security configuration'. Objects in s5SbsAuth, the Switch BaySecure MIB Group that are part of the 'security configuration', includes s5SbsAuthCtlPartTime, objects in s5SbsAuthCfgTable, Set requests for all read/write objects in s5SbsAuth group excluding this object will result in a BadValue return value."
+  },
+  "s5SbsAuthCtlPartTime": {
+    "name": "s5SbsAuthCtlPartTime",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "If the value of s5SbsAuthCfgActionMode is partitionPort or partitionPortAndSendTrap, time partition will be done if this value is greater than 0. The value indicates the duration of the time for port partitioning in seconds. The default value is zero. When this value is zero, port remians partitioned until manually re-enabled."
+  },
+  "s5SbsSecurityStatus": {
+    "name": "s5SbsSecurityStatus",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enable": 1,
+          "disable": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "Indicates whether the switch security feature is enabled or not."
+  },
+  "s5SbsSecurityMode": {
+    "name": "s5SbsSecurityMode",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "singleMACperPort": 1,
+          "macList": 2,
+          "autoLearn": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The mode of switch security. singleMACperPort(1) indicates that the switch is in single-MAC-per-port mode which means it allows to configure only one MAC address per port. macList(2) indicates that the switch is in MAC-List mode, user can configure more than one MAC address per port, the maximum numbers of MAC address per port vary from switch to switch. autoLearn(3) indicates that the switch will learn the first MAC address on each port as an allowed address of that port. Change made between singleMACperPort(1), macList(2) and autoLearn(3) will erase all the data in s5SbsAuthCfgTable."
+  },
+  "s5SbsSecurityAction": {
+    "name": "s5SbsSecurityAction",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noAction": 1,
+          "trap": 2,
+          "partitionPort": 3,
+          "partitionPortAndsendTrap": 4,
+          "daFiltering": 5,
+          "daFilteringAndsendTrap": 6,
+          "partitionPortAnddaFiltering": 7,
+          "partitionPortdaFilteringAndsendTrap": 8
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "Action performed by software when a violation occurs (if s5SbsSecurityStatus is enabled). The security action specified here applies to all ports of the switch. NOTE: da means destination address. A blocked address will always cause the port to be partitioned when unauthorized access is attempted. See s5SbsAuthCfgAccessCtrlType for more information on allowed and blocked addresses."
+  },
+  "s5SbsCurrNodesAllowed": {
+    "name": "s5SbsCurrNodesAllowed",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The current number of entries of the nodes allowed in the s5SbsAuthCfgTable."
+  },
+  "s5SbsMaxNodesAllowed": {
+    "name": "s5SbsMaxNodesAllowed",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The maximum number of entries of the nodes allowed in the s5SbsAuthCfgTable."
+  },
+  "s5SbsCurrNodesBlocked": {
+    "name": "s5SbsCurrNodesBlocked",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The current number of entries of the nodes blocked in the s5SbsAuthCfgTable."
+  },
+  "s5SbsMaxNodesBlocked": {
+    "name": "s5SbsMaxNodesBlocked",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The maximum number of entries of the nodes blocked in the s5SbsAuthCfgTable."
+  },
+  "s5SbsAuthCfgTable": {
+    "name": "s5SbsAuthCfgTable",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "A table containing a list of boards and ports and MAC addresses that constitute the security configuration."
+  },
+  "s5SbsAuthCfgEntry": {
+    "name": "s5SbsAuthCfgEntry",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsAuthCfgBrdIndx",
+        "implied": 0
+      },
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsAuthCfgPortIndx",
+        "implied": 0
+      },
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsAuthCfgMACIndx",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "An entry in this table indicates the security configuration for a specified MAC address and a specified port and a specified board. A SNMP SET PDU for a row of the s5SbsAuthCfgTable requires the entired sequence of the MIB Objects in each s5SbsAuthCfgEntry stored in one PDU. Otherwise, GENERR return-value will be returned."
+  },
+  "s5SbsAuthCfgBrdIndx": {
+    "name": "s5SbsAuthCfgBrdIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of the slot containing the board on which the port is located. This value is meaningful --NEW only if s5SbsAuthCfgSecureList value is zero. --NEW For other SecureList values it should have the value of zero. "
+  },
+  "s5SbsAuthCfgPortIndx": {
+    "name": "s5SbsAuthCfgPortIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of the port on the board. This value is meaningful only if s5SbsAuthCfgSecureList value is zero. --NEW For other SecureList values it should have the value of zero. "
+  },
+  "s5SbsAuthCfgMACIndx": {
+    "name": "s5SbsAuthCfgMACIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of source MAC address of allowed station or not-allowed station."
+  },
+  "s5SbsAuthCfgAccessCtrlType": {
+    "name": "s5SbsAuthCfgAccessCtrlType",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "allowed": 1,
+          "blocked": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This Node Access Control Type represents whether the node entry is node allowed or node blocked type. A MAC address may be allowed on multiple ports."
+  },
+  "s5SbsAuthCfgStatus": {
+    "name": "s5SbsAuthCfgStatus",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "valid": 1,
+          "create": 2,
+          "delete": 3,
+          "modify": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The status of the AuthCfg entry. The primary use of this object is for modifying the AuthCfg table. Values that can be written create(2), delete(3), modify(4). Values that can be read: valid(1). Setting this entry to delete(3) causes the entry to be deleted from the table. Setting a new entry with create(2) causes the entry to be created in the table. Setting an entry with modify(4) causes the entry to be modified. The response to a get request or get-next request will always indicate a status of valid (1), since invalid entries are removed from the table. "
+  },
+  "s5SbsAuthCfgSecureList": {
+    "name": "s5SbsAuthCfgSecureList",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.10.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The index of the security list. This value is meaningful only if s5SbsAuthCfgBrdIndx and s5SbsAuthCfgPortIndx values are zero. For other board and port index values it should have the value of zero. This value is used as an index into s5SbsSecurityListTable. The corresponding MAC Address of this entry is allowed or blocked on all the ports of that port list. "
+  },
+  "s5SbsAuthStatusTable": {
+    "name": "s5SbsAuthStatusTable",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "A table containing a snapshot of the authorized boards and ports status data collection. Port security information consists of an action to be performed when an unAuthorized station is detected and the current security status of a port."
+  },
+  "s5SbsAuthStatusEntry": {
+    "name": "s5SbsAuthStatusEntry",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsAuthStatusBrdIndx",
+        "implied": 0
+      },
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsAuthStatusPortIndx",
+        "implied": 0
+      },
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsAuthStatusMACIndx",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "An entry in this table may represent a single MAC address, all MAC addresses on a single port, a single port, all the ports on a single board, a particuler port on all the boards, or all the ports on all the boards."
+  },
+  "s5SbsAuthStatusBrdIndx": {
+    "name": "s5SbsAuthStatusBrdIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of the board. This corresponds to the index of the slot containing the board if the index is greater than zero. A zero index is a wild card."
+  },
+  "s5SbsAuthStatusPortIndx": {
+    "name": "s5SbsAuthStatusPortIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of the port on the board. This corresponds to the index of the last manageable port on the board if the index is greater than zero. A zero index is a wild card."
+  },
+  "s5SbsAuthStatusMACIndx": {
+    "name": "s5SbsAuthStatusMACIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of MAC address on the port. This corresponds to the index of the MAC address on the port if the index is greater than zero. A zero index is a wild card."
+  },
+  "s5SbsCurrentAccessCtrlType": {
+    "name": "s5SbsCurrentAccessCtrlType",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "allow": 1,
+          "block": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This Node Access Control Type represents whether the node entry is node allowed or node blocked type."
+  },
+  "s5SbsCurrentActionMode": {
+    "name": "s5SbsCurrentActionMode",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noAction": 1,
+          "partitionPort": 2,
+          "partitionPortAndsendTrap": 3,
+          "daFiltering": 4,
+          "daFilteringAndsendTrap": 5,
+          "sendTrap": 6,
+          "partitionPortAnddaFiltering": 7,
+          "partitionPortdaFilteringAndsendTrap": 8
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "An integer value representing the type of information contained in this s5SbsAuthStatusEntry. noAction(1) represents that port does not have any security assigned or the security is turned off. partitionPort(2) represents port is partitioned. partitionPortAndsendTrap(3) represents port is partitioned and a trap will be sent to trap receive station(s). daFiltering(4) represents port will filter out the frames with the desitnation address field is the MAC address of unauthorized station. daFilteringAndsendTrap(5) represents port will filter out the frames with the desitnation address field is the MAC address of unauthorized station and a trap will be sent to trap receive station(s). sendtrap(6) represents a trap will be sent to trap receive station(s). partitionPortAnddaFiltering(7) represents port is partitioned and port will filter out the frames with the destination address field is the MAC address of unauthorized station. partitionPortdaFilteringAndsendTrap(8) represents port is partitioned, port will filter out the frames with the destination address field is the MAC address of unauthorized station and a trap will be sent to trap receive station(s)."
+  },
+  "s5SbsCurrentPortSecurStatus": {
+    "name": "s5SbsCurrentPortSecurStatus",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.11.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notApplicable": 1,
+          "portSecure": 2,
+          "portPartition": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This represents the current port security status. If s5SbsSecurityStatus is disable, notApplicable(1) will be returned. The port in a normal situation returns the status with portSecure(2). portPartition(3) will be returned only if the port is partitioned."
+  },
+  "s5SbsViolationStatusTable": {
+    "name": "s5SbsViolationStatusTable",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.12",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "A table containing a list of boards, ports where network access violations have occurred. Information also contains the offending MAC addrersses."
+  },
+  "s5SbsViolationStatusEntry": {
+    "name": "s5SbsViolationStatusEntry",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.12.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsViolationStatusBrdIndx",
+        "implied": 0
+      },
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsViolationStatusPortIndx",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "An entry in this table "
+  },
+  "s5SbsViolationStatusBrdIndx": {
+    "name": "s5SbsViolationStatusBrdIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.12.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of the board. This corresponds to the slot containing the board. This index will be 1 where it is not applicable, e.g., ByaStack 303/304."
+  },
+  "s5SbsViolationStatusPortIndx": {
+    "name": "s5SbsViolationStatusPortIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.12.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of the port on the board. This corresponds to the port on which a security violation was seen."
+  },
+  "s5SbsViolationStatusMACAddress": {
+    "name": "s5SbsViolationStatusMACAddress",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.12.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The MAC address of the device attempting unauthorized network access. (MAC addrees-based security)"
+  },
+  "s5SbsMgmViolationType": {
+    "name": "s5SbsMgmViolationType",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "snmp": 1,
+          "web": 2,
+          "telnet": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "Type of management access attempted when the violation occurred."
+  },
+  "s5SbsMgmViolationIpAddress": {
+    "name": "s5SbsMgmViolationIpAddress",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "IP Address of the station attempting unauthorized management access."
+  },
+  "s5SbsPortSecurityStatus": {
+    "name": "s5SbsPortSecurityStatus",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.15",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortSet",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The set of ports for which security is enabled. The bitwise AND of s5SbsPortSecurityStatus and s5SbsPortLearnStatus must be the empty set."
+  },
+  "s5SbsPortLearnStatus": {
+    "name": "s5SbsPortLearnStatus",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.16",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortSet",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The set of ports for which auto learning is enabled."
+  },
+  "s5SbsCurrSecurityLists": {
+    "name": "s5SbsCurrSecurityLists",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.17",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The current number of entries of the Security lists in the s5SbsSecurityListTable."
+  },
+  "s5SbsMaxSecurityLists": {
+    "name": "s5SbsMaxSecurityLists",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.18",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The maximum number of entries of the Security lists in the s5SbsSecurityListTable."
+  },
+  "s5SbsSecurityListTable": {
+    "name": "s5SbsSecurityListTable",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.19",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "A table containing a list of Security port lists."
+  },
+  "s5SbsSecurityListEntry": {
+    "name": "s5SbsSecurityListEntry",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.19.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "S5-SWITCH-BAYSECURE-MIB",
+        "object": "s5SbsSecurityListIndx",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "An entry in this table "
+  },
+  "s5SbsSecurityListIndx": {
+    "name": "s5SbsSecurityListIndx",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.19.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The index of the security list. This corresponds to the Security port list which can be used as index into s5SbsAuthCfgTable. "
+  },
+  "s5SbsSecurityListMembers": {
+    "name": "s5SbsSecurityListMembers",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.19.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortSet",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The set of ports that are currently members in this Port list."
+  },
+  "s5SbsSecurityListStatus": {
+    "name": "s5SbsSecurityListStatus",
+    "oid": "1.3.6.1.4.1.45.1.6.5.3.19.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "valid": 1,
+          "create": 2,
+          "delete": 3,
+          "modify": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The status of the SecurityList entry. The primary use of this object is for modifying the SecurityList table. Values that can be written create(2), delete(3), modify(4). Values that can be read: valid(1). Setting this entry to delete(3) causes the entry to be deleted from the table. Setting a new entry with create(2) causes the entry to be created in the table. Setting an entry with modify(4) causes the entry to be modified. The response to a get request or get-next request will always indicate a status of valid (1), since invalid entries are removed from the table. "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/s5sbs102.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:11:15 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "S5-SWITCH-BAYSECURE-MIB"
+  }
+}

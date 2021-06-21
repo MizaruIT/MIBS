@@ -1,0 +1,523 @@
+{
+  "imports": {
+    "class": "imports",
+    "HUAWEI-MIB": [
+      "huaweiUtility"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "MibIdentifier",
+      "IpAddress",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "Counter64",
+      "Unsigned32",
+      "Integer32",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "Gauge32",
+      "MODULE-IDENTITY",
+      "TimeTicks",
+      "Bits"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "RowStatus",
+      "DisplayString"
+    ]
+  },
+  "hwClock": {
+    "name": "hwClock",
+    "oid": "1.3.6.1.4.1.2011.6.25",
+    "class": "moduleidentity",
+    "lastupdated": "0411051600Z",
+    "organization": "Fix-Net Dept, Huawei Technologies Co.,Ltd.",
+    "contactinfo": "Floor 5 ,Block 4, R&D Building, Huawei Longgang Production Base, Shenzhen, P.R.C. http://www.huawei.com Zip:518057 ",
+    "description": "Clock Management MIB . Added the Nodes of hwUASystemWorkMode And hw3rdClkSubBoardWorkMode by fengjinchun "
+  },
+  "hwClkMibObjects": {
+    "name": "hwClkMibObjects",
+    "oid": "1.3.6.1.4.1.2011.6.25.1",
+    "class": "objectidentity"
+  },
+  "hwClockInManageTable": {
+    "name": "hwClockInManageTable",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Clock Source Management Table (the max record number is 10)"
+  },
+  "hwClockInManageEntry": {
+    "name": "hwClockInManageEntry",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-CLK-MIB",
+        "object": "hwClkInIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Clock Source Management Table Entity"
+  },
+  "hwClkInIndex": {
+    "name": "hwClkInIndex",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 9
+          },
+          {
+            "min": 255,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Clock source index: from 0 to 9 is effective, 255 indicates local source"
+  },
+  "hwClkInPostion": {
+    "name": "hwClkInPostion",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": " The ifIndex of physical position of clock source.If the clock source isn't a sysline clock, the value will be NULL_ULONG(0xFFFFFFFFFFFFFF).The highest byte is useless.The second byte describes the NO. of frame, the third byte describes the NO. of slot and the lowest byte describes the port ID. The following shows how to use parameter when getting or setting: 0x 0000, FFFF,0000,0000 Frame ID; 0~255 0x 0000, 0000,FFFF,0000 Slot ID; 0~255 0x 0000, 0000,0000,FFFF Port ID; 0~255"
+  },
+  "hwClkInWorkMode": {
+    "name": "hwClkInWorkMode",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "sysLine": 2,
+          "cesLine": 3,
+          "cesSrts": 4,
+          "e1Bits0": 5,
+          "e1Bits1": 6,
+          "f2mhzBits0": 7,
+          "f2mhzBits1": 8,
+          "msuSdh": 9,
+          "msuTdm": 10,
+          "localSurge": 11,
+          "xpm-8k": 12
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Clock source type: none(1), -- clock source not configuration sysLine(2), -- line clock source that need to specify frame/slot/port cesLine(3), -- line_clk of a ces clock source cesSrts(4), -- srts_clk of a ces clock source e1Bits0(5), -- e1 type of a bits0 clock source e1Bits1(6), -- e1 type of a bits1 clock source f2mhzBits0(7),-- 2MHZ type of a bits0 clock source f2mhzBits1(8),-- 2MHZ type of a bits1 clock source msuSdh(9), -- sdh_clk of a msu clock source msuTdm(10), -- tdm_clk of a msu clock source localSurge(11), -- local surge clock xpm-8k(12), --xpm-8k type of a xpm-8k clock source includes line clock source, bits clock source,local surge source, If it is line clock source of ces port, it may be ces line or ces srts clock source,. If it is bits clock source, it may be 2MHZ or e1 clock source of bits0, or 2MHZ or e1. clock source of bits1. if the value is 1, it indicates that clock source isn't configured"
+  },
+  "hwClkInOperStatus": {
+    "name": "hwClkInOperStatus",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "normal": 2,
+          "failure": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "clock source state none(1), -- clock source index isn't configured normal(2), -- the state of clock source is active failure(3) -- the state of clock source fails."
+  },
+  "hwClkInRowStatus": {
+    "name": "hwClkInRowStatus",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Clock Source operationadd clock source and clear clock source by user. when a user adds clock source, clock works in trace mode and when a user clears clock source clock works in srystal mode. To set position(frame,slot,port) and oper(4), these two operation should be set together. oper(6) could be set by itself. To set a bit clock source, the frame,slot,port parameters are useless. Oper(6) is used to clear a clock source."
+  },
+  "hwClkInBitsImpedance": {
+    "name": "hwClkInBitsImpedance",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "bits_impedance_75ohm": 1,
+          "bits_impedance_120ohm": 2,
+          "bits_impedance_none": 255
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "BITS clock impedance type: bits_impedance_75ohm(1), -- the impedance of this bits clock source is 75 ohm bits_impedance_120ohm(2), -- the impedance of this bits clock source is 120 ohm bits_impedance_none(255), -- this clock source is not a bits clock The impedance value must been set when the clock source is a bits clock"
+  },
+  "hwClkInBitsType": {
+    "name": "hwClkInBitsType",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "bits_type_2MHz": 1,
+          "bits_type_2Mbps": 2,
+          "bits_type_none": 255
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "BITS clock type: bits_2MHz(1), -- the bits type is 2MHz bits_2Mbps(2), -- the bits type is 2bps bits_type_none(255) -- the clock source is not a bits clock The impedance value must been set when the clock source is a bits clock"
+  },
+  "hwClockOutManageTable": {
+    "name": "hwClockOutManageTable",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Clock Out Management Table (the max record number is 10) "
+  },
+  "hwClockOutManageEntry": {
+    "name": "hwClockOutManageEntry",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-CLK-MIB",
+        "object": "hwClkInIndex",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-CLK-MIB",
+        "object": "hwClkOutIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Clock Out Management Table Entity "
+  },
+  "hwClkOutIndex": {
+    "name": "hwClkOutIndex",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "index of clock out type, its meaning is the same as hwClkOutType. The clock out index must be 8k in UA system and must be sdh or tdm in MD/MA system during the setting of priority for a clock source."
+  },
+  "hwClkOutType": {
+    "name": "hwClkOutType",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "sdh": 1,
+          "tdm": 2,
+          "clk8K": 3,
+          "clk19M": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Clock Out Type, at present there are four types: sdh, tdm, 8k and 19m. "
+  },
+  "hwClkOutPriority": {
+    "name": "hwClkOutPriority",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 9
+          },
+          {
+            "min": 255,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 255,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Clock source priority, 0 is the highest priority and from 0 to 9 priority is descending If get value is 255, it indicates that the priority of the clock souce isn't configured. "
+  },
+  "hwClkOutWorkMode": {
+    "name": "hwClkOutWorkMode",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "trace": 1,
+          "surge": 2,
+          "keep": 3,
+          "snap": 4,
+          "thirdsurge": 5
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Out work mode of clock: trace(1) indicates clock is working in tracing mode surge(2) indicates clock is working in surge mode keep(3) indicates clock is working in keeping mode snap(4) indicates clock is working in snapping mode"
+  },
+  "hwClkOutOperStatus": {
+    "name": "hwClkOutOperStatus",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Clock source Out state. It indicates whether the clock source is the Out clock of system: 1--yes, 2--no "
+  },
+  "hwSystemClockManagePara": {
+    "name": "hwSystemClockManagePara",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.3",
+    "class": "objectidentity"
+  },
+  "hwUASystemWorkMode": {
+    "name": "hwUASystemWorkMode",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "olt": 1,
+          "onu": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "UA work mode: OLT(1),--UA works as OLT in VPRING ONU(2),--UA works as ONU in VPRING"
+  },
+  "hw3rdClkSubBoardWorkMode": {
+    "name": "hw3rdClkSubBoardWorkMode",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "trace": 1,
+          "keep": 2,
+          "thirdsurge": 3,
+          "snap": 4,
+          "no3rdclksubboard": 255
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Out work mode of 3rd subboard clock: trace(1) indicates clock is working in tracing mode keep(2) indicates clock is working in keeping mode 3rdsurge(3) indicates clock is working in 3rd subboard crystal snap(4) indicates clock is working in snap mode no3rdclksubboard(255) indicates does not have 3rd subboard"
+  },
+  "hwSystemClockMode": {
+    "name": "hwSystemClockMode",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.3.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clock-clksubboard": 1,
+          "clock-localboard": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Clock mode: clock-clksubboard(1) clock-subboard supply output clock clock-localboard(2) local-board supplay output clock"
+  },
+  "hw3rdClkSubBoardInputStatus": {
+    "name": "hw3rdClkSubBoardInputStatus",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.3.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "normal": 2,
+          "fault": 3,
+          "no3rdclksubboard": 255
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Clock mode: none(1) clock-subboard have no clock-signal input normal(2) clock-subboard clock-signal input normal fault(3) clock-subboard clock-signal input fault no3rdclksubboard(255) indicates does not have 3rd subboard"
+  },
+  "hw3rdClkSubBoardOutputStatus": {
+    "name": "hw3rdClkSubBoardOutputStatus",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.3.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "normal": 1,
+          "fault": 2,
+          "no3rdclksubboard": 255
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Clock mode: normal(1) clock-subboard output status normal fault(2) clock-subboard output status fault no3rdclksubboard(255) indicates does not have 3rd subboard"
+  },
+  "hwClockOutPortManageTable": {
+    "name": "hwClockOutPortManageTable",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Clock Out Port Management Table(the max record number is 24) "
+  },
+  "hwClockOutPortManageEntry": {
+    "name": "hwClockOutPortManageEntry",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-CLK-MIB",
+        "object": "hwClkOutputPostion",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Clock Out Port Management Table Entity "
+  },
+  "hwClkOutputPostion": {
+    "name": "hwClkOutputPostion",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": " The ifIndex of physical position of clock source.The highest byte is useless.The second byte describes the NO. of frame, the third byte describes the NO. of slot and the lowest byte describes the NO. of port. How to use parameter when getting or setting is as below: 0x 0000, FFFF,0000,0000 Frame ID; 0~255 0x 0000, 0000,FFFF,0000 Slot ID; 0~255 0x 0000, 0000,0000,FFFF Port ID; 0~255"
+  },
+  "hwClkOutPortEnable": {
+    "name": "hwClkOutPortEnable",
+    "oid": "1.3.6.1.4.1.2011.6.25.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enable": 0,
+          "disable": 1
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Clock source type: enable(0), -- Enabled this bits-port clock source output -- that need to specify frame/slot/port disable(1), -- Disabled this bits-port clock source output -- that need to specify frame/slot/port "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/HUAWEI-CLK-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:20:41 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "HUAWEI-CLK-MIB"
+  }
+}

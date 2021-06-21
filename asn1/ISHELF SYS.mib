@@ -1,0 +1,2637 @@
+
+ISHELF-SYS-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY,
+    Unsigned32,
+    IpAddress
+        FROM SNMPv2-SMI
+
+    DisplayString,
+    RowStatus,
+    TruthValue
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfSys,
+    iShelfTrap,
+    iShelfTrapGroup,
+    iShelfTrapConfig,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfLocation,
+    IShelfLabel,
+    IShelfCircuit,
+    IShelfFeatureKey,
+    IShelfAlarmId,
+    IShelfAlarmName,
+    IShelfAlarmLevel,
+    IShelfAlarmState,
+    IShelfAlarmCondition,
+    IShelfAlarmConditionString,
+    IShelfDateTime,
+    IShelfAlarmDescription,
+    IShelfCardType,
+    IShelfRedundancy,
+    IShelfFiberRingId,
+    IShelfStsCircuitType,
+    IShelfTdmBandwidth,
+    IShelfAlarmIO,
+    IShelfAlarmBitmap,
+    IShelfAdminState,
+    IShelfAlarmIndex,
+    IShelfSysConsoleErrorCode,
+    IShelfOperState,
+    IShelfSysTrapOid,
+    IShelfNode,
+    IShelfNodeMapCompression,
+    IShelfSysLastErrorCode,
+    IShelfDownloadFilename,
+    IShelfGenericString,
+    IShelfLocationType,
+    IShelfDbSyncStatus,
+    IShelfShelfCellBusClockRate
+        FROM ISHELF-TC
+    ;
+
+iShelfSysMIB MODULE-IDENTITY
+    LAST-UPDATED "200610280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION "The MIB module for managing the IShelf System."
+    REVISION "200610280000Z"
+    DESCRIPTION "11.1.0.a.12"
+    ::= { iShelfModules 2 }
+
+-- %PRIVATEHEADER
+--iShelfSys OBJECT IDENTIFIER ::= { osiOlt 1 }
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR group
+iShelfSysGroup OBJECT IDENTIFIER ::= { iShelfSys 1 }
+
+-- %CLICMDPREFIX sys:node
+iShelfSysNode OBJECT IDENTIFIER ::= { iShelfSys 2 }
+
+-- %CLICMDPREFIX sys:shelf
+iShelfSysShelf OBJECT IDENTIFIER ::= { iShelfSys 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysMIBVersion - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR mibversion
+-- %CLICOLLABEL MibVersion
+iShelfSysMIBVersion OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object indicates the current MIB version."
+    ::= { iShelfSysGroup 1 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysLabel - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR label
+-- %CLICOLLABEL Label
+iShelfSysLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "User label for the System."
+    ::= { iShelfSysGroup 2 }
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysFeatureEnable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR featenable
+-- %CLICOLLABEL FeatureEnable
+iShelfSysFeatureEnable OBJECT-TYPE
+    SYNTAX      IShelfFeatureKey
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Setting this scalar causes the associated feature to be
+         enabled on the system (assuming an appropriate key).  A Get returns
+         an unspecified value."
+    ::= { iShelfSysGroup 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysAction - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR action
+-- %CLICOLLABEL Action
+iShelfSysAction OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    noAction(0),
+                    resetAllTrafficAndTroubleshootingStats(1),
+                    resyncPanicDumpEntriesFromOlts(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Setting this scalar will result in the associated
+         action being performed on the system.  A Get of the scalar
+         will indicate the last performed action."
+    ::= { iShelfSysGroup 4 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysSystemDateTime - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR datetime
+-- %CLICOLLABEL DateTime
+iShelfSysSystemDateTime OBJECT-TYPE
+    SYNTAX      IShelfDateTime
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Reading this attribute produces the current system date and time.
+         Writing this attribute sets the current system date and time to the
+         value written."
+    ::= { iShelfSysGroup 5 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysDatabaseSyncStatus - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR dbstatus
+-- %CLICOLLABEL DBSyncStatus
+iShelfSysDatabaseSyncStatus OBJECT-TYPE
+    SYNTAX      IShelfDbSyncStatus
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute displays the current database synchronization status
+         between the EMGMT card and the CPU card."
+    ::= { iShelfSysGroup 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysAlarmSettingsTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR alarmsettings
+iShelfSysAlarmSettingsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSysAlarmSettingsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The Alarm Settings table provides the ability for the operator to
+         override the internal default settings for each alarm. For example, assuming the
+         ONT Missing alarm is MINOR by default, with this table a row can be created for the ONT
+         Missing alarm and the severity level can be changed to MAJOR."
+    ::= { iShelfSysGroup 7 }
+
+iShelfSysAlarmSettingsEntry OBJECT-TYPE
+    SYNTAX      IShelfSysAlarmSettingsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry corresponds to one Alarm."
+    INDEX       { iShelfSysAlarmSettingsId }
+    ::= {iShelfSysAlarmSettingsTable 1 }
+
+IShelfSysAlarmSettingsEntry ::=
+    SEQUENCE {
+        iShelfSysAlarmSettingsId
+            IShelfAlarmId,
+        iShelfSysAlarmSettingsName
+            IShelfAlarmName,
+        iShelfSysAlarmSettingsLevel
+            IShelfAlarmLevel,
+        iShelfSysAlarmSettingsState
+            IShelfAlarmState,
+        iShelfSysAlarmSettingsRowStatus
+            RowStatus
+    }
+
+-- %CLIWIDTH 20
+iShelfSysAlarmSettingsId OBJECT-TYPE
+    SYNTAX      IShelfAlarmId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The type of alarm."
+    ::= { iShelfSysAlarmSettingsEntry 1 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfSysAlarmSettingsName OBJECT-TYPE
+    SYNTAX      IShelfAlarmName
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "User name for the alarm.  This object can only set for
+         the usrX alarm ids. All other alarms have a predefined system name that
+         cannot be changed.
+         NOTE:  This object can only be modified with a non-active rowStatus."
+    ::= { iShelfSysAlarmSettingsEntry 2 }
+
+-- %SETINACTIVE
+iShelfSysAlarmSettingsLevel OBJECT-TYPE
+    SYNTAX      IShelfAlarmLevel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The severity level of the alarm.
+         critical(1),
+         major(2),
+         minor(3),
+         warning(4),
+         event(5),
+         clear(6)
+        NOTE:  This object can only be modified with a non-active rowStatus."
+    ::= { iShelfSysAlarmSettingsEntry 3 }
+
+-- %SETINACTIVE
+iShelfSysAlarmSettingsState OBJECT-TYPE
+    SYNTAX      IShelfAlarmState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Whether the alarm is enabled or disabled. By default, all alarms are
+         enabled. Disabling an alarm means there will be no user notification (no alarm) if
+         the underlying condition is detected.
+        NOTE:  This object can only be modified with a non-active rowStatus."
+    ::= { iShelfSysAlarmSettingsEntry 4 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfSysAlarmSettingsRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfSysAlarmSettingsEntry 5 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysCurrentAlarmTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR currentalarm
+-- %CLISHOWGROUP currentalarm
+iShelfSysCurrentAlarmTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSysCurrentAlarmEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "The Current Alarm Table."
+    ::= { iShelfSysGroup 8 }
+
+iShelfSysCurrentAlarmEntry OBJECT-TYPE
+    SYNTAX      IShelfSysCurrentAlarmEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry corresponds to one active Alarm."
+    INDEX       { iShelfSysCurrentAlarmIndex }
+    ::= {iShelfSysCurrentAlarmTable 1 }
+
+IShelfSysCurrentAlarmEntry ::=
+    SEQUENCE {
+        iShelfSysCurrentAlarmIndex
+            IShelfAlarmIndex,
+        iShelfSysCurrentAlarmId
+            IShelfAlarmId,
+        iShelfSysCurrentAlarmLocationType
+            IShelfLocationType,
+        iShelfSysCurrentAlarmLocation
+            IShelfLocation,
+        iShelfSysCurrentAlarmCircuit
+            IShelfCircuit,
+        iShelfSysCurrentAlarmCardType
+            IShelfCardType,
+        iShelfSysCurrentAlarmOid
+            IShelfSysTrapOid,
+        iShelfSysCurrentAlarmLevel
+            IShelfAlarmLevel,
+        iShelfSysCurrentAlarmCondition
+            IShelfAlarmCondition,
+        iShelfSysCurrentAlarmServiceAffecting
+            TruthValue,
+        iShelfSysCurrentAlarmDateAndTime
+            IShelfDateTime,
+        iShelfSysCurrentAlarmDescription
+            IShelfAlarmDescription
+    }
+
+-- %CLICOLLABEL Idx
+-- %CLIWIDTH 10
+-- %CLISHOWGROUP currentalarm.1
+-- %CLISHOWGROUP currentalarm.2
+iShelfSysCurrentAlarmIndex OBJECT-TYPE
+    SYNTAX      IShelfAlarmIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This is a rolling counter indicating the order of alarm
+         detection."
+    ::= { iShelfSysCurrentAlarmEntry 1 }
+
+-- %CLICOLLABEL Id
+-- %CLIWIDTH 20
+-- %CLISHOWGROUP currentalarm.1
+iShelfSysCurrentAlarmId OBJECT-TYPE
+    SYNTAX      IShelfAlarmId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the type of alarm that occurred."
+    ::= { iShelfSysCurrentAlarmEntry 2 }
+
+-- %CLISHOWGROUP currentalarm.1
+-- %CLICOLLABEL LocType
+-- %SETINACTIVE
+iShelfSysCurrentAlarmLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of location addressing."
+    ::= { iShelfSysCurrentAlarmEntry 3 }
+
+-- %CLICOLLABEL Location
+-- %CLIWIDTH 10
+-- %CLISHOWGROUP currentalarm.1
+iShelfSysCurrentAlarmLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the alarm.
+         This location will specify node, shelf, and slot."
+    ::= { iShelfSysCurrentAlarmEntry 4 }
+
+-- %CLICOLLABEL Circuit
+-- %CLIWIDTH 10
+-- %CLISHOWGROUP currentalarm.1
+iShelfSysCurrentAlarmCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The specific location of the alarm on the host card."
+    ::= { iShelfSysCurrentAlarmEntry 5 }
+
+-- %CLICOLLABEL CardType
+-- %CLISHOWGROUP currentalarm.1
+iShelfSysCurrentAlarmCardType OBJECT-TYPE
+    SYNTAX      IShelfCardType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The card type of the alarm."
+    ::= { iShelfSysCurrentAlarmEntry 6 }
+
+-- %CLIIGNORE
+-- %GETTYPE TABLE
+iShelfSysCurrentAlarmOid OBJECT-TYPE
+    SYNTAX      IShelfSysTrapOid
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The OID of the alarm on the host card."
+    ::= { iShelfSysCurrentAlarmEntry 7 }
+
+-- %CLICOLLABEL Level
+-- %CLIWIDTH 10
+-- %CLISHOWGROUP currentalarm.2
+iShelfSysCurrentAlarmLevel OBJECT-TYPE
+    SYNTAX      IShelfAlarmLevel
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The level of the alarm."
+    ::= { iShelfSysCurrentAlarmEntry 8 }
+
+-- %CLICOLLABEL Condition
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP currentalarm.2
+iShelfSysCurrentAlarmCondition OBJECT-TYPE
+    SYNTAX      IShelfAlarmCondition
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The condition/cause of the alarm."
+    ::= { iShelfSysCurrentAlarmEntry 9 }
+
+-- %CLICOLLABEL SvcEf
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP currentalarm.2
+iShelfSysCurrentAlarmServiceAffecting OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "True if the alarm is service affecting."
+    ::= { iShelfSysCurrentAlarmEntry 10 }
+
+-- %CLICOLLABEL DateTime
+-- %CLIWIDTH 14
+-- %CLISHOWGROUP currentalarm.2
+iShelfSysCurrentAlarmDateAndTime OBJECT-TYPE
+    SYNTAX      IShelfDateTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Date and time the alarm occurred."
+    ::= { iShelfSysCurrentAlarmEntry 11 }
+
+-- %CLICOLLABEL Description
+-- %CLIWIDTH 22
+-- %CLISHOWGROUP currentalarm.2
+iShelfSysCurrentAlarmDescription OBJECT-TYPE
+    SYNTAX      IShelfAlarmDescription
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Additional description of the alarm."
+    ::= { iShelfSysCurrentAlarmEntry 12 }
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysMgmtIfTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR mgmtif
+-- %CLISHOWGROUP mgmtif
+iShelfSysMgmtIfTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSysMgmtIfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSysGroup 9 }
+
+iShelfSysMgmtIfEntry OBJECT-TYPE
+    SYNTAX      IShelfSysMgmtIfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfSysMgmtIfIndex }
+    ::= { iShelfSysMgmtIfTable 1 }
+
+IShelfSysMgmtIfEntry ::=
+    SEQUENCE {
+        iShelfSysMgmtIfIndex
+            INTEGER,
+        iShelfSysMgmtIfLabel
+            IShelfLabel,
+        iShelfSysMgmtIfAdminState
+            IShelfAdminState,
+        iShelfSysMgmtIfOperState
+            IShelfOperState,
+        iShelfSysMgmtIfAllowAddress
+            IpAddress,
+        iShelfSysMgmtIfAllowMask
+            IpAddress,
+        iShelfSysMgmtIfActualAddress
+            IpAddress,
+        iShelfSysMgmtIfRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Index
+-- %CLISHOWGROUP mgmtif.1
+-- %CLISHOWGROUP mgmtif.2
+-- %CLIWIDTH 9
+iShelfSysMgmtIfIndex OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    snmpTrap1(4),
+                    snmpTrap2(5)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSysMgmtIfEntry 1 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP mgmtif.1
+-- %CLICOLLABEL Label
+iShelfSysMgmtIfLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSysMgmtIfEntry 2 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Admin
+-- %CLISHOWGROUP mgmtif.1
+iShelfSysMgmtIfAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for locking a given management
+         interface.
+
+         In the case of a craft or snmp-mgmt interface, locking the
+         interface results in the interface becoming read-only.
+         Modifications are not allowed from a locked interface but
+         Get operations will be allowed.
+
+         In the case of an snmp-trap type interface locking results
+         in no traps being sent to the interface."
+    ::= { iShelfSysMgmtIfEntry 3 }
+
+-- %CLICOLLABEL Oper
+-- %CLISHOWGROUP mgmtif.1
+iShelfSysMgmtIfOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object indicates the current status of the interface."
+    ::= { iShelfSysMgmtIfEntry 4 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL AllowAddr
+-- %CLISHOWGROUP mgmtif.2
+iShelfSysMgmtIfAllowAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the client that is allowed to
+         use the interface.  It is not applicable (0.0.0.0) for craft
+         type interfaces.
+
+         For snmp-mgmt interfaces:
+         - 0.0.0.0/AdminState=unlocked:  Allow SNMP EMS connect from any
+           client.
+         - 0.0.0.0/AdminState=locked:  Disallow connections on this interface.
+         - x.x.x.x:  Allow SNMP EMS connections from clients using the
+             indicated address with the AllowMask object.  The address may
+             be a subnet rather than a specific host.
+
+         For snmp-trap interfaces:
+         - 0.0.0.0 - Interface is unused.
+         - x.x.x.x - Send traps to specified host.  This must be a 
+                     host address."
+    ::= { iShelfSysMgmtIfEntry 5 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL AllowMask
+-- %CLISHOWGROUP mgmtif.2
+iShelfSysMgmtIfAllowMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the range of allowed addresses.
+         For example for a single host the AllowMask would be 255.255.255.255.
+         This object is not applicable for craft type interfaces.
+        This object is assumed to be 255.255.255.255 for snmp-trap type
+        interfaces."
+    ::= { iShelfSysMgmtIfEntry 6 }
+
+-- %CLICOLLABEL ActualAddr
+-- %CLISHOWGROUP mgmtif.2
+iShelfSysMgmtIfActualAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the actual client connection
+         for the interface when the interface is operational."
+    ::= { iShelfSysMgmtIfEntry 7 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP mgmtif.2
+iShelfSysMgmtIfRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfSysMgmtIfEntry 8 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysLastErrorTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR lasterr
+iShelfSysLastErrorTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSysLastErrorEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSysGroup 10 }
+
+iShelfSysLastErrorEntry OBJECT-TYPE
+    SYNTAX      IShelfSysLastErrorEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfSysLastErrorIndex }
+    ::= { iShelfSysLastErrorTable 1 }
+
+IShelfSysLastErrorEntry ::=
+    SEQUENCE {
+        iShelfSysLastErrorIndex
+            INTEGER,
+        iShelfSysLastErrorCode
+            IShelfSysLastErrorCode,
+        iShelfSysLastErrorData
+            Integer32,
+        iShelfSysLastErrorDescription
+            DisplayString
+    }
+
+-- %CLICOLLABEL index
+-- %CLICMDABBR index
+iShelfSysLastErrorIndex OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    snmpMgmt1(1),
+                    snmpMgmt2(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The interface that this error occurred on.
+         snmpMgmt1 (1)
+         snmpMgmt2 (2)"
+    ::= { iShelfSysLastErrorEntry 1 }
+
+iShelfSysLastErrorCode OBJECT-TYPE
+    SYNTAX      IShelfSysLastErrorCode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The error code of the last error that occurred."
+    DEFVAL { noerror }
+    ::= { iShelfSysLastErrorEntry 2 }
+
+-- %CLICOLLABEL data
+-- %CLICMDABBR data
+-- %CLIWIDTH 10
+iShelfSysLastErrorData OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The data associated with the last error that occurred."
+    DEFVAL { 0 }
+    ::= { iShelfSysLastErrorEntry 3 }
+
+-- %CLICOLLABEL description
+-- %CLICMDABBR description
+-- %CLIWIDTH 65
+iShelfSysLastErrorDescription OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..64))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The error string describing the last error that occurred.
+         The string can be a maximum of 64 characters."
+    ::= { iShelfSysLastErrorEntry 4 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysFileTransferTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDABBR ftt
+-- %CLISHOWGROUP ftt
+iShelfSysFileTransferTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSysFileTransferEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table provides the ability to download a file to the system
+         or upload a file from the system. It provides a generic way of
+         initiating either a software download (software upgrade) or a
+         database backup/restore (database upload/download). Only a single
+         entry can be created in this table."
+    ::= { iShelfSysGroup 11 }
+
+iShelfSysFileTransferEntry OBJECT-TYPE
+    SYNTAX      IShelfSysFileTransferEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "One row is for software download and one row is for database backup/restore."
+    INDEX       { iShelfSysFileTransferIndex }
+    ::= { iShelfSysFileTransferTable 1 }
+
+IShelfSysFileTransferEntry ::=
+    SEQUENCE {
+        iShelfSysFileTransferIndex
+            INTEGER,
+        iShelfSysFileTransferServerIpAddress
+            IpAddress,
+        iShelfSysFileTransferPort
+            INTEGER,
+        iShelfSysFileTransferFilename
+            IShelfDownloadFilename,
+	iShelfSysFileTransferCardLocation
+	    IShelfLocation,
+        iShelfSysFileTransferAction
+            INTEGER,
+        iShelfSysFileTransferProgress
+            INTEGER,
+        iShelfSysFileTransferOperState
+            INTEGER,
+        iShelfSysFileTransferOperStateDescription
+            IShelfGenericString,
+        iShelfSysFileTransferRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Index
+-- %CLIWIDTH 10
+-- %CLISHOWGROUP ftt.1
+-- %CLISHOWGROUP ftt.2
+-- %CLISHOWGROUP ftt.3
+-- %CLISHOWGROUP ftt.4
+iShelfSysFileTransferIndex OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    softwareDownload(1),
+                    databaseBackupRestore(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The first entry defines software download attributes and the second
+         entry defines database backup and restore attributes."
+    ::= { iShelfSysFileTransferEntry 1 }
+
+-- %CLICOLLABEL IPAddr
+-- %CLISHOWGROUP ftt.1
+iShelfSysFileTransferServerIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The TFTP or FTP server that will handle the file transfer."
+    ::= { iShelfSysFileTransferEntry 2 }
+
+-- %CLICOLLABEL Port
+-- %CLISHOWGROUP ftt.1
+iShelfSysFileTransferPort OBJECT-TYPE
+    SYNTAX      INTEGER (0..65535)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The TCP/UDP port to use for the file transfer."
+    ::= { iShelfSysFileTransferEntry 3 }
+
+-- %CLICOLLABEL Filename
+-- %CLISHOWGROUP ftt.2
+iShelfSysFileTransferFilename OBJECT-TYPE
+    SYNTAX      IShelfDownloadFilename
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The file that will be downloaded or uploaded."
+    ::= { iShelfSysFileTransferEntry 4 }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP ftt.1
+iShelfSysFileTransferCardLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the card to download.
+         This location will specify node, shelf, and slot.
+	 The active CPU is slot 26. The standby CPU is slot 27.
+
+	 If locations is set to 0 it specifies broadcast to all locations."
+    ::= { iShelfSysFileTransferEntry 5 }
+
+-- %CLICOLLABEL Action
+-- %CLISHOWGROUP ftt.1
+iShelfSysFileTransferAction OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    noAction(0),
+                    softwareDownload(1),        -- download system software
+                    softwareSwitch(2),          -- activate previously download software
+                    databaseBackup(3),          -- upload the current database to create a backup 
+                    databaseRestore(4),         -- download a previously backed up database and restore
+                    resetStatus(5)              -- reset all read-only status information
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The actions that can be initiated on the system. Note that the softwareXX actions
+         apply only to the softwareDownload entry and the databaseXX actions apply only to
+         the databaseBackupResotre entry."
+    ::= { iShelfSysFileTransferEntry 6 }
+
+-- %CLICOLLABEL Progress
+-- %CLISHOWGROUP ftt.3
+iShelfSysFileTransferProgress OBJECT-TYPE
+    SYNTAX      INTEGER (0..100)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Indicates the progress of the transfer in terms of percent complete."
+    ::= { iShelfSysFileTransferEntry 7 }
+
+-- %CLICOLLABEL OpState
+-- %CLISHOWGROUP ftt.3
+iShelfSysFileTransferOperState OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    idle(0),
+                    swDnldInProgress(1),
+                    swDnldCompleteSuccess(2),
+                    swDnldFailedTxInProgress(3),
+                    swDnldFailedServerUnreachable(4),
+                    swDnldFailedNetworkTimeout(5),
+                    swDnldFailedFileCorruption(6),
+                    swDnldFailedInternal(7),
+                    dbBakInProgress(8),
+                    dbBakCompleteSuccess(9),
+                    dbBakFailedTxInProgress(10),
+                    dbBakFailedServerUnreachable(11),
+                    dbBakFailedNetworkTimeout(12),
+                    dbBakFailedFileCorruption(13),
+                    dbBakFailedInternal(14),
+                    dbResInProgress(15),
+                    dbResCompleteSuccess(16),
+                    dbResFailedTxInProgress(17),
+                    dbResFailedServerUnreachable(18),
+                    dbResFailedNetworkTimeout(19),
+                    dbResFailedFileCorruption(20),
+                    dbResFailedInternal(21)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Indicates the operation status of the transfer."
+    ::= { iShelfSysFileTransferEntry 8 }
+
+-- %CLICOLLABEL OpDesc
+-- %CLISHOWGROUP ftt.4
+iShelfSysFileTransferOperStateDescription OBJECT-TYPE
+    SYNTAX      IShelfGenericString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Provides variable meaning to the different operational states."
+    ::= { iShelfSysFileTransferEntry 9 }
+
+-- %CLICOLLABEL RowStatus
+-- %CLISHOWGROUP ftt.1
+-- %ROWSTATUSTYPE FIXED
+iShelfSysFileTransferRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfSysFileTransferEntry 10 }
+    
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysTrapThrottleTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys:trap
+-- %CLICMDABBR throttle
+iShelfTrapThrottleTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfTrapThrottleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      obsolete
+    DESCRIPTION ""
+    ::= { iShelfTrapConfig 1 }
+
+iShelfTrapThrottleEntry OBJECT-TYPE
+    SYNTAX      IShelfTrapThrottleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      obsolete
+    DESCRIPTION ""
+    INDEX       { iShelfTrapThrottleIndex }
+    ::= { iShelfTrapThrottleTable 1 }
+
+IShelfTrapThrottleEntry ::=
+    SEQUENCE {
+        iShelfTrapThrottleIndex
+            INTEGER,
+        iShelfTrapThrottleStatus
+            INTEGER
+    }
+
+-- %CLICOLLABEL index
+-- %CLICMDABBR index
+iShelfTrapThrottleIndex OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    snmpTrap1(1),
+                    snmpTrap2(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      obsolete
+    DESCRIPTION ""
+    ::= { iShelfTrapThrottleEntry 1 }
+
+-- %CLICOLLABEL status
+-- %CLICMDABBR status
+iShelfTrapThrottleStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    freeFlow(1),
+                    allowOne(2),
+                    ifBusy(3),
+                    resendLast(4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      obsolete
+    DESCRIPTION
+        "."
+    DEFVAL      { freeFlow }
+    ::= { iShelfTrapThrottleEntry 2 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfTrapConfig objects for traps
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+iShelfSysTrapAlarmOid OBJECT-TYPE
+    SYNTAX      IShelfSysTrapOid
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Object identifier that the alarm is associated with."
+    ::= { iShelfTrapConfig 2 }
+
+iShelfSysTrapAlarmLevel OBJECT-TYPE
+    SYNTAX      IShelfAlarmLevel
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Level or severity of the alarm."
+    ::= { iShelfTrapConfig 3 }
+
+iShelfSysTrapAlarmTime OBJECT-TYPE
+    SYNTAX      IShelfDateTime
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Date and time the alarm was reported."
+    ::= { iShelfTrapConfig 4 }
+
+iShelfSysTrapAlarmId OBJECT-TYPE
+    SYNTAX      IShelfAlarmId
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "This object identifies the type of alarm that occurred."
+    ::= { iShelfTrapConfig 5 }
+
+iShelfSysTrapDbChgOid OBJECT-TYPE
+    SYNTAX      IShelfSysTrapOid
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Object identifier that the change is associated with."
+    ::= { iShelfTrapConfig 6 }
+
+iShelfSysTrapAlarmIndex OBJECT-TYPE
+    SYNTAX      IShelfAlarmIndex
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Index associated with alarm."
+    ::= { iShelfTrapConfig 7 }
+
+iShelfSysTrapAlarmCondition OBJECT-TYPE
+    SYNTAX      IShelfAlarmConditionString
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Condition associated with alarm."
+    ::= { iShelfTrapConfig 8 }
+    
+iShelfSysTrapDBChangeIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Index into the DB Change Log."
+    ::= { iShelfTrapConfig 9 }
+
+iShelfSysTrapLocationType OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION "Location Type used for Location fields that can have multiple types."
+    ::= { iShelfTrapConfig 10 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfTrapGroup Members 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+iShelfSysColdStartTrap NOTIFICATION-TYPE
+    STATUS      current
+    DESCRIPTION
+        "This trap is generated when the IShelf system agent
+         is initialized and is ready for action."
+    ::= { iShelfTrapGroup 1 }
+
+iShelfSysAlarmTrap NOTIFICATION-TYPE
+    OBJECTS     { iShelfSysTrapAlarmOid,
+                  iShelfSysTrapAlarmId,
+                  iShelfSysTrapAlarmLevel,
+                  iShelfSysTrapAlarmTime,
+                  iShelfSysTrapAlarmIndex,
+                  iShelfSysTrapAlarmCondition }
+    STATUS      current
+    DESCRIPTION "This trap will contain the information about an alarm."
+    ::= { iShelfTrapGroup 2 }
+
+iShelfSysDbChangeTrap NOTIFICATION-TYPE
+    OBJECTS     { iShelfSysTrapDbChgOid,
+                  iShelfSysTrapDBChangeIndex }
+    STATUS      current
+    DESCRIPTION
+        "This trap will indicate a row that has changed in some way
+         other than deletion (creation, change in read-write attributes).
+
+         This trap will be generated regardless of the source so in the
+         case of an EMS listener it will receive traps based on modifications
+         it has initiated as well as any modifications that may take place
+         through the Craft Interface."
+    ::= { iShelfTrapGroup 3 }
+
+--
+-- ishelfTrapGroup 4 is for panic dump (iShelfPanicDumpAvailableTrap), in the CARD MIB
+--
+
+iShelfSysDbDeleteTrap NOTIFICATION-TYPE
+    OBJECTS     { iShelfSysTrapDbChgOid,
+                  iShelfSysTrapDBChangeIndex }
+    STATUS      current
+    DESCRIPTION
+        "This trap will indicate a row that has changed in one
+         way, deletion.
+
+         This trap will be generated regardless of the source so in the
+         case of an EMS listener it will receive traps based on modifications
+         it has initiated as well as any modifications that may take place
+         through the Craft Interface."
+    ::= { iShelfTrapGroup 5 }
+
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfNodeConfigTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys:node
+-- %CLICMDABBR config
+-- %CLISHOWGROUP config
+iShelfNodeConfigTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfNodeConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Node specific configuration"
+    ::= { iShelfSysNode 1 }
+
+iShelfNodeConfigEntry OBJECT-TYPE
+    SYNTAX      IShelfNodeConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row is a node"
+    INDEX       { iShelfNodeConfigLocation }
+    ::= { iShelfNodeConfigTable 1 }
+
+IShelfNodeConfigEntry ::=
+    SEQUENCE {
+        iShelfNodeConfigLocation
+            IShelfLocation,
+        iShelfNodeConfigLabel
+            IShelfLabel,
+        iShelfNodeConfigRdtBatteriesInstalled
+            TruthValue,
+        iShelfNodeConfigRdtAcPowered
+            TruthValue,
+        iShelfNodeConfigCdtAlarmIO
+            IShelfAlarmIO,
+        iShelfNodeConfigAction
+            INTEGER,
+        iShelfNodeConfigOperState
+            IShelfOperState,
+        iShelfNodeConfigRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP config.1
+-- %CLISHOWGROUP config.2
+iShelfNodeConfigLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the node.
+         This location will only specify node."
+    ::= { iShelfNodeConfigEntry 1 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP config.1
+iShelfNodeConfigLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The user label for the node."
+    ::= { iShelfNodeConfigEntry 2 }
+
+-- %CLICOLLABEL RdtBattery
+-- %CLISHOWGROUP config.2
+-- %CLIWIDTH 10
+iShelfNodeConfigRdtBatteriesInstalled OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates if battery power is provided for the shelf.
+         Only applicable if the node is an RDT.
+           true (1),
+           false (2)
+           This attribute can only be modified when the node is in the enabled state."
+    ::= { iShelfNodeConfigEntry 3 }
+
+-- %CLICOLLABEL RdtACPower
+-- %CLISHOWGROUP config.2
+-- %CLIWIDTH 10
+iShelfNodeConfigRdtAcPowered OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates if AC power is provided for the shelf.
+         Only applicable if the node is an RDT.
+           true (1),
+           false (2)
+           This attribute can only be modified when the node is in the enabled state."
+    ::= { iShelfNodeConfigEntry 4 }
+
+-- %CLICOLLABEL CdtAlarm
+-- %CLISHOWGROUP config.2
+-- %CLIWIDTH 10
+iShelfNodeConfigCdtAlarmIO OBJECT-TYPE
+    SYNTAX      IShelfAlarmIO
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates if the Alarm I/O is input or output.  Only
+         applicable if the node is a CDT.
+           output (1),
+           input (2)
+           This attribute can only be modified when the node is in the enabled state."
+    ::= { iShelfNodeConfigEntry 5 }
+
+-- %CLICOLLABEL Action
+-- %CLISHOWGROUP config.2
+iShelfNodeConfigAction OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    noAction(0),
+                    clearAlarmHistory(1),
+                    alarmCutOff(2),
+                    resetNode(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Setting this object will result in the associated
+         action being performed on the node.  A Get of the object
+         will indicate the last performed action.
+           noAction (0),
+           clearAlarmHistory (1),
+           alarmCutOff (2),
+           resetNode(3)
+           This attribute can only be modified when the node is in the enabled state."
+    ::= { iShelfNodeConfigEntry 6 }
+
+-- %CLICOLLABEL Oper
+-- %CLISHOWGROUP config.2
+iShelfNodeConfigOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object indicates the current status of node.  Several attributes
+                 can only be modified when the operState is enabled.  See individual
+                 attributes for details."
+    ::= { iShelfNodeConfigEntry 7 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP config.1
+iShelfNodeConfigRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfNodeConfigEntry 8 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfNodeTimingSourceConfigTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX sys:node
+-- %CLICMDABBR timing
+-- %CLISHOWGROUP timingconfig
+iShelfNodeTimingSourceConfigTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfNodeTimingSourceConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Configured timing source table."
+    ::= { iShelfSysNode 2 }
+
+iShelfNodeTimingSourceConfigEntry OBJECT-TYPE
+    SYNTAX      IShelfNodeTimingSourceConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Contains timing info for node."
+    INDEX       { iShelfNodeTimingSourceConfigNode }
+    ::= { iShelfNodeTimingSourceConfigTable 1 }
+
+IShelfNodeTimingSourceConfigEntry ::=
+    SEQUENCE {
+        iShelfNodeTimingSourceConfigNode
+            IShelfNode,
+        iShelfNodeTimingSourceConfigType
+            INTEGER,
+        iShelfNodeTimingSourceConfigPrimaryLocationType
+            INTEGER,
+        iShelfNodeTimingSourceConfigPrimaryLocation
+            IShelfLocation,
+        iShelfNodeTimingSourceConfigPrimaryCircuit
+            IShelfCircuit,
+        iShelfNodeTimingSourceConfigSecondaryLocationType
+            INTEGER,
+        iShelfNodeTimingSourceConfigSecondaryLocation
+            IShelfLocation,
+        iShelfNodeTimingSourceConfigSecondaryCircuit
+            IShelfCircuit,
+        iShelfNodeTimingSourceConfigRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Node
+-- %CLISHOWGROUP timingconfig.1
+-- %CLISHOWGROUP timingconfig.2
+iShelfNodeTimingSourceConfigNode OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The node the timing source applies to."
+    ::= { iShelfNodeTimingSourceConfigEntry 1 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Type
+-- %CLISHOWGROUP timingconfig.1
+iShelfNodeTimingSourceConfigType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    local(1),      -- CDT only
+                    recovered(2),
+                    dds(3),
+                    bits(4)        -- CDT only
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of timing source associated
+         with the timing index.
+
+         TODO add all the rules."
+    ::= { iShelfNodeTimingSourceConfigEntry 2 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL PrimaryLocationType
+-- %CLISHOWGROUP timingconfig.1
+iShelfNodeTimingSourceConfigPrimaryLocationType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    specified(1),
+                    any(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the location type.  If the value is (1), the PrimaryLocation
+         and PrimaryCircuit will be used.  If the value is (2), then a wildcard will
+         used instead.  
+		 
+		 Note:  Only RDTx can have a primary of type any."
+    DEFVAL { any }
+    ::= { iShelfNodeTimingSourceConfigEntry 3 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL PrimaryLocation
+-- %CLISHOWGROUP timingconfig.1
+iShelfNodeTimingSourceConfigPrimaryLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the primary timing source for the node.
+         This location will specify node, shelf, and slot.
+
+         Note: Only shelf 1 of a node can provide a timing source for the node."
+    ::= { iShelfNodeTimingSourceConfigEntry 4 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL PrimaryCircuit
+-- %CLISHOWGROUP timingconfig.1
+iShelfNodeTimingSourceConfigPrimaryCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This field indicates the circuit on the slot carrying
+         the primary timing source.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfNodeTimingSourceConfigEntry 5 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL SecondaryLocationType
+-- %CLISHOWGROUP timingconfig.2
+iShelfNodeTimingSourceConfigSecondaryLocationType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    specified(1),
+                    any(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the location type.  If the value is (1), the SecondaryLocation
+         and SecondaryCircuit will be used.  If the value is (2), then a wildcard will
+         used instead."
+    DEFVAL { any }
+    ::= { iShelfNodeTimingSourceConfigEntry 6 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL SecondaryLocation
+-- %CLISHOWGROUP timingconfig.2
+iShelfNodeTimingSourceConfigSecondaryLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the Secondary timing source for the node.
+         This location will specify node, shelf, and slot.
+
+         Note: Only shelf 1 of a node can provide a timing source for the node."
+    ::= { iShelfNodeTimingSourceConfigEntry 7 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL SecondaryCircuit
+-- %CLISHOWGROUP timingconfig.2
+iShelfNodeTimingSourceConfigSecondaryCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This field indicates the circuit on the slot carrying
+         the secondary timing source.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfNodeTimingSourceConfigEntry 8 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP timingconfig.2
+iShelfNodeTimingSourceConfigRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row modification.  Modification of objects 
+         within the row is only allowed when the row is not in the active state.
+         In the case of an active row (already created), the row must be made 
+         notInService prior to modifying any settable objects. The notInService 
+         setting has no impact on the underlying object but is used to cause 
+         atomic updates of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfNodeTimingSourceConfigEntry 9 }
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfNodeActiveTimingSourceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPCPUGET XlateDeepGet 10000 ROW 
+-- %CLICMDPREFIX sys:node
+-- %CLICMDABBR activetiming
+iShelfNodeActiveTimingSourceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfNodeActiveTimingSourceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Timing source table."
+    ::= { iShelfSysNode 3 }
+
+iShelfNodeActiveTimingSourceEntry OBJECT-TYPE
+    SYNTAX      IShelfNodeActiveTimingSourceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each row indicates the current active timing source
+         for the associated node."
+    INDEX       { iShelfNodeActiveTimingSourceNode }
+    ::= { iShelfNodeActiveTimingSourceTable 1 }
+
+IShelfNodeActiveTimingSourceEntry ::=
+    SEQUENCE {
+        iShelfNodeActiveTimingSourceNode
+            IShelfNode,
+        iShelfNodeActiveTimingSourceIndex
+            INTEGER,
+        iShelfNodeActiveTimingSourceType
+            INTEGER,
+        iShelfNodeActiveTimingSourceLocation
+            IShelfLocation,
+        iShelfNodeActiveTimingSourceCircuit
+            IShelfCircuit
+    }
+
+-- %CLICOLLABEL Node
+iShelfNodeActiveTimingSourceNode OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The node the timing source applies to."
+    ::= { iShelfNodeActiveTimingSourceEntry 1 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL Source
+iShelfNodeActiveTimingSourceIndex OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    local(0),
+                    primary(1),
+                    secondary(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates which configured timing source
+         has been selected if any.
+
+         primary - the configured primary source is the active source.
+         secondary - the configured secondary source is the active source.
+         local - the active source is not the configured primary or secondary."
+	DEFVAL	{ local }
+    ::= { iShelfNodeActiveTimingSourceEntry 2 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL Type
+iShelfNodeActiveTimingSourceType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    local(1),      -- CDT only
+                    recovered(2),
+                    dds(3),
+                    bits(4)        -- CDT only
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of timing source providing
+         timing."
+    DEFVAL { local }
+    ::= { iShelfNodeActiveTimingSourceEntry 3 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL Location
+iShelfNodeActiveTimingSourceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the active timing source for the node.
+         This location will specify node, shelf, and slot.
+
+         Note: This location is only valid if the active timing source is recovered."
+    ::= { iShelfNodeActiveTimingSourceEntry 4 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL Circuit
+iShelfNodeActiveTimingSourceCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates the circuit currently providing timing
+         for recovered cases."
+    ::= { iShelfNodeActiveTimingSourceEntry 5 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfNodeSecSeuConnTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX sys:node
+-- %CLICMDABBR secseu
+iShelfNodeSecSeuConnTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfNodeSecSeuConnEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "SEC/SEU Connection Table. These are Shelf Expansion connections
+         that link multiple shelves within a single node."
+    ::= { iShelfSysNode 4 }
+
+iShelfNodeSecSeuConnEntry OBJECT-TYPE
+    SYNTAX      IShelfNodeSecSeuConnEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each row is a connection between shelves. Connections can be redundant
+         between shelves."
+    INDEX       { iShelfNodeSecSeuConnSeuLocation }
+    ::= { iShelfNodeSecSeuConnTable 1 }
+
+IShelfNodeSecSeuConnEntry ::=
+    SEQUENCE {
+        iShelfNodeSecSeuConnSeuLocation
+            IShelfLocation,
+        iShelfNodeSecSeuConnSecLocation
+            IShelfLocation,
+        iShelfNodeSecSeuConnStatus
+            INTEGER
+    }
+
+-- %CLICOLLABEL seuloc
+iShelfNodeSecSeuConnSeuLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the SEU card.
+         This location will specify node, shelf, and slot. The SEU card
+         is a general purpose card in the primary shelf."
+    ::= { iShelfNodeSecSeuConnEntry 1 }
+
+-- for DeepGet() 
+-- %CLICOLLABEL secloc
+iShelfNodeSecSeuConnSecLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the SEC card.
+         This location will specify node, shelf, and slot. The SEC card
+         replaces the CPU cards in the expansion shelf."
+    ::= { iShelfNodeSecSeuConnEntry 2 }
+
+-- for DeepGet() 
+-- %CLICOLLABEL status
+iShelfNodeSecSeuConnStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    fail(1),
+                    active(2),
+                    standby(3),
+                    noConnect(4)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current status of the connection"
+    ::= { iShelfNodeSecSeuConnEntry 3 }
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfNodeMapTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX sys:node
+-- %CLICMDABBR map
+-- %CLISHOWGROUP map
+iShelfNodeMapTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfNodeMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The table of connections between nodes (topology map).
+         The Node Map table supports the following inter-node connections:
+
+            OC12/OC48 Sonet circuits at STS1, STS3c, STS12c and STS48c rates. When creating
+              OC12 or OC48 circuits, the iShelfNodeMapStsCircuitType and iShelfNodeMapTdmBandwidth
+              objects are required. The specific iShelfNodeMapUpstreamCircuit and
+              iShelfNodeMapDownstreamCircuit must also be non-zero. The IShelfCircuit
+              format for an OC circuit is SSCCUU = 0001xx where xx is the circuit number
+              based on the iShelfNodeMapStsCircuitType setting. In addition,
+              iShelfNodeMapUpstreamCircuit and iShelfNodeMapDownstreamCircuit must be equal.
+
+            FO155 circuits. The FO155 card has only 1 FO155 circuit. Therefore, when creating
+              an FO155 circuit, the iShelfNodeMapUpstreamCircuit and iShelfNodeMapDownstreamCircuit
+              values are SSCCUU = 000101. Default values for the other objects are sufficient.
+
+            T1 circuits. Only the single T1 card is supported and, as such, there is only 1 T1 circuit.
+              Therefore, when creating a T1 circuit, the iShelfNodeMapUpstreamCircuit and
+              iShelfNodeMapDownstreamCircuit values are SSCCUU = 000101. Default values for the other 
+              objects are sufficient.
+
+            MDSL circuits. The MDSL card has only 1 MDSL circuit. Therefore, when creating
+              an MDSL circuit, the iShelfNodeMapUpstreamCircuit and iShelfNodeMapDownstreamCircuit
+              values are SSCCUU = 000101. Default values for the other objects are sufficient."
+    ::= { iShelfSysNode 5 }
+
+iShelfNodeMapEntry OBJECT-TYPE
+    SYNTAX      IShelfNodeMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry contains a link between nodes."
+    INDEX       { iShelfNodeMapUpstreamLocation,
+                  iShelfNodeMapUpstreamCircuit,
+		  iShelfNodeMapDownstreamLocation,
+		  iShelfNodeMapDownstreamCircuit }
+    ::= { iShelfNodeMapTable 1 }
+
+IShelfNodeMapEntry ::=
+    SEQUENCE {
+        iShelfNodeMapUpstreamLocation
+            IShelfLocation,
+        iShelfNodeMapUpstreamCircuit
+            IShelfCircuit,
+        iShelfNodeMapDownstreamLocation
+            IShelfLocation,
+        iShelfNodeMapDownstreamCircuit
+            IShelfCircuit,
+        iShelfNodeMapCardType
+            IShelfCardType,
+        iShelfNodeMapRedundancy
+            IShelfRedundancy,
+        iShelfNodeMapIsRingConfig
+            TruthValue,
+        iShelfNodeMapFiberRingId
+            IShelfFiberRingId,
+        iShelfNodeMapFiberRingMasterNode
+            IShelfNode,    
+        iShelfNodeMapStsCircuitType
+            IShelfStsCircuitType,
+        iShelfNodeMapTdmBandwidth
+            IShelfTdmBandwidth,
+        iShelfNodeMapLinkStatus
+            INTEGER,
+        iShelfNodeMapUsRedundancyStatus
+            INTEGER,
+        iShelfNodeMapDsRedundancyStatus
+            INTEGER,
+        iShelfNodeMapAdminState
+            IShelfAdminState,
+        iShelfNodeMapCompression
+            IShelfNodeMapCompression,
+        iShelfNodeMapRowStatus
+            RowStatus
+    }
+
+-- %CLICMDABBR usLoc
+-- %CLICOLLABEL usLoc
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP map.1
+-- %CLISHOWGROUP map.2
+iShelfNodeMapUpstreamLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the upstream side of the connection.
+         This location will specify node, shelf, and slot."
+    ::= { iShelfNodeMapEntry 1 }
+
+-- %CLICMDABBR usCir
+-- %CLICOLLABEL usCir
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP map.1
+-- %CLISHOWGROUP map.2
+iShelfNodeMapUpstreamCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The facility/circuit associated with the upstream side
+         of the connection.  Only applicable if cardType is oc12 or 0c48. 
+
+         For oc12 there is only 1 facility and the valid ranges of the circuit
+         are based on the STS Circuit Type:
+             STS1   - 1..12
+             STS3c  - 1..4
+             STS12c - 1
+             
+         For oc48 there is only 1 facility and the valid ranges of the circuit
+         are based on the STS Circuit Type:
+             STS1   - 1..48
+             STS3c  - 1..16
+             STS12c - 1..4
+             STS48c - 1"
+
+    ::= { iShelfNodeMapEntry 2 }
+
+-- %CLICMDABBR dsLoc
+-- %CLICOLLABEL dsLoc
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP map.1
+iShelfNodeMapDownstreamLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the downstream side of the connection.
+         This location will specify node, shelf, and slot."
+    ::= { iShelfNodeMapEntry 3 }
+
+-- %CLICMDABBR dsCir
+-- %CLICOLLABEL dsCir
+-- %CLIWIDTH 5
+-- %CLISHOWGROUP map.1
+iShelfNodeMapDownstreamCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The facility/circuit associated with the downstream side
+         of the connection.  Only applicable if cardType is oc12 or oc48. 
+
+         For oc12 there is only 1 facility and the valid ranges of the circuit
+         are based on the STS Circuit Type:
+             STS1   - 1..12
+             STS3c  - 1..4
+             STS12c - 1
+             
+         For oc48 there is only 1 facility and the valid ranges of the circuit
+         are based on the STS Circuit Type:
+             STS1   - 1..48
+             STS3c  - 1..16
+             STS12c - 1..4
+             STS48c - 1"
+             
+    ::= { iShelfNodeMapEntry 4 }
+
+-- %SETINACTIVE
+-- %CLICMDABBR type
+-- %CLICOLLABEL type
+-- %CLIWIDTH 6
+-- %CLISHOWGROUP map.1
+iShelfNodeMapCardType OBJECT-TYPE
+    SYNTAX      IShelfCardType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The card type hosting the connection.
+         Valid types are: mdsl, t1, fo155, oc12 and oc48."
+    ::= { iShelfNodeMapEntry 5 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR redundancy
+-- %CLICOLLABEL redundancy
+-- %CLISHOWGROUP map.2
+iShelfNodeMapRedundancy OBJECT-TYPE
+    SYNTAX      IShelfRedundancy
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The redundancy type of the connection.  Only applicable
+         for cardType of oc12 or oc48.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { none }
+    ::= { iShelfNodeMapEntry 6 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR isring
+-- %CLICOLLABEL isRng
+-- %CLISHOWGROUP map.2
+iShelfNodeMapIsRingConfig OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "True if the connection is part of a ring.  Only applicable
+         for cardType of fo155.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { false }
+    ::= { iShelfNodeMapEntry 7 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR ringid
+-- %CLICOLLABEL rId
+-- %CLISHOWGROUP map.2
+iShelfNodeMapFiberRingId OBJECT-TYPE
+    SYNTAX      IShelfFiberRingId
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The Fiber Ring ID of the connection.  Only applicable
+         for cardType of fo155.  If cardType is fo155 the range is 1..16.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfNodeMapEntry 8 }
+    
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR masterNode
+-- %CLICOLLABEL master
+-- %CLISHOWGROUP map.2
+iShelfNodeMapFiberRingMasterNode OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The network node that is the master node for this ring."
+    DEFVAL      { cdt }
+    ::= { iShelfNodeMapEntry 9 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR ststype
+-- %CLICOLLABEL sts
+-- %CLIWIDTH 6
+-- %CLISHOWGROUP map.1
+iShelfNodeMapStsCircuitType OBJECT-TYPE
+    SYNTAX      IShelfStsCircuitType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The STS circuit type of the connection.  Only applicable
+         if cardType is oc12 or oc48.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { none }
+    ::= { iShelfNodeMapEntry 10 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR tdmbw
+-- %CLICOLLABEL tdmbw
+-- %CLISHOWGROUP map.2
+iShelfNodeMapTdmBandwidth OBJECT-TYPE
+    SYNTAX      IShelfTdmBandwidth
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The number of 96 DS0 TDM bundles used for the connection.  Only applicable for
+         OC12 and OC48 circuits.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfNodeMapEntry 11 }
+
+-- for DeepGet() 
+-- %CLICMDABBR status
+-- %CLICOLLABEL status
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP map.1
+iShelfNodeMapLinkStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    normal(1),
+                    fault(2),
+                    dryUp(3),
+                    noComm(4)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the current state of the link
+         supporting the node map.  The following values are supported:
+             unknown - no communication to CPU
+             normal - the link is operational
+             fault - link has a problem (i.e., missing card, LOS etc.)
+             dryUp - link has been placed out of service
+             noComm - link status cannot be determined"
+    ::= { iShelfNodeMapEntry 12 }
+
+-- for DeepGet() 
+-- %CLICMDABBR usRedun
+-- %CLICOLLABEL usRedun
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP map.2
+iShelfNodeMapUsRedundancyStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(0),
+                    stbyProt(1),
+                    stbyWrk(2),
+                    actProt(3),
+                    actWrk(4),
+		    unknown(5)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the current redundancy state of
+         the link.  This is only applicable for OC12 type links.
+
+         The following status are possible:
+             none - not applicable or not accessible
+             stbyProt - upstream is standby card and protect card
+             stbyWrk - upstream is standby card and working card
+             actProt - upstream is active card and protect card
+             actWrk - upstream is active card and working card"
+    ::= { iShelfNodeMapEntry 13 }
+
+-- for DeepGet() 
+-- %CLICMDABBR dsRedun
+-- %CLICOLLABEL dsRedun
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP map.2
+iShelfNodeMapDsRedundancyStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(0),
+                    stbyProt(1),
+                    stbyWrk(2),
+                    actProt(3),
+                    actWrk(4),
+		    unknown(5)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the current redundancy state of
+         the link.  This is only applicable for OC12 type links.
+
+         The following status are possible:
+             none - not applicable or not accessible
+             stbyProt - downstream is standby card and protect card
+             stbyWrk - downstream is standby card and working card
+             actProt - downstream is active card and protect card
+             actWrk - downstream is active card and working card"
+    ::= { iShelfNodeMapEntry 14 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Admin
+-- %CLISHOWGROUP map.1
+-- %CLIOPTION
+iShelfNodeMapAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for locking a given node map.
+         Locking a node map will attempt to remove all traffic
+         between the two nodes to a different node map for these
+         two nodes (dryup the node map). This would be necessary
+         to minimize the service affects of deleting a node map."
+    ::= { iShelfNodeMapEntry 15 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Comp
+-- %CLISHOWGROUP map.2
+-- %CLIOPTION
+iShelfNodeMapCompression OBJECT-TYPE
+    SYNTAX      IShelfNodeMapCompression
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Defines the amount of compression applied to voice traffic on
+         the node map. This only applies to metallic facilities (MDSL
+         and T1). Compression is not supported for data traffic or on
+         fiber optic facilities (OC12, OC48 and FO155).
+
+         none(0)
+         comp64k(1)          uncompressed
+         comp32k(2)
+         comp16k(3)"
+    DEFVAL { none }
+    ::= { iShelfNodeMapEntry 16 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLICMDABBR rowstatus
+-- %CLISHOWGROUP map.1
+iShelfNodeMapRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfNodeMapEntry 17 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfShelfConfigTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %ROWSTRUCT USER
+-- %CLICMDPREFIX sys:shelf
+-- %CLICMDABBR config
+iShelfShelfConfigTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfShelfConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Shelf specific configuration"
+    ::= { iShelfSysShelf 1 }
+
+iShelfShelfConfigEntry OBJECT-TYPE
+    SYNTAX      IShelfShelfConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "each row is a shelf"
+    INDEX       { iShelfShelfConfigLocation }
+    ::= { iShelfShelfConfigTable 1 }
+
+IShelfShelfConfigEntry ::=
+    SEQUENCE {
+        iShelfShelfConfigLocation
+            IShelfLocation,
+        iShelfShelfConfigLabel
+            IShelfLabel,
+        iShelfShelfConfigRowStatus
+            RowStatus,
+	iShelfShelfConfigCellBusClockRate
+	    IShelfShelfCellBusClockRate
+    }
+
+iShelfShelfConfigLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The physical address location of the shelf.
+         This location will specify node and shelf."
+    ::= { iShelfShelfConfigEntry 1 }
+
+iShelfShelfConfigLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The user label for the shelf."
+    ::= { iShelfShelfConfigEntry 2 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLICMDABBR rowstatus
+iShelfShelfConfigRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfShelfConfigEntry 3 }
+    
+iShelfShelfConfigCellBusClockRate OBJECT-TYPE
+    SYNTAX      IShelfShelfCellBusClockRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The System Cell Bus Clock Rate."
+    DEFVAL { speed32M }
+    ::= { iShelfShelfConfigEntry 4 }
+
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfNodeRingSeqTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %CLICMDPREFIX sys:node
+-- %CLICMDABBR ringseq
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfNodeRingSeqEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table keeps track of the nodes in a ring network configuration.
+         Each entry (up to 16) represents a ring. A ring can consist of up 
+         to 16 nodes."
+    ::= { iShelfSysNode 6 }
+
+iShelfNodeRingSeqEntry OBJECT-TYPE
+    SYNTAX      IShelfNodeRingSeqEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Represents a ring configuration. The RingSeqID identifies each ring.
+         Up to 16 nodes can be in the ring. The first node in a Ring Sequence entry 
+         is the head node of that ring.  The order of nodes corresponds to the 
+         PHYSICAL ordering on the ring and indicates the direction of the Working 
+         Ring; that is, Protect card to Working card direction around the ring.
+         The last node entered is assumed to connect back to the head node."
+    INDEX       { iShelfNodeRingSeqID } 
+    ::= { iShelfNodeRingSeqTable 1 }
+    
+IShelfNodeRingSeqEntry ::=
+    SEQUENCE {
+        iShelfNodeRingSeqID
+            INTEGER,
+        iShelfNodeRingSeqRingType
+            IShelfRedundancy,
+        iShelfNodeRingSeqCarrierType
+            INTEGER,
+        iShelfNodeRingSeqNode1
+            IShelfNode,
+        iShelfNodeRingSeqNode2
+            IShelfNode,
+        iShelfNodeRingSeqNode3
+            IShelfNode,
+        iShelfNodeRingSeqNode4
+            IShelfNode,
+        iShelfNodeRingSeqNode5
+            IShelfNode,
+        iShelfNodeRingSeqNode6
+            IShelfNode,
+        iShelfNodeRingSeqNode7
+            IShelfNode,
+        iShelfNodeRingSeqNode8
+            IShelfNode,
+        iShelfNodeRingSeqNode9
+            IShelfNode,
+        iShelfNodeRingSeqNode10
+            IShelfNode,
+        iShelfNodeRingSeqNode11
+            IShelfNode,
+        iShelfNodeRingSeqNode12
+            IShelfNode,
+        iShelfNodeRingSeqNode13
+            IShelfNode,
+        iShelfNodeRingSeqNode14
+            IShelfNode,
+        iShelfNodeRingSeqNode15
+            IShelfNode,
+        iShelfNodeRingSeqNode16
+            IShelfNode,
+        iShelfNodeRingSeqRowStatus
+            RowStatus
+    }
+    
+-- %CLICOLLABEL RingID
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqID OBJECT-TYPE
+    SYNTAX      INTEGER (1..16)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "Unique identifier for the ring, 1..16."
+    ::= { iShelfNodeRingSeqEntry 1 }
+    
+-- %CLICOLLABEL RingType
+-- %CLISHOWGROUP ringdeq
+iShelfNodeRingSeqRingType OBJECT-TYPE
+    SYNTAX      IShelfRedundancy
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Redundancy type for this ring."
+    ::= { iShelfNodeRingSeqEntry 2 }
+    
+iShelfNodeRingSeqCarrierType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    fo155(1),
+                    oc12(2),
+                    oc48(3)
+                    }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Carrier type for this ring. fo155(1), oc12(2), or oc48(3)."
+    ::= { iShelfNodeRingSeqEntry 3 }
+    
+-- %CLICOLLABEL Loc1
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode1 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 1 in the ring. This is the head-end node of the ring."
+    ::= { iShelfNodeRingSeqEntry 4 }
+        
+-- %CLICOLLABEL Loc2
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode2 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 2 in the ring."
+    ::= { iShelfNodeRingSeqEntry 5 }
+    
+-- %CLICOLLABEL Loc3
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode3 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 3 in the ring."
+    ::= { iShelfNodeRingSeqEntry 6 }
+    
+-- %CLICOLLABEL Loc4
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode4 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 4 in the ring."
+    ::= { iShelfNodeRingSeqEntry 7 }
+    
+-- %CLICOLLABEL Loc5
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode5 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 5 in the ring."
+    ::= { iShelfNodeRingSeqEntry 8 }
+    
+-- %CLICOLLABEL Loc6
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode6 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 6 in the ring."
+    ::= { iShelfNodeRingSeqEntry 9 }
+    
+-- %CLICOLLABEL Loc7
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode7 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 7 in the ring."
+    ::= { iShelfNodeRingSeqEntry 10 }
+    
+-- %CLICOLLABEL Loc8
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode8 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 8 in the ring."
+    ::= { iShelfNodeRingSeqEntry 11 }
+    
+-- %CLICOLLABEL Loc9
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode9 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 9 in the ring."
+    ::= { iShelfNodeRingSeqEntry 12 }
+    
+-- %CLICOLLABEL Loc10
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode10 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 10 in the ring."
+    ::= { iShelfNodeRingSeqEntry 13 }
+    
+-- %CLICOLLABEL Loc11
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode11 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 11 in the ring."
+    ::= { iShelfNodeRingSeqEntry 14 }
+    
+-- %CLICOLLABEL Loc12
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode12 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 12 in the ring."
+    ::= { iShelfNodeRingSeqEntry 15 }
+    
+-- %CLICOLLABEL Loc13
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode13 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 13 in the ring."
+    ::= { iShelfNodeRingSeqEntry 16 }
+    
+-- %CLICOLLABEL Loc14
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode14 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 14 in the ring."
+    ::= { iShelfNodeRingSeqEntry 17 }
+    
+-- %CLICOLLABEL Loc15
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode15 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 15 in the ring."
+    ::= { iShelfNodeRingSeqEntry 18 }
+    
+-- %CLICOLLABEL Loc16
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqNode16 OBJECT-TYPE
+    SYNTAX      IShelfNode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Node 16 in the ring."
+    ::= { iShelfNodeRingSeqEntry 19 }
+    
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLICMDABBR rowstatus
+-- %CLISHOWGROUP ringseq
+iShelfNodeRingSeqRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfNodeRingSeqEntry 20 }
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysDBChangeLogTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+iShelfSysDBChangeLogTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSysDBChangeLogEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table is a history of DB change actions: edits and deletes.
+         There is a maximum of 256 entries. "
+    ::= { iShelfSysGroup 12 }
+    
+iShelfSysDBChangeLogEntry OBJECT-TYPE
+    SYNTAX      IShelfSysDBChangeLogEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        ""
+    INDEX       { iShelfSysDBChangeLogIndex } 
+    ::= { iShelfSysDBChangeLogTable 1 }
+  
+IShelfSysDBChangeLogEntry ::=
+    SEQUENCE {
+        iShelfSysDBChangeLogIndex
+            Unsigned32,
+        iShelfSysDBChangeLogOid
+            IShelfSysTrapOid,
+        iShelfSysDBChangeLogIsDeletion
+            TruthValue
+    }
+    
+iShelfSysDBChangeLogIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "Simple sequential index for the log entry. 1 - 4294967295.
+         The index is incremented by 1 for each new entry.
+         When max index is reached it rolls over to 1."
+    ::= { iShelfSysDBChangeLogEntry 1 }
+        
+-- %GETTYPE TABLE
+iShelfSysDBChangeLogOid OBJECT-TYPE
+    SYNTAX      IShelfSysTrapOid
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "The OID of the DB change."
+    ::= { iShelfSysDBChangeLogEntry 2 }
+    
+iShelfSysDBChangeLogIsDeletion OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "If true the indicated OID was deleted."
+    DEFVAL      { false }
+    ::= { iShelfSysDBChangeLogEntry 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysDBChangeLogLastIndex - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+iShelfSysDBChangeLogLastIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Identifies the sequence number that was used for the latest
+         entry into the DB Change Log table. The EMS may periodically
+         poll this entry to get the latest sequence number to determine
+         if it is in sync with the MGMT card database. The number is 
+         incremented for each entry, up to 4294967295, and wraps back to one."
+    ::= { iShelfSysGroup 13 }
+
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysDBChangeDataBaseHash - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+iShelfSysDBChangeDataBaseHash OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (16))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "128 bit MD5 Hash value. The value is obtained from the CPU.
+        Used by EMS to determine database out of sync condition."
+    ::= { iShelfSysGroup 14 }
+
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfSysFmmErrorResponseTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+-- %CLICMDPREFIX sys
+-- %CLICMDABBR fmmerr
+iShelfSysFmmErrorResponseTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfSysFmmErrorResponseEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSysGroup 15 }
+
+iShelfSysFmmErrorResponseEntry OBJECT-TYPE
+    SYNTAX      IShelfSysFmmErrorResponseEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfSysFmmErrorResponseSnmpRequestId }
+    ::= { iShelfSysFmmErrorResponseTable 1 }
+
+IShelfSysFmmErrorResponseEntry ::=
+    SEQUENCE {
+        iShelfSysFmmErrorResponseSnmpRequestId
+            INTEGER,
+        iShelfSysFmmErrorResponseConsoleCode
+            IShelfSysConsoleErrorCode,
+        iShelfSysFmmErrorResponseOutputString
+            DisplayString
+    }
+
+-- %CLICOLLABEL reqid
+-- %CLICMDABBR reqid
+iShelfSysFmmErrorResponseSnmpRequestId OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The SNMP PDU Request ID associated with this error response."
+    ::= { iShelfSysFmmErrorResponseEntry 1 }
+
+-- %CLICOLLABEL consolecode
+-- %CLICMDABBR consolecode
+iShelfSysFmmErrorResponseConsoleCode OBJECT-TYPE
+    SYNTAX      IShelfSysConsoleErrorCode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The console error code associated with this error response."
+    ::= { iShelfSysFmmErrorResponseEntry 2 }
+
+-- %CLICOLLABEL outputstring
+-- %CLICMDABBR outputstring
+-- %CLIWIDTH 80
+iShelfSysFmmErrorResponseOutputString OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..80))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The console output error string associated with this error response.
+         The string can be a maximum of 80 characters."
+    ::= { iShelfSysFmmErrorResponseEntry 3 }
+
+    
+END

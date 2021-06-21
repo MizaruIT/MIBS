@@ -1,0 +1,229 @@
+{
+  "imports": {
+    "class": "imports",
+    "SIAE-AGGRL1-MANAGEMENT-MIB": [
+      "aggrL1Entry"
+    ],
+    "SIAE-RADIO-SYSTEM-MIB": [
+      "linkStatusEntry",
+      "linkSettingsEntry"
+    ],
+    "SIAE-TREE-MIB": [
+      "siaeMib"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Bits",
+      "iso",
+      "OBJECT-TYPE",
+      "Counter32",
+      "IpAddress",
+      "TimeTicks",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "Gauge32",
+      "Unsigned32",
+      "MibIdentifier",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "OBJECT-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "hitlessAggregationL1": {
+    "name": "hitlessAggregationL1",
+    "oid": "1.3.6.1.4.1.3373.1103.98",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2016-02-29 00:00",
+        "description": "Initial version 01.00.00. "
+      }
+    ],
+    "lastupdated": "201602290000Z",
+    "organization": "SIAE MICROELETTRONICA spa",
+    "contactinfo": "SIAE MICROELETTONICA s.p.a. Via Michelangelo Buonarroti, 21 20093 - Cologno Monzese Milano - ITALY Phone : +39-02-27325-1 E-mail: tbd@siaemic.com ",
+    "description": "This module contains the hitless extension for a Level 1 aggregations of SIAE equipments. The Hitless L1 aggregation is a method to define radio link degradation in order to remove it from aggregation in advance (link status estimator). Only ethernet traffic is affected. The current TX profile of a link is used as extimator of the link status. When ACM modulation goes under a predefined profile (configurable by operator) the corresponding link is removed from RLAG. A radio link is considered unavailable for ethernet traffic during all the time that the current modulation remain under the predefined HITLESS profile (modulation). Every radio link is considered working in three separate ZONEs - GOOD ZONE: When it is working between the HITLESS profile (included) and the UPPER profile (included) - HITLESS ZONE: When it is working between the LOWER profile (included) and the HITLESS profile (excluded) - BAD ZONE: When the modem is unlocked NE is in charge to select which of the links, that are working into the HITLESS ZONE, participate in RLAG. The decision is taken according to three possible behaviors: - ALL survive: All links remain used by aggregator when working into the HITLESS ZONE - ONE survive: When NO link is working into the GOOD ZONE, the last link entered into the HITLESS ZONE continues to be used by the aggregator - NONE survive: Each link is removed from aggregation when working into the HITLESS ZONE Note that when HITLESS profile is configured equal to the LOWER profile, the ONE survive and NONE survive behave like the ALL survive. "
+  },
+  "hlAggrL1MibVersion": {
+    "name": "hlAggrL1MibVersion",
+    "oid": "1.3.6.1.4.1.3373.1103.98.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Numerical version of this module. The string version of this MIB have the following format: XX.YY.ZZ so, for example, the value 1 should be interpreted as 00.00.01 and the value 10001 should be interpreted as 01.00.01."
+  },
+  "hlAggrL1Table": {
+    "name": "hlAggrL1Table",
+    "oid": "1.3.6.1.4.1.3373.1103.98.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of hitless L1 aggregation (RLAG) entries. "
+  },
+  "hlAggrL1Entry": {
+    "name": "hlAggrL1Entry",
+    "oid": "1.3.6.1.4.1.3373.1103.98.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hlAggrL1Entry",
+      "module": "SIAE-HITLESS-AGGRL1-MIB",
+      "object": "aggrL1Entry"
+    },
+    "status": "current",
+    "description": "An entry containing management information applicable to the hitless extension for L1 aggregation. "
+  },
+  "hlAggrL1Mode": {
+    "name": "hlAggrL1Mode",
+    "oid": "1.3.6.1.4.1.3373.1103.98.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "hlAggrL1Auto": 1,
+          "hlAggrL1Manual": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "hlAggrL1Auto",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object defines how the HITLESS profiles is choosen (HITLESS profile is last profile that is considered good for L1 agrregation): hlAggrL1Auto(1): NE uses linkTxLowerProfile+1 as HITLESS profile hlAggrL1Manual(2): NE uses the values set in hlLinkSettingsTable as HITLESS profile "
+  },
+  "hlAggrL1Behaviour": {
+    "name": "hlAggrL1Behaviour",
+    "oid": "1.3.6.1.4.1.3373.1103.98.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "hlAggrL1AllSurvive": 1,
+          "hlAggrL1OneSurvive": 2,
+          "hlAggrL1NoneSurvive": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "hlAggrL1AllSurvive",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Every radio link is considered working in three separate ZONEs: GOOD ZONE: When it is working between the HITLESS profile (included) and the UPPER profile (included) HITLESS ZONE: When it is working between the LOWER profile (included) and the HITLESS profile (excluded) BAD ZONE: When the modem is unlocked HITLESS profile (one for each radio link) is last profile that is considered good for L1 aggregation. NE is in charge to select which of the links that are working into the HITLESS ZONE participate in L1 aggregation. The decision is taken according to three possible behaviors: hlAggrL1AllSurvive(1): All links remain used by aggregator when working into the HITLESS ZONE. hlAggrL1OneSurvive(2): When NO link is working into the GOOD ZONE, the last link entered into the HITLESS ZONE continues to be used by the aggregator hlAggrL1NoneSurvive(3): Each link is removed from aggregation when working into the HITLESS ZONE "
+  },
+  "hlLinkSettingsTable": {
+    "name": "hlLinkSettingsTable",
+    "oid": "1.3.6.1.4.1.3373.1103.98.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with the hitless L1 aggregation extension of linkSettingsEntry. The content of this table can be changed by a manager if linkRowStatus is notInService(2). "
+  },
+  "hlLinkSettingsEntry": {
+    "name": "hlLinkSettingsEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.98.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hlLinkSettingsEntry",
+      "module": "SIAE-HITLESS-AGGRL1-MIB",
+      "object": "linkSettingsEntry"
+    },
+    "status": "current",
+    "description": "An entry containing the hitless L1 aggregation extension of linkSettingsEntry. ."
+  },
+  "linkHitlessProfile": {
+    "name": "linkHitlessProfile",
+    "oid": "1.3.6.1.4.1.3373.1103.98.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The object contains hitless profile that is used to remove the radio link from the L1 aggregation. "
+  },
+  "hlLinkStatusTable": {
+    "name": "hlLinkStatusTable",
+    "oid": "1.3.6.1.4.1.3373.1103.98.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with hitless L1 aggregation extension of linkStatusEntry. "
+  },
+  "hlLinkStatusEntry": {
+    "name": "hlLinkStatusEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.98.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hlLinkStatusEntry",
+      "module": "SIAE-HITLESS-AGGRL1-MIB",
+      "object": "linkStatusEntry"
+    },
+    "status": "current",
+    "description": "An entry containing the hitless L1 aggregation extension of linkStatusEntry. "
+  },
+  "linkHitlessZone": {
+    "name": "linkHitlessZone",
+    "oid": "1.3.6.1.4.1.3373.1103.98.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "goodZone": 1,
+          "hitlessZone": 2,
+          "badZone": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The object shows the working zone of an aggregated radio link. "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SIAE-HITLESS-AGGRL1-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:30:54 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SIAE-HITLESS-AGGRL1-MIB"
+  }
+}

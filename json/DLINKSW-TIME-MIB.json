@@ -1,0 +1,635 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "iso",
+      "TimeTicks",
+      "MibIdentifier",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "IpAddress",
+      "Bits",
+      "Gauge32",
+      "Counter32",
+      "Counter64",
+      "NOTIFICATION-TYPE",
+      "Unsigned32"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "RowStatus",
+      "TruthValue",
+      "DateAndTime"
+    ]
+  },
+  "dlinkSwTimeMIB": {
+    "name": "dlinkSwTimeMIB",
+    "oid": "1.3.6.1.4.1.171.14.10",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-03-19 00:00",
+        "description": "This is the first version of the MIB file. "
+      },
+      {
+        "revision": "2013-08-20 00:00",
+        "description": "1.Add Year for date type of DlinkTimeSummerTimeValue . 2.Fixed bugs of type error for dTimeSntpServerLastReceive."
+      }
+    ],
+    "lastupdated": "201308200000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "This MIB module defines objects for Time and Simple Network Time Protocol (SNTP)."
+  },
+  "DlinkTimeSummerTimeValue": {
+    "name": "DlinkTimeSummerTimeValue",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 5,
+            "max": 5
+          },
+          {
+            "min": 6,
+            "max": 6
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Denotes Summer Time starts or ends time. This value is always interpreted within the context of a dTimeSummerTimeAutoSwitchMode value. When dTimeSummerTimeAutoSwitchMode is disable(1), this value is not meaningful. When dTimeSummerTimeAutoSwitchMode is recurring(2), the format is defined as follows: octets contents range ------ -------- ------- 1 week 1..4, ff last = ff 2 day 1..7 where Sunday = 1 Saturday = 7 3 month 1..12 where January = 1 December = 12 4 hour 0..23 5 minute 0..59 For example, the first Feb at 13:30pm should be given as 01 02 0d 1e For the last Tuesday in December at 1:20am should be given as ff 03 0c 01 14 When dTimeSummerTimeAutoSwitchMode is date(3), the format is defined as follows: octets contents range ------ -------- ------- 1-2 year 0..65536 in network-byte order 3 month 1..12 where January = 1 December = 12 4 date 1..31, 5 hour 0..23 6 minute 0..59 For example, the 2013-4-2 03:00 should be given as 07 dd 04 02 03 00 For the 2013-10-31 00:30 should be given as 07 dd 0a 1f 00 1e "
+  },
+  "dTimeMIBNotifications": {
+    "name": "dTimeMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.10.0",
+    "class": "objectidentity"
+  },
+  "dTimeMIBObjects": {
+    "name": "dTimeMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.10.1",
+    "class": "objectidentity"
+  },
+  "dTimeMIBConformance": {
+    "name": "dTimeMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.10.2",
+    "class": "objectidentity"
+  },
+  "dTimeGeneral": {
+    "name": "dTimeGeneral",
+    "oid": "1.3.6.1.4.1.171.14.10.1.1",
+    "class": "objectidentity"
+  },
+  "dTimeSntpEnabled": {
+    "name": "dTimeSntpEnabled",
+    "oid": "1.3.6.1.4.1.171.14.10.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the state of SNTP function. Setting this object to 'true' will enable SNTP function. "
+  },
+  "dTimeSntpBcastClientEnabled": {
+    "name": "dTimeSntpBcastClientEnabled",
+    "oid": "1.3.6.1.4.1.171.14.10.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to enable/disable the broadcast client mode. Setting this object to 'true' indicates that the agent accepts broadcast SNTP traffic from servers. "
+  },
+  "dTimeSntpPollInterval": {
+    "name": "dTimeSntpPollInterval",
+    "oid": "1.3.6.1.4.1.171.14.10.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 30,
+            "max": 99999
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 720,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the interval for the SNTP client to synchronize its clock with server."
+  },
+  "dTimeSntpSourceIfIndex": {
+    "name": "dTimeSntpSourceIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.10.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the ifIndex of the interface whose IP address will be used as the source address for sending the SNTP packet. A special value of 0 indicates the source interface is not specified and the IP address of the closest interface will be used. "
+  },
+  "dTimeClock": {
+    "name": "dTimeClock",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2",
+    "class": "objectidentity"
+  },
+  "dTimeManagedClock": {
+    "name": "dTimeManagedClock",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Use the object to manually set the system clock."
+  },
+  "dTimeCurrentTimeSource": {
+    "name": "dTimeCurrentTimeSource",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "sntp": 1,
+          "noTimeSource": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The object indicates the clock source."
+  },
+  "dTimeCurrentTime": {
+    "name": "dTimeCurrentTime",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current system time. System time can be disciplined or adjusted by RTC, SNTP, or configured by user. "
+  },
+  "dTimeSummerTime": {
+    "name": "dTimeSummerTime",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.5",
+    "class": "objectidentity"
+  },
+  "dTimeSummerTimeAutoSwitchMode": {
+    "name": "dTimeSummerTimeAutoSwitchMode",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "recurring": 2,
+          "date": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "disable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the mode of the system to automatically switch to Summer Time (Daylight Saving Time). disable(1) - The Daylight Saving Time feature is disabled. recurring(2) - The Daylight Saving Time feature is enabled. The Summer Time should start and end on the specified week day of the specified month. date(3) - The Daylight Saving Time feature is enabled. The Summer Time should start and end on the specified date of the specified month. "
+  },
+  "dTimeSummerTimeStart": {
+    "name": "dTimeSummerTimeStart",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.5.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkTimeSummerTimeValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates when the Summer Time starts. This value is always interpreted within the context of a dTimeSummerTimeAutoSwitchMode value. "
+  },
+  "dTimeSummerTimeEnd": {
+    "name": "dTimeSummerTimeEnd",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.5.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkTimeSummerTimeValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates when the Summer Time ends. This value is always interpreted within the context of a dTimeSummerTimeAutoSwitchMode value. "
+  },
+  "dTimeSummerTimeOffset": {
+    "name": "dTimeSummerTimeOffset",
+    "oid": "1.3.6.1.4.1.171.14.10.1.2.5.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 30,
+            "max": 30
+          },
+          {
+            "min": 60,
+            "max": 60
+          },
+          {
+            "min": 90,
+            "max": 90
+          },
+          {
+            "min": 120,
+            "max": 120
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 60,
+        "format": "decimal"
+      }
+    },
+    "units": "Minutes",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The value of this object indicates number of minutes to add or to subtract during Summer Time. This object is not meaningful when dTimeSummerTimeAutoSwitchMode object is 'disable'."
+  },
+  "dTimeServer": {
+    "name": "dTimeServer",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3",
+    "class": "objectidentity"
+  },
+  "dTimeSntpServerTableNum": {
+    "name": "dTimeSntpServerTableNum",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of entries present in the dTimeSntpServerTable."
+  },
+  "dTimeSntpServerTable": {
+    "name": "dTimeSntpServerTable",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of information for SNTP Time servers, which allow the software clock to be synchronized."
+  },
+  "dTimeSntpServerEntry": {
+    "name": "dTimeSntpServerEntry",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerAddrType",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerAddr",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerVrfName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry contains information about an SNTP Time server."
+  },
+  "dTimeSntpServerAddrType": {
+    "name": "dTimeSntpServerAddrType",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the address type of the SNTP server."
+  },
+  "dTimeSntpServerAddr": {
+    "name": "dTimeSntpServerAddr",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "IP or IPv6 address of the time server which provides the clock synchronization."
+  },
+  "dTimeSntpServerVrfName": {
+    "name": "dTimeSntpServerVrfName",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the name of the routing forwarding instance. A zero length string indicates the VRF name is not specified. For the platform that doesn't support VRF, only a zero length string is allowed for this object. "
+  },
+  "dTimeSntpServerRowStatus": {
+    "name": "dTimeSntpServerRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this entry."
+  },
+  "dTimeSntpServerVersion": {
+    "name": "dTimeSntpServerVersion",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the SNTP server version. When the value of dTimeSntpServerRowStatus at the same row is notInService(2), this object is 0. "
+  },
+  "dTimeSntpServerLastReceive": {
+    "name": "dTimeSntpServerLastReceive",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the elapsed time that the SNTP time has been synchronized. "
+  },
+  "dTimeSntpServerSynced": {
+    "name": "dTimeSntpServerSynced",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates whether the corresponding server is the current synced server. "
+  },
+  "dTimeSntpServerBcast": {
+    "name": "dTimeSntpServerBcast",
+    "oid": "1.3.6.1.4.1.171.14.10.1.3.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates whether the server is a broadcast SNTP server. "
+  },
+  "dTimeCompliances": {
+    "name": "dTimeCompliances",
+    "oid": "1.3.6.1.4.1.171.14.10.2.1",
+    "class": "objectidentity"
+  },
+  "dTimeCompliance": {
+    "name": "dTimeCompliance",
+    "oid": "1.3.6.1.4.1.171.14.10.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dTimeSysInfoGroup",
+        "module": "DLINKSW-TIME-MIB"
+      },
+      {
+        "object": "dTimeClockGroup",
+        "module": "DLINKSW-TIME-MIB"
+      },
+      {
+        "object": "dTimeSntpGroup",
+        "module": "DLINKSW-TIME-MIB"
+      },
+      {
+        "object": "dTimeSummerTimeCfgGroup",
+        "module": "DLINKSW-TIME-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-TIME-MIB."
+  },
+  "dTimeGroups": {
+    "name": "dTimeGroups",
+    "oid": "1.3.6.1.4.1.171.14.10.2.2",
+    "class": "objectidentity"
+  },
+  "dTimeSysInfoGroup": {
+    "name": "dTimeSysInfoGroup",
+    "oid": "1.3.6.1.4.1.171.14.10.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeCurrentTimeSource"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeCurrentTime"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides the information for system time."
+  },
+  "dTimeClockGroup": {
+    "name": "dTimeClockGroup",
+    "oid": "1.3.6.1.4.1.171.14.10.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeManagedClock"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides configuration for system time."
+  },
+  "dTimeSntpGroup": {
+    "name": "dTimeSntpGroup",
+    "oid": "1.3.6.1.4.1.171.14.10.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpEnabled"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpBcastClientEnabled"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpPollInterval"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpSourceIfIndex"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerTableNum"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerRowStatus"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerVersion"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerLastReceive"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerSynced"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerBcast"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides configuration for SNTP."
+  },
+  "dTimeSummerTimeCfgGroup": {
+    "name": "dTimeSummerTimeCfgGroup",
+    "oid": "1.3.6.1.4.1.171.14.10.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSummerTimeAutoSwitchMode"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSummerTimeStart"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSummerTimeEnd"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSummerTimeOffset"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerTableNum"
+      },
+      {
+        "module": "DLINKSW-TIME-MIB",
+        "object": "dTimeSntpServerRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides configuration for Daylight Saving Time feature."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-TIME-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:17:11 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-TIME-MIB"
+  }
+}

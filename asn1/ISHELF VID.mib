@@ -1,0 +1,1130 @@
+ISHELF-VID-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY,
+    Counter32,
+    IpAddress
+        FROM SNMPv2-SMI
+
+    RowStatus,
+    TruthValue
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfVideo,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfAdminState,
+    IShelfOperState,
+    IShelfLocationType,
+    IShelfLocation,
+    IShelfOltPonBandwidthRate,
+	 IShelfOltSdvPonBandwidthRate,
+    IShelfOntSubscriberLineCardIndex,
+    IShelfOltSdvPackageIndex,
+    IShelfOltSdvMapIndex,
+    IShelfLabel,
+    IShelfSppPointer,
+    IShelfVpi,
+    IShelfVci
+        FROM ISHELF-TC
+    ;
+
+iShelfVideoMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION "The MIB module for managing Switched Digital Video."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 8 }
+
+-- %CLICMDPREFIX vid:sdv
+iShelfSdv OBJECT IDENTIFIER ::= { iShelfVideo 1 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltSdvPackageProfileTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDABBR package
+iShelfOltSdvPackageProfileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltSdvPackageProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSdv 1 }
+
+iShelfOltSdvPackageProfileEntry OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPackageProfileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltSdvPackageProfileIndex }
+    ::= { iShelfOltSdvPackageProfileTable 1 }
+
+IShelfOltSdvPackageProfileEntry ::=
+    SEQUENCE {
+        iShelfOltSdvPackageProfileIndex
+            IShelfOltSdvPackageIndex,
+        iShelfOltSdvPackageProfileLabel
+            IShelfLabel,
+        iShelfOltSdvPackageRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Index
+iShelfOltSdvPackageProfileIndex OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPackageIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOltSdvPackageProfileEntry 1 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Label
+-- %CLIOPTION
+-- %CLICMDABBR label
+iShelfOltSdvPackageProfileLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOltSdvPackageProfileEntry 2 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOltSdvPackageRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltSdvPackageProfileEntry 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltSdvPackageElementTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDABBR element
+iShelfOltSdvPackageElementTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltSdvPackageElementEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSdv 2 }
+
+iShelfOltSdvPackageElementEntry OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPackageElementEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltSdvPackageElementPackage,
+                  iShelfOltSdvPackageElementMap }
+    ::= { iShelfOltSdvPackageElementTable 1 }
+
+IShelfOltSdvPackageElementEntry ::=
+    SEQUENCE {
+        iShelfOltSdvPackageElementPackage
+            IShelfOltSdvPackageIndex,
+        iShelfOltSdvPackageElementMap
+            IShelfOltSdvMapIndex,
+        iShelfOltSdvPackageElementRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Profile
+iShelfOltSdvPackageElementPackage OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPackageIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOltSdvPackageElementEntry 1 }
+
+-- %CLICOLLABEL Map
+iShelfOltSdvPackageElementMap OBJECT-TYPE
+    SYNTAX      IShelfOltSdvMapIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOltSdvPackageElementEntry 2 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLIIGNORE
+-- %CLICOLLABEL RowStatus
+iShelfOltSdvPackageElementRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltSdvPackageElementEntry 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltSdvMapTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDABBR map
+-- %CLISHOWGROUP map
+iShelfOltSdvMapTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltSdvMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSdv 3 }
+
+iShelfOltSdvMapEntry OBJECT-TYPE
+    SYNTAX      IShelfOltSdvMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltSdvMapIndex }
+    ::= { iShelfOltSdvMapTable 1 }
+
+IShelfOltSdvMapEntry ::=
+    SEQUENCE {
+        iShelfOltSdvMapIndex
+            IShelfOltSdvMapIndex,
+        iShelfOltSdvMapLabel
+            IShelfLabel,
+        iShelfOltSdvMapStartAddress
+            IpAddress,
+        iShelfOltSdvMapEndAddress
+            IpAddress,
+        iShelfOltSdvMapRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Idx
+-- %CLISHOWGROUP map
+-- %CLIWIDTH 4
+iShelfOltSdvMapIndex OBJECT-TYPE
+    SYNTAX      IShelfOltSdvMapIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOltSdvMapEntry 1 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP map
+-- %CLIOPTION
+iShelfOltSdvMapLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOltSdvMapEntry 2 }
+
+-- %CLICOLLABEL StartAddr
+-- %CLISHOWGROUP map
+iShelfOltSdvMapStartAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Must be a class-D multicast address."
+    ::= { iShelfOltSdvMapEntry 3 }
+
+-- %CLICOLLABEL EndAddr
+-- %CLISHOWGROUP map
+iShelfOltSdvMapEndAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Must be a class-D multicast address."
+    ::= { iShelfOltSdvMapEntry 4 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLISHOWGROUP map
+-- %CLIWIDTH 9
+iShelfOltSdvMapRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltSdvMapEntry 5 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltPonSdvTable - Manage SDV Resources on an OLT PON
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltSdvServiceTable 5000 ROW
+-- %CLICMDABBR ponsdv
+-- %CLISHOWGROUP ponsdv
+iShelfOltPonSdvTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltPonSdvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSdv 4 }
+
+iShelfOltPonSdvEntry OBJECT-TYPE
+    SYNTAX      IShelfOltPonSdvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltPonSdvLocationType,
+                  iShelfOltPonSdvLocation,
+                  iShelfOltPonSdvIndex }
+    ::= { iShelfOltPonSdvTable 1 }
+
+IShelfOltPonSdvEntry ::=
+    SEQUENCE {
+        iShelfOltPonSdvLocationType
+            IShelfLocationType,
+        iShelfOltPonSdvLocation
+            IShelfLocation,
+        iShelfOltPonSdvIndex
+            INTEGER,
+        iShelfOltPonSdvMaxStreams
+            INTEGER,
+        iShelfOltPonSdvStreamAlertLevel
+            INTEGER,
+        iShelfOltPonSdvMaxBandwidth
+            IShelfOltSdvPonBandwidthRate,
+        iShelfOltPonSdvBandwidthAlertLevel
+            IShelfOltSdvPonBandwidthRate,
+        iShelfOltPonSdvActiveStreams
+            Counter32,
+        iShelfOltPonSdvPeakStream
+            Counter32,
+        iShelfOltPonSdvActiveBandwidth
+            Counter32,
+        iShelfOltPonSdvPeakBandwidth
+            Counter32,
+        iShelfOltPonSdvJoins
+            Counter32,
+        iShelfOltPonSdvLeaves
+            Counter32,
+        iShelfOltPonSdvQueries
+            Counter32,
+        iShelfOltPonSdvJoinErrors
+            Counter32,
+        iShelfOltPonSdvStreamsAlerts
+            Counter32,
+        iShelfOltPonSdvBandwidthAlerts
+            Counter32,
+        iShelfOltPonSdvMulticastPackets
+            Counter32,
+        iShelfOltPonSdvMulticastBytes
+            Counter32,
+        iShelfOltPonSdvMulticastDrops
+            Counter32,
+        iShelfOltPonSdvRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ponsdv.1
+-- %CLICOLLABEL LocationType
+iShelfOltPonSdvLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type of this PON."
+    ::= { iShelfOltPonSdvEntry 1 }
+
+-- %CLISHOWGROUP ponsdv.1
+-- %CLISHOWGROUP ponsdv.2
+-- %CLISHOWGROUP ponsdv.3
+-- %CLISHOWGROUP ponsdv.4
+-- %CLICOLLABEL Location
+iShelfOltPonSdvLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The Node-Shelf-Slot location of this PON."
+    ::= { iShelfOltPonSdvEntry 2 }
+
+-- %CLISHOWGROUP ponsdv.1
+-- %CLISHOWGROUP ponsdv.2
+-- %CLISHOWGROUP ponsdv.3
+-- %CLISHOWGROUP ponsdv.4
+-- %CLICOLLABEL Pon
+iShelfOltPonSdvIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the specific PON on the OLT."
+    ::= { iShelfOltPonSdvEntry 3 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ponsdv.1
+-- %CLICOLLABEL MaxStrms
+iShelfOltPonSdvMaxStreams OBJECT-TYPE
+    SYNTAX      INTEGER (0..512)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the maximum number of SDV streams supported
+         on the associated PON interface."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonSdvEntry 4 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ponsdv.1
+-- %CLICOLLABEL StrmAlert
+iShelfOltPonSdvStreamAlertLevel OBJECT-TYPE
+    SYNTAX      INTEGER (0..512)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The alert level is the number of active SDV streams at which
+         a threshold alert (trap) will be notified. This should be set to
+         a value less than the MaxStreams and the notification can be
+         interpreted as a signal that the MaxStreams value should be increased."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonSdvEntry 5 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ponsdv.1
+-- %CLICOLLABEL MaxBw
+iShelfOltPonSdvMaxBandwidth OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the maximum amount of bandwidth on the PON that can
+         be utilized for SDV traffic."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonSdvEntry 6 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ponsdv.1
+-- %CLICOLLABEL BwAlert
+iShelfOltPonSdvBandwidthAlertLevel OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The alert level is the current bandwidth utilization at which a
+         a threshold alert (trap) will be notified. This should be set to a
+         value less than the MaxBandwidth and the notification can be interpreted
+         as a signal that the MaxBandwidth value should be increased."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonSdvEntry 7 }
+
+-- %DEEPOBJ osiOltSdvServiceActiveStreams
+-- %CLISHOWGROUP ponsdv.2
+-- %CLICOLLABEL ActStrms
+iShelfOltPonSdvActiveStreams OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Current number of active SDV streams."
+    ::= { iShelfOltPonSdvEntry 8 }
+
+-- %DEEPOBJ osiOltSdvServicePeakStream
+-- %CLISHOWGROUP ponsdv.2
+-- %CLICOLLABEL PeakStrms
+iShelfOltPonSdvPeakStream OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Peak number of active SDV streams at any point in time."
+    ::= { iShelfOltPonSdvEntry 9 }
+
+-- %DEEPOBJ osiOltSdvServiceActiveBandwidth
+-- %CLISHOWGROUP ponsdv.2
+-- %CLICOLLABEL ActBw
+iShelfOltPonSdvActiveBandwidth OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Current bandwidth utilized for SDV traffic."
+    ::= { iShelfOltPonSdvEntry 10 }
+
+-- %DEEPOBJ osiOltSdvServicePeakBandwidth
+-- %CLISHOWGROUP ponsdv.2
+-- %CLICOLLABEL PeakBw
+iShelfOltPonSdvPeakBandwidth OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Peak bandwidth utilization for SDV traffic at any point in time."
+    ::= { iShelfOltPonSdvEntry 11 }
+
+-- %DEEPOBJ osiOltSdvServiceJoins
+-- %CLISHOWGROUP ponsdv.3
+-- %CLICOLLABEL Joins
+iShelfOltPonSdvJoins OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A count of the number of joins that have been processed."
+    ::= { iShelfOltPonSdvEntry 12 }
+
+-- %DEEPOBJ osiOltSdvServiceLeaves
+-- %CLISHOWGROUP ponsdv.3
+-- %CLICOLLABEL Leaves
+iShelfOltPonSdvLeaves OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A count of the number of leaves that have been processed."
+    ::= { iShelfOltPonSdvEntry 13 }
+
+-- %DEEPOBJ osiOltSdvServiceQueries
+-- %CLISHOWGROUP ponsdv.3
+-- %CLICOLLABEL Queries
+iShelfOltPonSdvQueries OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A count of the number of queries that have been processed."
+    ::= { iShelfOltPonSdvEntry 14 }
+
+-- %DEEPOBJ osiOltSdvServiceJoinErrors
+-- %CLISHOWGROUP ponsdv.3
+-- %CLICOLLABEL JoinErrs
+iShelfOltPonSdvJoinErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A count of the number of errors detected while processing a join."
+    ::= { iShelfOltPonSdvEntry 15 }
+
+-- %DEEPOBJ osiOltSdvServiceStreamsAlerts
+-- %CLISHOWGROUP ponsdv.4
+-- %CLICOLLABEL StrmAlerts
+iShelfOltPonSdvStreamsAlerts OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A count of the number of stream threshold alerts that have been notified."
+    ::= { iShelfOltPonSdvEntry 16 }
+
+-- %DEEPOBJ osiOltSdvServiceBandwidthAlerts
+-- %CLISHOWGROUP ponsdv.4
+-- %CLICOLLABEL BwAlerts
+iShelfOltPonSdvBandwidthAlerts OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A count of the number of bandwidth threshold alerts that have been notified."
+    ::= { iShelfOltPonSdvEntry 17 }
+
+-- %DEEPOBJ osiOltSdvServiceMulticastPackets
+-- %CLISHOWGROUP ponsdv.4
+-- %CLICOLLABEL McstPkts
+iShelfOltPonSdvMulticastPackets OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A counter for the number of multicast packets."
+    ::= { iShelfOltPonSdvEntry 18 }
+
+-- %DEEPOBJ osiOltSdvServiceMulticastBytes
+-- %CLISHOWGROUP ponsdv.4
+-- %CLICOLLABEL McstBytes
+iShelfOltPonSdvMulticastBytes OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A counter for the number of multicast bytes."
+    ::= { iShelfOltPonSdvEntry 19 }
+
+-- %DEEPOBJ osiOltSdvServiceMulticastDrops
+-- %CLISHOWGROUP ponsdv.4
+-- %CLICOLLABEL McstDrops
+iShelfOltPonSdvMulticastDrops OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "A counter for the number of multicast drops."
+    ::= { iShelfOltPonSdvEntry 20 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLISHOWGROUP ponsdv.1
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOltPonSdvRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltPonSdvEntry 21 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetSdvServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- %DEEPGET osiOltOntSdvServiceTable 1000 ROW
+-- %CLICMDABBR service
+-- %CLISHOWGROUP service
+iShelfOntEthernetSdvServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetSdvServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfSdv 5 }
+
+iShelfOntEthernetSdvServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetSdvServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntEthernetSdvServiceLocationType,
+                  iShelfOntEthernetSdvServiceLocation,
+                  iShelfOntEthernetSdvServiceSLCIndex,
+                  iShelfOntEthernetSdvServicePort }
+    ::= { iShelfOntEthernetSdvServiceTable 1 }
+
+IShelfOntEthernetSdvServiceEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetSdvServiceLocationType
+            IShelfLocationType,
+        iShelfOntEthernetSdvServiceLocation
+            IShelfLocation,
+        iShelfOntEthernetSdvServiceSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetSdvServicePort
+            INTEGER,
+        iShelfOntEthernetSdvServiceAdminState
+            IShelfAdminState,
+        iShelfOntEthernetSdvServiceOperState
+            IShelfOperState,
+        iShelfOntEthernetSdvServicePackage
+            IShelfOltSdvPackageIndex,
+        iShelfOntEthernetSdvServiceMaxStreams
+            INTEGER,
+        iShelfOntEthernetSdvServiceCurStreams
+            INTEGER,
+        iShelfOntEthernetSdvServiceTxOption
+            INTEGER,
+        iShelfOntEthernetSdvServiceRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL LocationType
+-- %CLISHOWGROUP service.1
+iShelfOntEthernetSdvServiceLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the location type of the ONT."
+    ::= { iShelfOntEthernetSdvServiceEntry 1 }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP service.1
+-- %CLISHOWGROUP service.2
+iShelfOntEthernetSdvServiceLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the logical ID of the ONT if the
+                 location type is logical otherwise, if the location type is
+                 physical, it identifies the physical location."
+    ::= { iShelfOntEthernetSdvServiceEntry 2 }
+
+-- %CLICOLLABEL SLC
+-- %CLISHOWGROUP service.1
+-- %CLISHOWGROUP service.2
+iShelfOntEthernetSdvServiceSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the ONT subscriber line card
+         index.  It must be ethernet."
+    ::= { iShelfOntEthernetSdvServiceEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLISHOWGROUP service.1
+-- %CLISHOWGROUP service.2
+-- %CLIWIDTH 4
+iShelfOntEthernetSdvServicePort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the ethernet port number."
+    ::= { iShelfOntEthernetSdvServiceEntry 4 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICOLLABEL AdminSt
+-- %CLISHOWGROUP service.1
+iShelfOntEthernetSdvServiceAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to unlock and lock this service.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { unlock }
+    ::= { iShelfOntEthernetSdvServiceEntry 5 }
+
+-- %DEEPOBJ osiOltOntSdvServiceOperState
+-- %CLICOLLABEL OperSt
+-- %CLISHOWGROUP service.1
+iShelfOntEthernetSdvServiceOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates whether or not this service is
+         capable of performing its task."
+    ::= { iShelfOntEthernetSdvServiceEntry 6 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL Package
+-- %CLISHOWGROUP service.2
+iShelfOntEthernetSdvServicePackage OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPackageIndex
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is an index into the
+         iShelfOltSdvPackageProfileTable.  This will determine the range of
+         IP multicast addresses for which IGMP messages will be forwared up
+         the IGMP control VC.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntEthernetSdvServiceEntry 7 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICOLLABEL MaxStr
+-- %CLIWIDTH 6
+-- %CLISHOWGROUP service.2
+iShelfOntEthernetSdvServiceMaxStreams OBJECT-TYPE
+    SYNTAX      INTEGER (1..16)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the maximum number of simultaneous
+         SDV streams that can be delivered by this service.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 8 }
+    ::= { iShelfOntEthernetSdvServiceEntry 8 }
+
+-- %DEEPOBJ osiOltOntSdvServiceCurStreams
+-- %CLICOLLABEL CurStr
+-- %CLIWIDTH 6
+-- %CLISHOWGROUP service.2
+iShelfOntEthernetSdvServiceCurStreams OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the current number of active
+         SDV streams on this ethernet subscriber line."
+    ::= { iShelfOntEthernetSdvServiceEntry 9 }
+
+-- %CLICOLLABEL TxOption
+-- %CLIWIDTH 9
+-- %CLIOPTION
+-- %CLISHOWGROUP service.2
+iShelfOntEthernetSdvServiceTxOption OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    multicast(1),   -- multicast is transmitted as multicast
+                    unicast(2)      -- multicast is converted and transmitted as unicast
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This attribute defines how SDV multicast traffic will be
+         transmitted toward the subscriber."
+    DEFVAL      { unicast }
+    ::= { iShelfOntEthernetSdvServiceEntry 10 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP service.1
+iShelfOntEthernetSdvServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)
+
+         The following objects are required to be set for row creation:
+         - iShelfOntEthernetSdvServicePackage
+
+         Objects with default values may be set during row creation."
+    ::= { iShelfOntEthernetSdvServiceEntry 11 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltOltSdvTable - Manage SDV Resources on the OLT uplink(s)
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltSdvServiceTable 5000 ROW
+-- %CLICMDABBR oltsdv
+-- %CLISHOWGROUP oltsdv
+iShelfOltOltSdvTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltOltSdvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The table provides the ability to govern the SDV traffic that is flowing
+         from the video provider (uplink) through the OLT card. It also provides statistics
+         regarding the SDV activity for the OLT card. The attributes apply to the OLT card
+         as a whole, independent of the actual uplink that is providing the SDV traffic."
+    ::= { iShelfSdv 6 }
+
+iShelfOltOltSdvEntry OBJECT-TYPE
+    SYNTAX      IShelfOltOltSdvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row in this table represents the network-side SDV settings for an OLT card."
+    INDEX       { iShelfOltOltSdvLocationType,
+                  iShelfOltOltSdvLocation }
+    ::= { iShelfOltOltSdvTable 1 }
+
+IShelfOltOltSdvEntry ::=
+    SEQUENCE {
+        iShelfOltOltSdvLocationType
+            IShelfLocationType,
+        iShelfOltOltSdvLocation
+            IShelfLocation,
+        iShelfOltOltSdvMaxStreams
+            INTEGER,
+        iShelfOltOltSdvStreamAlertLevel
+            INTEGER,
+        iShelfOltOltSdvBandwidthAlertLevel
+            IShelfOltPonBandwidthRate,
+        iShelfOltOltSdvActiveStreams
+            Counter32,
+        iShelfOltOltSdvPeakStream
+            Counter32,
+        iShelfOltOltSdvActiveBandwidth
+            Counter32,
+        iShelfOltOltSdvPeakBandwidth
+            Counter32,
+        iShelfOltOltSdvJoins
+            Counter32,
+        iShelfOltOltSdvLeaves
+            Counter32,
+        iShelfOltOltSdvQueries
+            Counter32,
+        iShelfOltOltSdvJoinErrors
+            Counter32,
+        iShelfOltOltSdvStreamsAlerts
+            Counter32,
+        iShelfOltOltSdvBandwidthAlerts
+            Counter32,
+        iShelfOltOltSdvMulticastPackets
+            Counter32,
+        iShelfOltOltSdvMulticastBytes
+            Counter32,
+        iShelfOltOltSdvMulticastDrops
+            Counter32,
+        iShelfOltOltSdvRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP oltsdv.1
+-- %CLICOLLABEL LocationType
+iShelfOltOltSdvLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The location type of the OLT card."
+    ::= { iShelfOltOltSdvEntry 1 }
+
+-- %CLISHOWGROUP oltsdv.1
+-- %CLISHOWGROUP oltsdv.2
+-- %CLISHOWGROUP oltsdv.3
+-- %CLISHOWGROUP oltsdv.4
+-- %CLICOLLABEL Location
+iShelfOltOltSdvLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The node-shelf-slot location of the OLT card."
+    ::= { iShelfOltOltSdvEntry 2 }
+
+-- %DEEPOBJ osiOltSdvServiceMaxStreams
+-- %SETINACTIVE
+-- %CLISHOWGROUP oltsdv.1
+-- %CLICOLLABEL MaxStrms
+iShelfOltOltSdvMaxStreams OBJECT-TYPE
+    SYNTAX      INTEGER (0..512)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the maximum number of SDV streams supported
+         on the OLT card."
+    DEFVAL      { 0 }
+    ::= { iShelfOltOltSdvEntry 3 }
+
+-- %DEEPOBJ osiOltSdvServiceStreamAlertLevel
+-- %SETINACTIVE
+-- %CLISHOWGROUP oltsdv.1
+-- %CLICOLLABEL StrmAlert
+iShelfOltOltSdvStreamAlertLevel OBJECT-TYPE
+    SYNTAX      INTEGER (0..512)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the number of streams at which a threshold crossing
+         alert should be generated."
+    DEFVAL      { 0 }
+    ::= { iShelfOltOltSdvEntry 4 }
+
+-- %DEEPOBJ osiOltSdvServiceBandwidthAlertLevel
+-- %SETINACTIVE
+-- %CLISHOWGROUP oltsdv.1
+-- %CLICOLLABEL BwAlert
+iShelfOltOltSdvBandwidthAlertLevel OBJECT-TYPE
+    SYNTAX      INTEGER(0..1000000000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This indicates the amount of bandwidth used for SDV at which a
+         threshold crossing alert should be generated.  This value is in bytes."
+    DEFVAL      { 0 }
+    ::= { iShelfOltOltSdvEntry 5 }
+
+-- %DEEPOBJ osiOltSdvServiceActiveStreams
+-- %CLISHOWGROUP oltsdv.2
+-- %CLICOLLABEL ActStrms
+iShelfOltOltSdvActiveStreams OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current number of streams that are active on the OLT card."
+    ::= { iShelfOltOltSdvEntry 6 }
+
+-- %DEEPOBJ osiOltSdvServicePeakStream
+-- %CLISHOWGROUP oltsdv.2
+-- %CLICOLLABEL PeakStrms
+iShelfOltOltSdvPeakStream OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the highest number of streams that have been active on the OLT card."
+    ::= { iShelfOltOltSdvEntry 7 }
+
+-- %DEEPOBJ osiOltSdvServiceActiveBandwidth
+-- %CLISHOWGROUP oltsdv.2
+-- %CLICOLLABEL ActBw
+iShelfOltOltSdvActiveBandwidth OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current amount of bandwidth being used on the OLT uplink."
+    ::= { iShelfOltOltSdvEntry 8 }
+
+-- %DEEPOBJ osiOltSdvServicePeakBandwidth
+-- %CLISHOWGROUP oltsdv.2
+-- %CLICOLLABEL PeakBw
+iShelfOltOltSdvPeakBandwidth OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the highest amount of bandwidth that has been used on the OLT uplink."
+    ::= { iShelfOltOltSdvEntry 9 }
+
+-- %DEEPOBJ osiOltSdvServiceJoins
+-- %CLISHOWGROUP oltsdv.2
+-- %CLICOLLABEL Joins
+iShelfOltOltSdvJoins OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the number of IGMP joins that have been processed."
+    ::= { iShelfOltOltSdvEntry 10 }
+
+-- %DEEPOBJ osiOltSdvServiceLeaves
+-- %CLISHOWGROUP oltsdv.3
+-- %CLICOLLABEL Leaves
+iShelfOltOltSdvLeaves OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the number of IGMP leaves that have been processed."
+    ::= { iShelfOltOltSdvEntry 11 }
+
+-- %DEEPOBJ osiOltSdvServiceQueries
+-- %CLISHOWGROUP oltsdv.3
+-- %CLICOLLABEL Queries
+iShelfOltOltSdvQueries OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the number of IGMP queries that have been processed."
+    ::= { iShelfOltOltSdvEntry 12 }
+
+-- %DEEPOBJ osiOltSdvServiceJoinErrors
+-- %CLISHOWGROUP oltsdv.3
+-- %CLICOLLABEL JoinErrs
+iShelfOltOltSdvJoinErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the number of errors that have occurred with IGMP joins."
+    ::= { iShelfOltOltSdvEntry 13 }
+
+-- %DEEPOBJ osiOltSdvServiceStreamsAlerts
+-- %CLISHOWGROUP oltsdv.3
+-- %CLICOLLABEL StrmAlerts
+iShelfOltOltSdvStreamsAlerts OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates the number of times the stream threshold crossing
+         has been detected."
+    ::= { iShelfOltOltSdvEntry 14 }
+
+-- %DEEPOBJ osiOltSdvServiceBandwidthAlerts
+-- %CLISHOWGROUP oltsdv.3
+-- %CLICOLLABEL BwAlerts
+iShelfOltOltSdvBandwidthAlerts OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This indicates the number of times the bandwidth threshold crossing
+         has been detected."
+    ::= { iShelfOltOltSdvEntry 15 }
+
+-- %DEEPOBJ osiOltSdvServiceMulticastPackets
+-- %CLISHOWGROUP oltsdv.4
+-- %CLICOLLABEL McstPkts
+iShelfOltOltSdvMulticastPackets OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the number of multicast packets that have been forwarded."
+    ::= { iShelfOltOltSdvEntry 16 }
+
+-- %DEEPOBJ osiOltSdvServiceMulticastBytes
+-- %CLISHOWGROUP oltsdv.4
+-- %CLICOLLABEL McstBytes
+iShelfOltOltSdvMulticastBytes OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the number of multicast bytes that have been forwarded."
+    ::= { iShelfOltOltSdvEntry 17 }
+
+-- %DEEPOBJ osiOltSdvServiceMulticastDrops
+-- %CLISHOWGROUP oltsdv.4
+-- %CLICOLLABEL McstDrops
+iShelfOltOltSdvMulticastDrops OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the number of multicast packets/bytes that have not been forwarded."
+    ::= { iShelfOltOltSdvEntry 18 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLISHOWGROUP oltsdv.1
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOltOltSdvRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfOltOltSdvEntry 19 }
+
+END

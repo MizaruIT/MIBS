@@ -1,0 +1,505 @@
+--	Micromuse, Inc.
+--	
+--	Private Enterprise Management Information Base (MIB)
+--	
+--	Rev 1.0  7/28/97  Paul Foster
+--  Rev 1.01 9/8/97   Paul Foster
+--  Rev 1.02 12/15/97 Paul Foster
+--  Rev 1.03 2/6/98	  Paul Foster changed logFileSize to read/write.
+
+LOG-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE			FROM RFC-1212
+    DisplayString		FROM RFC1213-MIB
+    TRAP-TYPE, NetworkAddress,IpAddress, Counter, Gauge, TimeTicks			
+						FROM RFC1155-SMI;
+
+-- Micromuse OID tree structure
+-- ---------------------
+
+	microMuse 	OBJECT IDENTIFIER ::= { enterprises 1279 }
+	genMessage	OBJECT IDENTIFIER ::= { microMuse 1 }
+	v1Agent		OBJECT IDENTIFIER ::= { microMuse 3 }
+	logMon		OBJECT IDENTIFIER ::= { v1Agent 2 }
+
+-- summary message sub-tree : 1.3.6.1.4.1.1279.1.2
+-- --------------------------------------------------------------------
+
+	summary OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return a summary message when a trap is sent."
+			::= { genMessage 2 }
+
+-- target name sub-tree : 1.3.6.1.4.1.1279.1.3
+-- --------------------------------------------------------------------
+
+	target OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return the target system when a trap is sent."
+			::= { genMessage 3 }
+
+-- log message name sub-tree : 1.3.6.1.4.1.1279.1.5
+-- --------------------------------------------------------------------
+
+	logMessage OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return the target system when a trap is sent."
+			::= { genMessage 5 }
+
+-- error code message sub-tree : 1.3.6.1.4.1.1279.1.4
+-- --------------------------------------------------------------------
+
+	errorCode OBJECT-TYPE
+			SYNTAX  INTEGER
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return an error code when a trap is sent."
+			::= { genMessage 4 }
+
+-- generic agentFailure trap: 1.3.6.1.4.1.1279.1.1
+-- -------------------------------------------------------------------------
+
+	agentFailure TRAP-TYPE
+			ENTERPRISE	genMessage
+			VARIABLES   { summary, target }
+			DESCRIPTION
+				"The agent has failed."
+			::= 1
+
+-- logMon sub-tree : 1.3.6.1.4.1.1279.3.2
+-- --------------------------------------------------------------------
+
+	logGlobalSampleRate OBJECT-TYPE
+			SYNTAX  INTEGER (1..86400)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"Global sample rate (in seconds). This value will be used if the
+				table entry sample rate is zero. Default value is 60."
+			::= { logMon 1 }
+
+	logGlobalTrapRate OBJECT-TYPE
+			SYNTAX	 INTEGER (0..86400)
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"Global trapping rate. Zero indicates edge-level trapping. 1 indicates
+				trapping continuously. Any other value means that a trap will be generated
+				every nth sampling while the condition persists."			
+			::= { logMon 2 }
+
+	logVersion  OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The version number of the agent."
+			::= { logMon 3 }
+
+	logNotificationMethod  OBJECT-TYPE
+			SYNTAX	INTEGER
+			{
+				trap(1),
+				modular(2),
+				both(3)
+			}
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The desired method of notification. If trapping is not selected then global and
+				local trap rates have no significance. The modular selection causes traps to be
+				sent reliably to a primary or secondary modular probe. The default method is trap."
+			::= { logMon 4 }
+
+	logOsType OBJECT-TYPE
+			SYNTAX	INTEGER 
+			{
+				windowsnt(1),
+				solaris(2),
+				sunos(3)
+			}
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The type of operating system."
+			::= { logMon 5 }
+
+	logGlobalStatus OBJECT-TYPE
+			SYNTAX	INTEGER 
+			{
+				valid(1),
+				invalid(2)
+			}
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The overall status of the agent. Valid indicates the
+				agent is operating properly and the data in the MIB is
+				valid. Invalid indicates a major problem with the agent
+				that has prohibited further processing without corrective
+				action by an administrator. Futher details concerning
+				the reason for thefailure can be found in the event log (NT) 
+				or error log (UNIX)."
+			::= { logMon 6 }
+
+-- logFileMon table : 1.3.6.1.4.1.1279.3.2.7
+-- --------------------------------------------------------------------
+
+	logFileTable OBJECT-TYPE
+			SYNTAX  SEQUENCE OF LogFileTableEntry
+			ACCESS  not-accessible
+			STATUS  mandatory
+			DESCRIPTION
+				"Log file table"
+			::= { logMon 7 }
+
+	logFileTableSize OBJECT-TYPE
+			SYNTAX	INTEGER
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Size of the table. The default value is 1."
+			::= { logFileTable 1 }
+
+	logFileTableEntry OBJECT-TYPE
+			SYNTAX	LogFileTableEntry
+			ACCESS	not-accessible
+			STATUS	mandatory
+			DESCRIPTION
+				"Log file entry."
+			INDEX	{ logFileIndex }
+			::= { logFileTable 2 }
+
+	LogFileTableEntry ::= SEQUENCE {
+			logFileIndex				INTEGER,
+			logFileType					INTEGER,
+			logFileStatus				INTEGER,
+			logFileLocalSampleRate		INTEGER,
+			logFileLocalTrapRate		INTEGER,
+			logFilePathname				DisplayString,
+			logFileSize					INTEGER,
+			logFileThreshold			INTEGER,
+			logFilePermissions			INTEGER,
+			logFileExpressionTableSize	INTEGER,
+			logFileStartTimeHr			INTEGER,
+			logFileStartTimeMin			INTEGER,
+			logFileStopTimeHr			INTEGER,
+			logFileStopTimeMin			INTEGER,
+			logFileOffDays				INTEGER
+	}
+
+	logFileIndex OBJECT-TYPE
+			SYNTAX INTEGER (1..2147483647)
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The index for this table."
+			::= { logFileTableEntry 1 }
+
+	logFileType	OBJECT-TYPE
+			SYNTAX  INTEGER 
+			{
+				active(1),
+				inactive(2),
+				deleted(3),
+				monitor(4)
+			}
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The type or command word of the entry:
+				active -   Trapping is enabled.
+				inactive - No trapping. The default is inactive.
+				deleted - The entry has been deleted.
+				monitor - Do not trap based upon file size."
+			::= { logFileTableEntry 2 }
+
+	logFileStatus OBJECT-TYPE
+			SYNTAX  INTEGER 
+			{
+				valid(1),
+				invalid(2),
+				notresponding(3),
+				doesnotexist(4),
+				readonly(5)
+			}
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+				"Current status of the entry:
+				valid         - the value is under the threshold
+				invalid       - the value exceeds the threshold
+				notresponding - cannot communicate
+				doesnotexist  - file does not exist
+				readonly	  - file is read-only." 
+			::= { logFileTableEntry 3 }
+
+	logFileLocalSampleRate OBJECT-TYPE
+			SYNTAX	INTEGER (1..86400)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Local sample rate for this table entry. The default 
+				is 0 which will cause the global sample rate to be used."
+			::= { logFileTableEntry 4 }
+
+	logFileLocalTrapRate OBJECT-TYPE
+			SYNTAX	INTEGER (-1..86400)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Local trapping rate for this table entry. Zero indicates edge-level 
+				trapping. 1 indicates continuous trapping. Any other value indicates
+				a trap will be generated every nth sampling while the condition persists.			
+				The default is -1 which will cause the global trap rate to be used."
+			::= { logFileTableEntry 5 }
+
+	logFilePathname OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The path of the file to be monitored."
+			::= { logFileTableEntry 6 }
+
+	logFileSize OBJECT-TYPE
+			SYNTAX	INTEGER	(-1..2147483647)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The current size of the log file (in bytes). This value can be preset to
+				start monitoring at a location besides the beginning. This value is reset to 
+				zero whenever the file is truncated. The default value is -1 which will start
+				logging at the end of the file." 
+			::= { logFileTableEntry 7 }
+
+	logFileThreshold OBJECT-TYPE
+			SYNTAX	INTEGER (0..2147483647)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The maximum size of the log file (in bytes). The default is zero which
+				will not generate a trap."
+			::= { logFileTableEntry 8 }
+
+	logFilePermissions OBJECT-TYPE
+			SYNTAX	INTEGER
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The current permissions of the log file." 
+			::= { logFileTableEntry 9 }
+
+	logFileExpressionTableSize OBJECT-TYPE
+			SYNTAX	INTEGER
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The size of the expression subtable." 
+			::= { logFileTableEntry 10 }
+
+	logFileStartTimeHr OBJECT-TYPE 
+			SYNTAX	INTEGER	(0..23)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The hour to start monitoring. The default value is 0.
+				If logFileStartTimeHr = logFileStartTimeMin = logFileStopTimeHr =
+				logFileStopTimeMin = 0, then monitoring is continuous."
+			::= { logFileTableEntry 11 }
+
+	logFileStartTimeMin OBJECT-TYPE 
+			SYNTAX INTEGER (0..59)
+			ACCESS read-write
+			STATUS mandatory
+			DESCRIPTION
+				"The minute to start monitoring. The default value is 0.
+				If logFileStartTimeHr = logFileStartTimeMin = logFileStopTimeHr =
+				logFileStopTimeMin = 0, then monitoring is continuous."
+			::= { logFileTableEntry 12 }
+
+	logFileStopTimeHr OBJECT-TYPE 
+			SYNTAX	INTEGER	(0..23)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The hour to stop monitoring. The default value is 0.
+				If logFileStartTimeHr = logFileStartTimeMin = logFileStopTimeHr =
+				logFileStopTimeMin = 0, then monitoring is continuous."
+			::= { logFileTableEntry 13 }
+
+	logFileStopTimeMin OBJECT-TYPE 
+			SYNTAX	INTEGER	(0..59)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The minute to stop monitoring. The default value is 0.
+				If logFileStartTimeHr = logFileStartTimeMin = logFileStopTimeHr =
+				logFileStopTimeMin = 0, then monitoring is continuous."
+			::= { logFileTableEntry 14 }
+
+	logFileOffDays OBJECT-TYPE
+			SYNTAX	INTEGER (0..127)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Bit string which specifies the day(s) of the week
+				to not monitor.
+				FORMAT: 0MTWRFSS
+				EXAMPLE:00000011 = decimal 3, which excludes Saturday and
+					Sunday."
+			::= { logFileTableEntry 15 }
+
+-- logExpressMon table : 1.3.6.1.4.1.1279.3.2.8
+-- --------------------------------------------------------------------
+
+	logExpressTable OBJECT-TYPE
+			SYNTAX  SEQUENCE OF LogExpressTableEntry
+			ACCESS  not-accessible
+			STATUS  mandatory
+			DESCRIPTION
+				"Log expression table"
+			::= { logMon 8 }
+
+	logExpressTableEntry OBJECT-TYPE
+			SYNTAX	LogExpressTableEntry
+			ACCESS	not-accessible
+			STATUS	mandatory
+			DESCRIPTION
+				"Log file entry."
+			INDEX	{ logExpressParent, logExpressIndex }
+			::= { logExpressTable 1 }
+
+	LogExpressTableEntry ::= SEQUENCE {
+			logExpressParent			INTEGER,
+			logExpressIndex				INTEGER,
+			logExpressType				INTEGER,
+			logExpressRegex				DisplayString,
+			logExpressMessage			DisplayString
+	}
+
+	logExpressParent OBJECT-TYPE
+			SYNTAX	INTEGER
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The file table index of the parent."
+			::= { logExpressTableEntry 1 }
+
+	logExpressIndex OBJECT-TYPE
+			SYNTAX INTEGER (1..2147483647)
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The local index for this table."
+			::= { logExpressTableEntry 2 }
+
+	logExpressType	OBJECT-TYPE
+			SYNTAX  INTEGER 
+			{
+				active(1),
+				inactive(2),
+				deleted(3)
+			}
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The type or command word of the entry:
+				active -   The entry is active.
+				inactive - The entry is not active. The default is inactive.
+				deleted - The entry has been deleted."
+			::= { logExpressTableEntry 3 }
+
+	logExpressRegex OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The regular expression to be monitored."
+			::= { logExpressTableEntry 4 }
+
+	logExpressMessage OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Optional message to be sent when a trap is sent. The logFilePathname field, 
+				the logExpressString field , and the log file match line may be encoded in the message 
+				by putting '$PATHNAME', or '$EXPRESSION' '$LOGFILELINE' in the message 
+				respectively. The default message is the standard message that is 
+				generated by the log agent."
+			::= { logExpressTableEntry 5 }
+
+-- logMon Traps
+-- --------------------------------------------------------------------
+
+	logExpressionFound TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{ summary, target, logFilePathname, logMessage, logExpressRegex }
+			DESCRIPTION
+				"The log agent found the desired string in the log file."
+			::= 1
+
+	logNotResponding TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{summary, target, logFilePathname, errorCode }
+			DESCRIPTION
+				"The data is not available because the remote system is not 
+				responding."
+			::= 2
+
+	logResponding TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{ summary, target, logFilePathname }
+			DESCRIPTION
+				"The data is now available because the remote system is 
+				responding again."
+			::= 3
+
+	logFileNotFound TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{ summary, target, logFilePathname }
+			DESCRIPTION
+				"The log file canot be found."
+			::= 4
+
+	logMaxSizeExceeded TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{ summary, target, logFilePathname, logFileSize, logFileThreshold }
+			DESCRIPTION
+				"The maximum size of the log file has been exceeded."
+			::= 5
+
+	logPermissionsChanged TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{ summary, target, logFilePathname, logFilePermissions }
+			DESCRIPTION
+				"The permissions on the log file have changed."
+			::= 6
+
+	logTruncated TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{ summary, target, logFilePathname, logFileSize }
+			DESCRIPTION
+				"The log file has been truncated."
+			::= 7
+
+	logInvalidExpression TRAP-TYPE
+			ENTERPRISE	logMon
+			VARIABLES	{ summary, target, logFilePathname, logExpressRegex }
+			DESCRIPTION
+				"The regular expression is invalid."
+			::= 8
+
+END

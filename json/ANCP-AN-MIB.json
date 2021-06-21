@@ -1,0 +1,1158 @@
+{
+  "imports": {
+    "class": "imports",
+    "GSMP-MIB": [
+      "GsmpNameType",
+      "GsmpPartitionIdType",
+      "GsmpVersion"
+    ],
+    "IF-MIB": [
+      "ifIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetPortNumber",
+      "InetAddress"
+    ],
+    "RMON2-MIB": [
+      "ZeroBasedCounter32"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Integer32",
+      "OBJECT-IDENTITY",
+      "TimeTicks",
+      "Counter32",
+      "MODULE-IDENTITY",
+      "Unsigned32",
+      "Bits",
+      "MibIdentifier",
+      "Counter64",
+      "OBJECT-TYPE",
+      "iso",
+      "IpAddress",
+      "mib-2",
+      "NOTIFICATION-TYPE",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "RowStatus",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "ancpAnMIB": {
+    "name": "ancpAnMIB",
+    "oid": "1.3.6.1.2.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2007-06-14 00:00",
+        "description": "Initial version as published in RFC yyyy."
+      }
+    ],
+    "lastupdated": "200706140000Z",
+    "organization": "IETF ANCP Working Group",
+    "contactinfo": " Editors: Stefaan De Cnodder Alcatel-Lucent Postal: Copernicuslaan 50 B-2018 Antwerp Belgium EMail: stefaan.de_cnodder@alcatel-lucent.be Phone: +32 3 240 85 15 Moti Morgenstern ECI Telecom Ltd. Postal: 30 Hasivim St. Petach Tikva 49517, Israel. Email: moti.morgenstern@ecitele.com Phone: +972 3 926 6258 ",
+    "description": "The MIB module for entities implementing the access node side of the Access Node Control Protocol (ANCP). Copyright (C) The IETF Trust (2007). The initial version of this MIB module was published in RFC yyyy; for full legal notices see the RFC itself."
+  },
+  "ancpAnNotifications": {
+    "name": "ancpAnNotifications",
+    "oid": "1.3.6.1.2.1.1.0",
+    "class": "objectidentity"
+  },
+  "ancpAnObjects": {
+    "name": "ancpAnObjects",
+    "oid": "1.3.6.1.2.1.1.1",
+    "class": "objectidentity"
+  },
+  "ancpAnConformance": {
+    "name": "ancpAnConformance",
+    "oid": "1.3.6.1.2.1.1.2",
+    "class": "objectidentity"
+  },
+  "GsmpSubVersion": {
+    "name": "GsmpSubVersion",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "The subversion numbers defined for the GSMP protocol."
+  },
+  "AncpAnSessionCapabilities": {
+    "name": "AncpAnSessionCapabilities",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "topologyDiscovery": 0,
+        "lineConfig": 1,
+        "multicast": 2,
+        "l2Oam": 3
+      }
+    },
+    "status": "current",
+    "description": "ANCP capabilities supported by the AN. The following capabilities are available: topologyDiscovery (0)- Access Topology Discovery lineConfig (1) - Line Configuration multicast (2) - Multicast l2Oam (3) - Layer 2 OAM A bit set means the associated capability is supported."
+  },
+  "ancpAnPartitionsUsed": {
+    "name": "ancpAnPartitionsUsed",
+    "oid": "1.3.6.1.2.1.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "partitionsUnused": 1,
+          "partitionsUsed": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "partitionsUnused",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows the manager to specify whether or not to use the 'Partition ID' field in the GSMP message header. When set to 'partitionsUnused' the application does not use partitions and the ancpAnSessionConfigPartitionId object MUST be zero for all sessions. In addition, rows SHOULD not be created in the ancpAnInterfaceConfigTable. When set to 'partitionsUsed' the application uses partitions and the ancpAnSessionConfigPartitionId object MUST be set, for every session, to a nonzero value. In such a case, rows are created in ancpAnInterfaceConfigTable. The default value zero in ancpAnInterfaceConfigPartitionId object means that the operator did not associate the interface with a particular partition. Note that modifying the value of this object is restricted. E.g., prior to setting it from 'partitionsUsed' to 'partitionsUnused' ancpAnSessionConfigRowStatus objects for all sessions should be set to notInService and the partition ID value MUST be set to zero. The value of this object is persistent."
+  },
+  "ancpAnNextSessionId": {
+    "name": "ancpAnNextSessionId",
+    "oid": "1.3.6.1.2.1.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The object reports the next index (potential value of ancpAnSessionConfigSessionId) which is available for creating a new row in ancpAnSessionConfigTable. If no such value is available (e.g., the table is full or any other reason) the object reports '0' (zero). An available value V becomes unavailable when a row is actually created with ancpAnSessionConfigSessionId=V and until then consecutive GET commands with this object may return the same value V. Note that eventually only one row creation with the value V can succeed. An unavailable value V becomes available again when a row with ancpAnSessionConfigSessionId=V in ancpAnSessionConfigTable is deleted."
+  },
+  "ancpAnSessionConfigTable": {
+    "name": "ancpAnSessionConfigTable",
+    "oid": "1.3.6.1.2.1.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table represents the ANCP sessions in the access node. An entry in this table needs to be configured (created) before an ANCP session might be started."
+  },
+  "ancpAnSessionConfigEntry": {
+    "name": "ancpAnSessionConfigEntry",
+    "oid": "1.3.6.1.2.1.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigSessionId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table showing the data for a specific actual or yet to be established session. If partitions are used, one session corresponds to one specific access node partition."
+  },
+  "ancpAnSessionConfigSessionId": {
+    "name": "ancpAnSessionConfigSessionId",
+    "oid": "1.3.6.1.2.1.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A system generated index to distinguish between different sessions. Session may be actually established or just potential."
+  },
+  "ancpAnSessionConfigRowStatus": {
+    "name": "ancpAnSessionConfigRowStatus",
+    "oid": "1.3.6.1.2.1.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "An object that allows entries in this table to be created, modified and deleted using the RowStatus convention. A SET operation to any other attribute in this row, when this object is set to 'active' (1), MUST be rejected with an SNMP error (e.g., inconsistentValue). In order to perform a SET operation to any other attribute in this table the manager MUST set this object to notInService (2). After setting the object back to 'active' the implementation MAY tear down the session and recreate it, depending on what session attributes have been modified. "
+  },
+  "ancpAnSessionConfigGsmpVersion": {
+    "name": "ancpAnSessionConfigGsmpVersion",
+    "oid": "1.3.6.1.2.1.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpVersion",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum version number of the GSMP protocol that may be used in this session. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigGsmpSubVersion": {
+    "name": "ancpAnSessionConfigGsmpSubVersion",
+    "oid": "1.3.6.1.2.1.1.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpSubVersion",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum subversion number of the GSMP protocol that may be used in this session. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigEncapsulationType": {
+    "name": "ancpAnSessionConfigEncapsulationType",
+    "oid": "1.3.6.1.2.1.1.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "tcp": 1
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "tcp",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Required encapsulation for this session. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigCapabilities": {
+    "name": "ancpAnSessionConfigCapabilities",
+    "oid": "1.3.6.1.2.1.1.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AncpAnSessionCapabilities",
+      "class": "type"
+    },
+    "default": {
+      "value": {
+        "type": "Bits",
+        "class": "type",
+        "bits": {
+          "topologyDiscovery": 0,
+          "l2Oam": 3
+        }
+      },
+      "format": "bits"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "ANCP capabilities supported by the AN in this session. When all bits are set to zero then this means that no capabilities are supported. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigAliveTimer": {
+    "name": "ancpAnSessionConfigAliveTimer",
+    "oid": "1.3.6.1.2.1.1.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 100,
+        "format": "decimal"
+      }
+    },
+    "units": "deciseconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The timer specifies the nominal time between periodic adjacency protocol messages generated by the access node. It is a constant for the duration of an ANCP session. The timer is specified in units of 100ms. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigPortReportShaper": {
+    "name": "ancpAnSessionConfigPortReportShaper",
+    "oid": "1.3.6.1.2.1.1.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "deciseconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The timer specifies the nominal time between 2 EventReport messages related to the same port. It is a constant for the duration of a GSMP session. The timer is specified in units of 100ms. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigAggregateReportShaper": {
+    "name": "ancpAnSessionConfigAggregateReportShaper",
+    "oid": "1.3.6.1.2.1.1.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2550
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "centiseconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The timer specifies the nominal time between 2 EventReport messages related to any port. It is a constant for the duration of a GSMP session. The timer is specified in units of 10ms. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigTransportRetryTimer": {
+    "name": "ancpAnSessionConfigTransportRetryTimer",
+    "oid": "1.3.6.1.2.1.1.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "deciseconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The timer specifies the nominal time between 2 transport connection setup attempts done by the access node. The transport protocol is specified in ancpAnSessionConfigEncapsulationType. The timer is specified in units of 100ms. A value 0 means that the access node will NOT initiate nor setup the transport connection. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigAncpRetryTimer": {
+    "name": "ancpAnSessionConfigAncpRetryTimer",
+    "oid": "1.3.6.1.2.1.1.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "deciseconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The timer specifies the nominal time between 2 ANCP connection setup attempts. The timer is specified in units of 100ms. A value 0 means that the access node will NOT spontaneously trigger an ANCP session. Whatever the setting of this timer, the access node shall always listen for ANCP session setup. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigAnName": {
+    "name": "ancpAnSessionConfigAnName",
+    "oid": "1.3.6.1.2.1.1.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpNameType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "000000000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of the access node. The first three octets must be an Organizationally Unique Identifier (OUI) that identifies the manufacturer of the access node. This can be (one of) the MAC address(es) of the access node on the network side. When set to zero, the access node shall autonomously decide on using the most appropriate MAC address of the access node. Then the actually used access node name can be read from ancpAnCurrentSessionAnName. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigPartitionId": {
+    "name": "ancpAnSessionConfigPartitionId",
+    "oid": "1.3.6.1.2.1.1.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpPartitionIdType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "00",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Id for this session's specific access node partition. This object has a meaning only if partitions are used (ancpAnPartitionsUsed='partitionsUsed') and is ignored otherwise. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigWindowSize": {
+    "name": "ancpAnSessionConfigWindowSize",
+    "oid": "1.3.6.1.2.1.1.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum number of unacknowledged request messages that may be transmitted by the controller without the possibility of loss. This field is used to prevent request messages from being lost in the access node because of overflow in the receive buffer. The field is a hint to the controller. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigNasIpAddressType": {
+    "name": "ancpAnSessionConfigNasIpAddressType",
+    "oid": "1.3.6.1.2.1.1.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of address in ancpAnSessionConfigNasIpAddress. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigNasIpAddress": {
+    "name": "ancpAnSessionConfigNasIpAddress",
+    "oid": "1.3.6.1.2.1.1.1.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The IP address used for the ANCP session peer (NAS). The value of this object is persistent."
+  },
+  "ancpAnSessionConfigEncapPortNumber": {
+    "name": "ancpAnSessionConfigEncapPortNumber",
+    "oid": "1.3.6.1.2.1.1.1.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetPortNumber",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 6068,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The port number used for the transport protocol establishment to the ANCP peer. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigNotifyDnEnable": {
+    "name": "ancpAnSessionConfigNotifyDnEnable",
+    "oid": "1.3.6.1.2.1.1.1.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies if ancpAnSessionDown notification should be generated when this session leaves the 'estab' state as given by ancpAnCurrentSessionState in the corresponding row in ancpAnCurrentSessionTable. The value of this object is persistent."
+  },
+  "ancpAnSessionConfigNotifyUpEnable": {
+    "name": "ancpAnSessionConfigNotifyUpEnable",
+    "oid": "1.3.6.1.2.1.1.1.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies if ancpAnSessionUp notification should be generated when this session goes to 'estab' state as given by ancpAnCurrentSessionState in the corresponding row in ancpAnCurrentSessionTable. The value of this object is persistent."
+  },
+  "ancpAnCurrentSessionTable": {
+    "name": "ancpAnCurrentSessionTable",
+    "oid": "1.3.6.1.2.1.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table gives actual information of the sessions in the access node. A row in this table is created when the corresponding row in the ancpAnSessionConfigTable is created. A row in this table is deleted when the corresponding row in the ancpAnSessionConfigTable is deleted."
+  },
+  "ancpAnCurrentSessionEntry": {
+    "name": "ancpAnCurrentSessionEntry",
+    "oid": "1.3.6.1.2.1.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigSessionId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table showing the data for a specific actual session."
+  },
+  "ancpAnCurrentSessionState": {
+    "name": "ancpAnCurrentSessionState",
+    "oid": "1.3.6.1.2.1.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "null": 1,
+          "synsent": 2,
+          "synrcvd": 3,
+          "estab": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The state of this session. The null (1) state is returned if the proper encapsulation data is not yet configured, if the row is not in active status or if the session is in NULL state as defined in the GSMP specification."
+  },
+  "ancpAnCurrentSessionGsmpVersion": {
+    "name": "ancpAnCurrentSessionGsmpVersion",
+    "oid": "1.3.6.1.2.1.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpVersion",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The actual version number of the GSMP protocol that is used in this session. This object has value 0 if ancpAnCurrentSessionState is not estab(4)."
+  },
+  "ancpAnCurrentSessionGsmpSubVersion": {
+    "name": "ancpAnCurrentSessionGsmpSubVersion",
+    "oid": "1.3.6.1.2.1.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpSubVersion",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The actual subversion number of the GSMP protocol that may be used in this session. This object has value 0 if ancpAnCurrentSessionState is not estab(4)."
+  },
+  "ancpAnCurrentSessionAnName": {
+    "name": "ancpAnCurrentSessionAnName",
+    "oid": "1.3.6.1.2.1.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpNameType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the access node used in this session. It should be the same as ancpAnSessionConfigAnName if that object is not set to zero. If ancpAnSessionConfigAnName is set to zero, then this object will contain the MAC address selected by the access node as described in the description of ancpAnSessionConfigAnName. The value of this object is used as value for the 'Sender Name' field in the header of the ANCP messages generated for this session by the AN."
+  },
+  "ancpAnCurrentSessionNasName": {
+    "name": "ancpAnCurrentSessionNasName",
+    "oid": "1.3.6.1.2.1.1.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpNameType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the NAS as advertised in the adjacency message. The value of this object is set to the value of the 'Sender Name' field in the header of the ANCP messages received on this session. This object has value 0 if ancpAnCurrentSessionState is not estab(4)."
+  },
+  "ancpAnCurrentSessionAnIpAddressType": {
+    "name": "ancpAnCurrentSessionAnIpAddressType",
+    "oid": "1.3.6.1.2.1.1.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of address in ancpAnCurrentSessionAnIpAddress."
+  },
+  "ancpAnCurrentSessionAnIpAddress": {
+    "name": "ancpAnCurrentSessionAnIpAddress",
+    "oid": "1.3.6.1.2.1.1.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address used for the access node."
+  },
+  "ancpAnCurrentSessionAnInstance": {
+    "name": "ancpAnCurrentSessionAnInstance",
+    "oid": "1.3.6.1.2.1.1.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 16777215
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The instance number used by the access node during this session. The Instance number is a 24-bit number that should be guaranteed to be unique within the recent past and to change when the link or node comes back up after going down. Zero is not a valid instance number. This object has value 0 if ancpAnCurrentSessionState is not estab(4)."
+  },
+  "ancpAnCurrentSessionNasInstance": {
+    "name": "ancpAnCurrentSessionNasInstance",
+    "oid": "1.3.6.1.2.1.1.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 16777215
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The instance number used by the NAS during this session. The Instance number is a 24-bit number that should be guaranteed to be unique within the recent past and to change when the link or node comes back up after going down. This object has value 0 if ancpAnCurrentSessionState is not estab(4)."
+  },
+  "ancpAnCurrentSessionCapabilities": {
+    "name": "ancpAnCurrentSessionCapabilities",
+    "oid": "1.3.6.1.2.1.1.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AncpAnSessionCapabilities",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The common ANCP capabilities supported by the AN and NAS in this session. The object has the value 0 if no capabilities are supported or if ancpAnCurrentSessionState is not estab(4)."
+  },
+  "ancpAnCurrentSessionStartUptime": {
+    "name": "ancpAnCurrentSessionStartUptime",
+    "oid": "1.3.6.1.2.1.1.1.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when the session came to established state. This object has value 0 if ancpAnCurrentSessionState is not estab(4)."
+  },
+  "ancpAnCurrentSessionDiscontinuityTime": {
+    "name": "ancpAnCurrentSessionDiscontinuityTime",
+    "oid": "1.3.6.1.2.1.1.1.4.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion at which session's counters suffered a discontinuity. If no such discontinuities have occurred since then, this object contains the same value as ancpAnCurrentSessionStartUptime."
+  },
+  "ancpAnCurrentSessionStatSentMessages": {
+    "name": "ancpAnCurrentSessionStatSentMessages",
+    "oid": "1.3.6.1.2.1.1.1.4.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ZeroBasedCounter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of messages that have been sent in this session by the access node. All ANCP messages pertaining to this session after the session came to established state shall be counted, also including adjacency protocol messages and failure response messages. Discontinuities of this counter are indicated by ancpAnCurrentSessionDiscontinuityTime."
+  },
+  "ancpAnCurrentSessionStatReceivedValidMessages": {
+    "name": "ancpAnCurrentSessionStatReceivedValidMessages",
+    "oid": "1.3.6.1.2.1.1.1.4.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ZeroBasedCounter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of messages that have been received and processed in this session by the access node. All ANCP messages pertaining to this session after the session came to established state shall be counted, also including adjacency protocol messages and failure response messages. Discontinuities of this counter are indicated by ancpAnCurrentSessionDiscontinuityTime."
+  },
+  "ancpAnCurrentSessionStatDiscardedMessages": {
+    "name": "ancpAnCurrentSessionStatDiscardedMessages",
+    "oid": "1.3.6.1.2.1.1.1.4.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ZeroBasedCounter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of messages that in this session have been received and discarded for whatever reason by the access node. All ANCP messages pertaining to this session after the session came to established state shall be counted, also including adjacency protocol messages and failure response messages. Discontinuities of this counter are indicated by ancpAnCurrentSessionDiscontinuityTime."
+  },
+  "ancpAnInterfaceConfigTable": {
+    "name": "ancpAnInterfaceConfigTable",
+    "oid": "1.3.6.1.2.1.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table configures the association of user facing interfaces to ANCP partitions in the access node. An entry in this table needs to be added by the agent for each relevant user facing interface with the value of ancpAnInterfaceConfigPartitionId set to zero at the time of the creation of the row. A relevant user facing interface is created whenever a row is created in the ifTable of the IF-MIB that can be controlled by ANCP. When such an interface is deleted from the ifTable, the corresponding row in this table has to be removed by the agent. Rows should only be created by the agent when ancpAnPartitionsUsed is set to 'partitionsUsed'. If no partitions are used, then no rows should be created in this table."
+  },
+  "ancpAnInterfaceConfigEntry": {
+    "name": "ancpAnInterfaceConfigEntry",
+    "oid": "1.3.6.1.2.1.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the table showing the partition id for a specific user facing interface"
+  },
+  "ancpAnInterfaceConfigPartitionId": {
+    "name": "ancpAnInterfaceConfigPartitionId",
+    "oid": "1.3.6.1.2.1.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GsmpPartitionIdType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "00",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A partition Id associated with the related ifIndex. Upon creation of the row, the value is set to '00'H. The value of this object is persistent."
+  },
+  "ancpAnSessionDown": {
+    "name": "ancpAnSessionDown",
+    "oid": "1.3.6.1.2.1.1.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnIpAddressType"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnIpAddress"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigNasIpAddressType"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigNasIpAddress"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnInstance"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionNasInstance"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStartUptime"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStatSentMessages"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStatReceivedValidMessages"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStatDiscardedMessages"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated whenever an ANCP session goes down. A session can go down for several reasons: 1) The ANCP session can be deleted by a manager from the ancpAnSessionConfigTable, and hence it will also be removed from the ancpAnCurrentSessionTable. 2) The session can go operational down due to some malfunction in the network, the AN, or the NAS. In this case, the ANCP session will be still in the ancpAnSessionConfigTable and ancpAnCurrentSessionTable, but the ancpAnCurrentSessionState moves from the estab state to another state."
+  },
+  "ancpAnSessionUp": {
+    "name": "ancpAnSessionUp",
+    "oid": "1.3.6.1.2.1.1.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnInstance"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when an ANCP session enters the estab state as given by ancpAnCurrentSessionState. Since ancpAnCurrentSessionAnInstance identifies the ANCP session uniquely the other attributes can be derived from this attribute."
+  },
+  "ancpAnGroups": {
+    "name": "ancpAnGroups",
+    "oid": "1.3.6.1.2.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "ancpAnCompliances": {
+    "name": "ancpAnCompliances",
+    "oid": "1.3.6.1.2.1.1.2.2",
+    "class": "objectidentity"
+  },
+  "ancpAnModuleCompliance": {
+    "name": "ancpAnModuleCompliance",
+    "oid": "1.3.6.1.2.1.1.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "ancpAnConfigGroup",
+        "module": "ANCP-AN-MIB"
+      },
+      {
+        "object": "ancpAnCurrentGroup",
+        "module": "ANCP-AN-MIB"
+      },
+      {
+        "object": "ancpAnInterfaceGroup",
+        "module": "ANCP-AN-MIB"
+      },
+      {
+        "object": "ancpAnNotificationsGroup",
+        "module": "ANCP-AN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agents that support the ANCP MIB module for access nodes."
+  },
+  "ancpAnConfigGroup": {
+    "name": "ancpAnConfigGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnNextSessionId"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigRowStatus"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigGsmpVersion"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigGsmpSubVersion"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigEncapsulationType"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigCapabilities"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigAliveTimer"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigPortReportShaper"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigAggregateReportShaper"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigTransportRetryTimer"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigAncpRetryTimer"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigAnName"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigPartitionId"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigWindowSize"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigNasIpAddressType"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigNasIpAddress"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigEncapPortNumber"
+      }
+    ],
+    "status": "current",
+    "description": "These objects apply to the configuration of ANCP sessions in access nodes."
+  },
+  "ancpAnCurrentGroup": {
+    "name": "ancpAnCurrentGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionState"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionGsmpVersion"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionGsmpSubVersion"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnName"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionNasName"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnIpAddressType"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnIpAddress"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionAnInstance"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionNasInstance"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionCapabilities"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStartUptime"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionDiscontinuityTime"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStatSentMessages"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStatReceivedValidMessages"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnCurrentSessionStatDiscardedMessages"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigNotifyDnEnable"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionConfigNotifyUpEnable"
+      }
+    ],
+    "status": "current",
+    "description": "These objects show the operational state of all ANCP sessions configured in the access node."
+  },
+  "ancpAnInterfaceGroup": {
+    "name": "ancpAnInterfaceGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnPartitionsUsed"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnInterfaceConfigPartitionId"
+      }
+    ],
+    "status": "current",
+    "description": "These objects are used to assign user facing interface to partitions."
+  },
+  "ancpAnNotificationsGroup": {
+    "name": "ancpAnNotificationsGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionDown"
+      },
+      {
+        "module": "ANCP-AN-MIB",
+        "object": "ancpAnSessionUp"
+      }
+    ],
+    "status": "current",
+    "description": "These notifications inform management stations about changes in the state of ANCP sessions."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ANCP-AN-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:58:46 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ANCP-AN-MIB"
+  }
+}

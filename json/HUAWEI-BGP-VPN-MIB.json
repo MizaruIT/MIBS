@@ -1,0 +1,2756 @@
+{
+  "imports": {
+    "class": "imports",
+    "ENTITY-MIB": [
+      "entPhysicalIndex"
+    ],
+    "HUAWEI-MIB": [
+      "hwDatacomm"
+    ],
+    "IF-MIB": [
+      "ifIndex",
+      "ifName"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "MPLS-L3VPN-STD-MIB": [
+      "mplsL3VpnVrfConfMidRteThresh",
+      "mplsL3VpnVrfPerfCurrNumRoutes"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "IpAddress",
+      "MibIdentifier",
+      "NOTIFICATION-TYPE",
+      "iso",
+      "Integer32",
+      "MODULE-IDENTITY",
+      "Bits",
+      "Counter64",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "Counter32",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "hwBgpMIB": {
+    "name": "hwBgpMIB",
+    "oid": "1.3.6.1.4.1.2011.5.25.177",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2014-11-20 11:15",
+        "description": "Update"
+      },
+      {
+        "revision": "2014-06-18 11:40",
+        "description": "Add some trap nodes for sending BGP routes threshold alarms, include: 'hwBgpRouteThresholdExceed', 'hwBgpRouteThresholdClear', 'hwBgpRouteMaxExceed', 'hwBgpRouteMaxClear'. "
+      },
+      {
+        "revision": "2014-05-30 15:40",
+        "description": "Add some MIB nodes for getting BGP protocol resource information, include: 'hwBgpPeerSessionNum', 'hwIBgpPeerSessionNum', 'hwEBgpPeerSessionNum', 'hwConfiguredVrfs', 'hwConfiguredIpv4Vrfs','hwConfiguredIpv6Vrfs'."
+      },
+      {
+        "revision": "2014-03-18 15:02",
+        "description": "Update"
+      },
+      {
+        "revision": "2014-03-10 09:55",
+        "description": "Update"
+      },
+      {
+        "revision": "2008-12-26 09:55",
+        "description": "Update"
+      }
+    ],
+    "lastupdated": "201411201115Z",
+    "organization": "Huawei Technologies Co.,Ltd.",
+    "contactinfo": "Huawei Industrial Base Bantian, Longgang Shenzhen 518129 People's Republic of China Website: http://www.huawei.com Email: support@huawei.com ",
+    "description": "The Mib module for management of BGP/VPN. Huawei Technologies co.,Ltd. Supplementary information may be available at: http://www.huawei.com"
+  },
+  "HWBgpAfi": {
+    "name": "HWBgpAfi",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2,
+          "vpls": 25,
+          "l2vpn": 196
+        }
+      }
+    },
+    "status": "current",
+    "description": "Address Family Identifier(AFI) for BGP peer."
+  },
+  "HWBgpSafi": {
+    "name": "HWBgpSafi",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unicast": 1,
+          "multicast": 2,
+          "mpls": 4,
+          "mcast-vpn": 5,
+          "vpls": 65,
+          "mdt": 66,
+          "vpn": 128,
+          "route-target": 132
+        }
+      }
+    },
+    "status": "current",
+    "description": "Subsequent Address Family Identifier(SAFI) for BGP peer."
+  },
+  "MplsL3VpnName": {
+    "name": "MplsL3VpnName",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 31
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "An identifier that is assigned to each MPLS/BGP VPN and is used to uniquely identify it. This is assigned by the system operator or NMS and SHOULD be unique throughout the MPLS domain. If this is the case, then this identifier can then be used at any LSR within a specific MPLS domain to identify this MPLS/BGP VPN. It may also be possible to preserve the uniqueness of this identifier across MPLS domain boundaries, in which case this identifier can then be used to uniquely identify MPLS/BGP VPNs on a more global basis. This object MAY be set to the VPN ID as defined in RFC 2685.",
+    "reference": "RFC 2685 Fox B., et al, 'Virtual Private Networks Identifier', September 1999."
+  },
+  "hwBgpObjects": {
+    "name": "hwBgpObjects",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1",
+    "class": "objectidentity"
+  },
+  "hwBgpPeers": {
+    "name": "hwBgpPeers",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1",
+    "class": "objectidentity"
+  },
+  "hwBgpPeerAddrFamilyTable": {
+    "name": "hwBgpPeerAddrFamilyTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "BGP Peer Address Family Table. This table contains information about the address family for BGP peers."
+  },
+  "hwBgpPeerAddrFamilyEntry": {
+    "name": "hwBgpPeerAddrFamilyEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerInstanceId",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerAddrFamilyAfi",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerAddrFamilySafi",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerType",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerIPAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The information about the address family for BGP peers."
+  },
+  "hwBgpPeerInstanceId": {
+    "name": "hwBgpPeerInstanceId",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the instance for the remote BGP peer."
+  },
+  "hwBgpPeerAddrFamilyAfi": {
+    "name": "hwBgpPeerAddrFamilyAfi",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HWBgpAfi",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the address family for the remote BGP peer."
+  },
+  "hwBgpPeerAddrFamilySafi": {
+    "name": "hwBgpPeerAddrFamilySafi",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HWBgpSafi",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the sub-address family for the remote peer."
+  },
+  "hwBgpPeerType": {
+    "name": "hwBgpPeerType",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The type of the address family for the remote BGP peer."
+  },
+  "hwBgpPeerIPAddr": {
+    "name": "hwBgpPeerIPAddr",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The IP address of the remote BGP peer."
+  },
+  "hwBgpPeerVrfName": {
+    "name": "hwBgpPeerVrfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the VPN instance."
+  },
+  "hwBgpPeerTable": {
+    "name": "hwBgpPeerTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "BGP Peer Table. This table contains information about the connections for BGP peers."
+  },
+  "hwBgpPeerEntry": {
+    "name": "hwBgpPeerEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hwBgpPeerEntry",
+      "module": "HUAWEI-BGP-VPN-MIB",
+      "object": "hwBgpPeerAddrFamilyEntry"
+    },
+    "status": "current",
+    "description": "The information about the connections with BGP peers."
+  },
+  "hwBgpPeerNegotiatedVersion": {
+    "name": "hwBgpPeerNegotiatedVersion",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The version negotiated with the remote BGP peer."
+  },
+  "hwBgpPeerRemoteAs": {
+    "name": "hwBgpPeerRemoteAs",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The AS number of the remote BGP peer."
+  },
+  "hwBgpPeerRemoteAddr": {
+    "name": "hwBgpPeerRemoteAddr",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address of the remote BGP peer."
+  },
+  "hwBgpPeerState": {
+    "name": "hwBgpPeerState",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "idle": 1,
+          "connect": 2,
+          "active": 3,
+          "opensent": 4,
+          "openconfirm": 5,
+          "established": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of the remote BGP peer, including: 1: Idle(1) 2: Connect(2) 3: Active(3) 4: Opensent(4) 5: Openconfirm(5) 6: Established(6) "
+  },
+  "hwBgpPeerFsmEstablishedCounter": {
+    "name": "hwBgpPeerFsmEstablishedCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The Counter That Records the Times the Remote BGP Peer Is Correctly Connected The counter is increased by one if the remote BGP peer is correctly connected once. The counter could be set to zero."
+  },
+  "hwBgpPeerFsmEstablishedTime": {
+    "name": "hwBgpPeerFsmEstablishedTime",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter that records the times the remote BGP peer is correctly connected."
+  },
+  "hwBgpPeerGRStatus": {
+    "name": "hwBgpPeerGRStatus",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "peerNotBeingHelped": 1,
+          "peerRestarting": 2,
+          "peerFinishRestart": 3,
+          "peerHelping": 4
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Graceful restart status of the BGP peer, including: 1: peerNotBeingHelped, indicating that the BGP peer will not be helped during restarting. 2: peerRestarting, indicating that the BGP peer is detected restarting. 3: peerFinishRestart, indicating that the BGP peer finishes the latest GR. 4: peerHelping, indicating that the BGP peer is helping the local end to perform GR."
+  },
+  "hwBgpPeerLastError": {
+    "name": "hwBgpPeerLastError",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The last error code and subcode seen by this peer on this connection. If no error has occurred, this field is zero. Otherwise, the first byte of this two byte OCTET STRING contains the error code, and the second byte contains the subcode."
+  },
+  "hwBgpPeerUnAvaiReason": {
+    "name": "hwBgpPeerUnAvaiReason",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bgp peer down reason including: 1: Configuration lead peer down(1) 2: Receive notification(2) 3: Receive error packet(3) 4: Hold timer expire(4) 5: Remote peer not reachable(5) 6: Direct connect-interface down(6) 7: Route limit(7)"
+  },
+  "hwBgpPeerRouteTable": {
+    "name": "hwBgpPeerRouteTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Route table for BGP Peers This table contains routing information about the BGP peers."
+  },
+  "hwBgpPeerRouteEntry": {
+    "name": "hwBgpPeerRouteEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hwBgpPeerRouteEntry",
+      "module": "HUAWEI-BGP-VPN-MIB",
+      "object": "hwBgpPeerAddrFamilyEntry"
+    },
+    "status": "current",
+    "description": "The routing information about the BGP peers."
+  },
+  "hwBgpPeerPrefixRcvCounter": {
+    "name": "hwBgpPeerPrefixRcvCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of prefixes received from the remote BGP peer."
+  },
+  "hwBgpPeerPrefixActiveCounter": {
+    "name": "hwBgpPeerPrefixActiveCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of active prefixes received from the remote BGP peer."
+  },
+  "hwBgpPeerPrefixAdvCounter": {
+    "name": "hwBgpPeerPrefixAdvCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of prefixes sent to the remote BGP peer."
+  },
+  "hwBgpPeerMessageTable": {
+    "name": "hwBgpPeerMessageTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Protocol Packet Table for BGP Peers This table contains information about the protocol packets of BGP peers."
+  },
+  "hwBgpPeerMessageEntry": {
+    "name": "hwBgpPeerMessageEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hwBgpPeerMessageEntry",
+      "module": "HUAWEI-BGP-VPN-MIB",
+      "object": "hwBgpPeerAddrFamilyEntry"
+    },
+    "status": "current",
+    "description": "The information about the protocol packets of the BGP peers."
+  },
+  "hwBgpPeerInTotalMsgCounter": {
+    "name": "hwBgpPeerInTotalMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of protocol packets received from the remote BGP peer."
+  },
+  "hwBgpPeerOutTotalMsgCounter": {
+    "name": "hwBgpPeerOutTotalMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of protocol packets sent to the remote BGP peer."
+  },
+  "hwBgpPeerInOpenMsgCounter": {
+    "name": "hwBgpPeerInOpenMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Open packets received from the remote BGP peer."
+  },
+  "hwBgpPeerInUpdateMsgCounter": {
+    "name": "hwBgpPeerInUpdateMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Update packets received from the remote BGP peer."
+  },
+  "hwBgpPeerInNotificationMsgCounter": {
+    "name": "hwBgpPeerInNotificationMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Notification packets received from the remote BGP peer."
+  },
+  "hwBgpPeerInKeepAliveMsgCounter": {
+    "name": "hwBgpPeerInKeepAliveMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Keepalive packets received from the remote BGP peer."
+  },
+  "hwBgpPeerInRouteFreshMsgCounter": {
+    "name": "hwBgpPeerInRouteFreshMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Route-Refresh packets received from the remote BGP peer."
+  },
+  "hwBgpPeerOutOpenMsgCounter": {
+    "name": "hwBgpPeerOutOpenMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Open packets sent to the remote BGP peer."
+  },
+  "hwBgpPeerOutUpdateMsgCounter": {
+    "name": "hwBgpPeerOutUpdateMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Update packets sent to the remote BGP peer."
+  },
+  "hwBgpPeerOutNotificationMsgCounter": {
+    "name": "hwBgpPeerOutNotificationMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Notification packets sent to the remote BGP peer."
+  },
+  "hwBgpPeerOutKeepAliveMsgCounter": {
+    "name": "hwBgpPeerOutKeepAliveMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Keepalive packets sent to the remote BGP peer."
+  },
+  "hwBgpPeerOutRouteFreshMsgCounter": {
+    "name": "hwBgpPeerOutRouteFreshMsgCounter",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.4.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Route-Refresh packets sent to the remote BGP peer."
+  },
+  "hwBgpPeerConfigTable": {
+    "name": "hwBgpPeerConfigTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "BGP Peer Configuration Table. This table contains the configurations of BGP peers."
+  },
+  "hwBgpPeerConfigEntry": {
+    "name": "hwBgpPeerConfigEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "hwBgpPeerConfigEntry",
+      "module": "HUAWEI-BGP-VPN-MIB",
+      "object": "hwBgpPeerAddrFamilyEntry"
+    },
+    "status": "current",
+    "description": "This object indicates the configurations of BGP peers."
+  },
+  "hwBgpPeerConfigRouteLimitNum": {
+    "name": "hwBgpPeerConfigRouteLimitNum",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the maximum number of routes received from the BGP peer."
+  },
+  "hwBgpPeerConfigRouteLimitThreshold": {
+    "name": "hwBgpPeerConfigRouteLimitThreshold",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the alarm threshold (%) of the maximum number of routes received from the BGP peer."
+  },
+  "hwBgpPeerSessionTable": {
+    "name": "hwBgpPeerSessionTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "BGP Peer Session Table. This table contains BGP peer session informations."
+  },
+  "hwBgpPeerSessionEntry": {
+    "name": "hwBgpPeerSessionEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionVrfName",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionRemoteAddrType",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionRemoteAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The information about the BGP peer sessions."
+  },
+  "hwBgpPeerSessionVrfName": {
+    "name": "hwBgpPeerSessionVrfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bgp Vrf id."
+  },
+  "hwBgpPeerSessionRemoteAddrType": {
+    "name": "hwBgpPeerSessionRemoteAddrType",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bgp peer session remote address type."
+  },
+  "hwBgpPeerSessionRemoteAddr": {
+    "name": "hwBgpPeerSessionRemoteAddr",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bgp peer session remote address."
+  },
+  "hwBgpPeerSessionLocalAddrType": {
+    "name": "hwBgpPeerSessionLocalAddrType",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bgp peer session local address type."
+  },
+  "hwBgpPeerSessionLocalAddr": {
+    "name": "hwBgpPeerSessionLocalAddr",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bgp peer session local address."
+  },
+  "hwBgpPeerSessionUnavailableType": {
+    "name": "hwBgpPeerSessionUnavailableType",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "uptodown": 1,
+          "alwaysdown": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bgp peer unavailable type including: 1: Up To Down(1) 2: Always Down(2)"
+  },
+  "hwBgpPeerSessionLocalIfName": {
+    "name": "hwBgpPeerSessionLocalIfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bgp peer session local IFName."
+  },
+  "hwBgpPeerSessionReason": {
+    "name": "hwBgpPeerSessionReason",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "configurationLeadPeerDown": 1,
+          "receiveNotification": 2,
+          "receiveErrorPacket": 3,
+          "holdTimerExpire": 4,
+          "remotePeerNotReachable": 5,
+          "directConnectInterfaceDown": 6,
+          "routeLimit": 7,
+          "peerIsNotUpForASpecifiedPeriodOfTime": 8,
+          "alarmClear": 100
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bgp peer down reason including: 1: Configuration lead peer down(1) 2: Receive notification(2) 3: Receive error packet(3) 4: Hold timer expire(4) 5: Remote peer not reachable(5) 6: Direct connect-interface down(6) 7: Route limit(7) 8: Peer is not up for a specified long time(8) 100: Alarm clear(100)"
+  },
+  "hwBgpRoute": {
+    "name": "hwBgpRoute",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.2",
+    "class": "objectidentity"
+  },
+  "hwBgpRouteLimitTable": {
+    "name": "hwBgpRouteLimitTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.2.1",
+    "class": "objectidentity"
+  },
+  "hwBgpRouteLimitindex": {
+    "name": "hwBgpRouteLimitindex",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2,
+          "ipv4vrf": 3,
+          "ipv6vrf": 4,
+          "ipv4public": 5,
+          "ipv6public": 6,
+          "l2ad": 7
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The index of bgp route limit, including: 1.ipv4(1): total ipv4 routes number. 2.ipv6(2): total ipv6 routes number. 3.ipv4vrf(3): ipv4 vrf routes number. 4.ipv6vrf(4): ipv6 vrf routes number. 5.ipv4public(5): ipv4 public routes number. 6.ipv6public(6): ipv6 public routes number. 7.l2ad(7): l2ad routes number."
+  },
+  "hwBgpRouteCurNum": {
+    "name": "hwBgpRouteCurNum",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The current number of bgp routes."
+  },
+  "hwBgpRouteMaxNum": {
+    "name": "hwBgpRouteMaxNum",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The maximum number of bgp routes."
+  },
+  "hwBgpRouteThreshold": {
+    "name": "hwBgpRouteThreshold",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.2.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The threshold number of bgp routes."
+  },
+  "hwBgpTraps": {
+    "name": "hwBgpTraps",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3",
+    "class": "objectidentity"
+  },
+  "hwBgpPeerRouteNumThresholdExceed": {
+    "name": "hwBgpPeerRouteNumThresholdExceed",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitNum"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of routes received from the BGP peer exceeds the alarm threshold."
+  },
+  "hwBgpPeerRouteNumThresholdClear": {
+    "name": "hwBgpPeerRouteNumThresholdClear",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitNum"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of routes received from the BGP peer decreases below the alarm threshold."
+  },
+  "hwBgpPeerGRStatusChange": {
+    "name": "hwBgpPeerGRStatusChange",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerGRStatus"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the graceful restart status described by hwBgpPeerGRStatus changes."
+  },
+  "hwBgpPeerUnavailable": {
+    "name": "hwBgpPeerUnavailable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionLocalAddrType"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionLocalAddr"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionUnavailableType"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionLocalIfName"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionReason"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when bgp peer session state change from up to down."
+  },
+  "hwBgpPeerAvailable": {
+    "name": "hwBgpPeerAvailable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionLocalAddrType"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionLocalAddr"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionUnavailableType"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionLocalIfName"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerSessionReason"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when bgp peer session state change from down to up."
+  },
+  "hwBgpPeerRouteExceed": {
+    "name": "hwBgpPeerRouteExceed",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitNum"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when bgp peer session route number exceed."
+  },
+  "hwBgpPeerRouteExceedClear": {
+    "name": "hwBgpPeerRouteExceedClear",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitNum"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when bgp peer session route number exceed clear."
+  },
+  "hwL3vpnVrfRouteMidThreshCleared": {
+    "name": "hwL3vpnVrfRouteMidThreshCleared",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.8",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "MPLS-L3VPN-STD-MIB",
+        "object": "mplsL3VpnVrfPerfCurrNumRoutes"
+      },
+      {
+        "module": "MPLS-L3VPN-STD-MIB",
+        "object": "mplsL3VpnVrfConfMidRteThresh"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of routes contained by the specified VRF exceeds the value indicated by mplsL3VpnVrfMidRouteThreshold, and then falls below this value. A single notification MUST be generated when this threshold is exceeded, and no other notifications of this type should be issued until the value of mplsL3VpnVrfPerfCurrNumRoutes has fallen below that of mplsL3VpnVrfConfMidRteThresh."
+  },
+  "hwBgpPeerEstablished": {
+    "name": "hwBgpPeerEstablished",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.9",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerLastError"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerState"
+      }
+    ],
+    "status": "current",
+    "description": "The BGP Established event is generated when the BGP FSM enters the ESTABLISHED state."
+  },
+  "hwBgpPeerBackwardTransition": {
+    "name": "hwBgpPeerBackwardTransition",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.10",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerLastError"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerState"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerUnAvaiReason"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifName"
+      }
+    ],
+    "status": "current",
+    "description": "The BGPBackwardTransition Event is generated when the BGP FSM moves from a higher numbered state to a lower numbered state."
+  },
+  "hwBgpRouteThresholdExceed": {
+    "name": "hwBgpRouteThresholdExceed",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.11",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteLimitindex"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteCurNum"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteThreshold"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteMaxNum"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of bgp routes exceeds the threshold."
+  },
+  "hwBgpRouteThresholdClear": {
+    "name": "hwBgpRouteThresholdClear",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.12",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteLimitindex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of routes decreases below the threshold."
+  },
+  "hwBgpRouteMaxExceed": {
+    "name": "hwBgpRouteMaxExceed",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.13",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteLimitindex"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteMaxNum"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of routes exceeds the maximum number."
+  },
+  "hwBgpRouteMaxClear": {
+    "name": "hwBgpRouteMaxClear",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.3.14",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpRouteLimitindex"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when the number of routes decreases below the maximum number."
+  },
+  "hwBgpScalars": {
+    "name": "hwBgpScalars",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.4",
+    "class": "objectidentity"
+  },
+  "hwBgpPeerSessionNum": {
+    "name": "hwBgpPeerSessionNum",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of BGP peer sessions configured."
+  },
+  "hwIBgpPeerSessionNum": {
+    "name": "hwIBgpPeerSessionNum",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.4.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of Internal BGP peer sessions configured."
+  },
+  "hwEBgpPeerSessionNum": {
+    "name": "hwEBgpPeerSessionNum",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.1.4.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of External BGP peer sessions configured."
+  },
+  "hwBgpVpnObjects": {
+    "name": "hwBgpVpnObjects",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2",
+    "class": "objectidentity"
+  },
+  "hwBgpVpnTunnelTable": {
+    "name": "hwBgpVpnTunnelTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the VPN-tunnel bearing relation table that shows detailed information about the tunnel that bears the VPN service."
+  },
+  "hwBgpVpnTunnelEntry": {
+    "name": "hwBgpVpnTunnelEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelVrfName",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelPublicNetNextHop",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This object indicates detailed information about the tunnel bearing VPN services. This object can be queried, but not be set or created."
+  },
+  "hwBgpVpnTunnelVrfName": {
+    "name": "hwBgpVpnTunnelVrfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 31
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the VRF name."
+  },
+  "hwBgpVpnTunnelPublicNetNextHop": {
+    "name": "hwBgpVpnTunnelPublicNetNextHop",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the next hop in the public network."
+  },
+  "hwBgpVpnTunnelId": {
+    "name": "hwBgpVpnTunnelId",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The value of this object identifies the tunnel ID."
+  },
+  "hwBgpVpnTunnelDestAddr": {
+    "name": "hwBgpVpnTunnelDestAddr",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the destination address of the tunnel."
+  },
+  "hwBgpVpnTunnelType": {
+    "name": "hwBgpVpnTunnelType",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies the tunnel type."
+  },
+  "hwBgpVpnTunnelSrcAddr": {
+    "name": "hwBgpVpnTunnelSrcAddr",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the source address of the tunnel."
+  },
+  "hwBgpVpnTunnelOutIfName": {
+    "name": "hwBgpVpnTunnelOutIfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the name of the outgoing interface for the tunnel."
+  },
+  "hwBgpVpnTunnelIsLoadBalance": {
+    "name": "hwBgpVpnTunnelIsLoadBalance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies whether load balancing is performed."
+  },
+  "hwBgpVpnTunnelLspIndex": {
+    "name": "hwBgpVpnTunnelLspIndex",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies the index of the primary LSP for the tunnel."
+  },
+  "hwBgpVpnTunnelLspOutIfName": {
+    "name": "hwBgpVpnTunnelLspOutIfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the name of the outgoing interface for the primary LSP of the tunnel."
+  },
+  "hwBgpVpnTunnelLspOutLabel": {
+    "name": "hwBgpVpnTunnelLspOutLabel",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies the outgoing label for the primary LSP of the tunnel."
+  },
+  "hwBgpVpnTunnelLspNextHop": {
+    "name": "hwBgpVpnTunnelLspNextHop",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the next hop for the primary LSP of the tunnel."
+  },
+  "hwBgpVpnTunnelLspFec": {
+    "name": "hwBgpVpnTunnelLspFec",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the FEC for the primary LSP of the tunnel."
+  },
+  "hwBgpVpnTunnelLspFecPfxLen": {
+    "name": "hwBgpVpnTunnelLspFecPfxLen",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the length of the FEC for the primary LSP of the tunnel."
+  },
+  "hwBgpVpnTunnelLspIsBackup": {
+    "name": "hwBgpVpnTunnelLspIsBackup",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies whether the LSP is the backup LSP."
+  },
+  "hwBgpVpnTunnelSignalProtocol": {
+    "name": "hwBgpVpnTunnelSignalProtocol",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies signaling protocol type of the tunnel."
+  },
+  "hwBgpVpnTunnelSessionTunnelId": {
+    "name": "hwBgpVpnTunnelSessionTunnelId",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of this object identifies ID of the tunnel configured through the command."
+  },
+  "hwBgpVpnTunnelTunnelName": {
+    "name": "hwBgpVpnTunnelTunnelName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the tunnel name."
+  },
+  "hwBgpVpnServiceIdTable": {
+    "name": "hwBgpVpnServiceIdTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the Service-id of the L3VPN services."
+  },
+  "hwBgpVpnServiceIdEntry": {
+    "name": "hwBgpVpnServiceIdEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnServiceIdVrfName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This object indicates detailed information about the Service-id of L3VPN services. This object can be queried, set but not created."
+  },
+  "hwBgpVpnServiceIdVrfName": {
+    "name": "hwBgpVpnServiceIdVrfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 31
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the VRF name."
+  },
+  "hwBgpVpnServiceIdValue": {
+    "name": "hwBgpVpnServiceIdValue",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "0",
+        "format": "bin"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The value of this object identifies the Service-id."
+  },
+  "hwBgpVpnScalars": {
+    "name": "hwBgpVpnScalars",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.3",
+    "class": "objectidentity"
+  },
+  "hwConfiguredVrfs": {
+    "name": "hwConfiguredVrfs",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of VRFs that are configured on this node."
+  },
+  "hwConfiguredIpv4Vrfs": {
+    "name": "hwConfiguredIpv4Vrfs",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of IPv4-family VRFs that are configured on this node."
+  },
+  "hwConfiguredIpv6Vrfs": {
+    "name": "hwConfiguredIpv6Vrfs",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.2.3.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of IPv6-family VRFs that are configured on this node."
+  },
+  "hwBgpConformance": {
+    "name": "hwBgpConformance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3",
+    "class": "objectidentity"
+  },
+  "hwBgpCompliances": {
+    "name": "hwBgpCompliances",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.1",
+    "class": "objectidentity"
+  },
+  "hwBgpCompliance": {
+    "name": "hwBgpCompliance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "hwBgpPeer",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      },
+      {
+        "object": "hwBgpPeerRoute",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      },
+      {
+        "object": "hwBgpPeerMessage",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for Huawei-BGP-VPN MIB"
+  },
+  "hwBgpGroups": {
+    "name": "hwBgpGroups",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.2",
+    "class": "objectidentity"
+  },
+  "hwBgpPeerAddrFamily": {
+    "name": "hwBgpPeerAddrFamily",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerVrfName"
+      }
+    ],
+    "status": "current",
+    "description": "Address Family Group for BGP peers This table contains members of the address family for BGP peers"
+  },
+  "hwBgpPeer": {
+    "name": "hwBgpPeer",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerNegotiatedVersion"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerRemoteAs"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerRemoteAddr"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerState"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerFsmEstablishedCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerGRStatus"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerFsmEstablishedTime"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerLastError"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerUnAvaiReason"
+      }
+    ],
+    "status": "current",
+    "description": "BGP Peer Group. This table contains members of the connections with BGP peers."
+  },
+  "hwBgpPeerRoute": {
+    "name": "hwBgpPeerRoute",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerPrefixRcvCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerPrefixActiveCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerPrefixAdvCounter"
+      }
+    ],
+    "status": "current",
+    "description": "Route Group for BGP Peers This table contains members of the routes with BGP peers."
+  },
+  "hwBgpPeerMessage": {
+    "name": "hwBgpPeerMessage",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerInTotalMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerOutTotalMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerInOpenMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerInUpdateMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerInNotificationMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerInKeepAliveMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerInRouteFreshMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerOutOpenMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerOutUpdateMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerOutNotificationMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerOutKeepAliveMsgCounter"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerOutRouteFreshMsgCounter"
+      }
+    ],
+    "status": "current",
+    "description": "Protocol Packet Group for BGP Peers This table contains members of the protocol packets with BGP peers."
+  },
+  "hwBgpPeerConfig": {
+    "name": "hwBgpPeerConfig",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitNum"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerConfigRouteLimitThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "Configuration Group for BGP Peers. This table contains members of the configurations of BGP peers."
+  },
+  "hwBgpTrap": {
+    "name": "hwBgpTrap",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.3.2.6",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerRouteNumThresholdExceed"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerRouteNumThresholdClear"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerGRStatusChange"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerEstablished"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerBackwardTransition"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwL3vpnVrfRouteMidThreshCleared"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerUnavailable"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerRouteExceed"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerRouteExceedClear"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpPeerAvailable"
+      }
+    ],
+    "status": "current",
+    "description": "Trap Group for BGP Peers. This table contains members of the traps of BGP peers."
+  },
+  "hwBgpVpnConformance": {
+    "name": "hwBgpVpnConformance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.5",
+    "class": "objectidentity"
+  },
+  "hwBgpVpnCompliances": {
+    "name": "hwBgpVpnCompliances",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.5.1",
+    "class": "objectidentity"
+  },
+  "hwBgpVpnCompliance": {
+    "name": "hwBgpVpnCompliance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.5.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "hwBgpVpnTunnelGroup",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      },
+      {
+        "object": "hwBgpVpnServiceIdGroup",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for Route Management MIB."
+  },
+  "hwBgpVpnExtGroups": {
+    "name": "hwBgpVpnExtGroups",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.5.2",
+    "class": "objectidentity"
+  },
+  "hwBgpVpnTunnelGroup": {
+    "name": "hwBgpVpnTunnelGroup",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.5.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelDestAddr"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelType"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelSrcAddr"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelIsLoadBalance"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelLspIndex"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelLspOutLabel"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelLspNextHop"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelLspFec"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelLspFecPfxLen"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelOutIfName"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelLspOutIfName"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelLspIsBackup"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelTunnelName"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelSessionTunnelId"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnTunnelSignalProtocol"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "hwBgpVpnServiceIdGroup": {
+    "name": "hwBgpVpnServiceIdGroup",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.5.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwBgpVpnServiceIdValue"
+      }
+    ],
+    "status": "current",
+    "description": "This object indicates the Service-id of the L3VPN services."
+  },
+  "hwTnl2VpnTrapObjects": {
+    "name": "hwTnl2VpnTrapObjects",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.6",
+    "class": "objectidentity"
+  },
+  "hwTnl2VpnTrapTable": {
+    "name": "hwTnl2VpnTrapTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.6.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Tnl2Vpn Trap table. This table contains the trap information. This table is only used for sending trap messages and does not support the get/getnext/set operation."
+  },
+  "hwTnl2VpnTrapEntry": {
+    "name": "hwTnl2VpnTrapEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.6.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwVpnId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This object indicates detailed information about the trap message."
+  },
+  "hwVpnId": {
+    "name": "hwVpnId",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.6.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the VPN index."
+  },
+  "hwVpnPublicNextHop": {
+    "name": "hwVpnPublicNextHop",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.6.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the public next-hop address."
+  },
+  "hwTunnelReachablityEvent": {
+    "name": "hwTunnelReachablityEvent",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.6.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4096
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates whether the tunnel is reachable. 1--tunnel reachable. 2--tunnel unreachable."
+  },
+  "hwVpnTrapCkeyValue": {
+    "name": "hwVpnTrapCkeyValue",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.6.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the ckey value. This value is used for getting next-hop information."
+  },
+  "hwTnl2VpnTrapConformance": {
+    "name": "hwTnl2VpnTrapConformance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.7",
+    "class": "objectidentity"
+  },
+  "hwTnl2VpnTrapConformances": {
+    "name": "hwTnl2VpnTrapConformances",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.7.1",
+    "class": "objectidentity"
+  },
+  "hwTnl2VpnTrapCompliance": {
+    "name": "hwTnl2VpnTrapCompliance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.7.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "hwTnl2VpnTrapGroup",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      },
+      {
+        "object": "hwTnl2VpnTrapNotificationGroup",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for Huawei-BGP-VPN MIB."
+  },
+  "hwTnl2VpnTrapGroups": {
+    "name": "hwTnl2VpnTrapGroups",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.7.2",
+    "class": "objectidentity"
+  },
+  "hwTnl2VpnTrapGroup": {
+    "name": "hwTnl2VpnTrapGroup",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.7.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwVpnId"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwVpnPublicNextHop"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwVpnTrapCkeyValue"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwTunnelReachablityEvent"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "hwTnl2VpnTrapNotificationGroup": {
+    "name": "hwTnl2VpnTrapNotificationGroup",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.7.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwTnl2VpnTrapEvent"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "hwTnl2VpnTrapNotification": {
+    "name": "hwTnl2VpnTrapNotification",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.8",
+    "class": "objectidentity"
+  },
+  "hwTnl2VpnTrapEvent": {
+    "name": "hwTnl2VpnTrapEvent",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.8.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwVpnId"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwVpnPublicNextHop"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwVpnTrapCkeyValue"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwTunnelReachablityEvent"
+      }
+    ],
+    "status": "current",
+    "description": "This trap indicates whether the tunnel used by a VPN is reachable, If the tunnel is unreachable, a trap is sent to notify the user, hwTunnelReachablityEvent is 2. If the tunnel is reachable, a trap is sent to notify the user, hwTunnelReachablityEvent is 1."
+  },
+  "hwPeerDistributeObjects": {
+    "name": "hwPeerDistributeObjects",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9",
+    "class": "objectidentity"
+  },
+  "hwBgpTotalRouteNumber": {
+    "name": "hwBgpTotalRouteNumber",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of BGP routes."
+  },
+  "hwOsNodeTable": {
+    "name": "hwOsNodeTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table contains some statistic information entries orgnized by os-node."
+  },
+  "hwOsNodeEntry": {
+    "name": "hwOsNodeEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ENTITY-MIB",
+        "object": "entPhysicalIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Every entry contains some statistic infomation on specific os-node."
+  },
+  "hwCurrSlot": {
+    "name": "hwCurrSlot",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index of specific slot."
+  },
+  "hwPeerNumber": {
+    "name": "hwPeerNumber",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of the neighbors on the specific os-group."
+  },
+  "hwRouteNumber": {
+    "name": "hwRouteNumber",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of the routes on the specific os-group."
+  },
+  "hwDistributeTable": {
+    "name": "hwDistributeTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table contains some information entries orgnized by distribute-instance."
+  },
+  "hwDistributeEntry": {
+    "name": "hwDistributeEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwDistributeName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Every entry contains some infomation on specific distribute-instance."
+  },
+  "hwDistributeLocId": {
+    "name": "hwDistributeLocId",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The id of specific distribute-instance."
+  },
+  "hwDistributeName": {
+    "name": "hwDistributeName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 31
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The name of specific distribute-instance."
+  },
+  "hwMigrateSrcSlot": {
+    "name": "hwMigrateSrcSlot",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 31
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The source slot name the distribute-instances is from when migration happens."
+  },
+  "hwMigrateDestSlot": {
+    "name": "hwMigrateDestSlot",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 31
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The destination slot name the distribute-instances is aboute to go when migration happens."
+  },
+  "hwMigrateReason": {
+    "name": "hwMigrateReason",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "memoryoverload": 1,
+          "cpuoverload": 2
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The reason of a migration when it happens."
+  },
+  "hwPeerDistributeTraps": {
+    "name": "hwPeerDistributeTraps",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.9.4",
+    "class": "objectidentity"
+  },
+  "hwRpkiObjects": {
+    "name": "hwRpkiObjects",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11",
+    "class": "objectidentity"
+  },
+  "hwRpkiSessions": {
+    "name": "hwRpkiSessions",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.1",
+    "class": "objectidentity"
+  },
+  "hwRpkiSessionTable": {
+    "name": "hwRpkiSessionTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "RPKI Session Table. This table contains information about the RPKI sessions."
+  },
+  "hwRpkiSessionEntry": {
+    "name": "hwRpkiSessionEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionVrfName",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionType",
+        "implied": 0
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwSessionIPAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The information about the RPKI session."
+  },
+  "hwRpkiSessionVrfName": {
+    "name": "hwRpkiSessionVrfName",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MplsL3VpnName",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the instance for the session."
+  },
+  "hwRpkiSessionType": {
+    "name": "hwRpkiSessionType",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The type of the address family for the remote session."
+  },
+  "hwSessionIPAddr": {
+    "name": "hwSessionIPAddr",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The IP address of the session."
+  },
+  "hwRpkiSessionRoaLimitNum": {
+    "name": "hwRpkiSessionRoaLimitNum",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address of the session."
+  },
+  "hwRpkiTraps": {
+    "name": "hwRpkiTraps",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.2",
+    "class": "objectidentity"
+  },
+  "hwRpkiSessionRoaExceed": {
+    "name": "hwRpkiSessionRoaExceed",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.2.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionRoaLimitNum"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when rpki session ROA number exceed."
+  },
+  "hwRpkiSessionRoaExceedClear": {
+    "name": "hwRpkiSessionRoaExceedClear",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.2.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionRoaLimitNum"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is generated when rpki session ROA number exceed clear."
+  },
+  "hwRpkiConformance": {
+    "name": "hwRpkiConformance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.3",
+    "class": "objectidentity"
+  },
+  "hwRpkiCompliances": {
+    "name": "hwRpkiCompliances",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.3.1",
+    "class": "objectidentity"
+  },
+  "hwRpkiCompliance": {
+    "name": "hwRpkiCompliance",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "hwRpkiSession",
+        "module": "HUAWEI-BGP-VPN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for Huawei-BGP-VPN MIB"
+  },
+  "hwRpkiGroups": {
+    "name": "hwRpkiGroups",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.3.2",
+    "class": "objectidentity"
+  },
+  "hwRpkiSession": {
+    "name": "hwRpkiSession",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionVrfName"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionType"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwSessionIPAddr"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionRoaLimitNum"
+      }
+    ],
+    "status": "current",
+    "description": "Session Group for RPKI sessions This table contains members of session for RPKI"
+  },
+  "hwRpkiTrap": {
+    "name": "hwRpkiTrap",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.11.3.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionRoaExceed"
+      },
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwRpkiSessionRoaExceedClear"
+      }
+    ],
+    "status": "current",
+    "description": "Trap Group for RPKI Sessions. This table contains members of the traps of RPKI Sessions."
+  },
+  "hwFlowSpecObjects": {
+    "name": "hwFlowSpecObjects",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12",
+    "class": "objectidentity"
+  },
+  "hwFlowSpecStatisticsTable": {
+    "name": "hwFlowSpecStatisticsTable",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "FlowSpec Statistics Table. This table contains information about the FlowSpec Statistics."
+  },
+  "hwFlowSpecStatisticsEntry": {
+    "name": "hwFlowSpecStatisticsEntry",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-BGP-VPN-MIB",
+        "object": "hwReIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The information about the FlowSpec Statistics."
+  },
+  "hwReIndex": {
+    "name": "hwReIndex",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index of the flow route."
+  },
+  "hwRuleNumber": {
+    "name": "hwRuleNumber",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The rule number."
+  },
+  "hwMatchPackets": {
+    "name": "hwMatchPackets",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The match packets."
+  },
+  "hwMatchBytes": {
+    "name": "hwMatchBytes",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The match bytes."
+  },
+  "hwMchPacketPerSec": {
+    "name": "hwMchPacketPerSec",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The match packets per sec."
+  },
+  "hwMchBitPerSec": {
+    "name": "hwMchBitPerSec",
+    "oid": "1.3.6.1.4.1.2011.5.25.177.12.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The match bits per sec."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/HUAWEI-BGP-VPN-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:05:53 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "HUAWEI-BGP-VPN-MIB"
+  }
+}

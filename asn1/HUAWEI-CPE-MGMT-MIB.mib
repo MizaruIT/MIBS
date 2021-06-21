@@ -1,0 +1,482 @@
+-- ============================================================================
+-- Copyright (C) 2006 by  HUAWEI TECHNOLOGIES. All rights reserved.
+--
+-- Description:  cpe management mib
+-- Reference:
+-- Version: V1.07
+-- History:   
+-- <wangyunshi>,<2008-4-28><v1.07 Add leave hwBatchCpeLoadProgress to table hwBatchCpeSelectTable.
+-- wangyunshi  2008-04-20 Added
+-- ============================================================================
+	HUAWEI-CPE-MGMT-MIB DEFINITIONS ::= BEGIN
+
+		IMPORTS
+
+			Integer32, IpAddress, OBJECT-TYPE, MODULE-IDENTITY
+				FROM SNMPv2-SMI
+			huaweiUtility
+				FROM HUAWEI-MIB	;
+
+		hwCpeMgmt MODULE-IDENTITY
+			LAST-UPDATED "0602231426Z"
+			ORGANIZATION "Fix-Net Dep, Huawei Technologies Co.,Ltd."
+			CONTACT-INFO
+				"Huawei Longgang Production Base,
+				Shenzhen,   P.R.C.
+				http://www.huawei.com
+				Zip:518129
+				"
+			DESCRIPTION
+				"huawei cpe management mib."
+			::= { huaweiUtility 106 }
+
+		hwCpeMgmtPara  OBJECT IDENTIFIER ::= { hwCpeMgmt 1 }
+
+		hwCpeMgmtIpAddr OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				IP address of CPE terminal.
+				DSLAM uses this IP address to connect to CPE terminal.
+				"
+			DEFVAL { 3232235777 }
+			::= { hwCpeMgmtPara 1 }
+
+		hwCpeMgmtVpi OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				VPI of terminal management channel.
+				It is necessary to config VPI/VCI value when establish management channel.
+				"
+			DEFVAL { 1 }
+			::= { hwCpeMgmtPara 2 }
+
+		hwCpeMgmtVci OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				VCI of terminal management channel.
+				It is necessary to config VPI/VCI value when establish management channel.
+				"
+			DEFVAL { 39 }
+			::= { hwCpeMgmtPara 3 }
+
+		hwCpeMgmtDslamVlan OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				VLAN ID of DSLAM's VLAN interface.
+				It is necessary to config VLAN ID value when establish management channel.
+				"
+			DEFVAL { 3999 }
+			::= { hwCpeMgmtPara 4 }
+
+		hwCpeMgmtCpeVlan OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				VLAN ID of VDSL CPE's management VLAN.
+				It is necessary to config VLAN ID value when establish management channel.
+				"
+			DEFVAL { 4014 }
+			::= { hwCpeMgmtPara 5 }
+
+		hwCpeMgmtFlowType OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				cpevlan(1),
+				vlanethertype(2),
+				vlan8021p(3)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Flow type of VDSL CPE's management VLAN.
+				1 cpevlan
+				2 vlanethertype
+				3 vlan8021p
+				"
+			DEFVAL { 1 }
+			::= { hwCpeMgmtPara 6 }
+
+		hwCpeMgmtFlowPara OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Flow parameter of VDSL CPE's management flow.
+				当hwCpeMgmtFlowType取值为1(cpevlan)时，本节点取值无效
+				当hwCpeMgmtFlowType取值为2(vlanethertype)时，本节点意义为用户侧封装类型，取值范围为1 pppoe，2 ipoe
+				当hwCpeMgmtFlowType取值为3(vlan8021p)时，本节点意义为802.1p用户优先级，取值范围为0～7
+				"
+			::= { hwCpeMgmtPara 7 }
+
+		hwCpeSelect OBJECT IDENTIFIER ::= { hwCpeMgmt 2 }
+
+		hwCpeFrameIndex OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's frame ID
+				"
+			::= { hwCpeSelect 1 }
+
+		hwCpeSlotIndex OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's slot ID
+				"
+			::= { hwCpeSelect 2 }
+
+		hwCpePortIndex OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's port ID
+				"
+			::= { hwCpeSelect 3 }
+
+		hwCpeMgmtOper OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				start(1),
+				stop(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Operation of terminal management:
+				1 - terminal management start
+				2 - terminal management end
+				NMS starts telnet to CPE terminal from here.
+				User only need Start operation if he want to telnet to CPE terminal.
+				User need both Start operation and Stop operation if he want to update files to CPE terminal.
+				"
+			::= { hwCpeSelect 4 }
+
+		hwCpeUpgrade OBJECT  IDENTIFIER   ::= { hwCpeMgmt 3 }
+
+		hwCpeLoadServerIpAddr OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Server IP address.
+				DSLAM download files from this server.
+				"
+			::= { hwCpeUpgrade 1 }
+
+		hwCpeLoadProtocol OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				tftp(1),
+				ftp(2),
+				sftp(3),
+				other(4)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Load protocol:
+				1 - TFTP mode
+				2 - FTP mode
+				3 - SFTP mode
+				4 - Other mode
+				User can choose TFTP,FTP or SFTP mode to transfer files.
+				The third transfer mode is used to extend.
+				"
+			::= { hwCpeUpgrade 2 }
+
+		hwCpeLoadFileName OBJECT-TYPE
+			SYNTAX OCTET STRING
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Name of file to be loaded.
+				Absolute path is needed if the file is not in the default path of FTP/TFTP server.
+				"
+			::= { hwCpeUpgrade 3 }
+
+		hwCpeLoadUserName OBJECT-TYPE
+			SYNTAX OCTET STRING
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				User name,use to visit FTP server.
+				User name is not needed if TFTP protocol is used.
+				This value will be discarded if TFTP protocol is used.
+				"
+			::= { hwCpeUpgrade 4 }
+
+		hwCpeLoadPassword OBJECT-TYPE
+			SYNTAX OCTET STRING
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Password,use to visit FTP server.
+				Password is not needed if TFTP protocol is used.
+				This value will be discarded if TFTP protocol is used.
+				"
+			::= { hwCpeUpgrade 5 }
+
+		hwCpeLoadAdminStatus OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				start(1),
+				stop(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Load operation
+				1 - Start loading operation
+				2 - Stop loading operation
+				NMS start update files from here.
+				"
+			::= { hwCpeUpgrade 6 }
+
+		hwCpeLoadOperStatus OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				noLoadOperation(1),
+				ready(2),
+				getingToDslam(3),
+				puttingToCpe(4),
+				getToDslamFail(5),
+				putToCpeFail(6)
+				}
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				Load result:
+				1 - No load operation
+				2 - Wait to load
+				3 - Geting to dslam
+				4 - Putting to cpe
+				5 - Get to dslam fail
+				6 - Put to cpe fail
+				DSLAM return loading result to NMS by this node.
+				"
+			::= { hwCpeUpgrade 7 }
+
+		hwCpeLoadFileType OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				image(1),
+				cfgfile(2),
+				otherfile(3)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				File Type:
+				1 - software of CPE
+				2 - configuration file
+				3 - other file
+
+				加载结果：
+				1 - 程序文件
+				2 - 配置文件
+				3 - 其他文件
+				"
+			::= { hwCpeUpgrade 8 }
+
+		hwCpeLoadServerPort OBJECT-TYPE
+			SYNTAX INTEGER (0..65535)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Cpe load server port in SFTP mode
+				Default: 22
+				"
+			DEFVAL { 22 }
+			::= { hwCpeUpgrade 9 }
+
+		hwBatchCpeSelectTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwBatchCpeSelectEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"Cpe Batch Management Table(the max record number is 1024)"
+			::= { hwCpeMgmt 4 }
+
+
+		hwBatchCpeSelectEntry OBJECT-TYPE
+			SYNTAX HwBatchCpeSelectEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"Cpe Batch Management Table Entity"
+			INDEX { hwBatchCpeFrameIndex,
+	          		hwBatchCpeSlotIndex,
+	          		hwBatchCpePortIndex,
+	          		hwBatchCpeid
+	          	   }
+			::= { hwBatchCpeSelectTable 1 }
+
+		HwBatchCpeSelectEntry ::=
+			SEQUENCE {
+				hwBatchCpeFrameIndex
+					INTEGER,
+				hwBatchCpeSlotIndex
+					INTEGER,
+				hwBatchCpePortIndex
+					INTEGER,
+				hwBatchCpeid
+					INTEGER,
+				hwBatchCpeAdminStatus
+					INTEGER,
+				hwBatchCpeRowStatus
+					INTEGER,                     
+				hwBatchCpeLoadProgress
+					INTEGER
+			 }
+
+		hwBatchCpeFrameIndex OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's frame ID
+
+				终端所在的框号
+				"
+			::= { hwBatchCpeSelectEntry 1 }
+
+		hwBatchCpeSlotIndex OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's slot ID
+
+				终端所在的槽位号
+				"
+			::= { hwBatchCpeSelectEntry 2 }
+
+		hwBatchCpePortIndex OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's port ID
+
+				终端所在的端口号
+				"
+			::= { hwBatchCpeSelectEntry 3 }
+
+		hwBatchCpeid OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's ID
+
+				终端id,如ontid,0-63
+				"
+			::= { hwBatchCpeSelectEntry 4 }
+
+		hwBatchCpeAdminStatus OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				prepareToLoad(1),
+				loading(2),
+				loadsuccess(3),
+				loadfail(4),
+				}
+
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				Terminal's current loading status
+
+				终端当前的加载状态
+				网管可以通过查询此叶子了解当前特定终端的加载状态
+				Load result:
+				1 - prepare to load
+				2 - loading
+				3 - loadsuccess
+				4 - loadfail
+				DSLAM return loading result to NMS by this node.
+
+				加载结果：
+				1 -准备加载
+				2 -正在加载
+				3 -加载成功
+				4 -加载失败
+				"
+			::= { hwBatchCpeSelectEntry 5 }
+
+		hwBatchCpeRowStatus OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				createAndGo(4),
+				delete(6)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Operation of terminal management:
+
+				终端管理操作：
+				createAndGo(4), - 把此终端加入待加载终端序列
+				delete(6)       - 把此终端移出待加载终端序列
+
+				网管通过 createAndGo 操作把终端逐个加入待加载终端序列。
+				在批量加载已经start后，不允许再把终端加入或者移出待加载终端序列
+
+				"
+			::= { hwBatchCpeSelectEntry 6 }
+                                               
+                                               
+		hwBatchCpeLoadProgress OBJECT-TYPE
+			SYNTAX INTEGER (0..100)
+			MAX-ACCESS read-only
+			STATUS current               
+			DESCRIPTION
+				"          
+				
+				display ont load progress   
+				用于ONT加载进度查询 
+				取值：[0, 100]  
+				
+				"  
+			::= { hwBatchCpeSelectEntry 7 }
+
+	END

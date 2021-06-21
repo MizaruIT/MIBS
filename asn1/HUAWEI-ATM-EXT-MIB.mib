@@ -1,0 +1,264 @@
+-- ============================================================================
+-- Copyright (C) 2003 by  HUAWEI TECHNOLOGIES. All rights reserved.
+--
+-- Description:  
+-- Reference:  
+-- Version: V3.01
+-- History:
+-- liu chenglong 2003-04-28 Added IPR Decriptions and updated all MIB version to V3.00
+-- IAS软件一部傅永申请增加hwAtmTrafficPriority 、hwAtmTrafficPriorityPolicy 
+-- ============================================================================
+	HUAWEI-ATM-EXT-MIB DEFINITIONS ::= BEGIN
+		IMPORTS 
+			atmTrafficDescrParamEntry, atmTrafficDescrParamIndex, atmVplEntry, atmVplVpi, atmVclEntry, 
+			atmVclVpi, atmVclVci, atmMIBObjects			
+				FROM ATM-MIB			
+			IpAddress, Integer32, Counter32	,OBJECT-TYPE		
+				FROM SNMPv2-SMI;  
+	    
+		hwAtmTrafficReference OBJECT-TYPE
+			SYNTAX Counter32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				UPC indentifier expanded from atmVclTable of ATM-MIB (HUAWEI products)
+				"
+			::= { atmTrafficDescrParamEntry 65536 }
+
+		hwAtmTrafficPriority OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Set corresponding 802.1P priority for ATM connection.
+				UBR service can only set to 0 or 1.
+				NRT-VBR service can only set to 2 or 3.
+				RT-VBR service can only set to 4 or 5.
+				CBR service can only set to 6 or 7.
+				"
+			::= { atmTrafficDescrParamEntry 65537 }
+
+		hwAtmTrafficPriorityPolicy OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				first-pvcsetting(1),
+				firs-802dot1p(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Traffic priority policy, can use connection priority or 802.1p tag.  
+				"
+			::= { atmTrafficDescrParamEntry 65538 }
+		hwTrafficTemplateType OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				atm(1),
+				ip(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Traffic Template types 1-ATM traffic template 2-IP traffic template.
+				"
+			::= { atmTrafficDescrParamEntry 65539 }
+			
+		hwAtmTrafficCar OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				User input the value of the CAR 64..32768
+				"
+			::= { atmTrafficDescrParamEntry 65540 }
+			
+		hwAtmVplUpcNpcFlag OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				enable(1),
+				disable(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"Vpl UPC indentifiers expanded from atmVclTable of ATM-MIB 
+				"
+			::= { atmVplEntry 65536 }
+		
+		hwAtmVclUpcNpcFlag OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				enable(1),
+				disable(2)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"VCL UPC  identifiers expanded from atmVclTable of ATM-MIB 
+				"
+			::= { atmVclEntry 65536 }
+		
+		hwAtmVclProtocalType OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				llc1483b(1),
+				ipoa(2),
+				none(3)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"protocal type expanded from atmVclTable of ATM-MIB
+				"
+			::= { atmVclEntry 65537 }
+		
+		hwAtmVclUserType OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"vcl user type expanded from atmVclTable of ATM-MIB
+				"
+			::= { atmVclEntry 65539 }
+		
+		hwAtmVclBoundIpAddress OBJECT-TYPE
+			SYNTAX IpAddress
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"vcl Ip Address  expanded from atmVclTable of ATM-MIB
+				"
+			::= { atmVclEntry 65540 }
+	
+	    hwAtmVcldot1dDefaultPriority OBJECT-TYPE
+			SYNTAX INTEGER (0..7)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"vcl LAN 802.1p priority  expanded from atmVclTable of ATM-MIB
+				"
+			::= { atmVclEntry 65541 }
+			
+   -- -------------------------------------------------------------------------
+   
+   -- traffic中的CBR的PCR表
+   
+   -- -------------------------------------------------------------------------
+    hwTrafficCbrPcrTable    OBJECT-TYPE
+        SYNTAX      SEQUENCE OF HwTrafficCbrPcrEntry
+        MAX-ACCESS      not-accessible
+        STATUS      current
+    DESCRIPTION
+    "CBR traffic PCR parameter table."
+    ::= { atmMIBObjects 65536 }
+
+   hwTrafficCbrPcrEntry    OBJECT-TYPE
+        SYNTAX         HwTrafficCbrPcrEntry
+        MAX-ACCESS         not-accessible
+        STATUS         current
+    DESCRIPTION
+    "This list contains CBR traffic's PCR parameter."
+    INDEX   { 
+               hwCbrPcrIndex
+            }
+    ::= { hwTrafficCbrPcrTable  1 }
+
+   HwTrafficCbrPcrEntry    ::= SEQUENCE  {
+            hwCbrPcrIndex         INTEGER,
+            hwCbrPcrValue         INTEGER,
+            hwCbrPcrRefCount      INTEGER
+          }
+   
+    hwCbrPcrIndex  OBJECT-TYPE
+        SYNTAX   INTEGER
+        MAX-ACCESS   not-accessible
+        STATUS   current
+    DESCRIPTION
+    "The index of CBR traffic PCR parameter table.
+    "
+    ::= { hwTrafficCbrPcrEntry 1}
+   
+    hwCbrPcrValue  OBJECT-TYPE
+        SYNTAX   INTEGER
+        MAX-ACCESS   read-write
+        STATUS   current
+    DESCRIPTION
+    "The CBR traffic PCR parameter value.
+    "
+    ::= { hwTrafficCbrPcrEntry 2}
+   
+    hwCbrPcrRefCount  OBJECT-TYPE
+        SYNTAX   INTEGER
+        MAX-ACCESS   read-only
+        STATUS   current
+    DESCRIPTION
+    "The CBR traffic PCR parameter reference count.
+    "
+    ::= { hwTrafficCbrPcrEntry 3}
+
+   -- -------------------------------------------------------------------------
+   
+   -- traffic中的RTVBR的SCR表
+   
+   -- -------------------------------------------------------------------------
+    hwTrafficRtvbrScrTable    OBJECT-TYPE
+        SYNTAX      SEQUENCE OF HwTrafficRtvbrScrEntry
+        MAX-ACCESS      not-accessible
+        STATUS      current
+    DESCRIPTION
+    "rtVbr traffic SCR parameter table."
+    ::= { atmMIBObjects 65537 }
+
+   hwTrafficRtvbrScrEntry    OBJECT-TYPE
+        SYNTAX         HwTrafficRtvbrScrEntry
+        MAX-ACCESS         not-accessible
+        STATUS         current
+    DESCRIPTION
+    "This list contains rtVbr traffic's SCR parameter."
+    INDEX   { 
+               hwRtvbrScrIndex
+            }
+    ::= { hwTrafficRtvbrScrTable  1 }
+
+   HwTrafficRtvbrScrEntry    ::= SEQUENCE  {
+            hwRtvbrScrIndex         INTEGER,
+            hwRtvbrScrValue         INTEGER,
+            hwRtvbrScrRefCount      INTEGER
+          }
+   
+    hwRtvbrScrIndex  OBJECT-TYPE
+        SYNTAX   INTEGER
+        MAX-ACCESS   not-accessible
+        STATUS   current
+    DESCRIPTION
+    "The index of rtVbr traffic SCR parameter table.
+    "
+    ::= { hwTrafficRtvbrScrEntry 1}
+   
+    hwRtvbrScrValue  OBJECT-TYPE
+        SYNTAX   INTEGER
+        MAX-ACCESS   read-write
+        STATUS   current
+    DESCRIPTION
+    "The rtVbr traffic SCR parameter value.
+    "
+    ::= { hwTrafficRtvbrScrEntry 2}
+   
+    hwRtvbrScrRefCount  OBJECT-TYPE
+        SYNTAX   INTEGER
+        MAX-ACCESS   read-only
+        STATUS   current
+    DESCRIPTION
+    "The rtVbr traffic SCR parameter reference count.
+    "
+    ::= { hwTrafficRtvbrScrEntry 3}	
+	
+	
+	END
+
+

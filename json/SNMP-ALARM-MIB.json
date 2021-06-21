@@ -1,0 +1,1460 @@
+{
+  "imports": {
+    "class": "imports",
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "iso",
+      "MODULE-IDENTITY",
+      "Integer32",
+      "OBJECT-TYPE",
+      "Gauge32",
+      "IpAddress",
+      "TimeTicks",
+      "snmpModules",
+      "Unsigned32",
+      "Bits",
+      "Counter64",
+      "Counter32",
+      "NOTIFICATION-TYPE",
+      "MibIdentifier",
+      "OBJECT-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "AutonomousType",
+      "TimeStamp",
+      "DisplayString",
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "VariablePointer"
+    ]
+  },
+  "snmpAlarmMIB": {
+    "name": "snmpAlarmMIB",
+    "oid": "1.3.6.1.6.3.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2001-02-22 00:00",
+        "description": "The initial revision"
+      }
+    ],
+    "lastupdated": "200102220000Z",
+    "organization": "IETF Distributed Management Working Group",
+    "contactinfo": "WG-email: disman@dorothy.bmc.com Subscribe: disman-request@dorothy.bmc.com In message body: subscribe disman your_email_address Archive: ftp://amethyst.bmc.com/pub/disman/archives Chair: Randy Presuhn BMC Software EMail: rpresuhn@bmc.com Phone: +1-301-854-6889 Author: David T. Perkins SNMPinfo Postal: 3763 Benton Street Santa Clara, CA 95051 EMail: dperkins@dsperkins.com Phone: +1 408 394 8702",
+    "description": "This MIB module defines MIB objects and notifications that provide mechanisms to monitor alarms currently active and the history of alarms being set and cleared on a managed system. Terminology used in this MIB module: Error - A deviation from intended operation. Fault - A lasting error or warning condition. Alarm - A persistent indication of a fault. An alarm is said to be 'set' when a fault is first detected and administratively enabled. An alarm is said to be 'cleared' when a fault is first noticed to have ceased or administratively disabled. Event - Something that happened. Examples include a change in status, crossing a threshold, an external input to the system. Additionally, setting or clearing an alarm is also an event."
+  },
+  "snmpAlarmObjects": {
+    "name": "snmpAlarmObjects",
+    "oid": "1.3.6.1.6.3.1.1",
+    "class": "objectidentity"
+  },
+  "snmpAlarmNotifications": {
+    "name": "snmpAlarmNotifications",
+    "oid": "1.3.6.1.6.3.1.2",
+    "class": "objectidentity"
+  },
+  "snmpAlarmConformance": {
+    "name": "snmpAlarmConformance",
+    "oid": "1.3.6.1.6.3.1.3",
+    "class": "objectidentity"
+  },
+  "snmpAlarmCompliances": {
+    "name": "snmpAlarmCompliances",
+    "oid": "1.3.6.1.6.3.1.3.1",
+    "class": "objectidentity"
+  },
+  "snmpAlarmGroups": {
+    "name": "snmpAlarmGroups",
+    "oid": "1.3.6.1.6.3.1.3.2",
+    "class": "objectidentity"
+  },
+  "SnmpAlarmCond": {
+    "name": "SnmpAlarmCond",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "set": 1,
+          "clear": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The alarm condition. The values are: set(1)....the alarm condition detected clear(2)..the alarm condition ceased"
+  },
+  "SnmpAlarmType": {
+    "name": "SnmpAlarmType",
+    "class": "textualconvention",
+    "type": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "The identity of the type of an SNMP alarm. The SNMP SMI does not have a construct to define SNMP alarms. Thus, the OBJECT-IDENTITY construct must be used with the text of the DESCRIPTION clause describing the conditions that cause the alarm to be set and to be clear, and a description of each varBind to be associated with the alarm."
+  },
+  "OptDateAndTime": {
+    "name": "OptDateAndTime",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 8,
+            "max": 8
+          },
+          {
+            "min": 11,
+            "max": 11
+          }
+        ]
+      }
+    },
+    "displayhint": "2d-1d-1d,1d:1d:1d.1d,1a1d:1d",
+    "status": "current",
+    "description": "An date-time specification, or a zero length string. field octets contents range ----- ------ -------- ----- 1 1-2 year 0..65536 2 3 month 1..12 3 4 day 1..31 4 5 hour 0..23 5 6 minutes 0..59 6 7 seconds 0..60 (use 60 for leap-second) 7 8 deci-seconds 0..9 8 9 direction from UTC '+' / '-' 9 10 hours from UTC 0..11 10 11 minutes from UTC 0..59 For example, Tuesday May 26, 1992 at 1:30:15 PM EDT would be displayed as: 1992-5-26,13:30:15.0,-4:0 Note that if only local time is known, then time zone information (fields 8-10) is not present."
+  },
+  "SnmpValUnion": {
+    "name": "SnmpValUnion",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "A descriminated union, which is the following ASN.1 sequence BER encoded and wrapped as the value of an OCTET STRING. <details later> "
+  },
+  "snmpAlarmGlobals": {
+    "name": "snmpAlarmGlobals",
+    "oid": "1.3.6.1.6.3.1.1.1",
+    "class": "objectidentity"
+  },
+  "snmpAlarmCurrEntries": {
+    "name": "snmpAlarmCurrEntries",
+    "oid": "1.3.6.1.6.3.1.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of entries in the current alarm table."
+  },
+  "snmpAlarmLastChange": {
+    "name": "snmpAlarmLastChange",
+    "oid": "1.3.6.1.6.3.1.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of object sysUpTime when an entry was added or removed from the current alarm table and added to the alarm log table."
+  },
+  "snmpAlarmLogFirstIndex": {
+    "name": "snmpAlarmLogFirstIndex",
+    "oid": "1.3.6.1.6.3.1.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index of the oldest entry in the alarm log table, or zero. The value of zero is used to indicate that no entry exists in the alarm log."
+  },
+  "snmpAlarmLogLastIndex": {
+    "name": "snmpAlarmLogLastIndex",
+    "oid": "1.3.6.1.6.3.1.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The index of the youngest entry in the alarm log table, or zero. The value of zero is used to indicate that no entry exists in the alarm log."
+  },
+  "snmpAlarmGenNotify": {
+    "name": "snmpAlarmGenNotify",
+    "oid": "1.3.6.1.6.3.1.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The controls whether or not notification snmpAlarmStatusChange may be generated. The values are: true(1)...notifications may be generated false(2)..notifications may not be generated"
+  },
+  "snmpItuAlarmGenNotify": {
+    "name": "snmpItuAlarmGenNotify",
+    "oid": "1.3.6.1.6.3.1.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The controls whether or not notification snmpItuAlarmStatusChange may be generated. The values are: true(1)...notifications may be generated false(2)..notifications may not be generated Note: if this is enabled, then most likely generation of notification snmpAlarmStatusChange should be disabled."
+  },
+  "snmpAlarmCurrTable": {
+    "name": "snmpAlarmCurrTable",
+    "oid": "1.3.6.1.6.3.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table listing all the current 'alarms'. An alarm indicates a persistent fault condition in a software or hardware component or sub-system that is intended to be operating. An alarm is cleared by 'fixing' the fault condition or administratively disabling the alarm."
+  },
+  "snmpAlarmCurrEntry": {
+    "name": "snmpAlarmCurrEntry",
+    "oid": "1.3.6.1.6.3.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in the table of current alarms. Rows cannot be created or deleted via SNMP operations."
+  },
+  "snmpAlarmCurrIndex": {
+    "name": "snmpAlarmCurrIndex",
+    "oid": "1.3.6.1.6.3.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An arbitrary index of the alarm in the current alarm table. The index for an existing entry is not affected when a entry is added or removed from the table. Index values may be cycled to the max before reuse or follow any implementation specific reuse strategy."
+  },
+  "snmpAlarmCurrOccurDateAndTime": {
+    "name": "snmpAlarmCurrOccurDateAndTime",
+    "oid": "1.3.6.1.6.3.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OptDateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The local date and time when the alarm was set, or a zero length string. The value is a zero length string when the local time cannot be determined."
+  },
+  "snmpAlarmCurrOccurUpTime": {
+    "name": "snmpAlarmCurrOccurUpTime",
+    "oid": "1.3.6.1.6.3.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when the alarm was set or zero. The value is zero when the alarm occurred before the most recent reset of the management system."
+  },
+  "snmpAlarmCurrType": {
+    "name": "snmpAlarmCurrType",
+    "oid": "1.3.6.1.6.3.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAlarmType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of the alarm."
+  },
+  "snmpAlarmCurrId": {
+    "name": "snmpAlarmCurrId",
+    "oid": "1.3.6.1.6.3.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID of the alarm. No two active alarms may have the same value. This value is used in matching the set and clear entries in the alarm log."
+  },
+  "snmpAlarmCurrContextName": {
+    "name": "snmpAlarmCurrContextName",
+    "oid": "1.3.6.1.6.3.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The context in which the alarm occurred."
+  },
+  "snmpAlarmCurrVarBinds": {
+    "name": "snmpAlarmCurrVarBinds",
+    "oid": "1.3.6.1.6.3.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of varBinds associated with the alarm. The count is usually at least one, with at least one varBind identifying the source of the alarm."
+  },
+  "snmpAlarmCurrVarBindTable": {
+    "name": "snmpAlarmCurrVarBindTable",
+    "oid": "1.3.6.1.6.3.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of varBinds (pairs of variable and value) that sparse extends the rows in table snmpAlarmCurrTable. That is, for each row in table snmpAlarmCurrTable, there is zero, one, or more associated rows in this table. The value of object snmpAlarmCurrVarBinds specifies the number of rows in this table."
+  },
+  "snmpAlarmCurrVarBindEntry": {
+    "name": "snmpAlarmCurrVarBindEntry",
+    "oid": "1.3.6.1.6.3.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrIndex",
+        "implied": 0
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrVarBindIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in the table of varBinds for current alarms. Rows cannot be created or deleted via SNMP operations."
+  },
+  "snmpAlarmCurrVarBindIndex": {
+    "name": "snmpAlarmCurrVarBindIndex",
+    "oid": "1.3.6.1.6.3.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the varBind. The value is between one and the value of the associated object snmpAlarmCurrVarBinds."
+  },
+  "snmpAlarmCurrVarBindId": {
+    "name": "snmpAlarmCurrVarBindId",
+    "oid": "1.3.6.1.6.3.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID of the object instance."
+  },
+  "snmpAlarmCurrVarBindVal": {
+    "name": "snmpAlarmCurrVarBindVal",
+    "oid": "1.3.6.1.6.3.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpValUnion",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of the object instance."
+  },
+  "snmpAlarmLogTable": {
+    "name": "snmpAlarmLogTable",
+    "oid": "1.3.6.1.6.3.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table containing a log of when each 'alarm' has been 'set' or 'cleared'. An alarm indicates a persistent fault condition in a software or hardware component or sub-system that is intended to be operating. An alarm is cleared by 'fixing' the fault condition or administratively disabling the alarm. The alarm log operates like a circular buffer. The index of the oldest entry is specified by object snmpAlarmLogFirstIndex and the index of the youngest entry is specified by object tbtSystemAlarmLogLastIndex. The alarm log may be preserved in part or in total across restarts of a management system. The last few entries SHOULD be saved to assist in determining the cause of an unplanned restart."
+  },
+  "snmpAlarmLogEntry": {
+    "name": "snmpAlarmLogEntry",
+    "oid": "1.3.6.1.6.3.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in the alarm log table. Rows cannot be created or deleted via SNMP operations."
+  },
+  "snmpAlarmLogIndex": {
+    "name": "snmpAlarmLogIndex",
+    "oid": "1.3.6.1.6.3.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An index of the alarm in the alarm log table. The index is increased by one for each new entry in the table until the maximum value is reach and then the index restarts at 1. The index of the oldest entry is specified by object snmpAlarmLogFirstIndex and index of the youngest entry is specified by object snmpAlarmLogLastIndex."
+  },
+  "snmpAlarmLogCond": {
+    "name": "snmpAlarmLogCond",
+    "oid": "1.3.6.1.6.3.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAlarmCond",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates if the log entry is due to the alarm Being set (raised) or being cleared."
+  },
+  "snmpAlarmLogOccurDateAndTime": {
+    "name": "snmpAlarmLogOccurDateAndTime",
+    "oid": "1.3.6.1.6.3.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OptDateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The local date and time when the alarm was set or clear, or a zero length string. The value is a zero length string when the local time cannot be determined."
+  },
+  "snmpAlarmLogOccurUpTime": {
+    "name": "snmpAlarmLogOccurUpTime",
+    "oid": "1.3.6.1.6.3.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when the alarm was set or cleared, or zero. The value is zero when the alarm was set or cleared before the most recent reset of the management system."
+  },
+  "snmpAlarmLogType": {
+    "name": "snmpAlarmLogType",
+    "oid": "1.3.6.1.6.3.1.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAlarmType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of the alarm."
+  },
+  "snmpAlarmLogId": {
+    "name": "snmpAlarmLogId",
+    "oid": "1.3.6.1.6.3.1.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID of the alarm. Each alarm that is set is assigned a unique ID among active alarms. That is, no two active alarms may have the same value. This value is used in matching the set and clear entries in this log. Note: alarms may be cleared and not recorded across restarts of the management system. Thus, additional checks must be performed to match set and clear entries in the log that occur on opposite sides of a restart."
+  },
+  "snmpAlarmLogContextName": {
+    "name": "snmpAlarmLogContextName",
+    "oid": "1.3.6.1.6.3.1.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The context in which the alarm occurred."
+  },
+  "snmpAlarmLogVarBinds": {
+    "name": "snmpAlarmLogVarBinds",
+    "oid": "1.3.6.1.6.3.1.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of varBinds associated with the alarm. The count is usually at least one, with at least one varBind identifying the source of the alarm."
+  },
+  "snmpAlarmLogVarBindTable": {
+    "name": "snmpAlarmLogVarBindTable",
+    "oid": "1.3.6.1.6.3.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of varBinds (pairs of variable and value) that sparse extends the rows in table snmpAlarmLogTable. That is, for each row in table snmpAlarmLogTable, there is zero, one, or more associated rows in this table. The value of object snmpAlarmLogVarBinds specifies the number of rows in this table."
+  },
+  "snmpAlarmLogVarBindEntry": {
+    "name": "snmpAlarmLogVarBindEntry",
+    "oid": "1.3.6.1.6.3.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogIndex",
+        "implied": 0
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogVarBindIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in the table of varBinds for the alarm log. Rows cannot be created or deleted via SNMP operations."
+  },
+  "snmpAlarmLogVarBindIndex": {
+    "name": "snmpAlarmLogVarBindIndex",
+    "oid": "1.3.6.1.6.3.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the varBind. The value is between one and the value of the associated object snmpAlarmLogVarBinds."
+  },
+  "snmpAlarmLogVarBindId": {
+    "name": "snmpAlarmLogVarBindId",
+    "oid": "1.3.6.1.6.3.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ID of the object instance."
+  },
+  "snmpAlarmLogVarBindVal": {
+    "name": "snmpAlarmLogVarBindVal",
+    "oid": "1.3.6.1.6.3.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpValUnion",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of the object instance."
+  },
+  "SnmpItuAlarmClass": {
+    "name": "SnmpItuAlarmClass",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "communicationsAlarm": 2,
+          "qualityOfServiceAlarm": 3,
+          "processingErrorAlarm": 4,
+          "equipmentAlarm": 5,
+          "environmentalAlarm": 6,
+          "integrityViolation": 7,
+          "operationalViolation": 8,
+          "physicalViolation": 9,
+          "securityServiceOrMechanismViolation": 10,
+          "timeDomainViolation": 11
+        }
+      }
+    },
+    "status": "current",
+    "description": "The class of alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "SnmpItuAlarmProbCause": {
+    "name": "SnmpItuAlarmProbCause",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "adapterError": 2,
+          "applicationSubsystemFailure": 3,
+          "bandwidthReduced": 4,
+          "callEstablishmentError": 5,
+          "communicationsProtocolError": 6,
+          "communicationsSubsystemFailure": 7,
+          "configurationOrCustomizationError": 8,
+          "congestion": 9,
+          "corruptData": 10,
+          "cpuCyclesLimitExceeded": 11,
+          "dataSetOrModemError": 12,
+          "degradedSignal": 13,
+          "dteDceInterfaceError": 14,
+          "enclosureDoorOpen": 15,
+          "equipmentMalfunction": 16,
+          "excessiveVibration": 17,
+          "fileError": 18,
+          "fireDetected": 19,
+          "floodDetected": 20,
+          "framingError": 21,
+          "heatingVentCoolingSystemProblem": 22,
+          "humidityUnacceptable": 23,
+          "inputOutputDeviceError": 24,
+          "inputDeviceError": 25,
+          "lanError": 26,
+          "leakDetected": 27,
+          "localNodeTransmissionError": 28,
+          "lossOfFrame": 29,
+          "lossOfSignal": 30,
+          "materialSupplyExhausted": 31,
+          "multiplexerProblem": 32,
+          "outOfMemory": 33,
+          "ouputDeviceError": 34,
+          "performanceDegraded": 35,
+          "powerProblem": 36,
+          "pressureUnacceptable": 37,
+          "processorProblem": 38,
+          "pumpFailure": 39,
+          "queueSizeExceeded": 40,
+          "receiveFailure": 41,
+          "receiverFailure": 42,
+          "remoteNodeTransmissionError": 43,
+          "resourceAtOrNearingCapacity": 44,
+          "responseTimeExecessive": 45,
+          "retransmissionRateExcessive": 46,
+          "softwareError": 47,
+          "softwareProgramAbnormallyTerminated": 48,
+          "softwareProgramError": 49,
+          "storageCapacityProblem": 50,
+          "temperatureUnacceptable": 51,
+          "thresholdCrossed": 52,
+          "timingProblem": 53,
+          "toxicLeakDetected": 54,
+          "transmitFailure": 55,
+          "transmitterFailure": 56,
+          "underlyingResourceUnavailable": 57,
+          "versionMismatch": 58,
+          "authenticationFailure": 59,
+          "breachOfConfidentiality": 60,
+          "cableTamper": 61,
+          "delayedInformation": 62,
+          "denialOfService": 63,
+          "duplicateInformation": 64,
+          "informationMissing": 65,
+          "informationModificationDetected": 66,
+          "informationOutOfSequence": 67,
+          "intrusionDetection": 68,
+          "keyExpired": 69,
+          "nonRepudiationFailure": 70,
+          "outOfHoursActivity": 71,
+          "outOfService": 72,
+          "proceduralError": 73,
+          "unauthorizedAccessAttempt": 74,
+          "unexpectedInformation": 75
+        }
+      }
+    },
+    "status": "current",
+    "description": "The probable cause of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "SnmpItuAlarmPercSeverity": {
+    "name": "SnmpItuAlarmPercSeverity",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "indeterminate": 2,
+          "critical": 3,
+          "major": 4,
+          "minor": 5,
+          "warning": 6
+        }
+      }
+    },
+    "status": "current",
+    "description": "The perceived severity of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "SnmpItuAlarmTrendInd": {
+    "name": "SnmpItuAlarmTrendInd",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "moreSevere": 1,
+          "noChange": 2,
+          "lessSevere": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The trend indication of the alarm as specified in [X.733]. <expand this>"
+  },
+  "snmpItuAlarmCurrTable": {
+    "name": "snmpItuAlarmCurrTable",
+    "oid": "1.3.6.1.6.3.1.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table augmenting the current alarm table (snmpAlarmCurrTable) with additional information from the ITU-T alarm model."
+  },
+  "snmpItuAlarmCurrEntry": {
+    "name": "snmpItuAlarmCurrEntry",
+    "oid": "1.3.6.1.6.3.1.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "snmpItuAlarmCurrEntry",
+      "module": "SNMP-ALARM-MIB",
+      "object": "snmpAlarmCurrEntry"
+    },
+    "status": "current",
+    "description": "A row in the table of ITU-T current alarms. Rows cannot be created or deleted via SNMP operations."
+  },
+  "snmpItuAlarmCurrClass": {
+    "name": "snmpItuAlarmCurrClass",
+    "oid": "1.3.6.1.6.3.1.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmClass",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The class of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "snmpItuAlarmCurrProbCause": {
+    "name": "snmpItuAlarmCurrProbCause",
+    "oid": "1.3.6.1.6.3.1.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmProbCause",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The probable cause of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "snmpItuAlarmCurrPercSeverity": {
+    "name": "snmpItuAlarmCurrPercSeverity",
+    "oid": "1.3.6.1.6.3.1.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmPercSeverity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The perceived severity of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "snmpItuAlarmCurrAdditText": {
+    "name": "snmpItuAlarmCurrAdditText",
+    "oid": "1.3.6.1.6.3.1.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The additional text field of the alarm as specified in [X.733]. <expand this>"
+  },
+  "snmpItuAlarmCurrTrendInd": {
+    "name": "snmpItuAlarmCurrTrendInd",
+    "oid": "1.3.6.1.6.3.1.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmTrendInd",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The trend indication of the alarm as specified in [X.733]. <expand this>"
+  },
+  "snmpItuAlarmCurrDetector": {
+    "name": "snmpItuAlarmCurrDetector",
+    "oid": "1.3.6.1.6.3.1.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SecurityAlarmDetector object from [X.736]. <expand this>"
+  },
+  "snmpItuAlarmCurrServiceProvider": {
+    "name": "snmpItuAlarmCurrServiceProvider",
+    "oid": "1.3.6.1.6.3.1.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ServiceProvider object from [X.736]. <expand this>"
+  },
+  "snmpItuAlarmCurrServiceUser": {
+    "name": "snmpItuAlarmCurrServiceUser",
+    "oid": "1.3.6.1.6.3.1.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SericeUser object from [X.736]. <expand this>"
+  },
+  "snmpItuAlarmLogTable": {
+    "name": "snmpItuAlarmLogTable",
+    "oid": "1.3.6.1.6.3.1.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table augmenting the alarm log table (snmpAlarmLogTable) with additional information from the ITU-T alarm model."
+  },
+  "snmpItuAlarmLogEntry": {
+    "name": "snmpItuAlarmLogEntry",
+    "oid": "1.3.6.1.6.3.1.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "snmpItuAlarmLogEntry",
+      "module": "SNMP-ALARM-MIB",
+      "object": "snmpAlarmLogEntry"
+    },
+    "status": "current",
+    "description": "A row in the ITU-T alarm log table. Rows cannot be created or deleted via SNMP operations."
+  },
+  "snmpItuAlarmLogClass": {
+    "name": "snmpItuAlarmLogClass",
+    "oid": "1.3.6.1.6.3.1.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmClass",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The class of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "snmpItuAlarmLogProbCause": {
+    "name": "snmpItuAlarmLogProbCause",
+    "oid": "1.3.6.1.6.3.1.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmProbCause",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The probable cause of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "snmpItuAlarmLogPercSeverity": {
+    "name": "snmpItuAlarmLogPercSeverity",
+    "oid": "1.3.6.1.6.3.1.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmPercSeverity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The perceived severity of the alarm as specified in [X.733] and [X.736]. <expand this>"
+  },
+  "snmpItuAlarmLogAdditText": {
+    "name": "snmpItuAlarmLogAdditText",
+    "oid": "1.3.6.1.6.3.1.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The additional text field of the alarm as specified in [X.733]. <expand this>"
+  },
+  "snmpItuAlarmLogTrendInd": {
+    "name": "snmpItuAlarmLogTrendInd",
+    "oid": "1.3.6.1.6.3.1.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpItuAlarmTrendInd",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The trend indication of the alarm as specified in [X.733]. <expand this>"
+  },
+  "snmpItuAlarmLogDetector": {
+    "name": "snmpItuAlarmLogDetector",
+    "oid": "1.3.6.1.6.3.1.1.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SecurityAlarmDetector object from [X.736]. <expand this>"
+  },
+  "snmpItuAlarmLogServiceProvider": {
+    "name": "snmpItuAlarmLogServiceProvider",
+    "oid": "1.3.6.1.6.3.1.1.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ServiceProvider object from [X.736]. <expand this>"
+  },
+  "snmpItuAlarmLogServiceUser": {
+    "name": "snmpItuAlarmLogServiceUser",
+    "oid": "1.3.6.1.6.3.1.1.7.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AutonomousType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SericeUser object from [X.736]. <expand this>"
+  },
+  "snmpAlarmStatusChange": {
+    "name": "snmpAlarmStatusChange",
+    "oid": "1.3.6.1.6.3.1.2.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogCond"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogOccurDateAndTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogOccurUpTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogId"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogVarBinds"
+      }
+    ],
+    "status": "current",
+    "description": "An entry has been added to the alarm log table. That is, an alarm has been set or cleared. The objects all have the same instance, which is the row in the alarm log, and the objects are: snmpAlarmLogCond....alarm condition, either set or clear snmpAlarmLogOccurDateAndTime...date/time the alarm log entry created snmpAlarmLogOccurUpTime...timestamp the alarm log entry created snmpAlarmLogId....the ID of the alarm snmpAlarmLogVarBinds....the number of varBinds associated with the alarm Note 1: after these varBinds, the associated varBinds, if any, from table snmpAlarmLogVarBindTable must be specified in the varBind list for the notification. Note 2: object snmpAlarmGenNotify controls if or if not this notification may be generated."
+  },
+  "snmpItuAlarmStatusChange": {
+    "name": "snmpItuAlarmStatusChange",
+    "oid": "1.3.6.1.6.3.1.2.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogCond"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogOccurDateAndTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogOccurUpTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogId"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogVarBinds"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogClass"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogProbCause"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogPercSeverity"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogAdditText"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogTrendInd"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogDetector"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogServiceProvider"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogServiceUser"
+      }
+    ],
+    "status": "current",
+    "description": "An entry has been added to the alarm log table and the ITU extensions are supported. That is, an alarm has been set or cleared. The objects all have the same instance, which is the row in the alarm log, and the objects are: snmpAlarmLogCond....alarm condition, either set or clear snmpAlarmLogOccurDateAndTime...date/time the alarm log entry created snmpAlarmLogOccurUpTime...timestamp the alarm log entry created snmpAlarmLogId....the ID of the alarm snmpAlarmLogVarBinds....the number of varBinds associated with the alarm <finish this> snmpItuAlarmLogClass... snmpItuAlarmLogProbCause... snmpItuAlarmLogPercSeverity... snmpItuAlarmLogAdditText... snmpItuAlarmLogTrendInd... snmpItuAlarmLogDetector... snmpItuAlarmLogServiceProvider... snmpItuAlarmLogServiceUser... Note 1: after these varBinds, the associated varBinds, if any, from table snmpAlarmLogVarBindTable must be specified in the varBind list for the notification. Note 2: object snmpItuAlarmGenNotify controls if or if not this notification may be generated."
+  },
+  "snmpAlarmCompliance": {
+    "name": "snmpAlarmCompliance",
+    "oid": "1.3.6.1.6.3.1.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "snmpAlarmGblGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpAlarmCurrGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpAlarmLogGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpAlarmNotifyGroup",
+        "module": "SNMP-ALARM-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for systems supporting the SNMP alarms."
+  },
+  "snmpItuAlarmCompliance": {
+    "name": "snmpItuAlarmCompliance",
+    "oid": "1.3.6.1.6.3.1.3.1.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "snmpAlarmGblGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpAlarmCurrGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpAlarmLogGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpAlarmNotifyGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpItuAlarmGblGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpItuAlarmCurrGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpItuAlarmLogGroup",
+        "module": "SNMP-ALARM-MIB"
+      },
+      {
+        "object": "snmpItuAlarmNotifyGroup",
+        "module": "SNMP-ALARM-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for systems supporting the ITU-T extension to SNMP alarms."
+  },
+  "snmpAlarmGblGroup": {
+    "name": "snmpAlarmGblGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrEntries"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLastChange"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogFirstIndex"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogLastIndex"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmGenNotify"
+      }
+    ],
+    "status": "current",
+    "description": "Global objects for managing SNMP alarms."
+  },
+  "snmpAlarmCurrGroup": {
+    "name": "snmpAlarmCurrGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrOccurDateAndTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrOccurUpTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrType"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrId"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrContextName"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrVarBinds"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrVarBindId"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmCurrVarBindVal"
+      }
+    ],
+    "status": "current",
+    "description": "Objects in the SNMP current alarm and current varBind tables."
+  },
+  "snmpAlarmLogGroup": {
+    "name": "snmpAlarmLogGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogCond"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogOccurDateAndTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogOccurUpTime"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogType"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogId"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogContextName"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogVarBinds"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogVarBindId"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmLogVarBindVal"
+      }
+    ],
+    "status": "current",
+    "description": "Objects in the SNMP alarm log and log varBind tables."
+  },
+  "snmpAlarmNotifyGroup": {
+    "name": "snmpAlarmNotifyGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpAlarmStatusChange"
+      }
+    ],
+    "status": "current",
+    "description": "Notifications for SNMP alarms."
+  },
+  "snmpItuAlarmGblGroup": {
+    "name": "snmpItuAlarmGblGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmGenNotify"
+      }
+    ],
+    "status": "current",
+    "description": "Global objects for managing ITU-T extensions to SNMP alarms."
+  },
+  "snmpItuAlarmCurrGroup": {
+    "name": "snmpItuAlarmCurrGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrClass"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrProbCause"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrPercSeverity"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrAdditText"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrTrendInd"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrDetector"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrServiceProvider"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmCurrServiceUser"
+      }
+    ],
+    "status": "current",
+    "description": "Objects in the ITU-T extension to the SNMP current alarm and current varBind tables."
+  },
+  "snmpItuAlarmLogGroup": {
+    "name": "snmpItuAlarmLogGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogClass"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogProbCause"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogPercSeverity"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogAdditText"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogTrendInd"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogDetector"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogServiceProvider"
+      },
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmLogServiceUser"
+      }
+    ],
+    "status": "current",
+    "description": "Objects in the ITU-T extension to the SNMP alarm log and log varBind tables."
+  },
+  "snmpItuAlarmNotifyGroup": {
+    "name": "snmpItuAlarmNotifyGroup",
+    "oid": "1.3.6.1.6.3.1.3.2.8",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SNMP-ALARM-MIB",
+        "object": "snmpItuAlarmStatusChange"
+      }
+    ],
+    "status": "current",
+    "description": "Notifications for ITU-T extension to SNMP alarms."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SNMP-ALARM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:21:54 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SNMP-ALARM-MIB"
+  }
+}

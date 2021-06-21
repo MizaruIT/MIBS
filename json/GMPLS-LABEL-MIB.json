@@ -1,0 +1,483 @@
+{
+  "imports": {
+    "class": "imports",
+    "GMPLS-TC-MIB": [
+      "GmplsGeneralizedLabelTypes",
+      "GmplsGeneralizedLabelSubtypes",
+      "GmplsFreeformLabel"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "experimental",
+      "MODULE-IDENTITY",
+      "Bits",
+      "Counter32",
+      "Gauge32",
+      "MibIdentifier",
+      "Counter64",
+      "Integer32",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "OBJECT-IDENTITY",
+      "iso",
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "TimeTicks"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "gmplsLabelMIB": {
+    "name": "gmplsLabelMIB",
+    "oid": "1.3.6.1.3.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "1970-01-01 00:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "200206240900Z ",
+    "organization": "Common Control And Management Protocols (CCAMP) Working Group",
+    "contactinfo": " Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Tel: +1-978-244-3051 Email: tnadeau@cisco.com Cheenu Srinivasan Postal: Parama Networks, Inc. 1030 Broad Street Shrewsbury, NJ 07702 Tel: +1-732-544-9120 x731 Email: cheenu@paramanet.comTel: +1-732-544-9120x731 Adrian Farrel Postal: Movaz Networks, Inc. 7926 Jones Branch Drive McLean, VA 22102 Tel: +1-703-847-1867 Email: afarrel@movaz.com Edward Harrison Postal: Data Connection Ltd. 100 Church Street Enfield, Middlesex EN2 6BQ, United Kingdom Tel: +44-20-8366-1177 Email: eph@dataconnection.com Tim Hall Postal: Data Connection Ltd. 100 Church Street Enfield, Middlesex EN2 6BQ, United Kingdom Tel: +44-20-8366-1177 Email: timhall@dataconnection.com",
+    "description": "This MIB module contains managed object definitions for labels within GMPLS systems."
+  },
+  "gmplsLabelObjects": {
+    "name": "gmplsLabelObjects",
+    "oid": "1.3.6.1.3.1.0",
+    "class": "objectidentity"
+  },
+  "gmplsLabelConformance": {
+    "name": "gmplsLabelConformance",
+    "oid": "1.3.6.1.3.1.1",
+    "class": "objectidentity"
+  },
+  "gmplsLabelTable": {
+    "name": "gmplsLabelTable",
+    "oid": "1.3.6.1.3.1.0.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of GMPLS Labels. This table extends mplsLabelTable to handle the more complex label forms required for GMPLS. Each entry in this table represents an individual GMPLS label value. Labels in the tables in other MIBs are referred to using index entries into mplsLabelTable. The indexing of this table is identical. In effect, this table taken together with mplsLabelTable provides an integer mapping for label values that may be more complex than simple integers."
+  },
+  "gmplsLabelEntry": {
+    "name": "gmplsLabelEntry",
+    "oid": "1.3.6.1.3.1.0.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "mplsLabelInterface",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "mplsLabelIndex",
+        "implied": 0
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsSublabelIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table extends the label defintion in mplsLabelTable for use with certain types of switching appropriate to GMPLS."
+  },
+  "gmplsSublabelIndex": {
+    "name": "gmplsSublabelIndex",
+    "oid": "1.3.6.1.3.1.0.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "In conjunction with mplsLabelInterface and mplsLabelIndex, this object uniquely identifies this row. This sub-index allows a single GMPLS label to be defined as a concatenation of labels. This is particularly useful in TDM. The ordering of sub-labels is strict with the sub-label with lowest gmplsSublabelIndex appearing first. Note that all sub-labels of a single GMPLS label must share the same mplsLabelInterface and mplsLabelIndex values. For labels that are not composed of concatenated sub-labels, this value should be set to zero."
+  },
+  "gmplsLabelType": {
+    "name": "gmplsLabelType",
+    "oid": "1.3.6.1.3.1.0.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GmplsGeneralizedLabelTypes",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Identifies the type of this label as it appears in a Generalized Label. This object has meaning only if the value of mplsLabelType is other(1)."
+  },
+  "gmplsLabelSubtype": {
+    "name": "gmplsLabelSubtype",
+    "oid": "1.3.6.1.3.1.0.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GmplsGeneralizedLabelSubtypes",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Subtype to help determine which of the subsequent fields should be used to form the Generalized Label."
+  },
+  "gmplsPortWavelengthLabel": {
+    "name": "gmplsPortWavelengthLabel",
+    "oid": "1.3.6.1.3.1.0.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The value of a Port or Wavelength Label when carried as a Generalized Label. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to portWavelengthLabel(2)."
+  },
+  "gmplsFreeformLength": {
+    "name": "gmplsFreeformLength",
+    "oid": "1.3.6.1.3.1.0.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The length of a freeform Generalized Label indicated in the gmplsFreeformLabel object. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to freeformGeneralizedLabel(3)."
+  },
+  "gmplsFreeformLabel": {
+    "name": "gmplsFreeformLabel",
+    "oid": "1.3.6.1.3.1.0.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "GmplsFreeformLabel",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The value of a freeform Generalized Label that does not conform to one of the standardized label encoding or that an implementation chooses to represent as an octet string without further decoding. The length of this object is given by the value of gmplsFreeformLength. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to freeformGeneralizedLabel(3)."
+  },
+  "gmplsSonetSdhSignalIndex": {
+    "name": "gmplsSonetSdhSignalIndex",
+    "oid": "1.3.6.1.3.1.0.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4095
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Signal Index value (S) of a Sonet or SDH Generalized Label. 0 indicates that this field is non-significant. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to sonetLabel(4) or sdhLabel(5)."
+  },
+  "gmplsSdhVc": {
+    "name": "gmplsSdhVc",
+    "oid": "1.3.6.1.3.1.0.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The VC Indicator (U) of an SDH Generalized Label. 0 indicates that this field is non- significant. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to sdhLabel(5)."
+  },
+  "gmplsSdhVcBranch": {
+    "name": "gmplsSdhVcBranch",
+    "oid": "1.3.6.1.3.1.0.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The VC Branch Indicator (K) of an SDH Generalized Label. 0 indicates that this field is non-significant. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to sdhLabel(5)."
+  },
+  "gmplsSonetSdhBranch": {
+    "name": "gmplsSonetSdhBranch",
+    "oid": "1.3.6.1.3.1.0.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Branch Indicator (L) of a Sonet or SDH Generalized Label. 0 indicates that this field is non-significant. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to sonetLabel(4) or SdhLabel(5)."
+  },
+  "gmplsSonetSdhGroupBranch": {
+    "name": "gmplsSonetSdhGroupBranch",
+    "oid": "1.3.6.1.3.1.0.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Group Branch Indicator (M) of a Sonet or SDH Generalized Label. 0 indicates that this field is non-significant. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to sonetLabel(4) or sdhLabel(5)."
+  },
+  "gmplsWavebandId": {
+    "name": "gmplsWavebandId",
+    "oid": "1.3.6.1.3.1.0.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The waveband identifier component of a waveband label. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to wavebandLabel(6)."
+  },
+  "gmplsWavebandStartLabel": {
+    "name": "gmplsWavebandStartLabel",
+    "oid": "1.3.6.1.3.1.0.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The starting label component of a waveband label. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to wavebandLabel(6)."
+  },
+  "gmplsWavebandEndLabel": {
+    "name": "gmplsWavebandEndLabel",
+    "oid": "1.3.6.1.3.1.0.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The end label component of a waveband label. Only valid if mplsLabelType is set to other(1), gmplsLabelType is set to generalizedLabel(2), and gmplsLabelSubtype is set to wavebandLabel(6)."
+  },
+  "gmplsLabelGroups": {
+    "name": "gmplsLabelGroups",
+    "oid": "1.3.6.1.3.1.1.1",
+    "class": "objectidentity"
+  },
+  "gmplsLabelCompliances": {
+    "name": "gmplsLabelCompliances",
+    "oid": "1.3.6.1.3.1.1.2",
+    "class": "objectidentity"
+  },
+  "gmplsLabelModuleCompliance": {
+    "name": "gmplsLabelModuleCompliance",
+    "oid": "1.3.6.1.3.1.1.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "gmplsLabelTableGroup",
+        "module": "GMPLS-LABEL-MIB"
+      },
+      {
+        "object": "gmplsLabelTableGroup",
+        "module": "GMPLS-LABEL-MIB"
+      },
+      {
+        "object": "gmplsPortWavelengthLabelGroup",
+        "module": "GMPLS-LABEL-MIB"
+      },
+      {
+        "object": "gmplsFreeformLabelGroup",
+        "module": "GMPLS-LABEL-MIB"
+      },
+      {
+        "object": "gmplsSonetSdhLabelGroup",
+        "module": "GMPLS-LABEL-MIB"
+      },
+      {
+        "object": "gmplsWavebandLabelGroup",
+        "module": "GMPLS-LABEL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Compliance statement for agents that support the GMPLS Label MIB."
+  },
+  "gmplsLabelTableGroup": {
+    "name": "gmplsLabelTableGroup",
+    "oid": "1.3.6.1.3.1.1.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsLabelType"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsLabelSubtype"
+      }
+    ],
+    "status": "current",
+    "description": "Necessary, but not sufficient, set of objects to implement label table support. In addition, depending on the type of labels supported (for example, wavelength labels), the following other groups defined below are mandatory: gmplsPortWavelengthLabelGroup and/or gmplsFreeformLabelGroup and/or gmplsSonetSdhLabelGroup."
+  },
+  "gmplsPortWavelengthLabelGroup": {
+    "name": "gmplsPortWavelengthLabelGroup",
+    "oid": "1.3.6.1.3.1.1.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsPortWavelengthLabel"
+      }
+    ],
+    "status": "current",
+    "description": "Object needed to implement Port and Wavelength labels."
+  },
+  "gmplsFreeformLabelGroup": {
+    "name": "gmplsFreeformLabelGroup",
+    "oid": "1.3.6.1.3.1.1.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsFreeformLength"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsFreeformLabel"
+      }
+    ],
+    "status": "current",
+    "description": "Object needed to implement Freeform labels."
+  },
+  "gmplsSonetSdhLabelGroup": {
+    "name": "gmplsSonetSdhLabelGroup",
+    "oid": "1.3.6.1.3.1.1.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsSonetSdhSignalIndex"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsSdhVc"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsSdhVcBranch"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsSonetSdhBranch"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsSonetuSdhGroupBranch"
+      }
+    ],
+    "status": "current",
+    "description": "Object needed to implement SONET and SDH labels."
+  },
+  "gmplsWavebandLabelGroup": {
+    "name": "gmplsWavebandLabelGroup",
+    "oid": "1.3.6.1.3.1.1.1.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsWavebandId"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsWavebandStartLabel"
+      },
+      {
+        "module": "GMPLS-LABEL-MIB",
+        "object": "gmplsWavebandEndLabel"
+      }
+    ],
+    "status": "current",
+    "description": "Object needed to implement Waveband labels."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/GMPLS-LABEL-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:16:44 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "GMPLS-LABEL-MIB"
+  }
+}

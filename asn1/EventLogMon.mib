@@ -1,0 +1,692 @@
+--	Micromuse, Inc.
+--	
+--	Private Enterprise Management Information Base (MIB)
+--	
+--	Rev 1.0  3/17/97  Paul Foster
+--  Rev 1.01 9/2/97   Paul Foster
+--  Rev 1.10 12/15/97 Paul Foster Consolidated exception tables and added notification
+--  Rev 1.11 4/23/98  Paul Foster Added fail messages, the exception trap and changed 
+--								  the trap variables to be more consistent.
+
+EVENTLOG-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE			FROM RFC-1212
+    DisplayString		FROM RFC1213-MIB
+    TRAP-TYPE, NetworkAddress,IpAddress, Counter, Gauge, TimeTicks			
+						FROM RFC1155-SMI;
+
+-- Micromuse OID tree structure
+-- ---------------------
+
+	microMuse 	OBJECT IDENTIFIER ::= { enterprises 1279 }
+	genMessage	OBJECT IDENTIFIER ::= { microMuse 1 }
+	v1Agent		OBJECT IDENTIFIER ::= { microMuse 3 }
+	evLogMon	OBJECT IDENTIFIER ::= { v1Agent 3 }
+	evLogTrap	OBJECT IDENTIFIER ::= { evLogMon 99 }
+
+-- summary message sub-tree : 1.3.6.1.4.1.1279.1.2
+-- --------------------------------------------------------------------
+
+	summary OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return a summary message when a trap is sent."
+			::= { genMessage 2 }
+
+-- target name sub-tree : 1.3.6.1.4.1.1279.1.3
+-- --------------------------------------------------------------------
+
+	target OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return the target system when a trap is sent."
+			::= { genMessage 3 }
+
+-- log message name sub-tree : 1.3.6.1.4.1.1279.1.5
+-- --------------------------------------------------------------------
+
+	logMessage OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return the target system when a trap is sent."
+			::= { genMessage 5 }
+
+-- generic agentFailure trap: 1.3.6.1.4.1.1279.1.1
+-- -------------------------------------------------------------------------
+
+	agentFailure TRAP-TYPE
+			ENTERPRISE	genMessage
+			VARIABLES   { summary, target }
+			DESCRIPTION
+				"The agent has failed."
+			::= 1
+
+-- evLogMon sub-tree : 1.3.6.1.4.1.1279.3.3
+-- --------------------------------------------------------------------
+
+	evGlobalSampleRate OBJECT-TYPE
+			SYNTAX  INTEGER (1..1000)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"Global sample rate (in seconds). Default value is 60."
+			::= { evLogMon 1 }
+
+	evGlobalTrapRate OBJECT-TYPE
+			SYNTAX	 INTEGER (0..86400)
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"This value has no significance in EvLogMon. It is here for compatibility."
+			::= { evLogMon 2 }
+
+	evVersion  OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The version number of the agent."
+			::= { evLogMon 3 }
+
+	evNotificationMethod  OBJECT-TYPE
+			SYNTAX	INTEGER
+			{
+				trap(1),
+				modular(2),
+				both(3)
+			}
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The desired method of notification. If trapping is not selected then global and
+				local trap rates have no significance. The modular selection causes traps to be
+				sent reliably to a primary or secondary modular probe. The default method is trap."
+			::= { evLogMon 4 }
+
+	evOsType OBJECT-TYPE
+			SYNTAX	INTEGER {
+				windowsnt(1),
+				solaris(2),
+				sunos(3)
+			}
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The type of operating system."
+			::= { evLogMon 5 }
+
+	evGlobalStatus OBJECT-TYPE
+			SYNTAX	INTEGER 
+			{
+				valid(1),
+				invalid(2)
+			}
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The overall status of the agent. Valid indicates the
+				agent is operating properly and the data in the MIB is
+				valid. Invalid indicates a major problem with the agent
+				that has prohibited further processing without corrective
+				action by an administrator. Futher details concerning
+				the reason for thefailure can be found in the event log (NT) 
+				or error log (UNIX)."
+			::= { evLogMon 6 }
+
+	evSystemLevel OBJECT-TYPE
+			SYNTAX	 INTEGER {
+				error(1),
+				warning(2),
+				errorandwarning(3),
+				info(4),
+				infoanderror(5),
+				infoandwarning(6),
+				all(7),
+				none(8)
+			}
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"Which event level(s) should be included from the System Log."
+			::= { evLogMon 7 }
+
+	evSecurityLevel OBJECT-TYPE
+			SYNTAX	 INTEGER {
+				auditsuccess(1),
+				auditfailure(2),
+				all(3),
+				none(4)
+			}
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"Which event level(s) should be included from the Security Log."
+			::= { evLogMon 8 }
+
+	evApplicationLevel OBJECT-TYPE
+			SYNTAX	 INTEGER {
+				error(1),
+				warning(2),
+				errorandwarning(3),
+				info(4),
+				infoanderror(5),
+				infoandwarning(6),
+				all(7),
+				none(8)
+			}
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"Which event level(s) should be included from the Application Log."
+			::= { evLogMon 9 }
+
+-- Target Table sub-tree : 1.3.6.1.4.1.1279.3.3.10
+-- ------------------------------------------------------------------------------
+
+	evTargetTable OBJECT-TYPE
+			SYNTAX  SEQUENCE OF EvTargetTableEntry
+			ACCESS  not-accessible
+			STATUS  mandatory
+			DESCRIPTION
+				"Event Log monitoring host system table."
+			::= { evLogMon 10 }
+
+	evTargetTableSize OBJECT-TYPE
+			SYNTAX  INTEGER
+            ACCESS  read-write
+            STATUS  mandatory
+            DESCRIPTION
+                "The number of entries in the table."
+            ::= { evTargetTable 1 }
+
+	evTargetTableEntry OBJECT-TYPE
+			SYNTAX	EvTargetTableEntry
+			ACCESS	not-accessible
+			STATUS	mandatory
+			DESCRIPTION
+				"Event log exclusion table entry."
+			INDEX	{ evTargetIndex }
+			::= { evTargetTable 2 }
+
+	EvTargetTableEntry ::= SEQUENCE {
+			evTargetIndex			INTEGER,
+			evTargetType			INTEGER,
+			evTargetStatus			INTEGER,
+			evTargetName			OCTET STRING,
+			evTargetSysLogHandle	INTEGER,
+			evTargetSecLogHandle	INTEGER,
+			evTargetAppLogHandle	INTEGER,
+			evTargetStartTimeHr		INTEGER,
+			evTargetStartTimeMin	INTEGER,
+			evTargetStopTimeHr		INTEGER,
+			evTargetStopTimeMin		INTEGER,
+			evTargetOffDays			INTEGER
+			}
+
+	evTargetIndex	OBJECT-TYPE
+			SYNTAX	INTEGER (1..2147483647)
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"Target table index."
+			::= { evTargetTableEntry 1 }
+
+	evTargetType OBJECT-TYPE
+			SYNTAX  INTEGER {
+				active(1),
+				inactive(2),
+				deleted(3)
+			}
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"Whether to include this entry in the selection criteria:
+				active -	include this entry,
+				inactive -	do no include this entry. The default value
+							is inactive.
+				deleted - This entry has been deleted."
+			::=  { evTargetTableEntry 2 }
+
+	evTargetStatus OBJECT-TYPE
+			SYNTAX  INTEGER {
+				valid(1),
+				invalid(2)
+			}
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+				"Status of the host communications capability. If the status is
+				invalid, the event log monitor cannot connect to the system."
+			::=  { evTargetTableEntry 3 }
+
+	evTargetName OBJECT-TYPE
+			SYNTAX	OCTET STRING
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Name of the system to be monitored. The default value is NULL
+				which signifies the local system."
+			::= { evTargetTableEntry 4 }
+
+	evTargetSysLogHandle OBJECT-TYPE
+			SYNTAX  INTEGER 
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+				"The handle for accessing the system log."
+            ::= { evTargetTableEntry 5 }
+
+	evTargetSecLogHandle OBJECT-TYPE
+			SYNTAX  INTEGER 
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+				"The handle for accessing the security log."
+            ::= { evTargetTableEntry 6 }
+
+	evTargetAppLogHandle OBJECT-TYPE
+			SYNTAX  INTEGER 
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+				"The handle for accessing the application log."
+            ::= { evTargetTableEntry 7 }
+
+	evTargetStartTimeHr OBJECT-TYPE
+			SYNTAX  INTEGER (0..23)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The hour to start monitoring. The default value is 0.
+ 				If start time = stop time = 0, then monitoring is continuous."
+            ::= { evTargetTableEntry 8 }
+
+	evTargetStartTimeMin OBJECT-TYPE
+			SYNTAX  INTEGER (0..59)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The minute to start monitoring. The default value is 0.
+ 				If start time = stop time = 0, then monitoring is continuous."
+			::= { evTargetTableEntry 9 }
+
+	evTargetStopTimeHr OBJECT-TYPE
+			SYNTAX  INTEGER (0..23)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The hour to stop monitoring. The default value is 0. 
+  				If start time = stop time = 0, then monitoring is continuous."
+          ::= { evTargetTableEntry 10 }
+
+	evTargetStopTimeMin OBJECT-TYPE
+			SYNTAX  INTEGER (0..59)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The minute to stop monitoring. The default value is 0.
+ 				If start time = stop time = 0, then monitoring is continuous."
+			::= { evTargetTableEntry 11 }
+
+	evTargetOffDays OBJECT-TYPE
+			SYNTAX  INTEGER (0..127)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"7-bit binary encoded value for specifying days of
+			 	the week when monitoring should not occur.
+			 	FORMAT:  0MTWRFSS
+				EXAMPLE: 00000011 = decimal 3, which excludes Saturday and Sunday."
+			::= { evTargetTableEntry 12 }
+
+-- Exception Table sub-tree : 1.3.6.1.4.1.1279.3.3.11
+-- ---------------------------------------------------------------------------------
+
+	evExceptTable OBJECT-TYPE
+			SYNTAX  SEQUENCE OF EvExceptTableEntry
+			ACCESS  not-accessible
+			STATUS  mandatory
+			DESCRIPTION
+				"System log inclusion table."
+			::= { evLogMon 11 }
+
+	evExceptTableSize OBJECT-TYPE
+			SYNTAX  INTEGER
+            ACCESS  read-write
+            STATUS  mandatory
+            DESCRIPTION
+                "The number of entries in the table."
+            ::= { evExceptTable 1 }
+
+	evExceptTableEntry OBJECT-TYPE
+			SYNTAX	EvExceptTableEntry
+			ACCESS	not-accessible
+			STATUS	mandatory
+			DESCRIPTION
+				"Event log inclusion table entry."
+			INDEX	{ evExceptIndex }
+			::= { evExceptTable 2 }
+
+	EvExceptTableEntry ::= SEQUENCE {
+			evExceptIndex		INTEGER,
+			evExceptType		INTEGER,
+			evExceptStatus		INTEGER,
+			evExceptTarget		OCTET STRING,
+			evExceptLogType		INTEGER,
+			evExceptSource		OCTET STRING,
+			evExceptLevel		INTEGER,
+			evExceptRegex		OCTET STRING,
+			evExceptEventID		INTEGER,
+			evExceptStartTimeHr	INTEGER,
+			evExceptStartTimeMin INTEGER,
+			evExceptStopTimeHr	INTEGER,
+			evExceptStopTimeMin	INTEGER,
+			evExceptOffDays		INTEGER,
+			evExceptFailMessage OCTET STRING
+			}
+
+	evExceptIndex	OBJECT-TYPE
+			SYNTAX	INTEGER (1..2147483647)
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"Event Log inclusion table index."
+			::= { evExceptTableEntry 1 }
+
+	evExceptType OBJECT-TYPE
+			SYNTAX  INTEGER {
+				include(1),
+				inactive(2),
+				deleted(3),
+				exclude(4)
+			}
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"Whether to include this entry in the selection criteria:
+				include -	include events that meet these filters,
+				inactive -	do no include this entry. The default value
+							is inactive.
+				deleted - this entry has been deleted,
+				exclude - exclude events that meet these filters."
+			::=  { evExceptTableEntry 2 }
+
+	evExceptStatus OBJECT-TYPE
+			SYNTAX  INTEGER 
+			{
+				valid(1),
+				invalid(2)			
+			}
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+				"Current status of the entry:
+				valid   - the regular expression is valid,
+				invalid - the regular expression cannot be parsed."
+			::= { evExceptTableEntry 3 }
+
+	evExceptTarget OBJECT-TYPE
+			SYNTAX	OCTET STRING
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Target system of event log messages to include/exclude. This system name 
+				must appear in the targets list otherwise this entry is ignored."
+			::= { evExceptTableEntry 4 }
+
+	evExceptLogType	OBJECT-TYPE
+			SYNTAX	 INTEGER {
+				system(1),
+				security(2),
+				application(3)
+			}
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"Which log to sue to match the filter criteria for this entry."
+			::= { evExceptTableEntry 5 }
+
+	evExceptSource OBJECT-TYPE
+			SYNTAX	OCTET STRING
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Source of event log messages to include or exclude. Use the event viewer
+				(EVENTVWR.EXE) to determine valid sources."
+			::= { evExceptTableEntry 6 }
+
+	evExceptLevel OBJECT-TYPE
+			SYNTAX	 INTEGER {
+				error(1),
+				warning(2),
+				errorandwarning(3),
+				info(4),
+				infoanderror(5),
+				infoandwarning(6),
+				all(7)
+			}
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"Which event level(s) should be included. The default is errorandwarning.
+				If the evExceptLogType is security, the value takes on the following meanings: 
+				auditsuccess(1),
+				auditfailure(2),
+				all(3).
+				The default security value is auditfailure."
+			::= { evExceptTableEntry 7 }
+
+	evExceptEventID OBJECT-TYPE
+			SYNTAX  INTEGER (0..2147483647)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"Event ID to be included. The default is 0, which means
+				to include all."
+			::=  { evExceptTableEntry 8 }
+
+	evExceptRegex	OBJECT-TYPE
+			SYNTAX	OCTET STRING
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Regular expression that must be present in the event. The default is <NULL> which
+				signifies that all events qualify for this exception filter."
+			::= { evExceptTableEntry 9 }
+
+	evExceptStartTimeHr OBJECT-TYPE
+			SYNTAX  INTEGER (0..23)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The hour to start monitoring. The default value is 0.
+ 				If start time = stop time = 0, then monitoring is on for 24 hours."
+            ::= { evExceptTableEntry 10 }
+
+	evExceptStartTimeMin OBJECT-TYPE
+			SYNTAX  INTEGER (0..59)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The minute to start monitoring. The default value is 0.
+ 				If start time = stop time = 0, then monitoring is continuous."
+			::= { evExceptTableEntry 11 }
+
+	evExceptStopTimeHr OBJECT-TYPE
+			SYNTAX  INTEGER (0..23)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The hour to stop monitoring. The default value is 0. 
+  				If start time = stop time = 0, then monitoring is continuous."
+			::= { evExceptTableEntry 12 }
+
+	evExceptStopTimeMin OBJECT-TYPE
+			SYNTAX  INTEGER (0..59)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The minute to stop monitoring. The default value is 0.
+ 				If start time = stop time = 0, then monitoring is continuous."
+			::= { evExceptTableEntry 13 }
+
+	evExceptOffDays	OBJECT-TYPE
+			SYNTAX  INTEGER (0..127)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"7-bit binary encoded value for specifying days of
+			 	the week when monitoring should not occur.
+			 	FORMAT:  0MTWRFSS
+				EXAMPLE: 00000011 = decimal 3, which excludes Saturday and Sunday."
+			::= { evExceptTableEntry 14 }
+
+	evExceptFailMessage OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Optional message to be sent when a fail trap is sent. The logMessage, 
+				evLogName, evSource, evType, evEventID, and evExceptRegex fields will 
+				be encoded in the message by putting '$MESSAGE', '$LOGNAME', '$SOURCE', 
+				or '$TYPE' '$EVENTID', or '$REGEX' in the message respectively. The 
+				default message is the standard message that is generated by the agent."
+			::= { evExceptTableEntry 15 }
+
+-- continuation of evLogMon sub-tree : 1.3.6.1.4.1.1279.3.3
+-- --------------------------------------------------------------------
+
+	evSystemFailMessage OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Optional message to be sent when a fail trap is sent for a system event. 
+				The logMessage, evLogName, evSource, evType  and evEventID fields will
+				be encoded in the message by putting '$MESSAGE', '$LOGNAME', '$SOURCE',
+				'$TYPE', or '$EVENTID' in the message respectively. The default message 
+				is the standard message that is generated by the agent."
+			::= { evLogMon 12 }
+
+	evSecurityFailMessage OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Optional message to be sent when a fail trap is sent for a security event. 
+				The logMessage, evLogName, evSource, evType  and evEventID fields will
+				be encoded in the message by putting '$MESSAGE', '$LOGNAME', '$SOURCE',
+				'$TYPE', or '$EVENTID' in the message respectively. The default message 
+				is the standard message that is generated by the agent."
+			::= { evLogMon 13 }
+
+	evApplicationFailMessage OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Optional message to be sent when a fail trap is sent for an application event. 
+				The logMessage, evLogName, evSource, evType  and evEventID fields will
+				be encoded in the message by putting '$MESSAGE', '$LOGNAME', '$SOURCE',
+				'$TYPE', or '$EVENTID' in the message respectively. The default message 
+				is the standard message that is generated by the agent."
+			::= { evLogMon 14 }
+
+-- Event Log specific trap fields
+-- log name sub-tree : 1.3.6.1.4.1.1279.3.3.99.1
+-- --------------------------------------------------------------------
+
+	evLogName OBJECT-TYPE
+			SYNTAX	 DisplayString
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Name of the event log."
+			::= { evLogTrap 1 }
+
+-- source sub-tree : 1.3.6.1.4.1.1279.3.3.99.2
+-- --------------------------------------------------------------------
+
+	evSource OBJECT-TYPE
+			SYNTAX  DisplayString
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Source name."
+			::= { evLogTrap 2 }
+
+-- type sub-tree : 1.3.6.1.4.1.1279.3.3.99.3
+-- --------------------------------------------------------------------
+
+	evType OBJECT-TYPE
+			SYNTAX  DisplayString
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Event type, e.g. Information, Warning, Error, etc."
+			::= { evLogTrap 3 }
+
+-- event id sub-tree : 1.3.6.1.4.1.1279.3.3.99.4
+-- --------------------------------------------------------------------
+
+	evEventID OBJECT-TYPE
+			SYNTAX  INTEGER
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Event level."
+			::= { evLogTrap 4 }
+
+-- EvLogAgent Traps : 1.3.6.1.4.1.1279.3.3
+-- --------------------------------------------------------------------
+
+	evGlobalEvent	TRAP-TYPE
+			ENTERPRISE	evLogMon
+			VARIABLES	{ summary, target, logMessage, evLogName, evSource, evType, evEventID }
+			DESCRIPTION
+				"A global log event has occurred that meets the trapping criteria."
+			::= 1
+
+	evConnectionFailure TRAP-TYPE
+			ENTERPRISE	evLogMon
+			VARIABLES	{ summary, target }
+			DESCRIPTION
+				"A remote host connection has failed."
+			::= 2
+
+	evConnectionOK		TRAP-TYPE
+			ENTERPRISE	evLogMon
+			VARIABLES	{ summary, target }
+			DESCRIPTION
+				"A remote host connection has resumed working."
+			::= 3
+
+	evInvalidExpression		TRAP-TYPE
+			ENTERPRISE	evLogMon
+			VARIABLES	{ summary, evExceptRegex }
+			DESCRIPTION
+				"The regular expression is invalid."
+			::= 4
+
+	evExpressionOK		TRAP-TYPE
+			ENTERPRISE	evLogMon
+			VARIABLES	{ summary, evExceptRegex }
+			DESCRIPTION
+				"The regular expression is now valid."
+			::= 5
+
+	evExceptEvent	TRAP-TYPE
+			ENTERPRISE	evLogMon
+			VARIABLES	{ summary, target, logMessage, evLogName, evSource, evType, evEventID,  evExceptRegex }
+			DESCRIPTION
+				"An exception log event has occurred that meets the trapping criteria."
+			::= 6
+
+END

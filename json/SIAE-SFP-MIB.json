@@ -1,0 +1,1003 @@
+{
+  "imports": {
+    "class": "imports",
+    "SIAE-ALARM-MIB": [
+      "AlarmSeverityCode",
+      "AlarmStatus"
+    ],
+    "SIAE-TREE-MIB": [
+      "siaeMib"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "MibIdentifier",
+      "Integer32",
+      "iso",
+      "MODULE-IDENTITY",
+      "Bits",
+      "IpAddress",
+      "OBJECT-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "Counter32",
+      "OBJECT-TYPE",
+      "Gauge32",
+      "Unsigned32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "sfp": {
+    "name": "sfp",
+    "oid": "1.3.6.1.4.1.3373.1103.74",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2016-12-15 00:00",
+        "description": "MIB version 01.00.02 - Added TEXTUAL-CONVENTION Temperature and PhysicalQuantity - Added sfpAlarmTable, sfpDiagnosticTable, sfpHighAlarmSeverityCode, sfpHighWarningAlarmSeverityCode, sfpLowWarningAlarmSeverityCode and sfpLowWarningAlarmSeverityCode "
+      },
+      {
+        "revision": "2016-09-29 00:00",
+        "description": "MIB version 01.00.01 - Added sfpBasePX, sfpBaseBX10, sfp100BaseFX, sfp100BaseLX to sfpCompliance "
+      },
+      {
+        "revision": "2014-02-03 00:00",
+        "description": "Improved description of sfpMibVersion "
+      },
+      {
+        "revision": "2013-12-05 00:00",
+        "description": "Initial version 01.00.00 "
+      }
+    ],
+    "lastupdated": "201612150000Z",
+    "organization": "SIAE MICROELETTRONICA spa",
+    "contactinfo": "SIAE MICROELETTONICA s.p.a. Via Michelangelo Buonarroti, 21 20093 - Cologno Monzese Milano - ITALY Phone : +39-02-27325-1 E-mail: info@siaemic.com ",
+    "description": " This MIB contains objects & alarms for a SFP (Small Form-Factor Pluggable) module. Reference documentation: 1) Small Form-factor Pluggable (SFP) Transceiver MultiSource Agreement (MSA) 2) Finisar's Application Note AN-2030, Rev. D. 3) SFF 8472 - Diagnostic Monitoring Interface for Optical Transceivers Rev 12.2 November 21, 2014 4) SFF 8024 - SFF Cross Reference to Industry Products Rev 4.0 June 27, 2016 "
+  },
+  "Temperature": {
+    "name": "Temperature",
+    "class": "textualconvention",
+    "type": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -2000,
+            "max": 2000
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Temperature in tenth of degrees C"
+  },
+  "PhysicalQuantity": {
+    "name": "PhysicalQuantity",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "phyQtTemperature": 1,
+          "phyQtVoltage": 2,
+          "phyQtTxBias": 3,
+          "phyQtTxPower": 4,
+          "phyQtRxPower": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": "Measured physical quantity"
+  },
+  "sfpMibVersion": {
+    "name": "sfpMibVersion",
+    "oid": "1.3.6.1.4.1.3373.1103.74.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Numerical version of this module. The string version of this MIB have the following format: XX.YY.ZZ so, for example, the value 1 should be interpreted as 00.00.01 and the value 10001 should be interpreted as 01.00.01."
+  },
+  "sfpSerialIdTable": {
+    "name": "sfpSerialIdTable",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Each SFP contains a 95+32 byte block of ID data fields. This table contains the items found in this data block. Fields in this data block is filled in by the SFP manufactor. The table shows the contents of this data block without further processing."
+  },
+  "sfpSerialIdEntry": {
+    "name": "sfpSerialIdEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-SFP-MIB",
+        "object": "sfpModuleId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "SFP module record."
+  },
+  "sfpModuleId": {
+    "name": "sfpModuleId",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This index identifies a unique SFP module in the system"
+  },
+  "sfpSerialIdValid": {
+    "name": "sfpSerialIdValid",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "When false the SFP data in this table is not valid. This will be set to False if the SFP module is not installed or if the EEPROM check code is wrong. The data in this table should not be used unless this element is True."
+  },
+  "sfpVendorName": {
+    "name": "sfpVendorName",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SFP vendor name. Located at I2C address 0xa0, bytes: 20 - 35"
+  },
+  "sfpVendorPartNumber": {
+    "name": "sfpVendorPartNumber",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SFP vendor part number. Located at I2C address 0xa0, bytes: 40 - 55"
+  },
+  "sfpVendorRev": {
+    "name": "sfpVendorRev",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SFP vendor's product revision number. Located at I2C address 0xa0, bytes: 56 - 59"
+  },
+  "sfpVendorSN": {
+    "name": "sfpVendorSN",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SFP vendor serial number. Located at I2C address 0xa0, bytes: 68 - 83"
+  },
+  "sfpVendorDateCode": {
+    "name": "sfpVendorDateCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The SFP vendor date code. Format: YYMMDDLL - YY: year, 00 = 2000 - MM: month, 01 = January - DD_ day, 01 to 31 - LL: vendor lot code, or blank. Located at I2C address 0xa0, bytes: 84 - 91"
+  },
+  "sfpDiagMonitorCode": {
+    "name": "sfpDiagMonitorCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "sfpDMCtypeLegacy": 0,
+        "sfpDMCtypeImplemented": 1,
+        "sfpDMCtypeInternalCal": 2,
+        "sfpDMCtypeExternalCal": 3,
+        "sfpDMCtypeRxAvgPwr": 4,
+        "sfpDMCtypeAddrChngReqrd": 5
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates which type of diagnostic monitoring is implemented (if any) in the SFP. -bit 7: = 0 legacy diagnostic implementations (should be 0) -bit 6: = 1 digital diagnostic monitoring implemented (should be 1) -bit 5: = 1 internal calibration -bit 4: = 1 external calibration mask -bit 3: = 0 OMA received power measurment, = 1 average received power -bit 2: = 1 I2C addressing option. Located at I2C address 0xa0, byte: 92"
+  },
+  "sfpEnhancedOptionsCode": {
+    "name": "sfpEnhancedOptionsCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "sfpEOCalarmsImplemented": 0,
+        "sfpEOCSoftTxDisable": 1,
+        "sfpEOCSoftTxFault": 2,
+        "sfpEOCSoftRxLOS": 3,
+        "sfpEOCSoftRateSelect": 4
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This indicates which optional enhanced features are implemented (if any) in the SFP. Located at I2C address 0xa0, byte: 93"
+  },
+  "sfpOptions": {
+    "name": "sfpOptions",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "sfpOPTRateSelect": 0,
+        "sfpOPTTxDisable": 1,
+        "sfpOPTTxFault": 2,
+        "sfpOPTInvertedLOS": 3,
+        "sfpOPTlos": 4
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Implemented transceiver options: -bit 5: = 1 RATE_SELECT implemented. -bit 4: = 1 TX_DISABLE implemented -bit 3: = 1 TX_FAULT implemented -bit 2: = 1 LOS Implemented, inverted -bit 1: = 1 LOS Implemented Located at I2C address 0xa0, byte: 65"
+  },
+  "sfpFibreChannelMedia": {
+    "name": "sfpFibreChannelMedia",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "sfpMultiMode62u5": 0,
+        "sfpMultiMode50u0": 1,
+        "sfpSingleMode": 2,
+        "sfpTwistedAxialPair": 3,
+        "sfpShieldedTwistedPair": 4,
+        "sfpMiniatureCoax": 5,
+        "sfpVideoCoax": 6
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Fiber Channel transmission media. Located at I2C address 0xa0, byte: 9"
+  },
+  "sfpCompliance": {
+    "name": "sfpCompliance",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "sfpSonetReachSpecifier1": 0,
+        "sfpSonetReachSpecifier2": 1,
+        "sfpSonetOC48LongReach": 2,
+        "sfpSonetOC48IntermediateReach": 3,
+        "sfpSonetOC48ShortReach": 4,
+        "sfpSonetOC12LongReach": 5,
+        "sfpSonetOC12IntermediateReach": 6,
+        "sfpSonetOC12ShortReach": 7,
+        "sfpSonetOC3LongReach": 8,
+        "sfpSonetOC3IntermediateReach": 9,
+        "sfpSonetOC3ShortReach": 10,
+        "sfp1000BaseT": 11,
+        "sfp1000BaseCX": 12,
+        "sfp1000BaseLX": 13,
+        "sfp1000baseSX": 14,
+        "sfpBasePX": 15,
+        "sfpBaseBX10": 16,
+        "sfp100BaseFX": 17,
+        "sfp100BaseLX": 18
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Electronic or optical interfaces that are supported by the transceiver. Located at I2C address 0xa0, bytes: 4,5 & 6"
+  },
+  "sfpWavelength": {
+    "name": "sfpWavelength",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "nm",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Nominal transmiter output wavelength at room temperature. Units are in nm (nanometers). Located at I2C address 0xa0, bytes: 60 & 61 (endianess: big)"
+  },
+  "sfpNominalBitRate": {
+    "name": "sfpNominalBitRate",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Nominal bit rate (in megabit per second) supported from this SFP module rouded to the nearest 100 megabits per second. Located at I2C address 0xa0, byte: 12"
+  },
+  "sfpLinkLength9u": {
+    "name": "sfpLinkLength9u",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "m",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Link length (in meters) supported from this SFP module while operating in compliance with the applicable standards using single mode fiber. A value of zero means that the transceiver does not support single mode fiber. Located at I2C address 0xa0, bytes: 14-15"
+  },
+  "sfpLinkLength50u": {
+    "name": "sfpLinkLength50u",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "m",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Link length (in meters) supported from this SFP module while operating in compliance with the applicable standards using 50 micron multi-mode fiber. A value of zero means that the transceiver does not support 50 micron multi-mode mode fiber. Located at I2C address 0xa0, byte: 16"
+  },
+  "sfpLinkLength62u5": {
+    "name": "sfpLinkLength62u5",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "m",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Link length (in meters) supported from this SFP module while operating in compliance with the applicable standards using 62.5 micron multi-mode fiber. A value of zero means that the transceiver does not support 62.5 micron multi-mode mode fiber. Located at I2C address 0xa0, byte: 17"
+  },
+  "sfpLinkLengthCopper": {
+    "name": "sfpLinkLengthCopper",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "m",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Link length (in meters) supported from this SFP module while operating in compliance with the applicable standards using copper cable. A value of zero means that the transceiver does not support copper cable. Located at I2C address 0xa0, byte: 18"
+  },
+  "sfpLabel": {
+    "name": "sfpLabel",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This is an ASCII string that identifies this SFP in the system."
+  },
+  "sfpFailAlarm": {
+    "name": "sfpFailAlarm",
+    "oid": "1.3.6.1.4.1.3373.1103.74.2.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "SFP Module fail (module missing included)"
+  },
+  "sfpFailAlarmSeverityCode": {
+    "name": "sfpFailAlarmSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmSeverityCode",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "majorTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to the sfpFailAlarm and enables/disables the trap generation on status change event."
+  },
+  "sfpDiagnosticTable": {
+    "name": "sfpDiagnosticTable",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Each SFP may contain a 256 byte block of diagnostic data fields. This table contains the items found in this data block. The data block is located at I2C address 0xa2."
+  },
+  "sfpDiagnosticEntry": {
+    "name": "sfpDiagnosticEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-SFP-MIB",
+        "object": "sfpModuleId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This describes a row in the diagnostic table."
+  },
+  "sfpDiagnosticValid": {
+    "name": "sfpDiagnosticValid",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "if False, then the SFP data in this table is not valid. This will be set to False if the SFP module is not installed, or if the I/O card that contains the SFP is not installed or if the EEPROM check code is wrong. The data in the table should not be used unless this element is True."
+  },
+  "sfpLOSPinOut": {
+    "name": "sfpLOSPinOut",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the T/F state of the SFP LOS (output) pin. It is True if the SFP has detected Loss-Of-Signal. located at I2c address 0xa2, address: 110, mask 0x02"
+  },
+  "sfpTxFaultPinOut": {
+    "name": "sfpTxFaultPinOut",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the T/F state of the SFP Tx Fault (output) pin. It is True if the SFP has detected a Tx fault condition. located at I2C address 0xa2, Byte 110, mask 0x04"
+  },
+  "sfpRateSelectPinIn": {
+    "name": "sfpRateSelectPinIn",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the T/F state of the SFP RX Rate Select (input) pin. This function is not implemented on Finisar SFPs. located at I2C address 0xa2, Byte 110, mask 0x10"
+  },
+  "sfpTxDisablePinIn": {
+    "name": "sfpTxDisablePinIn",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the T/F state of the SFP TX Disable (input) pin. located at I2C address 0xa2, Byte 110, mask 0x80"
+  },
+  "sfpTemperature": {
+    "name": "sfpTemperature",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Temperature",
+      "class": "type"
+    },
+    "units": "C/10",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the internal temperature of the SFP in tehnth of Celsius degrees. Range is from -128.0C to +128.0C, but is only valid from -40.0C to +125.0C with an accuracy of +/- 3C. Located at I2C address 0xa2, Bytes 96 & 97 (MSB, LSB)"
+  },
+  "sfpVoltage": {
+    "name": "sfpVoltage",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "units": "milliVolts (mV)",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the internally measured SFP supply voltage (Vcc). Units are in milliVolts (3210 = 3.21V). Range is 0 to 6.554V. Located at I2C address 0xa2, Bytes 98 & 99 (MSB, LSB)"
+  },
+  "sfpTxBias": {
+    "name": "sfpTxBias",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 131000
+          }
+        ]
+      }
+    },
+    "units": "microAmps (uA)",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the internally measured SFP TX laser bias current. Units are in microAmps, and range from 0 to 131000uA (131mA). Located at I2C address 0xa2, Bytes 100 & 101 (MSB, LSB)"
+  },
+  "sfpTxPower": {
+    "name": "sfpTxPower",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "units": "microWatts (uW)",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the internally measured TX output power. Units are in uW (micro Watts), and range from 0 to 6554uW (6.535mW). This value is not valid if the transmitter is disabled. Located at I2C address 0xa2, Bytes 102 & 103 (MSB, LSB)"
+  },
+  "sfpRxPower": {
+    "name": "sfpRxPower",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "units": "microWatts (uW)",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the internally measured RX optical power. Units are in uW (micro Watts), and range from 0 to 6554uW (6.535mW). Located at I2C address 0xa2, Bytes 104 & 105 (MSB, LSB)"
+  },
+  "sfpInternalAlarms": {
+    "name": "sfpInternalAlarms",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "sfpIntAlarmTempHigh": 0,
+        "sfpIntAlarmTempLow": 1,
+        "sfpIntAlarmVoltageHigh": 2,
+        "sfpIntAlarmVoltageLow": 3,
+        "sfpIntAlarmTxBiasHigh": 4,
+        "sfpIntAlarmTxBiasLow": 5,
+        "sfpIntAlarmTxPowerHigh": 6,
+        "sfpIntAlarmTxPowerLow": 7,
+        "sfpIntAlarmRxPowerHigh": 8,
+        "sfpIntAlarmRxPowerLow": 9
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the state of the SFP internal alarm register. A bit is set for each alarm that is active. located at I2C address 0xa2, Byte 112 & 113 (MSB, LSB) mask 0xffc0"
+  },
+  "sfpInternalWarnings": {
+    "name": "sfpInternalWarnings",
+    "oid": "1.3.6.1.4.1.3373.1103.74.7.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "sfpIntWarnTempHigh": 0,
+        "sfpIntWarnTempLow": 1,
+        "sfpIntWarnVoltageHigh": 2,
+        "sfpIntWarnVoltageLow": 3,
+        "sfpIntWarnTxBiasHigh": 4,
+        "sfpIntWarnTxBiasLow": 5,
+        "sfpIntWarnTxPowerHigh": 6,
+        "sfpIntWarnTxPowerLow": 7,
+        "sfpIntWarnRxPowerHigh": 8,
+        "sfpIntWarnRxPowerLow": 9
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This contains the state of the SFP internal warning register. A bit is set for each warning that is active. located at I2C address 0xa2, Byte 116 & 117 (MSB, LSB) mask 0xffc0"
+  },
+  "sfpAlarmTable": {
+    "name": "sfpAlarmTable",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the SFP alarm and warning threshold values."
+  },
+  "sfpAlarmEntry": {
+    "name": "sfpAlarmEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-SFP-MIB",
+        "object": "sfpModuleId",
+        "implied": 0
+      },
+      {
+        "module": "SIAE-SFP-MIB",
+        "object": "sfpPhysicalQuantity",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry into the Threshold table."
+  },
+  "sfpPhysicalQuantity": {
+    "name": "sfpPhysicalQuantity",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysicalQuantity",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Measured physical quantity. Units of temperature are tenth of Celsius degrres, units of Power supply voltage (Vcc) are microVolts, units of Tx laser bias current are microAmps (uA), units of Rx optical power are microWatts (uW), units of Tx output power are microWatts (uW). "
+  },
+  "sfpThresholdHighAlarm": {
+    "name": "sfpThresholdHighAlarm",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A reading at or above this temperature will trigger a high measured physical quantity alarm."
+  },
+  "sfpThresholdHighWarning": {
+    "name": "sfpThresholdHighWarning",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A reading at or above this temperature will trigger a high measured physical quantity warning."
+  },
+  "sfpThresholdLowAlarm": {
+    "name": "sfpThresholdLowAlarm",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A reading at or above this temperature will trigger a low measured physical quantity alarm."
+  },
+  "sfpThresholdLowWarning": {
+    "name": "sfpThresholdLowWarning",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A reading at or above this temperature will trigger a low measured physical quantity warning."
+  },
+  "sfpHighAlarm": {
+    "name": "sfpHighAlarm",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Measured physical quantity has crossed sfpThresholdHighAlarm."
+  },
+  "sfpHighWarningAlarm": {
+    "name": "sfpHighWarningAlarm",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Measured physical quantity has crossed sfpThresholdHighWarning."
+  },
+  "sfpLowAlarm": {
+    "name": "sfpLowAlarm",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Measured physical quantity has crossed sfpThresholdLowAlarm."
+  },
+  "sfpLowWarningAlarm": {
+    "name": "sfpLowWarningAlarm",
+    "oid": "1.3.6.1.4.1.3373.1103.74.10.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Measured physical quantity has crossed sfpThresholdLowWarning."
+  },
+  "sfpHighAlarmSeverityCode": {
+    "name": "sfpHighAlarmSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmSeverityCode",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "majorTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to the sfpHighAlarm and enables/disables the trap generation on status change event."
+  },
+  "sfpHighWarningAlarmSeverityCode": {
+    "name": "sfpHighWarningAlarmSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmSeverityCode",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "warningTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to the sfpHighWarningAlarm and enables/disables the trap generation on status change event."
+  },
+  "sfpLowAlarmSeverityCode": {
+    "name": "sfpLowAlarmSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.13",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmSeverityCode",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "majorTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to the sfpLowAlarm and enables/disables the trap generation on status change event."
+  },
+  "sfpLowWarningAlarmSeverityCode": {
+    "name": "sfpLowWarningAlarmSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.74.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmSeverityCode",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "warningTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to the sfpLowWarningAlarm and enables/disables the trap generation on status change event."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SIAE-SFP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:25:49 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SIAE-SFP-MIB"
+  }
+}

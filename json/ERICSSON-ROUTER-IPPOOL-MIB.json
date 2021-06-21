@@ -1,0 +1,1825 @@
+{
+  "imports": {
+    "class": "imports",
+    "ERICSSON-ROUTER-SMI": [
+      "eriRouterMgmt"
+    ],
+    "ERICSSON-ROUTER-TC": [
+      "EriRouterPercentage"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddress",
+      "InetAddressType",
+      "InetAddressPrefixLength"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Counter64",
+      "MODULE-IDENTITY",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "Counter32",
+      "MibIdentifier",
+      "Integer32",
+      "Bits",
+      "Unsigned32",
+      "Gauge32",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "TimeTicks"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "eriRouterIpPoolMib": {
+    "name": "eriRouterIpPoolMib",
+    "oid": "1.3.6.1.4.1.193.218.2.15",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-01-14 18:00",
+        "description": "Updated RBN/rbn/Rbn as ERICSSON-ROUTER/eriRouter/EriRouter to migrate RBN MIB to ERICSSON MIB."
+      },
+      {
+        "revision": "2010-02-10 00:00",
+        "description": "Defined textual conventions for representing IP Pool type and threshold management: EriRouterInetPoolType, EriRouterInetIpPoolThresholdType, EriRouterInetIpPoolThreshold, and EriRouterInetIpPoolThrshNotify. Added the following tables and notifications to support IPv6: eriRouterInetIpPoolTable, eriRouterInetIpPoolCtxTable, eriRouterInetIpPoolHiFallingThrshMet, eriRouterInetIpPoolLoFallingThrshMet, eriRouterInetIpPoolCtxHiFallingThrshMet, eriRouterInetIpPoolCtxLoFallingThrshMet, Updated CONTACT-INFO. "
+      },
+      {
+        "revision": "2005-06-17 00:00",
+        "description": "Added an IP Pool total size object, an IP Pool percentage threshold table and a notification for monitoring per-context IP Pool percentage thresholds."
+      },
+      {
+        "revision": "2005-03-14 00:00",
+        "description": "Added an ip pool type, an end ip address for range ip pools, and updated conformance information."
+      },
+      {
+        "revision": "2004-09-28 00:00",
+        "description": "Added an ip pool name and updated conformance information."
+      },
+      {
+        "revision": "2001-11-07 17:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "201501141800Z",
+    "organization": "Ericsson AB",
+    "contactinfo": " Ericsson AB. Postal: 100 Headquarters Dr San Jose, CA 95134 USA Phone: +1 408 750 5000 Fax: +1 408 750 5599",
+    "description": "Defines the objects necessary to obtain information about IP Pools for interfaces within a context."
+  },
+  "eriRouterIpPoolMIBNotifications": {
+    "name": "eriRouterIpPoolMIBNotifications",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0",
+    "class": "objectidentity"
+  },
+  "eriRouterIpPoolMIBObjects": {
+    "name": "eriRouterIpPoolMIBObjects",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1",
+    "class": "objectidentity"
+  },
+  "eriRouterIpPoolMIBConformance": {
+    "name": "eriRouterIpPoolMIBConformance",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2",
+    "class": "objectidentity"
+  },
+  "EriRouterInetPoolType": {
+    "name": "EriRouterInetPoolType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv6": 1,
+          "dhcpv6": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Denotes a generic IP Pool Type. "
+  },
+  "EriRouterInetIpPoolThresholdType": {
+    "name": "EriRouterInetIpPoolThresholdType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "absolute": 1,
+          "percentage": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": " A value that represents a type of IP Pool threshold value. none(0) No threshold setting. This value MUST be used if the value of all corresponding EriRouterInetIpPoolThreshold objects in the same logical row are zeroes. absolute(1) EriRouterInetIpPoolThreshold values in the same logical row defined as absolute values with the range of (1..IP Pool size) percentage(2) EriRouterInetIpPoolThreshold values in the same logical row defined as percentages with the range of (1..100). Implementations must ensure that EriRouterInetIpPoolThresholdType objects and any dependent objects (e.g., EriRouterInetIpPoolThreshold objects) are consistent. The relationship between absolute value and percentage is: absolute = IP Pool size * percentage "
+  },
+  "EriRouterInetIpPoolThreshold": {
+    "name": "EriRouterInetIpPoolThreshold",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "displayhint": "d",
+    "status": "current",
+    "description": "Denotes a generic IP Pool threshold. An EriRouterInetIpPoolThreshold value is always interpreted within the context of an EriRouterInetIpPoolThresholdType value. The usages of the EriRouterInetIpPoolThreshold textual convention in the same logical row is required to specify the EriRouterInetIpPoolThresholdType object that provides the context. The value of an EriRouterInetIpPoolThreshold object must always be consistent with the value of the associated EriRouterInetIpPoolThresholdType object. "
+  },
+  "EriRouterInetIpPoolThrshNotify": {
+    "name": "EriRouterInetIpPoolThrshNotify",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "log": 1,
+          "trap": 2,
+          "both": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": " Denotes a logging method for monitoring falling thresholds "
+  },
+  "eriRouterIpPoolTable": {
+    "name": "eriRouterIpPoolTable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The purpose of this table is to allow customers to monitor the status of IP Pools on their SMS systems through SNMP. This table contains the objects which identify information about IP Pools. Each row in the table corresponds to one IP Pool for a given interface within a particular context. Objects defined in this table are only accessible within the context identified in the SNMP protocol (i.e. the community string in v1/v2c or the contextName in v3)."
+  },
+  "eriRouterIpPoolEntry": {
+    "name": "eriRouterIpPoolEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInterfaceIdx",
+        "implied": 0
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the eriRouterIpPoolTable."
+  },
+  "eriRouterIpPoolInterfaceIdx": {
+    "name": "eriRouterIpPoolInterfaceIdx",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the interface containing the IP Pool."
+  },
+  "eriRouterIpPoolAddr": {
+    "name": "eriRouterIpPoolAddr",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The start address of the IP Pool."
+  },
+  "eriRouterIpPoolInterfaceName": {
+    "name": "eriRouterIpPoolInterfaceName",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the interface containing the IP Pool."
+  },
+  "eriRouterIpPoolMask": {
+    "name": "eriRouterIpPoolMask",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The subnet mask of the IP Pool. This object will be instantiated for IP Pools of type subnet only."
+  },
+  "eriRouterIpPoolSize": {
+    "name": "eriRouterIpPoolSize",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The size of the IP Pool is defined to be the sum of the available addresses plus the unusable addresses."
+  },
+  "eriRouterIpPoolAvailable": {
+    "name": "eriRouterIpPoolAvailable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of addresses of an IP Pool that are available."
+  },
+  "eriRouterIpPoolUnusable": {
+    "name": "eriRouterIpPoolUnusable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Unusable IP addresses in an IP Pool consist of the ip address of the interface, and those used by the network address and the broadcast address of the interface."
+  },
+  "eriRouterIpPoolInuse": {
+    "name": "eriRouterIpPoolInuse",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of addresses of an IP Pool that are in use."
+  },
+  "eriRouterIpPoolThreshold": {
+    "name": "eriRouterIpPoolThreshold",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The threshold of an IP Pool is the value for currently available addresses, as reported in eriRouterIpPoolAvailable, which causes a trap and/or log message to be generated when this value is reached. This is a falling threshold, so a trap and/or log message will only be sent on a transition of the value of available addresss from (eriRouterIpPoolThreshold+1) addresses to eriRouterIpPoolThreshold addresses. Additionally, the action of sending the trap and/or log message is subject to the values of eriRouterIpPoolSendTrap and eriRouterIpPoolLogMessage. A value of zero means there is no threshold."
+  },
+  "eriRouterIpPoolSendTrap": {
+    "name": "eriRouterIpPoolSendTrap",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, upon detection of reaching a per-pool threshold event, a trap will be sent. See the definition of the eriRouterIpPoolThresholdMet for the information included in the trap. Note, both eriRouterIpPoolSendTrap and eriRouterIpPoolLogMessage are allowed to be TRUE at the same time."
+  },
+  "eriRouterIpPoolLogMessage": {
+    "name": "eriRouterIpPoolLogMessage",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, upon detection of reaching a per-pool threshold event, a message will be logged. The information contained in the message is the same as that included in the eriRouterIpPoolThresholdMet trap. Note, both eriRouterIpPoolSendTrap and eriRouterIpPoolLogMessage are allowed to be TRUE at the same time."
+  },
+  "eriRouterIpPoolName": {
+    "name": "eriRouterIpPoolName",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the IP Pool."
+  },
+  "eriRouterIpPoolType": {
+    "name": "eriRouterIpPoolType",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "subnet": 0,
+          "range": 1
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of the IP Pool."
+  },
+  "eriRouterIpPoolEndAddr": {
+    "name": "eriRouterIpPoolEndAddr",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The end address of the IP Pool. This object will be instantiated for range IP Pools only."
+  },
+  "eriRouterIpPoolSummary": {
+    "name": "eriRouterIpPoolSummary",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2",
+    "class": "objectidentity"
+  },
+  "eriRouterIpPoolContextName": {
+    "name": "eriRouterIpPoolContextName",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the context containing the IP Pool."
+  },
+  "eriRouterIpPoolContextAvailable": {
+    "name": "eriRouterIpPoolContextAvailable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of IP addresses available in all pools of all interfaces in the context valid in the current view."
+  },
+  "eriRouterIpPoolContextThreshold": {
+    "name": "eriRouterIpPoolContextThreshold",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The per-context threshold of an IP Pool is the value for currently available per-context addresses, as reported in eriRouterIpPoolContextAvailable, which causes a trap and/or log message to be generated when this value is reached. This is a falling threshold, so a trap and/or log message will only be sent on a transition of the value of available addresss from (eriRouterIpPoolContextThreshold+1) addresses to eriRouterIpPoolContextThreshold addresses. Additionally, the action of sending the trap and/or log message is subject to the values of eriRouterIpPoolContextSendTrap and eriRouterIpPoolContextLogMessage. A value of zero means there is no per-context threshold."
+  },
+  "eriRouterIpPoolContextSendTrap": {
+    "name": "eriRouterIpPoolContextSendTrap",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, upon detection of a per-context threshold crossing event, a trap will be sent. See the definition of the eriRouterIpPoolContextThresholdMet for the information included in the trap. Note, both eriRouterIpPoolContextSendTrap and eriRouterIpPoolContextLogMessage are allowed to be true at the same time."
+  },
+  "eriRouterIpPoolContextLogMessage": {
+    "name": "eriRouterIpPoolContextLogMessage",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, upon detection of a per-context threshold crossing event, a message will be logged. The information contained in the message logged is the same as that included in the eriRouterIpPoolContextThresholdMet trap. Note, both eriRouterIpPoolContextSendTrap and eriRouterIpPoolContextLogMessage are allowed to be true at the same time."
+  },
+  "eriRouterIpPoolContextTotalSize": {
+    "name": "eriRouterIpPoolContextTotalSize",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of IP addresses configured in all pools of all interfaces in the context valid in the current view. It is the sum of the available addresses plus the unusable addresses."
+  },
+  "eriRouterIpPoolContextThresholdPercentTable": {
+    "name": "eriRouterIpPoolContextThresholdPercentTable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The purpose of this table is to allow customers to monitor the status of per-context IP Pool percentage thresholds through SNMP. This table contains the objects which identify information about per-context IP Pool thresholds expressed in percentage. Each row in the table corresponds to one IP Pool percentage threshold configured within a particular context. Objects defined in this table are only accessible within the context identified in the SNMP protocol (i.e. the community string in v1/v2c or the contextName in v3)."
+  },
+  "eriRouterIpPoolContextThresholdPercentEntry": {
+    "name": "eriRouterIpPoolContextThresholdPercentEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the eriRouterIpPoolContextThresholdPercentTable."
+  },
+  "eriRouterIpPoolContextThresholdIndex": {
+    "name": "eriRouterIpPoolContextThresholdIndex",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the IP Pool percentage threshold."
+  },
+  "eriRouterIpPoolContextThresholdPercentage": {
+    "name": "eriRouterIpPoolContextThresholdPercentage",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterPercentage",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A threshold for the percentage of the number of currently available IP Pool addresses against the total number of IP Pool addresses configured within the context. This is a falling threshold, so an SNMP trap and/or log message will only be sent when the current value, which is the % of eriRouterIpPoolContextAvailable/eriRouterIpPoolContextTotalSize truncated to a whole number in percentage, is less than or equal to this threshold, and the percentage value at the last check was greater than this threshold. Additionally, the action of sending the SNMP trap and/or logging a message is subject to the values of eriRouterIpPoolContextThresholdSendTrap and eriRouterIpPoolContextThresholdLogMessage."
+  },
+  "eriRouterIpPoolContextThresholdSendTrap": {
+    "name": "eriRouterIpPoolContextThresholdSendTrap",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, upon detection of a per-context threshold crossing event, an SNMP trap will be sent. See the definition of the eriRouterIpPoolContextThresholdPercentageMet for the information included in the trap. Note, both eriRouterIpPoolContextThresholdSendTrap and eriRouterIpPoolContextThresholdLogMessage are allowed to be true at the same time."
+  },
+  "eriRouterIpPoolContextThresholdLogMessage": {
+    "name": "eriRouterIpPoolContextThresholdLogMessage",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.2.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If true, upon detection of a per-context threshold crossing event, a message will be logged. The information contained in the message logged is the same as that included in the eriRouterIpPoolContextThresholdPercentageMet trap. Note, both eriRouterIpPoolContextThresholdSendTrap and eriRouterIpPoolContextThresholdLogMessage are allowed to be true at the same time."
+  },
+  "eriRouterIpPoolThresholdMet": {
+    "name": "eriRouterIpPoolThresholdMet",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInterfaceName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolMask"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that the per pool falling threshold has been reached."
+  },
+  "eriRouterIpPoolContextThresholdMet": {
+    "name": "eriRouterIpPoolContextThresholdMet",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThreshold"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that the per-context falling threshold has been reached."
+  },
+  "eriRouterIpPoolContextThresholdPercentageMet": {
+    "name": "eriRouterIpPoolContextThresholdPercentageMet",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextTotalSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdPercentage"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that the per-context percentage falling threshold has been reached."
+  },
+  "eriRouterInetIpPoolTable": {
+    "name": "eriRouterInetIpPoolTable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "reference": "[RFC4861] Neighbor Discovery for IP version 6 (IPv6)",
+    "status": "current",
+    "description": "This table contains the objects which identify information about IP Pools (such as ND IPv6 pool and DHCP-PD IPv6 Pool). Each row in the table corresponds to one IP Pool for either a given interface within a particular context or only within a particular context . If this pool is only configured per context basis, the interface index is set to zero. The IPv6 pool range is from start prefix/length to the end prefix/length. The prefix length for start and end prefixes are the same, and refer to the prefix length to be advertised or delegated. Objects defined in this table are only accessible within the context identified in the SNMP protocol (i.e. the community string in v1/v2c or the contextName in v3)."
+  },
+  "eriRouterInetIpPoolEntry": {
+    "name": "eriRouterInetIpPoolEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolType",
+        "implied": 0
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolStartPrefixType",
+        "implied": 0
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolStartPrefix",
+        "implied": 0
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolStartPrefixLen",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the eriRouterInetIpPoolTable."
+  },
+  "eriRouterInetIpPoolType": {
+    "name": "eriRouterInetIpPoolType",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetPoolType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The type of IP Pool. "
+  },
+  "eriRouterInetIpPoolIfIndex": {
+    "name": "eriRouterInetIpPoolIfIndex",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index of the interface containing the IP Pool. The interface identified by a particular value of this index is the same interface as identified by the same value of the IF-MIB's ifIndex."
+  },
+  "eriRouterInetIpPoolStartPrefixType": {
+    "name": "eriRouterInetIpPoolStartPrefixType",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of eriRouterInetIpPoolPrefix. "
+  },
+  "eriRouterInetIpPoolStartPrefix": {
+    "name": "eriRouterInetIpPoolStartPrefix",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The start address prefix of this pool. The address type of this object is specified in eriRouterInetIpPoolPrefixType. The length of this object is the standard length for objects of that type (always 16 bytes). Any bits after eriRouterInetIpPoolStartPrefixLen must be zero. "
+  },
+  "eriRouterInetIpPoolStartPrefixLen": {
+    "name": "eriRouterInetIpPoolStartPrefixLen",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " The prefix length associated with this prefix. It refers to advertised or delegated prefix length. "
+  },
+  "eriRouterInetIpPoolEndPrefixType": {
+    "name": "eriRouterInetIpPoolEndPrefixType",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The address type of eriRouterInetIpPoolPrefix. The value of this object is always ipv6 (2). "
+  },
+  "eriRouterInetIpPoolEndPrefix": {
+    "name": "eriRouterInetIpPoolEndPrefix",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The end IP address prefix of this pool. The address type of this object is specified in eriRouterInetIpPoolPrefixType. Any bits after eriRouterInetIpPoolPrefixLen must be zero."
+  },
+  "eriRouterInetIpPoolEndPrefixLen": {
+    "name": "eriRouterInetIpPoolEndPrefixLen",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressPrefixLength",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " The IP prefix length associated with this prefix. It refers to the advertised or delegated prefix length. See eriRouterInetIpPoolEndPrefixLen. "
+  },
+  "eriRouterInetIpPoolInterfaceName": {
+    "name": "eriRouterInetIpPoolInterfaceName",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the interface containing the IP Pool."
+  },
+  "eriRouterInetIpPoolName": {
+    "name": "eriRouterInetIpPoolName",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The name of the IP Pool."
+  },
+  "eriRouterInetIpPoolSize": {
+    "name": "eriRouterInetIpPoolSize",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The size of the IP Pool is defined to be the sum of the available prefixes plus the unusable prefixes."
+  },
+  "eriRouterInetIpPoolAvailable": {
+    "name": "eriRouterInetIpPoolAvailable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of IP address prefixes of an IP Pool that are available."
+  },
+  "eriRouterInetIpPoolUnusable": {
+    "name": "eriRouterInetIpPoolUnusable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Unusable IP prefixes in an IP Pool. "
+  },
+  "eriRouterInetIpPoolInuse": {
+    "name": "eriRouterInetIpPoolInuse",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of IP prefixes of an IP Pool that are in use."
+  },
+  "eriRouterInetIpPoolThrshType": {
+    "name": "eriRouterInetIpPoolThrshType",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThresholdType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the value type of all threshold values in this logical row, including eriRouterInetIpPoolHiFallingThrsh, eriRouterInetIpPoolLoFallingThrsh. "
+  },
+  "eriRouterInetIpPoolHiFallingThrsh": {
+    "name": "eriRouterInetIpPoolHiFallingThrsh",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThreshold",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The falling threshold of an IP Pool. When the value of eriRouterInetIpPoolAvailable crosses from (eriRouterInetIpPoolHiFallingThrsh + 1) to eriRouterInetIpPoolHiFallingThrsh in either absolute value or percentage specified by eriRouterInetIpPoolThrshType, a eriRouterInetIpPoolHiFallingThrshMet notification and/or log is generated. The value of this object should never be smaller than the value of eriRouterInetIpPoolLoFallingThrsh. A value of zero means that this falling threshold is not configured. "
+  },
+  "eriRouterInetIpPoolHiFallingNotify": {
+    "name": "eriRouterInetIpPoolHiFallingNotify",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThrshNotify",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " This object specifies if eriRouterInetIpPoolHiFallingThrshMet and/or log is generated. See the description of eriRouterInetIpPoolHiFallingThrsh for conditions which generate the notification. "
+  },
+  "eriRouterInetIpPoolLoFallingThrsh": {
+    "name": "eriRouterInetIpPoolLoFallingThrsh",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThreshold",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The falling threshold of an IP Pool. When the value of eriRouterInetIpPoolAvailable crosses from (eriRouterInetIpPoolLoFallingThrsh + 1) to eriRouterInetIpPoolLoFallingThrsh (either absolute value or percentage) specified by eriRouterInetIpPoolThrshType, a eriRouterInetIpPoolLoFallingThrshMet notification and/or log is generated. The value of this object should never be greater than the value of eriRouterInetIpPoolHiFallingThrsh. A value of zero means that this falling threshold is not configured. "
+  },
+  "eriRouterInetIpPoolLoFallingNotify": {
+    "name": "eriRouterInetIpPoolLoFallingNotify",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThrshNotify",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies if eriRouterInetIpPoolLoFallingThrshMet and/or log is generated. See the description of eriRouterInetIpPoolLoFallingThrsh for conditions which generate the notification. "
+  },
+  "eriRouterInetIpPoolSummary": {
+    "name": "eriRouterInetIpPoolSummary",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4",
+    "class": "objectidentity"
+  },
+  "eriRouterInetIpPoolCtxName": {
+    "name": "eriRouterInetIpPoolCtxName",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The name of the context containing the IP Pool."
+  },
+  "eriRouterInetIpPoolCtxTable": {
+    "name": "eriRouterInetIpPoolCtxTable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The purpose of this table is to allow customers to monitor the status of IP Pool context summary and thresholds through SNMP. This table contains the objects which identify information about per-context IP Pool thresholds expressed in absolute value or percentage. Each row in the table corresponds to one IP Pool threshold configured within a particular context. Objects defined in this table are only accessible within the context identified in the SNMP protocol (i.e. the community string in v1/v2c or the contextName in v3)."
+  },
+  "eriRouterInetIpPoolCtxEntry": {
+    "name": "eriRouterInetIpPoolCtxEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxPoolType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the eriRouterInetIpPoolCtxTable."
+  },
+  "eriRouterInetIpPoolCtxPoolType": {
+    "name": "eriRouterInetIpPoolCtxPoolType",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetPoolType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The type of ip pool. "
+  },
+  "eriRouterInetIpPoolCtxAvailable": {
+    "name": "eriRouterInetIpPoolCtxAvailable",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of IP address prefixes of an IP Pool that are available."
+  },
+  "eriRouterInetIpPoolCtxPoolSize": {
+    "name": "eriRouterInetIpPoolCtxPoolSize",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of IP prefixes configured in all pools of all interfaces in the context valid in the current view. It is the sum of the available plus the unusable prefixes."
+  },
+  "eriRouterInetIpPoolCtxThrshType": {
+    "name": "eriRouterInetIpPoolCtxThrshType",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThresholdType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the value type of all threshold values in this logical row, including eriRouterInetIpPoolCtxHiFallingThrsh, eriRouterInetIpPoolCtxLoFallingThrsh. "
+  },
+  "eriRouterInetIpPoolCtxHiFallingThrsh": {
+    "name": "eriRouterInetIpPoolCtxHiFallingThrsh",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThreshold",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The falling threshold of an IP Pool. When the value of eriRouterInetIpPoolCtxAvailable crosses from (eriRouterInetIpPoolCtxHiFallingThrsh + 1) to eriRouterInetIpPoolCtxHiFallingThrsh in either absolute value or percentage specified by eriRouterInetIpPoolCtxThrshType, a eriRouterInetIpPoolCtxHiFallingThrshMet notification and/or log is generated. The value of this object should never be smaller than the value of eriRouterInetIpPoolCtxLoFallingThrsh. A value of zero means that this falling threshold is not configured. "
+  },
+  "eriRouterInetIpPoolCtxHiFallingNotify": {
+    "name": "eriRouterInetIpPoolCtxHiFallingNotify",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThrshNotify",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies if eriRouterInetIpPoolCtxHiFallingThrshMet and/or log is generated. See the description of eriRouterInetIpPoolCtxHiFallingThrsh for conditions which generate the notification. "
+  },
+  "eriRouterInetIpPoolCtxLoFallingThrsh": {
+    "name": "eriRouterInetIpPoolCtxLoFallingThrsh",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThreshold",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The falling threshold of an IP Pool. When the value of eriRouterInetIpPoolCtxAvailable crosses from (eriRouterInetIpPoolCtxLoFallingThrsh + 1) to eriRouterInetIpPoolCtxLoFallingThrsh (either absolute value or percentage) specified by eriRouterInetIpPoolCtxThrshType, a eriRouterInetIpPoolCtxLoFallingThrshMet notification and/or log is generated. The value of this object should never be greater than the value of eriRouterInetIpPoolCtxHiFallingThrsh. A value of zero means that this falling threshold is not configured. "
+  },
+  "eriRouterInetIpPoolCtxLoFallingNotify": {
+    "name": "eriRouterInetIpPoolCtxLoFallingNotify",
+    "oid": "1.3.6.1.4.1.193.218.2.15.1.4.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterInetIpPoolThrshNotify",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " This object specifies if eriRouterInetIpPoolCtxLoFallingThrshMet and/or log is generated. See the description of eriRouterInetIpPoolCtxLoFallingThrsh for conditions which generate the notification. "
+  },
+  "eriRouterInetIpPoolHiFallingThrshMet": {
+    "name": "eriRouterInetIpPoolHiFallingThrshMet",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefixType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefix"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefixLen"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolInterfaceName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolThrshType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolHiFallingThrsh"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that the falling threshold with the high water mark(eriRouterInetIpPoolHiFallingThrsh) per IP Pool has been reached."
+  },
+  "eriRouterInetIpPoolLoFallingThrshMet": {
+    "name": "eriRouterInetIpPoolLoFallingThrshMet",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefixType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefix"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefixLen"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolInterfaceName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolThrshType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolLoFallingThrsh"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that the falling threshold with the low water mark(eriRouterInetIpPoolLoFallingThrsh) per IP Pool has been reached."
+  },
+  "eriRouterInetIpPoolCtxHiFallingThrshMet": {
+    "name": "eriRouterInetIpPoolCtxHiFallingThrshMet",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxThrshType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxHiFallingThrsh"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that the falling threshold with the high water mark(eriRouterInetIpPoolCtxHiFallingThrsh) per IP Pool has been reached."
+  },
+  "eriRouterInetIpPoolCtxLoFallingThrshMet": {
+    "name": "eriRouterInetIpPoolCtxLoFallingThrshMet",
+    "oid": "1.3.6.1.4.1.193.218.2.15.0.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxThrshType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxLoFallingThrsh"
+      }
+    ],
+    "status": "current",
+    "description": "A notification indicating that the falling threshold with the low water mark(eriRouterInetIpPoolCtxLoFallingThrsh) per IP Pool has been reached."
+  },
+  "eriRouterIpPoolCompliances": {
+    "name": "eriRouterIpPoolCompliances",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1",
+    "class": "objectidentity"
+  },
+  "eriRouterIpPoolGroups": {
+    "name": "eriRouterIpPoolGroups",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2",
+    "class": "objectidentity"
+  },
+  "eriRouterIpPoolGroup": {
+    "name": "eriRouterIpPoolGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInterfaceName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolMask"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolUnusable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInuse"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolThreshold"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolSendTrap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolLogMessage"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThreshold"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextSendTrap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextLogMessage"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects providing interface IP Pool information."
+  },
+  "eriRouterIpPoolNotifyGroup": {
+    "name": "eriRouterIpPoolNotifyGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolThresholdMet"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdMet"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of notifications related to IP Pools."
+  },
+  "eriRouterIpPoolNameGroup": {
+    "name": "eriRouterIpPoolNameGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolName"
+      }
+    ],
+    "status": "current",
+    "description": "An object providing the IP pool name."
+  },
+  "eriRouterIpPoolGroupV2": {
+    "name": "eriRouterIpPoolGroupV2",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInterfaceName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolMask"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolUnusable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInuse"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolThreshold"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolSendTrap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolLogMessage"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThreshold"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextSendTrap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextLogMessage"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects providing interface IP Pool information."
+  },
+  "eriRouterIpPoolRangeGroup": {
+    "name": "eriRouterIpPoolRangeGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolEndAddr"
+      }
+    ],
+    "status": "current",
+    "description": "An object providing an IP pool range information."
+  },
+  "eriRouterIpPoolInterfaceGroup": {
+    "name": "eriRouterIpPoolInterfaceGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInterfaceName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolMask"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolUnusable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolInuse"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolThreshold"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolSendTrap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolLogMessage"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolEndAddr"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects providing interface IP Pool information."
+  },
+  "eriRouterIpPoolContextGroup": {
+    "name": "eriRouterIpPoolContextGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThreshold"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextSendTrap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextLogMessage"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextTotalSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdPercentage"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdSendTrap"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdLogMessage"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects providing context IP Pool information."
+  },
+  "eriRouterIpPoolNotifyGroupV2": {
+    "name": "eriRouterIpPoolNotifyGroupV2",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.8",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolThresholdMet"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdMet"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterIpPoolContextThresholdPercentageMet"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of notifications related to IP Pools."
+  },
+  "eriRouterInetIpPoolGroup": {
+    "name": "eriRouterInetIpPoolGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefixType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefix"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolEndPrefixLen"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolInterfaceName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolUnusable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolInuse"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolThrshType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolHiFallingThrsh"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolHiFallingNotify"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolLoFallingThrsh"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolLoFallingNotify"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxName"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxAvailable"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxPoolSize"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxThrshType"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxHiFallingThrsh"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxHiFallingNotify"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxLoFallingThrsh"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxLoFallingNotify"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects providing context IP Pool information."
+  },
+  "eriRouterInetIpPoolNotifyGroup": {
+    "name": "eriRouterInetIpPoolNotifyGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.2.10",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolHiFallingThrshMet"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolLoFallingThrshMet"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxHiFallingThrshMet"
+      },
+      {
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB",
+        "object": "eriRouterInetIpPoolCtxLoFallingThrshMet"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of notifications related to IP Pools."
+  },
+  "eriRouterIpPoolCompliance": {
+    "name": "eriRouterIpPoolCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterIpPoolGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNotifyGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this IP Pool MIB."
+  },
+  "eriRouterIpPoolNameCompliance": {
+    "name": "eriRouterIpPoolNameCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterIpPoolGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNotifyGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNameGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this IP Pool MIB, including support for named pools."
+  },
+  "eriRouterIpPoolComplianceV2": {
+    "name": "eriRouterIpPoolComplianceV2",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1.3",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterIpPoolGroupV2",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNotifyGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this IP Pool MIB."
+  },
+  "eriRouterIpPoolNameComplianceV2": {
+    "name": "eriRouterIpPoolNameComplianceV2",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1.4",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterIpPoolGroupV2",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNotifyGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNameGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this IP Pool MIB, including support for named pools."
+  },
+  "eriRouterIpPoolRangeCompliance": {
+    "name": "eriRouterIpPoolRangeCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1.5",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterIpPoolGroupV2",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNotifyGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolRangeGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement thhis IP Pool MIB, including support for range ip pools."
+  },
+  "eriRouterIpPoolThresholdPercentCompliance": {
+    "name": "eriRouterIpPoolThresholdPercentCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1.6",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterIpPoolInterfaceGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolContextGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterIpPoolNotifyGroupV2",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this IP Pool MIB, including support for per-context KIP Pool percentage thresholds."
+  },
+  "eriRouterInetIpPoolCompliance": {
+    "name": "eriRouterInetIpPoolCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.15.2.1.7",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterInetIpPoolGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      },
+      {
+        "object": "eriRouterInetIpPoolNotifyGroup",
+        "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement the IP Pool MIB, including support DHCP-PD & ND IPv6 Pool."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ERICSSON-ROUTER-IPPOOL-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:47:35 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ERICSSON-ROUTER-IPPOOL-MIB"
+  }
+}

@@ -1,0 +1,438 @@
+--	Micromuse, Inc.
+--	
+--	Private Enterprise Management Information Base (MIB)
+--	
+--	Rev 1.0		3/17/97  Paul Foster
+--	Rev 1.01	8/14/97  Paul Foster	
+--					Added the superFailMessage & the superOKMessage, and removed the 
+--					traps pertaining to invalid data entry.
+--	Rev 1.1		9/15/97	 Paul Foster Changed from SuperAgent to OmniMon
+--  Rev 1.11	12/15/97 Paul Foster Added notification
+
+OMNI-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE			FROM RFC-1212
+    DisplayString		FROM RFC1213-MIB
+    TRAP-TYPE, NetworkAddress,IpAddress, Counter, Gauge, TimeTicks			
+						FROM RFC1155-SMI;
+
+-- Micromuse OID tree structure
+-- ---------------------
+
+	microMuse 	OBJECT IDENTIFIER ::= { enterprises 1279 }
+	genMessage	OBJECT IDENTIFIER ::= { microMuse 1 }
+	v1Agent		OBJECT IDENTIFIER ::= { microMuse 3 }
+	omniMon		OBJECT IDENTIFIER ::= { v1Agent 1 }
+
+-- summary message sub-tree : 1.3.6.1.4.1.1279.1.2
+-- --------------------------------------------------------------------
+
+	summary OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return a summary message when a trap is sent."
+			::= { genMessage 2 }
+
+-- target name sub-tree : 1.3.6.1.4.1.1279.1.3
+-- --------------------------------------------------------------------
+
+	target OBJECT-TYPE
+			SYNTAX  OCTET STRING
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION	
+				"Used to return the target system when a trap is sent."
+			::= { genMessage 3 }
+
+-- generic agentFailure trap: 1.3.6.1.4.1.1279.1.1
+-- -------------------------------------------------------------------------
+
+	agentFailure TRAP-TYPE
+			ENTERPRISE	genMessage
+			VARIABLES   { summary }
+			DESCRIPTION
+				"The agent has failed."
+			::= 1
+
+-- omniMon sub-tree : 1.3.6.1.4.1.1279.3.1
+-- --------------------------------------------------------------------
+
+	omniGlobalSampleRate OBJECT-TYPE
+			SYNTAX  INTEGER (1..86400)
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"Global sample rate (in seconds). This value will be used if the
+				table entry sample rate is zero. Default value is 60."
+			::= { omniMon 1 }
+
+	omniGlobalTrapRate OBJECT-TYPE
+			SYNTAX	 INTEGER (0..86400)
+			ACCESS	 read-write
+			STATUS	 mandatory
+			DESCRIPTION
+				"Global trapping rate. Zero indicates edge-level trapping. 1 indicates
+				trapping continuously. Any other value means that a trap will be generated
+				every nth sample while the condition persists."			
+			::= { omniMon 2 }
+
+	omniVersion  OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The version number of the agent."
+			::= { omniMon 3 }
+
+	omniNotificationMethod  OBJECT-TYPE
+			SYNTAX	INTEGER
+			{
+				trap(1),
+				modular(2),
+				both(3)
+			}
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The desired method of notification. If trapping is not selected then global and
+				local trap rates have no significance. The modular selection causes traps to be
+				sent reliably to a primary or secondary modular probe. The default method is trap."
+			::= { omniMon 4 }
+
+	omniOsType OBJECT-TYPE
+			SYNTAX	INTEGER 
+			{
+				windowsnt(1),
+				solaris(2),
+				sunos(3)
+			}
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The type of operating system."
+			::= { omniMon 5 }
+
+	omniGlobalStatus OBJECT-TYPE
+			SYNTAX	INTEGER 
+			{
+				valid(1),
+				invalid(2)
+			}
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The overall status of the agent. Valid indicates the
+				agent is operating properly and the data in the MIB is
+				valid. Invalid indicates a major problem with the agent
+				that has prohibited further processing without corrective
+				action by an administrator. Futher details concerning
+				the reason for the failure can be found in the event log (NT) 
+				or error log (UNIX)."
+			::= { omniMon 6 }
+
+-- omniMon table : 1.3.6.1.4.1.1279.3.1.7
+-- --------------------------------------------------------------------
+
+	omniTable OBJECT-TYPE
+			SYNTAX  SEQUENCE OF OmniTableEntry
+			ACCESS  not-accessible
+			STATUS  mandatory
+			DESCRIPTION
+				"Performance monitoring table"
+			::= { omniMon 7 }
+
+	omniTableSize OBJECT-TYPE
+			SYNTAX	INTEGER
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Size of the monitoring table. The default value is 1."
+			::= { omniTable 1 }
+
+	omniTableEntry OBJECT-TYPE
+			SYNTAX	OmniTableEntry
+			ACCESS	not-accessible
+			STATUS	mandatory
+			DESCRIPTION
+				"Critical process entry."
+			INDEX	{ omniIndex }
+			::= { omniTable 2 }
+
+	OmniTableEntry ::= SEQUENCE {
+			omniIndex			INTEGER,
+			omniType			INTEGER,
+			omniStatus			INTEGER,
+			omniLocalSampleRate	INTEGER,
+			omniLocalTrapRate	INTEGER,
+			omniExpression		DisplayString,
+			omniValue			DisplayString,
+			omniCompOp			DisplayString,
+			omniThreshold		DisplayString,
+			omniLag				INTEGER,
+			omniFailMessage		DisplayString,
+			omniOKMessage		DisplayString,
+			omniStartTimeHr		INTEGER,
+			omniStartTimeMin	INTEGER,
+			omniStopTimeHr		INTEGER,
+			omniStopTimeMin		INTEGER,
+			omniOffDays			INTEGER
+	}
+
+	omniIndex OBJECT-TYPE
+			SYNTAX INTEGER (1..2147483647)
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The index for this table."
+			::= { omniTableEntry 1 }
+
+	omniType	OBJECT-TYPE
+			SYNTAX  INTEGER 
+			{
+				active(1),
+				inactive(2),
+				deleted(3),
+				monitor(4)
+			}
+			ACCESS  read-write
+			STATUS  mandatory
+			DESCRIPTION
+				"The type or command word of the entry:
+				active -   Monitoring is enabled and trapping is enabled.
+				inactive - No monitoring or trapping. The default is inactive.
+				deleted - The entry has been deleted.
+				monitor -  Do not generate traps but gather information."
+			::= { omniTableEntry 2 }
+
+	omniStatus OBJECT-TYPE
+			SYNTAX  INTEGER 
+			{
+				valid(1),
+				invalid(2),
+				notresponding(3),
+				badexpression(4),
+				badobject(5),
+				badinstance(6),
+				badcounter(7),
+				badmib(8)
+			}
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+				"Current status of the entry:
+				valid         - the value is under the threshold
+				invalid       - the value exceeds the threshold
+				notresponding - cannot communicate
+				badexpression - the expression cannot be parsed
+				badobject	  - invalid object name 
+				badinstance	  - invalid instance name
+				badcounter	  - invalid counter name
+				badmib        - invalid SNMP MIB"
+			::= { omniTableEntry 3 }
+
+	omniLocalSampleRate OBJECT-TYPE
+			SYNTAX	INTEGER (1..86400)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Local sample rate for this table entry. The default 
+				is 0 which will cause the global sample rate to be used."
+			::= { omniTableEntry 4 }
+
+	omniLocalTrapRate OBJECT-TYPE
+			SYNTAX	INTEGER (-1..86400)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Local trapping rate for this table entry. Zero indicates edge-level 
+				trapping. 1 indicates continuous trapping. Any other value indicates
+				a trap will be generated every nth sample while the condition persists.			
+				The default is -1 which will cause the global trap rate to be used."
+			::= { omniTableEntry 5 }
+
+	omniExpression OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"An expression specifying the value(s) to be monitored. The two initial
+				expressions are 'Perf(objectName,instanceName,counterName[,systemName])' and
+				'Mib(OID,CommmunityString,port[,systemName])'."
+			::= { omniTableEntry 6 }
+
+	omniValue OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-only
+			STATUS	mandatory
+			DESCRIPTION
+				"The current value of the expression." 
+			::= { omniTableEntry 7 }
+
+	omniCompOp OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Comparison operator (<, >, =) to match the value versus the
+				threshold. The default value is '='."
+			::= { omniTableEntry 8 }
+
+	omniThreshold OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Threshold value represented as a character string. The default 
+				value is 0."
+			::= { omniTableEntry 9 }
+
+	omniLag OBJECT-TYPE
+			SYNTAX	INTEGER	(0..100)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Lag value. The default value is 3."
+			::= { omniTableEntry 10 }
+
+	omniFailMessage OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Optional message to be sent when a fail trap is sent. The omniValue, 
+				omniCompOp, and omniThreshold fields will be encoded in the message 
+				by putting '$VALUE', '$COMPARISON', or '$THRESHOLD' in the message 
+				respectively. The default message is the standard message that is 
+				generated by the agent."
+			::= { omniTableEntry 11 }
+
+	omniOKMessage OBJECT-TYPE
+			SYNTAX	DisplayString
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Optional message to be sent when a 'return to normal' trap is sent. The omniValue, 
+				omniCompOp, and omniThreshold fields will be encoded in the message 
+				by putting '$VALUE', '$COMPARISON', or '$THRESHOLD' in the message 
+				respectively. The default message is the standard message that is 
+				generated by the agent."
+			::= { omniTableEntry 12 }
+
+	omniStartTimeHr OBJECT-TYPE 
+			SYNTAX	INTEGER	(0..23)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The hour to start monitoring. The default value is 0.
+				If omniStartTimeHr = omniStartTimeMin = omniStopTimeHr =
+				omniStopTimeMin = 0, then monitoring is continuous."
+			::= { omniTableEntry 13 }
+
+	omniStartTimeMin OBJECT-TYPE 
+			SYNTAX INTEGER (0..59)
+			ACCESS read-write
+			STATUS mandatory
+			DESCRIPTION
+				"The minute to start monitoring. The default value is 0.
+				If omniStartTimeHr = omniStartTimeMin = omniStopTimeHr =
+				omniStopTimeMin = 0, then monitoring is continuous."
+			::= { omniTableEntry 14 }
+
+	omniStopTimeHr OBJECT-TYPE 
+			SYNTAX	INTEGER	(0..23)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The hour to stop monitoring. The default value is 0.
+				If omniStartTimeHr = omniStartTimeMin = omniStopTimeHr =
+				omniStopTimeMin = 0, then monitoring is continuous."
+			::= { omniTableEntry 15 }
+
+	omniStopTimeMin OBJECT-TYPE 
+			SYNTAX	INTEGER	(0..59)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"The minute to stop monitoring. The default value is 0.
+				If omniStartTimeHr = omniStartTimeMin = omniStopTimeHr =
+				omniStopTimeMin = 0, then monitoring is continuous."
+			::= { omniTableEntry 16 }
+
+	omniOffDays OBJECT-TYPE
+			SYNTAX	INTEGER (0..127)
+			ACCESS	read-write
+			STATUS	mandatory
+			DESCRIPTION
+				"Bit string which specifies the day(s) of the week
+				to not monitor.
+				FORMAT: 0MTWRFSS
+				EXAMPLE:00000011 = decimal 3, which excludes Saturday and
+					Sunday."
+			::= { omniTableEntry 17 }
+
+
+-- omniMon Traps
+-- --------------------------------------------------------------------
+
+	omniFail TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target, omniExpression, omniValue, omniCompOp, omniThreshold }
+			DESCRIPTION
+				"The value exceeds the threshold."
+			::= 1
+
+	omniOK TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target,  omniExpression, omniValue, omniCompOp, omniThreshold }
+			DESCRIPTION
+				"The value has returned below the threshold."
+			::= 2
+
+	omniNotResponding TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target,  omniExpression}
+			DESCRIPTION
+				"The data is not available because the remote system is not 
+				responding."
+			::= 3
+
+	omniResponding TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target,  omniExpression }
+			DESCRIPTION
+				"The data is now available because the remote system is 
+				responding again."
+			::= 4
+
+	omniBadObject TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target,  omniExpression }
+			DESCRIPTION
+				"The performance data object name is invalid."
+			::= 5
+
+	omniBadInstance TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target,  omniExpression }
+			DESCRIPTION
+				"The performance data instance name is invalid."
+			::= 6
+
+	omniBadCounter TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target,  omniExpression }
+			DESCRIPTION
+				"The performance data counter name is invalid."
+			::= 7
+
+	omniBadExpression TRAP-TYPE
+			ENTERPRISE	omniMon
+			VARIABLES	{ summary, target,  omniExpression }
+			DESCRIPTION
+				"The expression is invalid."
+			::= 8
+
+END

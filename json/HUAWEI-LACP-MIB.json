@@ -1,0 +1,908 @@
+{
+  "imports": {
+    "class": "imports",
+    "BRIDGE-MIB": [
+      "dot1dStpPortEntry"
+    ],
+    "HUAWEI-DEVICE-MIB": [
+      "hwPortIndex",
+      "hwSlotIndex",
+      "hwFrameIndex"
+    ],
+    "HUAWEI-MIB": [
+      "huaweiMgmt"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-IDENTITY",
+      "Counter32",
+      "Bits",
+      "TimeTicks",
+      "OBJECT-TYPE",
+      "Gauge32",
+      "Integer32",
+      "Unsigned32",
+      "MibIdentifier",
+      "Counter64",
+      "MODULE-IDENTITY",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "IpAddress"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "DisplayString",
+      "MacAddress",
+      "RowStatus",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "hwLacpExt": {
+    "name": "hwLacpExt",
+    "oid": "1.3.6.1.4.1.2011.5.102",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2011-07-29 00:00",
+        "description": "V1.11, modified the description."
+      },
+      {
+        "revision": "2011-07-16 00:00",
+        "description": "V1.10, Added hwAggPreempt."
+      },
+      {
+        "revision": "2010-11-20 00:00",
+        "description": "V1.09, modified the descriptions of this MIB file and leaves."
+      },
+      {
+        "revision": "2010-08-15 00:00",
+        "description": "V1.08, modified the description of leaves. Added hwLacpPortStateForwarding and hwLacpPortStateDiscarding. Added hwAggLinkGroupID in hwLacpAlarmTrapsPrefix."
+      },
+      {
+        "revision": "2010-07-16 00:00",
+        "description": "V1.07, modified the description."
+      },
+      {
+        "revision": "2010-03-16 00:00",
+        "description": "V1.06, modified enumeration format."
+      },
+      {
+        "revision": "2009-12-30 16:00",
+        "description": "V1.05, modified data type definition,Add hwLacpTrapsVbOids in hwLacpExt.Add hwLacpTraps in hwLacpExt. Added hwLacpAlarmTraps in hwLacpTraps."
+      },
+      {
+        "revision": "2009-05-21 00:00",
+        "description": "V1.04, modified the scope of hwAggLinkNumber from (1, 728) to (1, 2147483647), added the description of hwAggLinkName and hwAggLinkNumber, and modify the description of hwAggPortRole, hwAggPortType and hwAggPortStatus."
+      },
+      {
+        "revision": "2006-07-31 00:00",
+        "description": "V1.00, initial version."
+      }
+    ],
+    "lastupdated": "201107290000Z",
+    "organization": "Huawei Technologies Co.,Ltd.",
+    "contactinfo": "Huawei Industrial Base Bantian, Longgang Shenzhen 518129 People's Republic of China Website: http://www.huawei.com Email: support@huawei.com ",
+    "description": "This mib module defines the Link Aggregation Control Protocol (LACP) MIB objects. LACP is the control protocol for implementing the link aggregation in the IEEE 802.3ad standard. By using this protocol, the ports between devices are automatically aggregated, port failure detection at layer 2 is performed, line aggregation protocol control is performed, and protection switchover function is triggered."
+  },
+  "hwLacpMibObjects": {
+    "name": "hwLacpMibObjects",
+    "oid": "1.3.6.1.4.1.2011.5.102.1",
+    "class": "objectidentity"
+  },
+  "hwAggLinkTable": {
+    "name": "hwAggLinkTable",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Describes the configuration of static LAGs. The index of this table is hwAggLinkNumber. "
+  },
+  "hwAggLinkEntry": {
+    "name": "hwAggLinkEntry",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Describes the configuration of static LAGs. The index of this entry is hwAggLinkNumber. "
+  },
+  "hwAggLinkNumber": {
+    "name": "hwAggLinkNumber",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Indicates the index of each LAG. The index uniquely identifies an LAG and equals the ifindex value of the master port. "
+  },
+  "hwAggLinkName": {
+    "name": "hwAggLinkName",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The name of an aggregation group "
+  },
+  "hwAggLinkMode": {
+    "name": "hwAggLinkMode",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "manual": 1,
+          "static": 2,
+          "dynamic": 3
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Type of aggregation. 1 => Manual aggregation, no LACP 2 => Membership specified by user, LACP is used to validate 3 => Completely dynamic aggregation detected by LACP Options: 1. manual(1) -indicates the type of aggregation is manual 2. static(2) -indicates the type of aggregation is static 3. dynamic(3) -indicates the type of aggregation is dynamic "
+  },
+  "hwAggLinkPortList": {
+    "name": "hwAggLinkPortList",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "List of ports in this AL, by bridge port number. If the type is manual or static, you can update this list to your hearts content. If, however, the AL is dynamic, then the system will maintain it. You are NOT permitted to set the value of this to all zeroes. "
+  },
+  "hwAggLinkState": {
+    "name": "hwAggLinkState",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "RowStatus "
+  },
+  "hwAggPortListSelectedPorts": {
+    "name": "hwAggPortListSelectedPorts",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A PortList of physical ports that have selected to this aggregator, but which have not yet attached. "
+  },
+  "hwAggPortListSamePartnerPorts": {
+    "name": "hwAggPortListSamePartnerPorts",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "PortList of physical ports that the same Actor SystemID and partner systemID as this aggregator, but have differing actor and partner keys. "
+  },
+  "hwAggLinkShareType": {
+    "name": "hwAggLinkShareType",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "loadSharing": 1,
+          "nonLoadSharing": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the load sharing type of links. Options: 1. loadSharing(1) -indicates sharing the link load 2. nonLoadSharing(2) -indicates not sharing the link load Currently, the system supports only loadsharing(1). "
+  },
+  "hwAggLinkProtectType": {
+    "name": "hwAggLinkProtectType",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "backupProtect": 1,
+          "nonBackupProtect": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the protection type of links. Options: 1. backupProtect(1) -indicates the backup aggregation protection 2. nonBackupProtect(2) -indicates the non-backup aggregation protection "
+  },
+  "hwAggLinkSelectPorts": {
+    "name": "hwAggLinkSelectPorts",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the number of selected ports in the LAG. "
+  },
+  "hwAggLinkUnselectPorts": {
+    "name": "hwAggLinkUnselectPorts",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the number of unselected ports in the LAG. "
+  },
+  "hwAggLinkMasterPort": {
+    "name": "hwAggLinkMasterPort",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the ifindex of the master port in the LAG. "
+  },
+  "hwAggPortTable": {
+    "name": "hwAggPortTable",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Describes the configuration of the ports in static LAGs. The index of this table is hwAggPortIndex. "
+  },
+  "hwAggPortEntry": {
+    "name": "hwAggPortEntry",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Describes the configuration of the ports in static LAGs. The index of this entry is hwAggPortIndex. "
+  },
+  "hwAggPortIndex": {
+    "name": "hwAggPortIndex",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Indicates the index of the port in an LAG. The index uniquely identifies a port in an LAG and equals the ifIndex value of the port. "
+  },
+  "hwAggPortNotAttachedReason": {
+    "name": "hwAggPortNotAttachedReason",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates why this port is selected for an aggregator but not attached,-- 1 - all active ports are already in-use for this aggregator.-- 2 - all aggregation resources are already being used.-- 3 - the port's configuration is not appropriate. -- 4 - the port's partner is not appropriate "
+  },
+  "hwAggPortLacpState": {
+    "name": "hwAggPortLacpState",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Control lacp enable or disable "
+  },
+  "hwAggPortNotAttachedString": {
+    "name": "hwAggPortNotAttachedString",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates why this port is selected for an aggregator but not attached "
+  },
+  "hwAggPortRole": {
+    "name": "hwAggPortRole",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "selected": 1,
+          "unselected": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the port role. Options: 1. selected(1) -indicates the port is selected 2. unselected(2) -indicates the port is not selected "
+  },
+  "hwAggPortType": {
+    "name": "hwAggPortType",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "mastPort": 1,
+          "nonMastPort": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the port type. Options: 1. mastPort(1) -indicates the port is a primary port 2. nonMastPort(2) -indicates the port is a secondary port "
+  },
+  "hwAggPortStatus": {
+    "name": "hwAggPortStatus",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "fowarding": 1,
+          "block": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the port status. Options: 1. fowarding(1) -indicates packets on the port can be forwarded 2. block(2) -indicates the port is blocked "
+  },
+  "hwAggResourceAllocationValue": {
+    "name": "hwAggResourceAllocationValue",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The priority value calculated to decide which aggregations have first call on the load-sharing aggregation resources in the hardware. DEFVAL { 0 } "
+  },
+  "hwAggShortPeriod": {
+    "name": "hwAggShortPeriod",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates the value of the short period for link aggregation. Range: 0-10 Default: 1 Unit: second When set to 0, the short period is restored to the default value. "
+  },
+  "hwAggLongPeriod": {
+    "name": "hwAggLongPeriod",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 20,
+            "max": 40
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates the value of the long period for link aggregation. Range: 0, 20-40 Default: 30 Unit: second When set to 0, the long period is restored to the default value. "
+  },
+  "hwAggPreempt": {
+    "name": "hwAggPreempt",
+    "oid": "1.3.6.1.4.1.2011.5.102.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enable": 1,
+          "disable": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object enables/disables LACP priority preemption function. Options: 1. enable(1) -indicates the LACP priority preemption function is enable 2. disable(2) -indicates the LACP priority preemption function is disable Default: disable(2) "
+  },
+  "hwLacpMibNotifications": {
+    "name": "hwLacpMibNotifications",
+    "oid": "1.3.6.1.4.1.2011.5.102.2",
+    "class": "objectidentity"
+  },
+  "hwAggSpeedChangedNotification": {
+    "name": "hwAggSpeedChangedNotification",
+    "oid": "1.3.6.1.4.1.2011.5.102.2.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkNumber"
+      }
+    ],
+    "status": "current",
+    "description": "This event will be triggered whenever an aggregation changes its speed. "
+  },
+  "hwAggPortInactiveNotification": {
+    "name": "hwAggPortInactiveNotification",
+    "oid": "1.3.6.1.4.1.2011.5.102.2.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkNumber"
+      }
+    ],
+    "status": "current",
+    "description": "This event will be triggered whenever any port in aggregator is made inactive "
+  },
+  "hwLacpMibConformance": {
+    "name": "hwLacpMibConformance",
+    "oid": "1.3.6.1.4.1.2011.5.102.4",
+    "class": "objectidentity"
+  },
+  "hwLacpMibCompliances": {
+    "name": "hwLacpMibCompliances",
+    "oid": "1.3.6.1.4.1.2011.5.102.4.1",
+    "class": "objectidentity"
+  },
+  "hwLacpMibCompliance": {
+    "name": "hwLacpMibCompliance",
+    "oid": "1.3.6.1.4.1.2011.5.102.4.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "hwLacpMibObjectGroup",
+        "module": "HUAWEI-LACP-MIB"
+      },
+      {
+        "object": "hwLacpMibNotificationGroup",
+        "module": "HUAWEI-LACP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement the Lacp MIB. "
+  },
+  "hwLacpMibGroup": {
+    "name": "hwLacpMibGroup",
+    "oid": "1.3.6.1.4.1.2011.5.102.4.2",
+    "class": "objectidentity"
+  },
+  "hwLacpMibObjectGroup": {
+    "name": "hwLacpMibObjectGroup",
+    "oid": "1.3.6.1.4.1.2011.5.102.4.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkName"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkMode"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkPortList"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkState"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortListSelectedPorts"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortListSamePartnerPorts"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkShareType"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkProtectType"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkSelectPorts"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkUnselectPorts"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkMasterPort"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkUndoActorSystemPriority"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortNotAttachedReason"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortLacpState"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortNotAttachedString"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortRole"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortType"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortStatus"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortUndoActorPortPriority"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggResourceAllocationValue"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggShortPeriod"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLongPeriod"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects which are used to represent Lacp objects. "
+  },
+  "hwLacpMibNotificationGroup": {
+    "name": "hwLacpMibNotificationGroup",
+    "oid": "1.3.6.1.4.1.2011.5.102.4.2.2",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggSpeedChangedNotification"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggPortInactiveNotification"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects which are used to represent notifications. "
+  },
+  "hwLacpTrapsVbOids": {
+    "name": "hwLacpTrapsVbOids",
+    "oid": "1.3.6.1.4.1.2011.5.102.5",
+    "class": "objectidentity"
+  },
+  "hwOldUpLinkMACAddress": {
+    "name": "hwOldUpLinkMACAddress",
+    "oid": "1.3.6.1.4.1.2011.5.102.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Indicates the old up link mac-address. "
+  },
+  "hwNewUpLinkMACAddress": {
+    "name": "hwNewUpLinkMACAddress",
+    "oid": "1.3.6.1.4.1.2011.5.102.5.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Indicates the new up link mac-address. "
+  },
+  "hwAggLinkGroupID": {
+    "name": "hwAggLinkGroupID",
+    "oid": "1.3.6.1.4.1.2011.5.102.5.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Indicates the aggregation link group ID. "
+  },
+  "hwLacpTraps": {
+    "name": "hwLacpTraps",
+    "oid": "1.3.6.1.4.1.2011.5.102.6",
+    "class": "objectidentity"
+  },
+  "hwLacpAlarmTraps": {
+    "name": "hwLacpAlarmTraps",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.1",
+    "class": "objectidentity"
+  },
+  "hwLacpAlarmTrapsPrefix": {
+    "name": "hwLacpAlarmTrapsPrefix",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.1.0",
+    "class": "objectidentity"
+  },
+  "hwLacpCommonTraps": {
+    "name": "hwLacpCommonTraps",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.2",
+    "class": "objectidentity"
+  },
+  "hwLacpCommonTrapsPrefix": {
+    "name": "hwLacpCommonTrapsPrefix",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.2.0",
+    "class": "objectidentity"
+  },
+  "hwLacpPortLinkFaultTrap": {
+    "name": "hwLacpPortLinkFaultTrap",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.1.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwFrameIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwSlotIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwPortIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The SNMP trap that is generated when LACP link is faulty. "
+  },
+  "hwLacpPortLinkRecoverTrap": {
+    "name": "hwLacpPortLinkRecoverTrap",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.1.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwFrameIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwSlotIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwPortIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The SNMP trap that is generated when the port receives the LACP packet normally. "
+  },
+  "hwLacpGroupMacChangeTrap": {
+    "name": "hwLacpGroupMacChangeTrap",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.1.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwOldUpLinkMACAddress"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwNewUpLinkMACAddress"
+      },
+      {
+        "module": "HUAWEI-LACP-MIB",
+        "object": "hwAggLinkGroupID"
+      }
+    ],
+    "status": "current",
+    "description": "The SNMP trap that is generated when LACP up link switch over. "
+  },
+  "hwLacpPortStateForwarding": {
+    "name": "hwLacpPortStateForwarding",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.2.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwFrameIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwSlotIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwPortIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The SNMP trap that is generated when a port turns into forwarding state form other state. "
+  },
+  "hwLacpPortStateDiscarding": {
+    "name": "hwLacpPortStateDiscarding",
+    "oid": "1.3.6.1.4.1.2011.5.102.6.2.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwFrameIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwSlotIndex"
+      },
+      {
+        "module": "HUAWEI-DEVICE-MIB",
+        "object": "hwPortIndex"
+      }
+    ],
+    "status": "current",
+    "description": "The SNMP trap that is generated when a port turns into discarding state form forwarding state. "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/HUAWEI-LACP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:48:27 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "HUAWEI-LACP-MIB"
+  }
+}

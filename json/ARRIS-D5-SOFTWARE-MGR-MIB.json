@@ -1,0 +1,716 @@
+{
+  "imports": {
+    "class": "imports",
+    "ARRIS-MIB": [
+      "arrisD5UEQam"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "Integer32",
+      "MibIdentifier",
+      "enterprises",
+      "iso",
+      "Gauge32",
+      "Unsigned32",
+      "TimeTicks",
+      "Counter64",
+      "Bits",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "DateAndTime",
+      "TruthValue"
+    ]
+  },
+  "softwareManagerMIB": {
+    "name": "softwareManagerMIB",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10",
+    "class": "moduleidentity",
+    "lastupdated": "200804100000Z",
+    "organization": "Arris Group",
+    "contactinfo": " Software Development Postal: ARRIS Group 3871 Lakefield Drive Suwanee, GA 30024 USA Tel: 800-469-6569 Fax: 678-473-8770",
+    "description": "This MIB manages the software on the ARRIS EdgeQAM products"
+  },
+  "smControlGroup": {
+    "name": "smControlGroup",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.1",
+    "class": "objectidentity"
+  },
+  "smReloadAction": {
+    "name": "smReloadAction",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nil": 1,
+          "reloadConfigSave": 2,
+          "reloadNoConfigSave": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Force a reload of the ARRIS product. The command is applied to both WANs when equipped. The load marked as boot in the Software Table will be loaded. nil(1) - Do nothing reloadConfigSave(2) - Saves the current configuration before reloading reloadNoConfigSave(3) - Reloads without saving configuration"
+  },
+  "smConfigFileAction": {
+    "name": "smConfigFileAction",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nil": 1,
+          "saveRunningConfig": 2,
+          "eraseStartupConfig": 3,
+          "uploadStartupConfigToServer": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Perform various actions on the configuration file, as directed below. nil(1) - Do nothing saveRunningConfig(2) - Copies the running configuration to the startup configuration. eraseStartupConfig(3) - Erases the startup configuration. You may want to do this before a reboot (without config file save) to get a default configured system. uploadStartupConfigToServer(4) - Using the server information in the configFileTransfer group, this will upload the current startup-configuration to the default directory on the server. If you need upload directory control, use the configFileTransfer"
+  },
+  "smSoftwareListGroup": {
+    "name": "smSoftwareListGroup",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2",
+    "class": "objectidentity"
+  },
+  "smSoftwareListTable": {
+    "name": "smSoftwareListTable",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of images installed on the flash disk"
+  },
+  "smSoftwareListEntry": {
+    "name": "smSoftwareListEntry",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-D5-SOFTWARE-MGR-MIB",
+        "object": "smSoftwareEntryIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "."
+  },
+  "smSoftwareEntryIndex": {
+    "name": "smSoftwareEntryIndex",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 30
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "image index"
+  },
+  "smSoftwareEntryFilename": {
+    "name": "smSoftwareEntryFilename",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Name of the image file"
+  },
+  "smSoftwareEntryVersion": {
+    "name": "smSoftwareEntryVersion",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "image version"
+  },
+  "smSoftwareEntryDate": {
+    "name": "smSoftwareEntryDate",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Date image created"
+  },
+  "smSoftwareEntryState": {
+    "name": "smSoftwareEntryState",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "valid": 1,
+          "corrupt": 2,
+          "unknown": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "State of the load file. valid means the software load has been properly downloaded and can be loaded onto the system. corrupt means there was a problem tranferring the load and it cannot be loaded onto the system. unknown means that the software load has not yet been validated by the system, and may or may not be valid."
+  },
+  "smSoftwareEntrySize": {
+    "name": "smSoftwareEntrySize",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "file size"
+  },
+  "smSoftwareEntryStatus": {
+    "name": "smSoftwareEntryStatus",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "running-boot": 1,
+          "running": 2,
+          "boot": 3,
+          "inactive": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Status of software may be running-boot, running, boot or inactive running-boot(1) indicates that the load is running AND is the boot load. running(2) means the software is currently running on the box, but is not the boot load. boot(3) means that the selected load will boot on next restart. Confirm by checking ksSMBootFileName. inactive(4) indicates the load is neither running nor set to boot."
+  },
+  "smSoftwareEntryAction": {
+    "name": "smSoftwareEntryAction",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nil": 1,
+          "makeBoot": 2,
+          "upload": 3,
+          "delete": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Perform an action on this software load entry. To make the current software load the boot load, select makeBoot(2). When set to upload(3), this software load will be sent to the server using the settings specified in the softwareDownloadGroup MIB objects. This method cannot specify an upload path on the server for the software load. The load will appear in the default directory on the server for the specified transfer protocol. For control over the upload path, please use the smSoftwareDownloadGroup directly. Selecting delete(4) will delete the load from the system."
+  },
+  "smConfigFileListGroup": {
+    "name": "smConfigFileListGroup",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.3",
+    "class": "objectidentity"
+  },
+  "smConfigFileListTable": {
+    "name": "smConfigFileListTable",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of configuration files or scripts on flash disk"
+  },
+  "smConfigFileListEntry": {
+    "name": "smConfigFileListEntry",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARRIS-D5-SOFTWARE-MGR-MIB",
+        "object": "smConfigFileEntryIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "."
+  },
+  "smConfigFileEntryIndex": {
+    "name": "smConfigFileEntryIndex",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 30
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "image index"
+  },
+  "smConfigFileEntryName": {
+    "name": "smConfigFileEntryName",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Name of the file"
+  },
+  "smConfigFileTimestamp": {
+    "name": "smConfigFileTimestamp",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Timestamp of the configuration file"
+  },
+  "smConfigFileEntryAction": {
+    "name": "smConfigFileEntryAction",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nil": 1,
+          "makeStartupConfig": 2,
+          "copyIntoRunningConfig": 3,
+          "upload": 4,
+          "delete": 5
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Actions to perform on the current configuration file. To make this configuration file the startup configuration file, select makeStartupConfig(2). Be sure not to overwrite the new startup-configuration when reloading the system. To copy the current configuration file into the running configuration, select copyIntoRunningConfig(3). Don't forget to save the new running configuration if necessary. When set to upload(4), this software load will be sent to the server using the settings specified in the smConfigFileDownloadGroup MIB objects. This method cannot specify an upload path on the server for the software load. The load will appear in the default directory on the server for the specified transfer protocol. For control over the upload path, please use the smConfigFileDownloadGroup directly. Finally, to delete the configuration file, select delete(5)."
+  },
+  "smSoftwareTransferGroup": {
+    "name": "smSoftwareTransferGroup",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4",
+    "class": "objectidentity"
+  },
+  "smSoftwareTransferDevice": {
+    "name": "smSoftwareTransferDevice",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nfs": 1,
+          "tftp": 2,
+          "ftp": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specify protocol to use for software load transfers"
+  },
+  "smSoftwareTransferHostname": {
+    "name": "smSoftwareTransferHostname",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Server ip address or hostname"
+  },
+  "smSoftwareTransferUsername": {
+    "name": "smSoftwareTransferUsername",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Server user name"
+  },
+  "smSoftwareTransferPassword": {
+    "name": "smSoftwareTransferPassword",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Server user password"
+  },
+  "smSoftwareTransferPath": {
+    "name": "smSoftwareTransferPath",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Path and filename for image file on tftp, ftp or nfs"
+  },
+  "smSoftwareTransferControl": {
+    "name": "smSoftwareTransferControl",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "abort": 1,
+          "download": 2,
+          "upload": 3,
+          "downloadAsBoot": 4
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Control the transfer as follows: abort(1) - Will abort the transfer in progress. download(2) - Starts a transfer to the ARRIS device upload(3) - Transfer specified load to the server downloadAsBoot(4) will download the software image to the ARRIS device and make it the next boot image"
+  },
+  "smSoftwareTransferStatus": {
+    "name": "smSoftwareTransferStatus",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.4.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "inprogress": 2,
+          "finished": 3,
+          "filenameError": 4,
+          "hostnameError": 5,
+          "tooManyImages": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indication of the last transfer attempt as follows: none(1) indicates no images have been transferred since the system rebooted. inprogress(2) - Indicates there is an active transfer occurring. finished(3) - Indicates the transfer is complete. filenameError(4) - Indicates there was a problem with either the path and/or filename, or the wrong server was specified and the file was not found. hostnameError(5) - Indicates a problem where the hostname could not be resolved, or an incorrectly formatted IP address was specified."
+  },
+  "smConfigFileTransferGroup": {
+    "name": "smConfigFileTransferGroup",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5",
+    "class": "objectidentity"
+  },
+  "smConfigFileTransferDevice": {
+    "name": "smConfigFileTransferDevice",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "nfs": 1,
+          "tftp": 2,
+          "ftp": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specify protocol to use for file transfers"
+  },
+  "smConfigFileTransferHostname": {
+    "name": "smConfigFileTransferHostname",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Server ip address or hostname"
+  },
+  "smConfigFileTransferUsername": {
+    "name": "smConfigFileTransferUsername",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Server user name"
+  },
+  "smConfigFileTransferPassword": {
+    "name": "smConfigFileTransferPassword",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Server user password"
+  },
+  "smConfigFileTransferPath": {
+    "name": "smConfigFileTransferPath",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Path and filename of the configuration file on the source device."
+  },
+  "smConfigFileTransferTargetPath": {
+    "name": "smConfigFileTransferTargetPath",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Path and filename of the configuration file on the target device."
+  },
+  "smConfigFileTransferControl": {
+    "name": "smConfigFileTransferControl",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "abort": 1,
+          "download": 2,
+          "upload": 3,
+          "downloadAsStartup": 4,
+          "downloadIntoRunning": 5
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Control the transfer as follows: abort(1) - Will abort the transfer in progress. download(2) - Starts a transfer to the ARRIS device upload(3) - Transfer specified file to the server downloadAsStartup(4) Transfer the config file and make it the startup configuration"
+  },
+  "smConfigFileTransferStatus": {
+    "name": "smConfigFileTransferStatus",
+    "oid": "1.3.6.1.4.1.4115.1.8.1.10.5.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "inprogress": 2,
+          "finished": 3,
+          "filenameError": 4,
+          "hostnameError": 5,
+          "tooManyFiles": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indication of the last transfer attempt as follows: none(1) indicates no files have been transferred since the system rebooted. inprogress(2) - Indicates there is an active transfer occurring. finished(3) - Indicates the transfer is complete. filenameError(4) - Indicates there was a problem with either the path and/or filename, or the wrong server was specified and the file was not found. hostnameError(5) - Indicates a problem where the hostname could not be resolved, or an incorrectly formatted IP address was specified."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ARRIS-D5-SOFTWARE-MGR-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:48:34 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ARRIS-D5-SOFTWARE-MGR-MIB"
+  }
+}

@@ -1,0 +1,935 @@
+{
+  "imports": {
+    "class": "imports",
+    "CIE1000-TC": [
+      "CIE1000DisplayString",
+      "CIE1000Unsigned16",
+      "CIE1000InterfaceIndex"
+    ],
+    "CISCO-IE1000-MIB": [
+      "cie1000SwitchMgmt"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "Counter32",
+      "Unsigned32",
+      "MODULE-IDENTITY",
+      "OBJECT-TYPE",
+      "Integer32",
+      "Bits",
+      "NOTIFICATION-TYPE",
+      "iso",
+      "MibIdentifier",
+      "Counter64",
+      "IpAddress",
+      "OBJECT-IDENTITY",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "MacAddress"
+    ]
+  },
+  "cie1000PsecMib": {
+    "name": "cie1000PsecMib",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2016-06-02 00:00",
+        "description": "Support SNMP trap"
+      },
+      {
+        "revision": "2014-12-10 00:00",
+        "description": "Remove user of DHCP snooping"
+      },
+      {
+        "revision": "2014-12-08 00:00",
+        "description": "Add users in status port table"
+      },
+      {
+        "revision": "2014-10-13 00:00",
+        "description": "Initial version"
+      }
+    ],
+    "lastupdated": "201606020000Z",
+    "organization": "Cisco Systems, Inc.",
+    "contactinfo": "Cisco Systems Customer Service Postal: 170 West Tasman Drive San Jose, CA 95134 USA Tel: +1 800 553-NETS E-mail: cs-snmp@cisco.com",
+    "description": "This is a private version of the Port Security MIB"
+  },
+  "CIE1000PsecLimitActionType": {
+    "name": "CIE1000PsecLimitActionType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "trap": 1,
+          "shutdown": 2,
+          "trapShutdown": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "This enumeration defines the Action type in psec function."
+  },
+  "CIE1000PsecStateType": {
+    "name": "CIE1000PsecStateType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "forwarding": 0,
+          "blocked": 1
+        }
+      }
+    },
+    "status": "current",
+    "description": "This enumeration defines the state of Psec config."
+  },
+  "cie1000PsecMibObjects": {
+    "name": "cie1000PsecMibObjects",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1",
+    "class": "objectidentity"
+  },
+  "cie1000PsecConfig": {
+    "name": "cie1000PsecConfig",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2",
+    "class": "objectidentity"
+  },
+  "cie1000PsecConfigGlobals": {
+    "name": "cie1000PsecConfigGlobals",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.1",
+    "class": "objectidentity"
+  },
+  "cie1000PsecConfigGlobalsEnabled": {
+    "name": "cie1000PsecConfigGlobalsEnabled",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Globally enable/disable aging of secured entries. This doesn't affect aging of addresses secured by other modules."
+  },
+  "cie1000PsecConfigGlobalsEnableAging": {
+    "name": "cie1000PsecConfigGlobalsEnableAging",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If aging is globally enabled, this is the aging period in seconds. Valid range is [10; 10000000] seconds(max is around 115 days)."
+  },
+  "cie1000PsecConfigGlobalsAgingPeriodSecs": {
+    "name": "cie1000PsecConfigGlobalsAgingPeriodSecs",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If aging is globally enabled, this is the aging period in seconds. Valid range is [10; 10000000] seconds(max is around 115 days)."
+  },
+  "cie1000PsecConfigPortTable": {
+    "name": "cie1000PsecConfigPortTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of port configuration per session"
+  },
+  "cie1000PsecConfigPortEntry": {
+    "name": "cie1000PsecConfigPortEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigPortIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each session has a set of parameters"
+  },
+  "cie1000PsecConfigPortIfIndex": {
+    "name": "cie1000PsecConfigPortIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number of the physical port."
+  },
+  "cie1000PsecConfigPortEnabled": {
+    "name": "cie1000PsecConfigPortEnabled",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether Port Security Limit Control is enabled for this port."
+  },
+  "cie1000PsecConfigPortLimit": {
+    "name": "cie1000PsecConfigPortLimit",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Maximum number of MAC addresses allowed on this port.Valid values = [PSEC_LIMIT_MIN; PSEC_LIMIT_MAX]."
+  },
+  "cie1000PsecConfigPortAction": {
+    "name": "cie1000PsecConfigPortAction",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000PsecLimitActionType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Action to take if number of MAC addresses exceeds the limit. NONE(0) Do nothing, except disallowing further clients. TRAP(1) Send an SNMP trap notification. SHUTDOWN(2) Shut-down the port. TRAP_AND_SHUTDOWN(3) Send an SNMP trap notification and shut-down the port."
+  },
+  "cie1000PsecStatus": {
+    "name": "cie1000PsecStatus",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3",
+    "class": "objectidentity"
+  },
+  "cie1000PsecStatusPortTable": {
+    "name": "cie1000PsecStatusPortTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of port configuration per session"
+  },
+  "cie1000PsecStatusPortEntry": {
+    "name": "cie1000PsecStatusPortEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each session has a set of parameters"
+  },
+  "cie1000PsecStatusPortIfIndex": {
+    "name": "cie1000PsecStatusPortIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number of the physical port."
+  },
+  "cie1000PsecStatusPortUsers": {
+    "name": "cie1000PsecStatusPortUsers",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bit masks to indicate what users currently use port security on this port. Where bit 0 - port security limit, bit 1 - 802.1x, bit 2 - voice VLAN."
+  },
+  "cie1000PsecStatusPortLimitReached": {
+    "name": "cie1000PsecStatusPortLimitReached",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TRUE if the limit is reached on the port, FALSE otherwise."
+  },
+  "cie1000PsecStatusPortShutdown": {
+    "name": "cie1000PsecStatusPortShutdown",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TRUE if the port is shut down, FALSE otherwise."
+  },
+  "cie1000PsecStatusPortMacCount": {
+    "name": "cie1000PsecStatusPortMacCount",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of MAC addresses currently assigned to this port. The number does NOT include the number of entries that are held due to a H/W failure or S/W failure."
+  },
+  "cie1000PsecStatusPortTrapsTable": {
+    "name": "cie1000PsecStatusPortTrapsTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of port configuration per session"
+  },
+  "cie1000PsecStatusPortTrapsEntry": {
+    "name": "cie1000PsecStatusPortTrapsEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each session has a set of parameters"
+  },
+  "cie1000PsecStatusPortTrapsIfIndex": {
+    "name": "cie1000PsecStatusPortTrapsIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number of the physical port."
+  },
+  "cie1000PsecStatusPortTrapsUsers": {
+    "name": "cie1000PsecStatusPortTrapsUsers",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bit masks to indicate what users currently use port security on this port. Where bit 0 - port security limit, bit 1 - 802.1x, bit 2 - voice VLAN."
+  },
+  "cie1000PsecStatusPortTrapsLimitReached": {
+    "name": "cie1000PsecStatusPortTrapsLimitReached",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TRUE if the limit is reached on the port, FALSE otherwise."
+  },
+  "cie1000PsecStatusPortTrapsShutdown": {
+    "name": "cie1000PsecStatusPortTrapsShutdown",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TRUE if the port is shut down, FALSE otherwise."
+  },
+  "cie1000PsecStatusPortTrapsMacCount": {
+    "name": "cie1000PsecStatusPortTrapsMacCount",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.3.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of MAC addresses currently assigned to this port. The number does NOT include the number of entries that are held due to a H/W failure or S/W failure."
+  },
+  "cie1000PsecControl": {
+    "name": "cie1000PsecControl",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.4",
+    "class": "objectidentity"
+  },
+  "cie1000PsecControlPortReopenTable": {
+    "name": "cie1000PsecControlPortReopenTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.4.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table to re-open port and move it to ready state, if it was being disabled after limit was reached."
+  },
+  "cie1000PsecControlPortReopenEntry": {
+    "name": "cie1000PsecControlPortReopenEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.4.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecControlPortReopenIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each session has a set of parameters"
+  },
+  "cie1000PsecControlPortReopenIfIndex": {
+    "name": "cie1000PsecControlPortReopenIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.4.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number of the physical port."
+  },
+  "cie1000PsecControlPortReopenPortReOpen": {
+    "name": "cie1000PsecControlPortReopenPortReOpen",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.4.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set to true to reopen after it is shutdown"
+  },
+  "cie1000PsecStatistics": {
+    "name": "cie1000PsecStatistics",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5",
+    "class": "objectidentity"
+  },
+  "cie1000PsecStatisticsPortTable": {
+    "name": "cie1000PsecStatisticsPortTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of port statistics per session"
+  },
+  "cie1000PsecStatisticsPortEntry": {
+    "name": "cie1000PsecStatisticsPortEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatisticsPortIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each session has a set of parameters"
+  },
+  "cie1000PsecStatisticsPortIfIndex": {
+    "name": "cie1000PsecStatisticsPortIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number of the physical port."
+  },
+  "cie1000PsecStatisticsPortAgeOrHold": {
+    "name": "cie1000PsecStatisticsPortAgeOrHold",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 14
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Down-counter used in block and ageing process."
+  },
+  "cie1000PsecStatisticsPortCreationTime": {
+    "name": "cie1000PsecStatisticsPortCreationTime",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 24
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Time when this entry was orignally added."
+  },
+  "cie1000PsecStatisticsPortState": {
+    "name": "cie1000PsecStatisticsPortState",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000PsecStateType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current State of a entry, expected state can be either FORWARDING or BLOCKED."
+  },
+  "cie1000PsecStatisticsPortMacId": {
+    "name": "cie1000PsecStatisticsPortMacId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MAC address that this is all about."
+  },
+  "cie1000PsecStatisticsPortVlanId": {
+    "name": "cie1000PsecStatisticsPortVlanId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.5.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The VID that this is all about."
+  },
+  "cie1000PsecTrap": {
+    "name": "cie1000PsecTrap",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.6",
+    "class": "objectidentity"
+  },
+  "cie1000PsecTrapLimitExceeded": {
+    "name": "cie1000PsecTrapLimitExceeded",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.6.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsIfIndex"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsUsers"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsLimitReached"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsShutdown"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsMacCount"
+      }
+    ],
+    "status": "current",
+    "description": "This trap signals that a row has been added. The index(es) and value(s) of the row is included in the trap."
+  },
+  "cie1000PsecTrapMod": {
+    "name": "cie1000PsecTrapMod",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.6.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsIfIndex"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsUsers"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsLimitReached"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsShutdown"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsMacCount"
+      }
+    ],
+    "status": "current",
+    "description": "This trap signals that one or more of the objects included in the trap has been updated."
+  },
+  "cie1000PsecTrapLimitRecovered": {
+    "name": "cie1000PsecTrapLimitRecovered",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.1.6.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "This trap signals that a row has been deleted. The index(es) of the row is included in the trap."
+  },
+  "cie1000PsecMibConformance": {
+    "name": "cie1000PsecMibConformance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2",
+    "class": "objectidentity"
+  },
+  "cie1000PsecMibCompliances": {
+    "name": "cie1000PsecMibCompliances",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.1",
+    "class": "objectidentity"
+  },
+  "cie1000PsecMibGroups": {
+    "name": "cie1000PsecMibGroups",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2",
+    "class": "objectidentity"
+  },
+  "cie1000PsecConfigGlobalsInfoGroup": {
+    "name": "cie1000PsecConfigGlobalsInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigGlobalsEnabled"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigGlobalsEnableAging"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigGlobalsAgingPeriodSecs"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000PsecConfigPortTableInfoGroup": {
+    "name": "cie1000PsecConfigPortTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigPortIfIndex"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigPortEnabled"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigPortLimit"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecConfigPortAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000PsecStatusPortTableInfoGroup": {
+    "name": "cie1000PsecStatusPortTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortIfIndex"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortUsers"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortLimitReached"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortShutdown"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortMacCount"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000PsecStatusPortTrapsInfoGroup": {
+    "name": "cie1000PsecStatusPortTrapsInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsIfIndex"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsUsers"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsLimitReached"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsShutdown"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatusPortTrapsMacCount"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000PsecControlPortReopenTableInfoGroup": {
+    "name": "cie1000PsecControlPortReopenTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecControlPortReopenIfIndex"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecControlPortReopenPortReOpen"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000PsecStatisticsPortTableInfoGroup": {
+    "name": "cie1000PsecStatisticsPortTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatisticsPortIfIndex"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatisticsPortAgeOrHold"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatisticsPortCreationTime"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatisticsPortState"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatisticsPortMacId"
+      },
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecStatisticsPortVlanId"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000PsecTrapLimitExceededInfoGroup": {
+    "name": "cie1000PsecTrapLimitExceededInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.7",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecTrapLimitExceeded"
+      }
+    ],
+    "status": "current",
+    "description": "Information group containing a trap."
+  },
+  "cie1000PsecTrapModInfoGroup": {
+    "name": "cie1000PsecTrapModInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.8",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecTrapMod"
+      }
+    ],
+    "status": "current",
+    "description": "Information group containing a trap."
+  },
+  "cie1000PsecTrapLimitRecoveredInfoGroup": {
+    "name": "cie1000PsecTrapLimitRecoveredInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.2.9",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "CIE1000-PSEC-MIB",
+        "object": "cie1000PsecTrapLimitRecovered"
+      }
+    ],
+    "status": "current",
+    "description": "Information group containing a trap."
+  },
+  "cie1000PsecMibCompliance": {
+    "name": "cie1000PsecMibCompliance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.66.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cie1000PsecConfigGlobalsInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecConfigPortTableInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecStatusPortTableInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecStatusPortTrapsInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecControlPortReopenTableInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecStatisticsPortTableInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecTrapLimitExceededInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecTrapModInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      },
+      {
+        "object": "cie1000PsecTrapLimitRecoveredInfoGroup",
+        "module": "CIE1000-PSEC-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for the implementation."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CIE1000-PSEC-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:25:38 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CIE1000-PSEC-MIB"
+  }
+}

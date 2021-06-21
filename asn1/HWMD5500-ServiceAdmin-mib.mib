@@ -1,0 +1,2574 @@
+--
+-- --------------------------------------------------------------
+-- 
+-- 文件描述 ：  华为公司 MD5500 V100R001 版 HWMD5500PortAdmin模块 
+-- 作    者 ：  zengguibiao24853
+-- 创建时间 ：   2000/12/13 
+-- 修改时间 ：   2000/12/20
+-- 修改作者 ：   zengguibiao24853 
+-- 版权所有 ：(C) 1988－2000，深圳华为技术有限公司?
+
+--
+-- ------------------------------------------------------------------
+-- 
+ 
+   
+  
+   
+   HWMD5500-ServiceAdmin-mib  DEFINITIONS ::= BEGIN
+   
+   -- 引入和定义的变量
+   
+   
+   
+   IMPORTS
+          
+          MODULE-IDENTITY,OBJECT-TYPE,Counter32
+                 FROM SNMPv2-SMI            
+          RowStatus, DisplayString, TruthValue,TEXTUAL-CONVENTION 
+	      	FROM SNMPv2-TC              
+                    
+          hwMd5500Mib
+	      FROM HUAWEI-MIB;
+         
+      
+     hwMD5500ServiceAdminMIB   MODULE-IDENTITY
+        LAST-UPDATED      "0006141450Z"
+        ORGANIZATION      "HUAWEI MUSA MD5500 Working Group"
+        CONTACT-INFO
+           "        MUSA  Dep.
+           Postal:  Shenzhen
+                    KeFa Road,ShenNan guarden
+                    China
+           Tel:     +1 086 0755 6594131
+           Fax:     +1 086 0755 6544552"
+         DESCRIPTION
+                 "This is the MIB Module for huawei musa md5500  
+                 private objects for service information."
+      ::= {  hwMd5500Mib 2 }
+         
+  
+       AtmOamConfigType ::= TEXTUAL-CONVENTION
+            STATUS      current
+            DESCRIPTION
+                    "The config type used on OAM CC/PM configuration."
+            SYNTAX      INTEGER {
+                                autoConfig(1),
+                                manualConfig(2),
+                                other(3)
+                                }
+     
+  
+    --------------------------------------------
+    -- hwMD5500AtmOam节点
+    --------------------------------------------
+    hwMD5500AtmOam    OBJECT IDENTIFIER ::= { hwMD5500ServiceAdminMIB 2 }
+    --------------------------------------------
+    -- apc捕获oam错误信元表
+    --------------------------------------------
+    hwAtmOamCelCapTable           OBJECT-TYPE
+        SYNTAX                    SEQUENCE OF HwAtmOamCelCapEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+        		          apc捕获oam错误信元表" 
+    ::={ hwMD5500AtmOam 1}
+    
+    hwAtmOamCelCapEntry           OBJECT-TYPE
+        SYNTAX                    HwAtmOamCelCapEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+        			  apc捕获oam错误信元实体"
+        INDEX                     {
+                                      hwAtmOamFrame,
+                                      hwAtmOamSlot,
+                                      hwAtmOamChipNo
+                                  }
+    
+    ::= { hwAtmOamCelCapTable  1 }
+    
+    HwAtmOamCelCapEntry       ::= SEQUENCE
+        {
+            hwAtmOamFrame                        INTEGER,
+            hwAtmOamSlot                         INTEGER,
+            hwAtmOamChipNo                       INTEGER,
+            hwAtmOamCelCapCrcErrCell             Counter32,
+            hwAtmOamCelCapUndefineCell           Counter32,
+            hwAtmOamCelCapUnsuportCell           Counter32
+        }
+
+    hwAtmOamFrame                OBJECT-TYPE
+        SYNTAX                   INTEGER(0..63)
+        MAX-ACCESS               not-accessible
+        STATUS                   current
+        DESCRIPTION              "
+        			 框号
+        			 "
+    ::= { hwAtmOamCelCapEntry  1 }
+      
+    hwAtmOamSlot                 OBJECT-TYPE
+        SYNTAX                   INTEGER(0..63)
+        MAX-ACCESS               not-accessible
+        STATUS                   current
+        DESCRIPTION              "
+        			 槽号
+        			 "
+    ::= { hwAtmOamCelCapEntry  2 }
+          
+    hwAtmOamChipNo               OBJECT-TYPE
+        SYNTAX                   INTEGER(0..3)
+        MAX-ACCESS               not-accessible
+        STATUS                   current
+        DESCRIPTION              "
+        			 APC芯片号, md5500固定为0
+        			 "
+    ::= { hwAtmOamCelCapEntry  3 }
+          
+    hwAtmOamCelCapCrcErrCell     OBJECT-TYPE
+        SYNTAX                   Counter32
+        MAX-ACCESS               read-only
+        STATUS                   current
+        DESCRIPTION              "
+        			 有crc错误的信元数目
+        			 "
+    ::= { hwAtmOamCelCapEntry  4 }     
+     
+    hwAtmOamCelCapUndefineCell   OBJECT-TYPE
+        SYNTAX                   Counter32
+        MAX-ACCESS               read-only
+        STATUS                   current
+        DESCRIPTION              "
+        			 未定义的信元数目
+        			 "
+    ::= { hwAtmOamCelCapEntry  5 }      
+    
+    hwAtmOamCelCapUnsuportCell   OBJECT-TYPE
+        SYNTAX                   Counter32
+        MAX-ACCESS               read-only
+        STATUS                   current
+        DESCRIPTION              "
+        			 不支持的信元的数目
+        			 "
+    ::= { hwAtmOamCelCapEntry  6 }
+
+    --------------------------------------------
+    -- 连接上行方向oam配置表
+    --------------------------------------------
+    hwAtmOamCfgUpStreamTable      OBJECT-TYPE
+        SYNTAX                    SEQUENCE OF HwAtmOamCfgUpStreamEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+        		          连接上行方向oam配置表
+        		          " 
+    ::={ hwMD5500AtmOam 2}
+    
+    hwAtmOamCfgUpStreamEntry      OBJECT-TYPE
+        SYNTAX                    HwAtmOamCfgUpStreamEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+         			  连接上行方向oam配置表实体
+         			  "
+        INDEX                     {
+                                      hwAtmOamFrame,
+                                      hwAtmOamSlot,
+                                      hwAtmOamPort,
+                                      hwAtmOamVPI,
+                                      hwAtmOamVCI
+                                  }    
+    ::= { hwAtmOamCfgUpStreamTable  1 }
+    
+    HwAtmOamCfgUpStreamEntry       ::= SEQUENCE
+        {
+            hwAtmOamPort                         INTEGER,
+            hwAtmOamVPI                          INTEGER,
+            hwAtmOamVCI                          INTEGER,
+            hwAtmOamCfgUpStreamSegment           INTEGER,
+            hwAtmOamCfgUpStreamRowStatus         RowStatus
+        }
+
+    hwAtmOamPort                 OBJECT-TYPE
+        SYNTAX                   INTEGER(0..63)
+        MAX-ACCESS               not-accessible
+        STATUS                   current
+        DESCRIPTION              "
+                                 端口号
+                                 "
+    ::= { hwAtmOamCfgUpStreamEntry  1 }
+      
+    hwAtmOamVPI                  OBJECT-TYPE
+        SYNTAX                   INTEGER(0..4095)
+        MAX-ACCESS               not-accessible
+        STATUS                   current
+        DESCRIPTION              "
+        			 虚通路标识符
+        			 "
+    ::= { hwAtmOamCfgUpStreamEntry  2 }
+          
+    hwAtmOamVCI                  OBJECT-TYPE
+        SYNTAX                   INTEGER(0 | 32..65535)
+        MAX-ACCESS               not-accessible
+        STATUS                   current
+        DESCRIPTION              " 
+                                 虚通道标识符,如果连接为vp连接，则vci＝0
+                                 "
+    ::= { hwAtmOamCfgUpStreamEntry  3 }
+          
+    hwAtmOamCfgUpStreamSegment   OBJECT-TYPE
+        SYNTAX                   INTEGER
+                                 {
+                                     segment(1),
+                                     endtoend(2),
+                                     intermediate(3)
+                                 }
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 是否段或端点标识, 缺省值：1"
+    ::= { hwAtmOamCfgUpStreamEntry  4 }     
+    
+    hwAtmOamCfgUpStreamRowStatus OBJECT-TYPE
+        SYNTAX                   RowStatus
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 操作行状态"
+    ::= { hwAtmOamCfgUpStreamEntry  5 }
+    
+    --------------------------------------------
+    -- 连接上行方向激活/去激活连续性校验功能表
+    --------------------------------------------
+    hwAtmOamADConfigUpStreamTable OBJECT-TYPE
+        SYNTAX                    SEQUENCE OF HwAtmOamADConfigUpStreamEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+        			  连接上行方向激活/去激活连续性校验功能表" 
+    ::={ hwMD5500AtmOam 3}
+    
+    hwAtmOamADConfigUpStreamEntry OBJECT-TYPE
+        SYNTAX                    HwAtmOamADConfigUpStreamEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+        			  连接上行方向激活/去激活连续性校验功能表实体"
+        INDEX                     {
+                                      hwAtmOamFrame,
+                                      hwAtmOamSlot,
+                                      hwAtmOamPort,
+                                      hwAtmOamVPI,
+                                      hwAtmOamVCI,
+                                      hwAtmOamADType
+                                  }    
+    ::= { hwAtmOamADConfigUpStreamTable  1 }
+    
+    HwAtmOamADConfigUpStreamEntry       ::= SEQUENCE
+        {
+            hwAtmOamADType                           INTEGER,
+            hwAtmOamADConfigUpStreamADDirection      INTEGER,
+            hwAtmOamADConfigUpStreamADCellType       INTEGER,
+            hwAtmOamADConfigUpStreamPMBlockSize                  INTEGER,
+            hwAtmOamADConfigUpStreamRowStatus        RowStatus
+        }
+
+    hwAtmOamADType               OBJECT-TYPE
+        SYNTAX                   INTEGER
+                                 {
+                                     cc(1),
+                                     pm(2)
+                                 }
+        MAX-ACCESS               not-accessible
+        STATUS                   current
+        DESCRIPTION              "
+        			 激活类型，用于区别是激活/去激活cc还是pm, 目前不支持pm"
+    ::= { hwAtmOamADConfigUpStreamEntry  1 }
+
+    hwAtmOamADConfigUpStreamADDirection   OBJECT-TYPE
+        SYNTAX                   INTEGER
+                                 {
+                                     btoa(1),
+                                     atob(2),
+                                     atob-and-btoa(3)
+                                 }
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 激活/去激活方向,缺省值：1"
+    ::= { hwAtmOamADConfigUpStreamEntry  2 }
+
+    hwAtmOamADConfigUpStreamADCellType   OBJECT-TYPE
+        SYNTAX                   INTEGER
+                                 {
+                                     segment(1),
+                                     endtoend(2)
+                                 }
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 AD信元类型,缺省值：1"
+    ::= { hwAtmOamADConfigUpStreamEntry  3 }
+
+    hwAtmOamADConfigUpStreamPMBlockSize   OBJECT-TYPE
+        SYNTAX                   INTEGER
+                                 {
+                                     size128(128),
+                                     size256(256),
+                                     size512(512),
+                                     size1024(1024),
+                                     size2048(2048),
+                                     size4096(4096),
+                                     size8192(8192),
+                                     size16384(16384),
+                                     size32768(32768)
+                                 }
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 激活pm块的大小，只有在激活类型为pm时才有效"
+    ::= { hwAtmOamADConfigUpStreamEntry  4 }
+
+    hwAtmOamADConfigUpStreamRowStatus    OBJECT-TYPE
+        SYNTAX                   RowStatus
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 操作行状态，激活操作行状态为增加，去激活行状态为删除"
+    ::= { hwAtmOamADConfigUpStreamEntry  5 }
+
+    --------------------------------------------
+    -- 上行插入环回信元配置表
+    --------------------------------------------
+    hwAtmOamLBUpStreamTable       OBJECT-TYPE
+        SYNTAX                    SEQUENCE OF HwAtmOamLBUpStreamEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+        			  上行插入环回信元配置表" 
+    ::={ hwMD5500AtmOam 4}
+    
+    hwAtmOamLBUpStreamEntry       OBJECT-TYPE
+        SYNTAX                    HwAtmOamLBUpStreamEntry
+        MAX-ACCESS                not-accessible
+        STATUS                    current
+        DESCRIPTION               "
+        			  上行插入环回信元配置表实体"
+        INDEX                     {
+                                      hwAtmOamFrame,
+                                      hwAtmOamSlot,
+                                      hwAtmOamPort,
+                                      hwAtmOamVPI,
+                                      hwAtmOamVCI
+                                  }    
+    ::= { hwAtmOamLBUpStreamTable  1 }
+    
+    HwAtmOamLBUpStreamEntry       ::= SEQUENCE
+        {
+            hwAtmOamLBUpStreamLBType                       INTEGER,
+            hwAtmOamLBUpStreamLLId                         DisplayString
+        }
+
+    hwAtmOamLBUpStreamLBType     OBJECT-TYPE
+        SYNTAX                   INTEGER
+                                 {
+                                     segment(1),
+                                     endtoend(2)
+                                 }
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 环回信元类型"
+    ::= { hwAtmOamLBUpStreamEntry  1 }
+
+    hwAtmOamLBUpStreamLLId       OBJECT-TYPE
+        SYNTAX                   DisplayString(SIZE(20))
+        MAX-ACCESS               read-write
+        STATUS                   current
+        DESCRIPTION              "
+        			 环回点标识,格式为字符串xx-xx-xx-xx-xx-xx-aa,其中，xx为主控板的mac地址，
+                                  aa为单板所在地槽号,端到端不支持指定点"
+    ::= { hwAtmOamLBUpStreamEntry  2 }
+	      
+    
+    -- ----------------------
+    -- APS业务
+    -- ----------------------
+    hwMD5500ApsService  OBJECT IDENTIFIER ::={ hwMD5500ServiceAdminMIB 7}
+
+    -- ----------------------
+    -- VP环配置表 hwAtmApsVpRingTable
+    -- ----------------------    
+    hwAtmApsVpRingTable             OBJECT-TYPE
+        SYNTAX                      SEQUENCE OF HwAtmApsVpRingEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    VP环配置表"
+    ::= { hwMD5500ApsService 1 }
+        
+    hwAtmApsVpRingEntry             OBJECT-TYPE 
+        SYNTAX                      HwAtmApsVpRingEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    VP环配置表实体"
+        INDEX                       {
+                                        hwAtmApsVpRingIndex
+                                    } 
+        ::={ hwAtmApsVpRingTable 1 }           
+
+    HwAtmApsVpRingEntry ::= SEQUENCE
+    {
+        hwAtmApsVpRingIndex                    INTEGER,
+        hwAtmApsVpRingPosition                 INTEGER,
+        hwAtmApsVpRingFrameID1                 INTEGER,
+        hwAtmApsVpRingSlotID1                  INTEGER,
+        hwAtmApsVpRingPortID1                  INTEGER,
+        hwAtmApsVpRingFrameID2                 INTEGER,
+        hwAtmApsVpRingSlotID2                  INTEGER,
+        hwAtmApsVpRingPortID2                  INTEGER,
+        hwAtmApsVpRingRowStatus                RowStatus
+    }
+
+    hwAtmApsVpRingIndex             OBJECT-TYPE
+        SYNTAX                      INTEGER(0..15)
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    VP环编号"
+    ::= { hwAtmApsVpRingEntry  1 }         
+
+    hwAtmApsVpRingPosition          OBJECT-TYPE
+        SYNTAX                      INTEGER(0..15)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    该节点在VP环上的位置编号"
+    ::= { hwAtmApsVpRingEntry  2 }         
+
+    hwAtmApsVpRingFrameID1          OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理框号1"
+    ::= { hwAtmApsVpRingEntry  3 }         
+
+    hwAtmApsVpRingSlotID1           OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理槽号1"
+    ::= { hwAtmApsVpRingEntry  4 }         
+
+    hwAtmApsVpRingPortID1           OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理端口号1"
+    ::= { hwAtmApsVpRingEntry  5 }         
+
+    hwAtmApsVpRingFrameID2          OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理框号2"
+    ::= { hwAtmApsVpRingEntry  6 }         
+
+    hwAtmApsVpRingSlotID2           OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理槽号2"
+    ::= { hwAtmApsVpRingEntry  7 }         
+
+    hwAtmApsVpRingPortID2           OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+                                    物理端口号2"
+    ::= { hwAtmApsVpRingEntry  8 }         
+
+    hwAtmApsVpRingRowStatus         OBJECT-TYPE
+        SYNTAX                      RowStatus
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+                                    行状态"
+    ::= { hwAtmApsVpRingEntry  9 }         
+
+    -- ----------------------
+    -- VPG配置表 hwAtmApsVPGConfigTable
+    -- ----------------------
+
+    hwAtmApsVPGConfigTable          OBJECT-TYPE
+        SYNTAX                      SEQUENCE OF HwAtmApsVPGConfigEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+                                     VPG配置表"
+    ::= { hwMD5500ApsService 2 }
+        
+    hwAtmApsVPGConfigEntry          OBJECT-TYPE 
+        SYNTAX                      HwAtmApsVPGConfigEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+                                    VPG配置表实体"
+        INDEX                       {
+                                        hwAtmApsVPGIndex
+                                    } 
+        ::={ hwAtmApsVPGConfigTable 1 }           
+
+    HwAtmApsVPGConfigEntry ::= SEQUENCE
+    {
+        hwAtmApsVPGIndex                        INTEGER,
+        hwAtmApsVPGName                         DisplayString,
+        hwAtmApsVPGWorkingFrameID               INTEGER,
+        hwAtmApsVPGWorkingSlotID                INTEGER,
+        hwAtmApsVPGWorkingPhyportID             INTEGER,
+        hwAtmApsVPGProtectionFrameID            INTEGER,
+        hwAtmApsVPGProtectionSlotID             INTEGER,
+        hwAtmApsVPGProtectionPhyportID          INTEGER,
+        hwAtmApsVPGMode                         INTEGER,
+        hwAtmApsVPGWTRTime                      INTEGER,
+        hwAtmApsVPGExternalCommands             INTEGER,
+        hwAtmApsVPGProtectK1K2Rcv               INTEGER,
+        hwAtmApsVPGProtectK1K2Trans             INTEGER,
+        hwAtmApsVPGWorkingEntityStatus          BITS,
+        hwAtmApsVPGProtectionEntityStatus       BITS,
+        hwAtmApsVPGCurrEntity                   INTEGER,
+        hwAtmApsVPGApsStatus                    INTEGER,
+        hwAtmApsVPGVplIsInUse                   TruthValue,
+        hwAtmApsVPGVpRingIndex                  INTEGER,
+        hwAtmApsVPGRevertive                    TruthValue,
+        hwAtmApsVPGRowStatus                    RowStatus
+    }
+
+    hwAtmApsVPGIndex                OBJECT-TYPE
+        SYNTAX                      INTEGER(1..256)
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+                                     VPG表的索引项"
+    ::= { hwAtmApsVPGConfigEntry  1 }         
+
+    hwAtmApsVPGName                 OBJECT-TYPE
+        SYNTAX                      DisplayString(SIZE(0..51))
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+                                     VPG表名称，长度为52个字节"
+    ::= { hwAtmApsVPGConfigEntry  2 }         
+
+    hwAtmApsVPGWorkingFrameID       OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+                                    工作实体物理框号"
+    ::= { hwAtmApsVPGConfigEntry  3 }         
+
+    hwAtmApsVPGWorkingSlotID        OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    工作实体物理槽号"
+    ::= { hwAtmApsVPGConfigEntry  4 }         
+
+    hwAtmApsVPGWorkingPhyportID     OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    工作实体物理端口号"
+    ::= { hwAtmApsVPGConfigEntry  5 }         
+
+    hwAtmApsVPGProtectionFrameID    OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+                                    保护实体物理框号"
+    ::= { hwAtmApsVPGConfigEntry  6 }         
+
+    hwAtmApsVPGProtectionSlotID     OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+                                    保护实体物理槽号"
+    ::= { hwAtmApsVPGConfigEntry  7 }         
+
+    hwAtmApsVPGProtectionPhyportID  OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    保护实体物理端口号"
+    ::= { hwAtmApsVPGConfigEntry  8 }         
+
+    hwAtmApsVPGMode                 OBJECT-TYPE
+        SYNTAX                      INTEGER
+                                    {
+                                        onePlusOneUnidirection(1),
+                                        onePlusOneBidirection(2)
+                                    }
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    保护模式，为可选项，默认为1＋1单向保护，分为1＋1单向和双向"
+    ::= { hwAtmApsVPGConfigEntry  9 }         
+
+    hwAtmApsVPGWTRTime              OBJECT-TYPE
+        SYNTAX                      INTEGER(1..30)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    VPG等待恢复时间，单位为分钟，缺省12分钟，
+                                     用户可以根据需要指定，范围为1到30分钟"
+    ::= { hwAtmApsVPGConfigEntry  10 }         
+
+    hwAtmApsVPGExternalCommands     OBJECT-TYPE
+        SYNTAX                      INTEGER
+                                    {
+                                         clear(1),
+                                         freeze(2),
+                                         lockoutOfProtection(3),
+                                         forcedSwitchForWorking(4),
+                                         manualSwitchForWorking(5),
+                                         manualSwitchForProtection(6)
+                                    }
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        		 	    外部命令的类型，如果设置该项，即认为是对改VPG进行对应的操作"
+    ::= { hwAtmApsVPGConfigEntry  11 }         
+
+    hwAtmApsVPGProtectK1K2Rcv       OBJECT-TYPE
+        SYNTAX                      INTEGER(0..65535)
+        MAX-ACCESS                  read-only
+        STATUS                      current
+        DESCRIPTION                 "
+        			     接收K字节，表示远端的最高请求情况，
+                                     以及远端的桥接器或者选择器状态,默认为正常即其值为0x0010"
+    ::= { hwAtmApsVPGConfigEntry  12 }         
+
+    hwAtmApsVPGProtectK1K2Trans     OBJECT-TYPE
+        SYNTAX                      INTEGER(0..65535)
+        MAX-ACCESS                  read-only
+        STATUS                      current
+        DESCRIPTION                 "
+        			     发送K字节，表示本地请求中的最高请求，
+                                     以及本地的桥接器和选择器状态,默认为正常即其值为0x0010"
+    ::= { hwAtmApsVPGConfigEntry  13 }         
+
+
+    hwAtmApsVPGWorkingEntityStatus  OBJECT-TYPE
+        SYNTAX                      BITS
+                                    {
+                                        lof(1),
+                                        los(2),
+                                        sd(3),
+                                        rdi(4),
+                                        ais(5),
+                                        rsd(6)
+                                   }
+        MAX-ACCESS                  read-only
+        STATUS                      current
+        DESCRIPTION                 "
+        			     表示工作实体的告警状态，每一位都代表一种告警，
+                                     如果为1认为告警存在，如果为0表示告警不存在，
+                                     如果整个值都为0，说明实体正常，默认实体正常
+                                     0x00000002-RSD
+                                     0x00000004-AIS,
+                                     0x00000008-RDI,
+                                     0x00000010-SD,
+                                     0x00000020-LOS,
+                                     0x00000040-LOF"
+    ::= { hwAtmApsVPGConfigEntry  14 }              
+
+    hwAtmApsVPGProtectionEntityStatus     OBJECT-TYPE
+        SYNTAX                      BITS
+                                    {
+                                        lof(1),
+                                        los(2),
+                                        sd(3),
+                                        rdi(4),
+                                        ais(5),
+                                        rsd(6)
+                                    }        
+        MAX-ACCESS                  read-only
+        STATUS                      current
+        DESCRIPTION                 "
+        			     表示保护实体的告警状态，每一位都代表一种告警，
+                                     如果为1认为告警存在，如果为0表示告警不存在，
+                                     如果整个值都为0，说明实体正常，默认实体正常
+                                     0x00000002-RSD
+                                     0x00000004-AIS,
+                                     0x00000008-RDI,
+                                     0x00000010-SD,
+                                     0x00000020-LOS,
+                                     0x00000040-LOF"
+    ::= { hwAtmApsVPGConfigEntry  15 }         
+
+    hwAtmApsVPGCurrEntity           OBJECT-TYPE
+        SYNTAX                      INTEGER
+                                    {
+                                        work(1),
+                                        protect(2)
+                                    }
+        MAX-ACCESS                  read-only
+        STATUS                      current
+        DESCRIPTION                 "
+        			    表示VPG的业务当前传输实体，缺省为工作实体"
+    ::= { hwAtmApsVPGConfigEntry  16 }         
+
+    hwAtmApsVPGApsStatus            OBJECT-TYPE
+        SYNTAX                      INTEGER
+        MAX-ACCESS                  read-only
+        STATUS                      current
+        DESCRIPTION                 "
+        			     记录VPG的本地告警情况，单向和双向保护模式下不一样，单向请求使用<24..31>位，双向请求使用<7..23>位
+                                        Bidirectional APSC:
+                                        0x00000080-DNR,
+                                        0x00000100-rsv1,
+                                        0x00000200-WTR,
+                                        0x00000400-rsv2,
+                                        0x00000800-MS-W,
+                                        0x00001000-MS-P,
+                                        0x00002000-rsv3,
+                                        0x00004000-SD-W,
+                                        0x00008000-SD-P,
+                                        0x00010000-rsv4,
+                                        0x00020000-SF-W,
+                                        0x00040000-rsv5,
+                                        0x00080000-FS-W,
+                                        0x00100000-SF-P,
+                                        0x00200000-LOP,
+                                        0x00400000-FREEZE,
+                                        0x00800000-CLEAR,
+                                        Unidirectional APSC:
+                                        0x01000000-WTR,
+                                        0x02000000-MS_P,
+                                        0x04000000-MS_W,
+                                        0x08000000-SD,
+                                        0x10000000-SF,
+                                        0x20000000-FS,
+                                        0x40000000-LOP,
+                                        0x80000000-CLEAR "
+    ::= { hwAtmApsVPGConfigEntry  17 }    
+    
+    hwAtmApsVPGVplIsInUse           OBJECT-TYPE
+        SYNTAX                      TruthValue
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			     VPG的保护倒换使能表示，如果为2，表示没有使能，为1表示使能，
+                                     如果将其设置为1，即认为是进行使能操作
+                                         enable(1),
+                                         disable(2)"
+    ::= { hwAtmApsVPGConfigEntry  18 }         
+
+    hwAtmApsVPGVpRingIndex          OBJECT-TYPE
+        SYNTAX                      INTEGER(0..15)
+        MAX-ACCESS                  read-only
+        STATUS                      current
+        DESCRIPTION                 "
+        			    VPG所在的VP环编号"
+    ::= { hwAtmApsVPGConfigEntry  19 }         
+
+    hwAtmApsVPGRevertive            OBJECT-TYPE
+        SYNTAX                      TruthValue
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			     可恢复标志，为1可恢复，为2不可恢复，缺省值2
+                                     revertible(1),
+                                     non-revertible(2)"
+    ::= { hwAtmApsVPGConfigEntry  20 }         
+
+    hwAtmApsVPGRowStatus            OBJECT-TYPE
+        SYNTAX                      RowStatus
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    行状态"
+    ::= { hwAtmApsVPGConfigEntry  21 }         
+
+
+    -- ----------------------
+    -- VP保护对配置表 hwAtmApsVPGVplTable
+    -- ----------------------
+    hwAtmApsVPGVplTable             OBJECT-TYPE
+        SYNTAX                      SEQUENCE OF HwAtmApsVPGVplEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    VP保护对配置表"
+    ::= { hwMD5500ApsService 3 }
+        
+    hwAtmApsVPGVplEntry             OBJECT-TYPE 
+        SYNTAX                      HwAtmApsVPGVplEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+         			    VP保护对配置表实体"
+        INDEX                       {
+                                        hwAtmApsVPGIndex,
+                                        hwAtmApsVPGVplWorkingVpi
+                                    } 
+        ::={ hwAtmApsVPGVplTable 1 } 
+
+    HwAtmApsVPGVplEntry ::= SEQUENCE
+    {
+        hwAtmApsVPGVplWorkingVpi              INTEGER,
+        hwAtmApsVPGVplProtectionVpi           INTEGER,
+        hwAtmApsVPGVplServiceClass            INTEGER,
+        hwAtmApsVPGVplRowStaus                RowStatus,
+        hwAtmApsVPGVplTrafficTableIndex       INTEGER
+    }
+    
+    hwAtmApsVPGVplWorkingVpi        OBJECT-TYPE
+        SYNTAX                      INTEGER(1..255)
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    工作虚通道标识"
+    ::= { hwAtmApsVPGVplEntry  1 }         
+    
+    hwAtmApsVPGVplProtectionVpi     OBJECT-TYPE
+        SYNTAX                      INTEGER(1..255)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    保护虚通道标识"
+    ::= { hwAtmApsVPGVplEntry  2 }         
+    
+    hwAtmApsVPGVplServiceClass      OBJECT-TYPE
+        SYNTAX                      INTEGER
+                                    {
+                                        cbr(1),
+                                        rtvbr(2),
+                                        nrtvbr(3),
+                                        abr(4),
+                                        ubr(5)
+                                    }
+        MAX-ACCESS                  read-only
+        STATUS                      deprecated
+        DESCRIPTION                 "
+        			    业务等级"
+    ::= { hwAtmApsVPGVplEntry  3 }         
+    
+    hwAtmApsVPGVplRowStaus          OBJECT-TYPE
+        SYNTAX                      RowStatus
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    行状态"
+    ::= { hwAtmApsVPGVplEntry  4 }         
+    
+    hwAtmApsVPGVplTrafficTableIndex OBJECT-TYPE
+			SYNTAX INTEGER (0..511)
+			MAX-ACCESS read-create
+			STATUS current
+			DESCRIPTION
+				"
+				流量描述表索引"
+			::= { hwAtmApsVPGVplEntry 5 }
+
+    -- ----------------------
+    -- 抽样VP保护对配置表 hwAtmApsAPSChannelTable
+    -- ----------------------
+    hwAtmApsAPSChannelTable         OBJECT-TYPE
+        SYNTAX                      SEQUENCE OF HwAtmApsAPSChannelEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+         			    抽样VP保护对配置表"
+    ::= { hwMD5500ApsService 4 }
+
+    hwAtmApsAPSChannelEntry         OBJECT-TYPE 
+        SYNTAX                      HwAtmApsAPSChannelEntry
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    抽样VP保护对配置表实体"
+        INDEX                       {
+                                        hwAtmApsAPSChannelFrameID,
+                                        hwAtmApsAPSChannelSlotID,
+                                        hwAtmApsAPSChannelPhyport,
+                                        hwAtmApsAPSChannelVpi
+                                    } 
+        ::={ hwAtmApsAPSChannelTable 1 }           
+
+    HwAtmApsAPSChannelEntry ::= SEQUENCE
+    {
+        hwAtmApsAPSChannelFrameID             INTEGER,
+        hwAtmApsAPSChannelSlotID              INTEGER,
+        hwAtmApsAPSChannelPhyport             INTEGER,
+        hwAtmApsAPSChannelVpi                 INTEGER,
+        hwAtmApsAPSChannelGroupIndex          INTEGER,
+        hwAtmApsAPSChannelVlType              INTEGER,
+        hwAtmApsAPSChannelRowStaus            RowStatus
+    }
+
+    hwAtmApsAPSChannelFrameID       OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理框号"
+    ::= { hwAtmApsAPSChannelEntry  1 }         
+
+    hwAtmApsAPSChannelSlotID        OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理槽号"
+    ::= { hwAtmApsAPSChannelEntry  2 }         
+        
+    hwAtmApsAPSChannelPhyport       OBJECT-TYPE
+        SYNTAX                      INTEGER(0..63)
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    物理端口号"
+    ::= { hwAtmApsAPSChannelEntry  3 }         
+
+    hwAtmApsAPSChannelVpi           OBJECT-TYPE
+        SYNTAX                      INTEGER(1..255)
+        MAX-ACCESS                  not-accessible
+        STATUS                      current
+        DESCRIPTION                 "
+        			    虚通道标识"
+    ::= { hwAtmApsAPSChannelEntry  4 }         
+
+    hwAtmApsAPSChannelGroupIndex    OBJECT-TYPE
+        SYNTAX                      INTEGER(1..256)
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    APS CHANNEL所在的VPG索引"
+    ::= { hwAtmApsAPSChannelEntry  5 }         
+
+    hwAtmApsAPSChannelVlType        OBJECT-TYPE
+        SYNTAX                      INTEGER
+                                    {
+                                        p2p(1),
+                                        w-leaf(2),
+                                        p-leaf(3)
+                                    }
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			     VL类型，有P2P,W_LEAF,P_LEAF三种，P2P表示环上中间节点
+                                     所在的CHANNEL,W_LEAF表示业务上下环点处的工作实体所在
+                                     CHANNEL,P_LEAF则表示相应的保护CHANNEL"
+    ::= { hwAtmApsAPSChannelEntry  6 }         
+
+    hwAtmApsAPSChannelRowStaus      OBJECT-TYPE
+        SYNTAX                      RowStatus
+        MAX-ACCESS                  read-write
+        STATUS                      current
+        DESCRIPTION                 "
+        			    行状态"
+    ::= { hwAtmApsAPSChannelEntry  7 }         
+
+
+
+hwMD5500V5IfManage  OBJECT IDENTIFIER ::={ hwMD5500ServiceAdminMIB 9 }
+
+--V5接口数据配置表 V5InterfaceConfigTable
+
+
+ hwV5InterfaceConfigTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5InterfaceConfigEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 1 }
+
+    hwV5InterfaceConfigEntry         OBJECT-TYPE
+       SYNTAX         HwV5InterfaceConfigEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { hwV5cfgV5InterfaceID }
+    ::= { hwV5InterfaceConfigTable  1 }
+
+     HwV5InterfaceConfigEntry ::= SEQUENCE 
+     {
+        hwV5cfgV5InterfaceID                    INTEGER,
+	hwV5cfgUpperV5InterfaceID               INTEGER,
+	hwV5cfgV5InterfaceType                  INTEGER,
+	hwV5cfgV5InterfaceVersion               INTEGER,
+	hwV5cfgPSTNlogicCID                     INTEGER, 
+	hwV5cfgV5Variable                       INTEGER,
+	hwV5cfgLinkIDIdentify0                  TruthValue,
+	hwV5cfgLinkIDIdentify1                  TruthValue,
+	hwV5cfgLinkIDIdentify2                  TruthValue,
+	hwV5cfgLinkIDIdentify3                  TruthValue,
+	hwV5cfgRowStatus                        RowStatus,
+	hwV5UsableTs			 			    INTEGER,
+	hwV5PhoneUsableTs	    			    INTEGER,
+	hwV5PstnUser		    			    INTEGER,
+	hwV5IsdnUser		    			    INTEGER,
+	hwV5cfgV5InterfaceDesc                  OCTET STRING
+     }
+     
+    hwV5cfgV5InterfaceID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..16777215)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 1 }
+     
+    hwV5cfgUpperV5InterfaceID       OBJECT-TYPE
+        SYNTAX      INTEGER(0..16777215)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 2 }
+
+    hwV5cfgV5InterfaceType       OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            an(1),
+                            le(2)
+                           } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 3 }
+
+    hwV5cfgV5InterfaceVersion       OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             v51(1),
+                             v52(2)
+                           }  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 4 }
+
+    hwV5cfgPSTNlogicCID       OBJECT-TYPE
+        SYNTAX      INTEGER(0..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 5 }
+
+    hwV5cfgV5Variable       OBJECT-TYPE
+        SYNTAX      INTEGER(0..127)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 6 }
+
+    hwV5cfgLinkIDIdentify0       OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 7 }
+
+    hwV5cfgLinkIDIdentify1       OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 8 }
+
+    hwV5cfgLinkIDIdentify2       OBJECT-TYPE
+        SYNTAX   TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 9 }
+
+    hwV5cfgLinkIDIdentify3       OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 10 }
+
+    hwV5cfgRowStatus       OBJECT-TYPE
+         SYNTAX                 RowStatus                      
+                         
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceConfigEntry 11 }
+    
+    hwV5UsableTs  OBJECT-TYPE
+   		SYNTAX INTEGER
+   		MAX-ACCESS read-only
+   		STATUS current
+		DESCRIPTION
+			" "
+		::= { hwV5InterfaceConfigEntry 12 }
+			
+    hwV5PhoneUsableTs   OBJECT-TYPE
+   		SYNTAX INTEGER
+   		MAX-ACCESS read-only
+   		STATUS current
+		DESCRIPTION
+			" "
+		::= { hwV5InterfaceConfigEntry 13 }
+
+    hwV5PstnUser   OBJECT-TYPE
+   		SYNTAX INTEGER
+   		MAX-ACCESS read-only
+   		STATUS current
+		DESCRIPTION
+			" "
+		::= { hwV5InterfaceConfigEntry 14 }
+
+    hwV5IsdnUser   OBJECT-TYPE
+   		SYNTAX INTEGER
+   		MAX-ACCESS read-only
+   		STATUS current
+		DESCRIPTION
+			" "
+		::= { hwV5InterfaceConfigEntry 15 }
+
+    hwV5cfgV5InterfaceDesc   OBJECT-TYPE
+   		SYNTAX OCTET STRING	(SIZE (0..32))
+   		MAX-ACCESS read-write
+   		STATUS current
+		DESCRIPTION
+			"description of v5 interface
+			      v5接口的描述信息"
+		::= { hwV5InterfaceConfigEntry 16 }  
+      
+  --   V5接口2M链路数据配置表 v5InterfaceLinkConfigTable
+    
+    
+     hwV5InterfaceLinkConfigTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5InterfaceLinkConfigEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 2 }
+
+    hwV5InterfaceLinkConfigEntry         OBJECT-TYPE
+       SYNTAX         HwV5InterfaceLinkConfigEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { hwV5cfgV5InterfaceID,
+                     hwV5FrameID,
+                     hwV5SlotID,
+                     hwV5PortID
+                   }
+    ::= { hwV5InterfaceLinkConfigTable  1 }
+
+     HwV5InterfaceLinkConfigEntry ::= SEQUENCE 
+     {
+	hwV5FrameID                             INTEGER,            	
+        hwV5SlotID                              INTEGER,
+	hwV5PortID                              INTEGER, 
+	hwV5LinkID                              INTEGER,
+	hwV5RowStatus                           RowStatus
+     }
+     
+    hwV5FrameID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceLinkConfigEntry 1 }
+
+    hwV5SlotID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceLinkConfigEntry 2 }
+
+    hwV5PortID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceLinkConfigEntry 3 }
+
+    hwV5LinkID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceLinkConfigEntry 4 }
+
+    hwV5RowStatus         OBJECT-TYPE
+        SYNTAX                 RowStatus
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceLinkConfigEntry 5 }
+    
+    
+ 
+  --  V5接口通信通道数据配置管理表 V5CChannelConfigManage 
+    hwV5CChannelConfigManage  OBJECT IDENTIFIER ::={ hwMD5500V5IfManage 3  }
+
+  --  用来get可分配的物理C通道号的叶子  v5channelNextAllocPhyNo
+    hwV5channelNextAllocPhyCNo    OBJECT-TYPE
+        SYNTAX      INTEGER(0..255)
+        MAX-ACCESS  read-only
+        STATUS      current
+    DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigManage 1 }
+
+ --  V5接口通信通道数据配置表 V5CChannelConfigTable
+    hwV5CChannelConfigTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5CChannelConfigEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwV5CChannelConfigManage 2 }
+
+    hwV5CChannelConfigEntry         OBJECT-TYPE
+       SYNTAX         HwV5CChannelConfigEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { hwV5cfgV5InterfaceID,
+                     hwV5channelPhyCNo
+                   }
+    ::= { hwV5CChannelConfigTable  1 }
+
+     HwV5CChannelConfigEntry ::= SEQUENCE 
+     {
+	hwV5channelPhyCNo                              INTEGER,   
+	hwV5channelFrameID         	            INTEGER,
+        hwV5channelSlotID                              INTEGER,
+	hwV5channelPortID                              INTEGER, 
+	hwV5channelTsNo                                INTEGER,
+	hwV5channelProtectType                         INTEGER,
+	hwV5channelLogicCChannelID                     INTEGER,
+	hwV5channelRowStatus                           RowStatus
+     }
+     
+    hwV5channelPhyCNo         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 1 }
+
+    hwV5channelFrameID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 2 }
+
+    hwV5channelSlotID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 3 }
+
+    hwV5channelPortID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 4 }
+
+    hwV5channelTsNo         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             t15(1),
+                             t16(2),
+                             t31(3)
+                           }  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 5 }
+
+
+    hwV5channelProtectType         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             p1master(1),
+                             p1slaver(2),
+                             p2master(3),
+                             p2slaver(4)
+                           }  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 6 }
+
+    hwV5channelLogicCChannelID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65535)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 7 }
+
+    hwV5channelRowStatus         OBJECT-TYPE
+       SYNTAX                RowStatus
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5CChannelConfigEntry 8 }
+    
+     
+  --  V5接口保护切换操作表 V5ProtSwitchOprTable
+  
+    hwV5ProtSwitchOprTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5ProtSwitchOprEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 4 }
+
+    hwV5ProtSwitchOprEntry         OBJECT-TYPE
+       SYNTAX         HwV5ProtSwitchOprEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { 
+                     hwV5cfgV5InterfaceID,
+                     hwV5SwitchLogicCchannelID
+                   }
+    ::= { hwV5ProtSwitchOprTable  1 }
+
+     HwV5ProtSwitchOprEntry ::= SEQUENCE 
+     {
+    hwV5SwitchLogicCchannelID                     INTEGER,
+	hwV5SwitchPhyCLinkID                          INTEGER, 
+	hwV5SwitchPhyCTsNo                            INTEGER,
+	hwV5SwitchSwitchover                          INTEGER
+     }
+     
+    hwV5SwitchLogicCchannelID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65535)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5ProtSwitchOprEntry 1 }
+
+    hwV5SwitchPhyCLinkID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5ProtSwitchOprEntry 2 }
+
+    hwV5SwitchPhyCTsNo         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             t15(1),
+                             t16(2),
+                             t31(3)
+                           }  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5ProtSwitchOprEntry 3 }
+
+    hwV5SwitchSwitchover         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             yes(1)
+                           }  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5ProtSwitchOprEntry 4 }
+    
+    
+   -- V5接口信息表 V5InterfaceTable 
+   
+   
+    hwV5InterfaceTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5InterfaceEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 5 }
+
+    hwV5InterfaceEntry         OBJECT-TYPE
+       SYNTAX         HwV5InterfaceEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { 
+                     hwV5cfgV5InterfaceID
+                   }
+    ::= { hwV5InterfaceTable  1 }
+
+     HwV5InterfaceEntry ::= SEQUENCE 
+     {
+	hwV5IfInterfaceType                     INTEGER,            	
+    hwV5IfcurrentVarIdx                     INTEGER,
+	hwV5IfPrimaryLinkid                     INTEGER, 
+	hwV5IfSecondaryLinkid                   INTEGER,
+	hwV5IfLinkNum                           INTEGER,  
+	hwV5IfLinkIDIdentify0                   TruthValue,
+	hwV5IfLinkIDIdentify1                   TruthValue,
+	hwV5IfLinkIDIdentify2                   TruthValue,
+	hwV5IfLinkIDIdentify3                   TruthValue,
+	hwV5IfInterfacestate                    INTEGER,
+	hwV5IfPstnDataLinkState                 INTEGER,
+	hwV5IfBccDataLinkState                  INTEGER,
+	hwV5IfCtrlDataLinkState                 INTEGER,
+	hwV5IfProtectDataLink1State             INTEGER,
+	hwV5IfProtectDataLink2state             INTEGER, 
+	hwV5IfLinkCtrlDataLinkState             INTEGER,
+	hwV5IfOprtype                           INTEGER,	
+	hwV5IfOprResult                         INTEGER
+     }
+     
+    hwV5IfInterfaceType         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                            an(1),
+                            le(2)
+                           } 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 1 }
+
+    hwV5IfcurrentVarIdx         OBJECT-TYPE
+        SYNTAX      INTEGER(0..127) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 2 }
+
+    hwV5IfPrimaryLinkid         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 3 }
+
+    hwV5IfSecondaryLinkid         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 4 }
+
+    hwV5IfLinkNum         OBJECT-TYPE
+        SYNTAX      INTEGER(0..16) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 5 }
+
+    hwV5IfLinkIDIdentify0         OBJECT-TYPE
+        SYNTAX       TruthValue 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 6 }
+
+    hwV5IfLinkIDIdentify1         OBJECT-TYPE
+        SYNTAX     TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 7 }
+
+    hwV5IfLinkIDIdentify2         OBJECT-TYPE  
+        SYNTAX   TruthValue 
+        MAX-ACCESS read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 8 }
+
+    hwV5IfLinkIDIdentify3         OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 9 }
+
+    hwV5IfInterfacestate         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             nostartif(1),--接口未启动，
+                             iffree(2)   ,--接口释放，
+                             wait2buildlink(3),--等待二层建链，
+                             reqifvar(4),      -- :请求接口变量ID，
+                             reqlinkid(5),--:请求链路身份标识，
+                             waitrestart(6),--等待重启动，
+                             ifnormal(7),--接口正常，
+                             ifclose(8)--接口关闭
+                           }  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 10 }
+
+    hwV5IfPstnDataLinkState         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             linknormal(1),--链路正常，
+                             linkwaitbuild(2),--链路等待建立，
+                             linknouse(3),  --链路不可用，
+                             linknocfg(4)--链路未配置
+                           }  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 11 }
+
+    hwV5IfBccDataLinkState         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             linknormal(1),--链路正常，
+                             linkwaitbuild(2),--链路等待建立，
+                             linknouse(3),  --链路不可用，
+                             linknocfg(4)--链路未配置
+                           }  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 12 }
+
+    hwV5IfCtrlDataLinkState         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             linknormal(1),--链路正常，
+                             linkwaitbuild(2),--链路等待建立，
+                             linknouse(3),  --链路不可用，
+                             linknocfg(4)--链路未配置
+                           }  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 13 }
+
+    hwV5IfProtectDataLink1State         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             linknormal(1),--链路正常，
+                             linkwaitbuild(2),--链路等待建立，
+                             linknouse(3),  --链路不可用，
+                             linknocfg(4)--链路未配置
+                           }  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 14 }
+
+    hwV5IfProtectDataLink2state         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             linknormal(1),--链路正常，
+                             linkwaitbuild(2),--链路等待建立，
+                             linknouse(3),  --链路不可用，
+                            linknocfg(4)--链路未配置
+                           }  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 15 }
+
+    hwV5IfLinkCtrlDataLinkState         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             linknormal(1),--链路正常，
+                             linkwaitbuild(2),--链路等待建立，
+                             linknouse(3),  --链路不可用，
+                             linknocfg(4)--链路未配置
+                           }  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 16 }
+
+
+    hwV5IfOprtype         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             reset(1),
+                             restart(2),
+                             close(3)
+                           }  
+        MAX-ACCESS read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 18 }
+    
+    hwV5IfOprResult         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                               success(1),
+                               failure(2)
+                               }
+                            
+        MAX-ACCESS     read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5InterfaceEntry 19 }
+    
+  --  V5逻辑C通道信息表 V5LogicCChannelTable
+
+
+hwV5LogicCChannelTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5LogicCChannelEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 6 }
+
+    hwV5LogicCChannelEntry         OBJECT-TYPE
+       SYNTAX         HwV5LogicCChannelEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { 
+                     hwV5cfgV5InterfaceID,
+                     hwV5LCChannelLogicCID
+                   }
+    ::= { hwV5LogicCChannelTable  1 }
+
+     HwV5LogicCChannelEntry ::= SEQUENCE 
+     {
+	hwV5LCChannelLogicCID                     INTEGER, 
+	hwV5LCChanneLogicCLinkID           	INTEGER,
+        hwV5LCChannelFrameID                      INTEGER,
+	hwV5LCChannelSlotID                       INTEGER, 
+	hwV5LCChannelPortID                       INTEGER,
+	hwV5LCChannelTsNo                         INTEGER,  
+	hwV5LCChannelProtectGroup                 INTEGER,
+	hwV5LCChannelPSTNProtocolBear             TruthValue,
+	hwV5LCChannelCTRLProtocolBear             TruthValue,
+	hwV5LCChannelBCCProtocolBear              TruthValue,
+	hwV5LCChannelPROTProtocolBear             TruthValue,
+	hwV5LCChannelLCTRLProtocolBear            TruthValue,
+	hwV5LCChannelISDNDsProtocolBear           TruthValue,
+	hwV5LCChannelISDNpProtocolBear            TruthValue, 
+	hwV5LCChannelISDNfProtocolBear            TruthValue
+     }
+     
+    hwV5LCChannelLogicCID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65535) 
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 1 }
+
+    hwV5LCChanneLogicCLinkID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 2 }
+
+    hwV5LCChannelFrameID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 3 }
+
+    hwV5LCChannelSlotID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 4 }
+
+    hwV5LCChannelPortID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 5 }
+
+    hwV5LCChannelTsNo         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             t15(1),
+                             t16(2),
+                             t31(3)
+                           }   
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 6 }
+
+    hwV5LCChannelProtectGroup         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             pm(1),--保护组一主用,
+                             ps(2),-- 2:保护组一备用, 
+                             p2m(3),--3:保护组二主用,
+                             p2s(4)-- 4:保护组二备用
+                           }   
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 7 }
+
+    hwV5LCChannelPSTNProtocolBear         OBJECT-TYPE
+        SYNTAX      TruthValue   
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 8 }
+
+    hwV5LCChannelCTRLProtocolBear         OBJECT-TYPE
+        SYNTAX     TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 9 }
+
+    hwV5LCChannelBCCProtocolBear         OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 10 }
+
+    hwV5LCChannelPROTProtocolBear         OBJECT-TYPE
+        SYNTAX     TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 11 }
+
+    hwV5LCChannelLCTRLProtocolBear         OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 12 }
+
+    hwV5LCChannelISDNDsProtocolBear         OBJECT-TYPE
+        SYNTAX    TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 13 }
+
+    hwV5LCChannelISDNpProtocolBear         OBJECT-TYPE
+        SYNTAX     TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 14 }
+
+    hwV5LCChannelISDNfProtocolBear         OBJECT-TYPE
+        SYNTAX     TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LogicCChannelEntry 15 }
+    
+    
+--    备用物理通信通道信息表 V5StandbyPhyCChannelTable
+
+hwV5StandbyPhyCChannelTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5StandbyPhyCChannelEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 7 }
+
+    hwV5StandbyPhyCChannelEntry         OBJECT-TYPE
+       SYNTAX         HwV5StandbyPhyCChannelEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { 
+                     hwV5cfgV5InterfaceID,
+                     hwV5StandbyPhyLogicStdPhyCNo
+                   }
+    ::= { hwV5StandbyPhyCChannelTable  1 }
+
+     HwV5StandbyPhyCChannelEntry ::= SEQUENCE 
+     {
+	hwV5StandbyPhyLogicStdPhyCNo               INTEGER,           	     
+	hwV5StandbyPhyPhyCLinkID                   INTEGER, 
+        hwV5StandbyPhyFrameID                      INTEGER,
+	hwV5StandbyPhySlotID                       INTEGER, 
+	hwV5StandbyPhyPortID                       INTEGER,
+	hwV5StandbyPhyTsNo                         INTEGER,  
+	hwV5StandbyPhyPhyCProtectGroup             INTEGER
+     }
+
+    hwV5StandbyPhyLogicStdPhyCNo         OBJECT-TYPE
+        SYNTAX      INTEGER {
+                             protectgroup1(1),
+                             protectgroup2(2),
+                             protectgroup3(3),
+                             protectgroup4(4)
+                             }
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5StandbyPhyCChannelEntry 1 }
+     
+    hwV5StandbyPhyPhyCLinkID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5StandbyPhyCChannelEntry 2 }
+
+    hwV5StandbyPhyFrameID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5StandbyPhyCChannelEntry 3 }
+
+    hwV5StandbyPhySlotID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5StandbyPhyCChannelEntry 4 }
+
+    hwV5StandbyPhyPortID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..63) 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5StandbyPhyCChannelEntry 5 }
+
+    hwV5StandbyPhyTsNo         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                              t15(1),
+                              t16(2),
+                              t31(3)
+                           }    
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5StandbyPhyCChannelEntry 6 }
+
+    hwV5StandbyPhyPhyCProtectGroup         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             pm(1),--保护组一主用,
+                             ps(2),-- 2:保护组一备用, 
+                             p2m(3),--3:保护组二主用,
+                             p2s(4)-- 4:保护组二备用
+                           }        
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5StandbyPhyCChannelEntry 7 }
+    
+  --  V5接口2M链路信息表 V5LinkTable
+  
+   hwV5LinkTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5LinkEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 8 }
+
+    hwV5LinkEntry         OBJECT-TYPE
+       SYNTAX         HwV5LinkEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { 
+                     hwV5cfgV5InterfaceID,
+                     hwV5LinkLinkID
+                   }
+    ::= { hwV5LinkTable  1 }
+
+     HwV5LinkEntry ::= SEQUENCE 
+     {
+	hwV5LinkLinkID                           INTEGER,            	
+	hwV5LinkLinkState                        INTEGER, 
+	hwV5LinkCRC4                             TruthValue,
+	hwV5LinkLIDState                         INTEGER,  
+	hwV5LinkOprType                          INTEGER,
+	hwV5LinkTsState                          Unsigned32	
+     }
+     
+    hwV5LinkLinkID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..255) 
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LinkEntry 1 }
+
+
+    hwV5LinkLinkState         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                               linkfail(1),--:链路故障，
+                               linkfailblock(2),--:链路故障阻塞，
+                               linkblock(3),--:链路阻塞，
+                               linlockunblock(4),--4:链路本地解阻塞，
+                               linremkunblock(5),--5:链路远地解阻塞，
+                               linknomal(6),--6:链路正常，
+                               remotelinkid(7),--:远端链路身份标识，                               
+                               locallinkid(8),--近端链路身份标识
+                               linknotcfged(9) --链路未配置                               
+                            }          
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LinkEntry 3 }
+
+    hwV5LinkCRC4         OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LinkEntry 4 }
+
+    hwV5LinkLIDState         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                               linkidnoreq(1),--:链路身份未请求，
+                               linkidsuccess(2),--:链路身份标识成功，
+                               linkidfail(3),--:链路身份标识失败，
+                               linkidreject(4),--:链路身份标识拒绝，
+                               linkid(5),--:链路身份标识正运行，
+                               linkidlenores(6),--:链路身份标识LE无响应，
+                               linkidgiveinres(7)--:链路身份标识放弃请求
+                           }               
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LinkEntry 5 }
+
+    hwV5LinkOprType         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             imclose(1),--:立即闭塞,
+                             delayclose(2),-- 2:延迟闭塞, 
+                             nodeclose(3),--:非延迟闭塞,
+                             unclose(4),-- 4:解闭塞,
+                             linkidoper(5)-- 5:链路身份标识操作）                           
+                            }  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LinkEntry 6 }
+
+    hwV5LinkTsState         OBJECT-TYPE
+        SYNTAX      Unsigned32(0..4294967295)  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5LinkEntry 7 }    
+    
+ --   V5接口重新指配操作 V5ReProvisionOperatorTable
+ 
+   hwV5ReProvisionOperatorTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5ReProvisionOperatorEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 9 }
+
+    hwV5ReProvisionOperatorEntry         OBJECT-TYPE
+       SYNTAX         HwV5ReProvisionOperatorEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { 
+                     hwV5cfgV5InterfaceID
+                   }
+    ::= { hwV5ReProvisionOperatorTable  1 }
+
+     HwV5ReProvisionOperatorEntry ::= SEQUENCE 
+     {
+	hwV5ReProvisionv5variable                      INTEGER,            	
+        hwV5ReProvisionrejectreason                    INTEGER,
+	hwV5ReProvisionOperType                        INTEGER 
+     }
+     
+    hwV5ReProvisionv5variable         OBJECT-TYPE
+        SYNTAX      INTEGER(0..127) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5ReProvisionOperatorEntry 1 }
+
+    hwV5ReProvisionrejectreason         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             varunkown(1),--:变量未知,
+                             varunprepare(2),--:变量未准备好,
+                             provision(3)--:指配正在进行）
+                           }          
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5ReProvisionOperatorEntry 2 }
+
+    hwV5ReProvisionOperType         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             dateuse(1),--1:数据集可用,
+                             checkre(2),--:核实重新指配,
+                             changevar(3),-- 3:切换到新变量,
+                             reqvarifid(4),-- 4:请求变量和接口标识, 
+                             reprovision(5),--:重新指配准备好,
+                             reprovisionunprepare(6),-- 6:重新指配未准备好,
+                             reprovisionstart(7),-- 7:重新指配启动,
+                             unablereprovision(8) --8:不能重新指配
+                            }         
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5ReProvisionOperatorEntry 3 }
+    
+  
+  --  ISDN用户通信通道配置管理表  V5IsdnCChannelConfigManage
+    hwV5IsdnCChannelConfigManage  OBJECT IDENTIFIER ::={ hwMD5500V5IfManage 10  }
+
+  --  用来get可分配的isdn端口群的叶子?v5IsdnNextAllocPortGroup
+    hwV5IsdnNextAllocPortGroup    OBJECT-TYPE
+        SYNTAX      INTEGER(0..254)
+        MAX-ACCESS  read-only
+        STATUS      current
+    DESCRIPTION
+         " "
+    ::= { hwV5IsdnCChannelConfigManage  1 }
+
+--  ISDN用户通信通道配置表 V5IsdnCChannelConfigTable
+  hwV5IsdnCChannelConfigTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5IsdnCChannelConfigEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwV5IsdnCChannelConfigManage 2 }
+
+    hwV5IsdnCChannelConfigEntry         OBJECT-TYPE
+       SYNTAX         HwV5IsdnCChannelConfigEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    " "
+          INDEX    { 
+                     hwV5cfgV5InterfaceID,
+                     hwV5IsdnCCIsdnPortGroupNo                    
+                   }
+    ::= { hwV5IsdnCChannelConfigTable  1 }
+
+     HwV5IsdnCChannelConfigEntry ::= SEQUENCE 
+     {
+        hwV5IsdnCCIsdnPortGroupNo       INTEGER,
+        hwV5IsdnCCLogicCID              INTEGER,
+        hwV5IsdnCCDChannelType          INTEGER,
+        hwV5IsdnCCUpperIsdnPortGroupNo  INTEGER,
+        hwV5IsdnCCRowStatus             RowStatus
+     }
+
+    hwV5IsdnCCIsdnPortGroupNo         OBJECT-TYPE
+        SYNTAX      INTEGER(0..254) 
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5IsdnCChannelConfigEntry 1 }
+
+    hwV5IsdnCCLogicCID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65535) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5IsdnCChannelConfigEntry 2 }
+
+    hwV5IsdnCCDChannelType         OBJECT-TYPE
+        SYNTAX      INTEGER{
+                             d(1),
+                             f(2),
+                             p(3)
+                           }  
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5IsdnCChannelConfigEntry 3 }
+
+    hwV5IsdnCCUpperIsdnPortGroupNo         OBJECT-TYPE
+        SYNTAX      INTEGER(0..254)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5IsdnCChannelConfigEntry 4 }
+
+    hwV5IsdnCCRowStatus         OBJECT-TYPE
+       SYNTAX                      RowStatus
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5IsdnCChannelConfigEntry 5 }
+    
+   -- V5振铃类型映射配置表 V5RingTypeMapConfigTable
+    hwV5RingTypeMapConfigTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwV5RingTypeMapConfigEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+        DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 11 }
+
+    hwV5RingTypeMapConfigEntry         OBJECT-TYPE
+       SYNTAX         HwV5RingTypeMapConfigEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    " "
+          INDEX    { 
+                     hwV5cfgV5InterfaceID,
+                     hwV5RingPeerRingType                    
+                   }
+    ::= { hwV5RingTypeMapConfigTable  1 }
+
+     HwV5RingTypeMapConfigEntry ::= SEQUENCE 
+     {
+        hwV5RingPeerRingType       INTEGER,
+        hwV5RingCascadeRingType    INTEGER,
+        hwV5RingInitRingType       INTEGER,
+        hwV5RingRowStatus          RowStatus
+     }
+
+    hwV5RingPeerRingType         OBJECT-TYPE
+        SYNTAX      INTEGER(0..127) 
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5RingTypeMapConfigEntry 1 }
+
+    hwV5RingCascadeRingType         OBJECT-TYPE
+        SYNTAX      INTEGER{                   
+                                                 r1(1),--  1 :null
+                                                 r2(2),--  2: 正常振铃 1:4
+                                                 r3(3),--  3: 特殊振铃 1:2  
+                                                 r4(4),--  4: 香港振铃 0.4:0.2:0.4:4 
+                                                 r5(5),--  5: 长振铃 
+                                                 r6(6),--  6: 特殊振铃 1.2:2
+                                                 r7(7),--  7: HK Ring 1:3 
+                                                 r8(8),--  8: HK CNTRX 0.4:0.2:0.4:0.2:0.4:3.0
+                                                 r9(9),--  9: HK DN-A 0.4:0.2:0.4:3.0
+                                                 r10(10),--  10: HK ACB 0.4:0.2 
+                                                 r11(11),--  11: HK Reminder 0.4秒振铃（一声）
+                                                 r12(12),--  12: HK DN-B 1.2:3  
+                                                 r13(13),--  13: CNTRX_IN 0.4:0.2:0.4:0.2:2.6
+                                                 r14(14),--  14: 埃及长途振铃 2:1
+                                                 r15(15),--  15:用户自定义振铃方式0
+                                                 r16(16),--  16:用户自定义振铃方式1
+                                                 r17(17),--  17:用户自定义振铃方式2
+                                                 r18(18),--  18:用户自定义振铃方式3
+                                                 r19(19),--  19:用户自定义振铃方式4
+                                                 r20(20),--  20:用户自定义振铃方式5
+                                                 r21(21),--  21:用户自定义振铃方式6
+                                                 r22(22),--  22:用户自定义振铃方式7
+                                                 r23(23),--  23:用户自定义振铃方式8
+                                                 r24(24),--  24:用户自定义振铃方式9
+                                                 r25(25),--  25:用户自定义振铃方式10
+                                                 r26(26),--  26:用户自定义振铃方式11
+                                                 r27(27),--  27:用户自定义振铃方式12
+                                                 r28(28),--  28:用户自定义振铃方式13
+                                                 r29(29),--  29:用户自定义振铃方式14
+                                                 r30(30) --  30:用户自定义振铃方式15                                                  
+
+                                             }    
+        
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5RingTypeMapConfigEntry 2 }
+
+    hwV5RingInitRingType         OBJECT-TYPE
+        SYNTAX      INTEGER{                     r1(1),--  1:NULL
+                                                 r2(2),--  2: FSK 振铃 1:4 
+                                                 r3(3),--  3: 特殊振铃(FSK) 1:2
+                                                 r4(4),--  4: 香港振铃(FSK) 0.4:0.2:0.4:4 
+                                                 r5(5),--  5: 特殊振铃(FSK)1.2:2
+                                                 r6(6),--  6: HK Ring (FSK)1:3
+                                                 r7(7),--  7: HK CNTRX (FSK) 0.4:0.2:0.4:0.2:0.4:3.0 
+                                                 r8(8),--  8: HK DN-A  (FSK) 0.4:0.2:0.4:3.0   
+                                                 r9(9),-- 9: HK DN-B  (FSK) 1.2:3    
+                                                 r10(10),--  10: CNTRX_IN (FSK) 0.4:0.2:0.4:0.2:2.6  
+                                                 r11(11),--  11: 埃及长途振铃(FSK) 2:1  
+                                                 r12(12),--  12: 用户自定义FSK振铃方式0  
+                                                 r13(13),--  13: 用户自定义FSK振铃方式1；
+                                                 r14(14),--  14: 用户自定义FSK振铃方式2
+                                                 r15(15),--  15: 用户自定义FSK振铃方式3
+                                                 r16(16),--  16: 用户自定义FSK振铃方式4
+                                                 r17(17),--  17: 用户自定义FSK振铃方式5
+                                                 r18(18),--  18: 用户自定义FSK振铃方式6
+                                                 r19(19),--  19: 用户自定义FSK振铃方式7
+                                                 r20(20),--  20: 用户自定义FSK振铃方式8
+                                                 r21(21),--  21: 用户自定义FSK振铃方式9
+                                                 r22(22),--  22: 用户自定义FSK振铃方式10
+                                                 r23(23),--  23: 用户自定义FSK振铃方式11
+                                                 r24(24),--  24: 用户自定义FSK振铃方式12
+                                                 r25(25),--  25: 用户自定义FSK振铃方式13
+                                                 r26(26),--  26: 用户自定义FSK振铃方式14
+                                                 r27(27) --  27: 用户自定义FSK振铃方式15
+                                                 
+                              }        
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5RingTypeMapConfigEntry 3 }
+
+    hwV5RingRowStatus         OBJECT-TYPE
+       SYNTAX               RowStatus
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwV5RingTypeMapConfigEntry 4 }
+    
+  --  用户自定义振铃类型表 UserDefineRingTypeTable
+     hwUserDefineRingTypeTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwUserDefineRingTypeEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+        DESCRIPTION
+           "The table lists the V5 groups that have been
+            configured on the system."
+    ::= { hwMD5500V5IfManage 12 }
+
+    hwUserDefineRingTypeEntry         OBJECT-TYPE
+       SYNTAX         HwUserDefineRingTypeEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    " "
+          INDEX    { 
+                     hwV5UserTypeRingType
+                   }
+    ::= { hwUserDefineRingTypeTable  1 }
+
+     HwUserDefineRingTypeEntry ::= SEQUENCE 
+     {
+        hwV5UserTypeRingType       INTEGER,
+        hwV5UserTypePara1          INTEGER,
+        hwV5UserTypePara2          INTEGER,
+        hwV5UserTypePara3          INTEGER,
+        hwV5UserTypePara4          INTEGER,
+        hwV5UserTypePara5          INTEGER,
+        hwV5UserTypePara6          INTEGER     
+           
+     }
+
+    hwV5UserTypeRingType         OBJECT-TYPE
+        SYNTAX      INTEGER(0..15) 
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwUserDefineRingTypeEntry 1 }
+
+    hwV5UserTypePara1         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65534) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwUserDefineRingTypeEntry 2 }
+
+
+    hwV5UserTypePara2         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65534) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwUserDefineRingTypeEntry 3 }
+
+    hwV5UserTypePara3         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65534) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwUserDefineRingTypeEntry 4 }
+
+    hwV5UserTypePara4         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65534) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwUserDefineRingTypeEntry 5 }
+
+    hwV5UserTypePara5         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65535) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwUserDefineRingTypeEntry 6 }
+
+    hwV5UserTypePara6         OBJECT-TYPE
+        SYNTAX      INTEGER(0..65534) 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwUserDefineRingTypeEntry 7 }
+    
+    
+    
+hwMD5500SPCMIfManage  OBJECT IDENTIFIER ::={ hwMD5500ServiceAdminMIB 12 }
+
+--SPCM接口表 SPCMInterfaceTable
+
+
+ hwSPCMInterfaceTable     OBJECT-TYPE
+        SYNTAX         SEQUENCE OF HwSPCMInterfaceEntry
+        MAX-ACCESS     not-accessible
+        STATUS         current
+    DESCRIPTION
+           "The table lists the SPCM groups that have been
+            configured on the system."
+    ::= { hwMD5500SPCMIfManage 1 }
+
+    hwSPCMInterfaceEntry         OBJECT-TYPE
+       SYNTAX         HwSPCMInterfaceEntry
+       MAX-ACCESS     not-accessible
+       STATUS         current
+       DESCRIPTION    ""
+          INDEX    { hwSPCMInterfaceID }
+    ::= { hwSPCMInterfaceTable  1 }
+
+     HwSPCMInterfaceEntry ::= SEQUENCE 
+     {
+        hwSPCMInterfaceID                   INTEGER,
+		hwSPCMCASE1PortFrameID              INTEGER,
+		hwSPCMCASE1PortSlotID				INTEGER,
+		hwSPCMCASE1PortPortID				INTEGER,
+		hwSPCMRingModeID					INTEGER,
+		hwSPCMInitRingModeID					INTEGER,
+		hwSPCMRowStatus                     RowStatus,
+		hwSPCMState							INTEGER
+     }
+     
+    hwSPCMInterfaceID         OBJECT-TYPE
+        SYNTAX      INTEGER(0..254)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 1 }
+
+    hwSPCMCASE1PortFrameID       OBJECT-TYPE
+        SYNTAX      INTEGER(0..240)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 2 }
+
+    hwSPCMCASE1PortSlotID       OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 3 }
+    
+    hwSPCMCASE1PortPortID       OBJECT-TYPE
+        SYNTAX      INTEGER(0..63)
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 4 }    
+
+    hwSPCMRingModeID       OBJECT-TYPE
+        SYNTAX      INTEGER{                   
+                              r1(1),--  1 :null
+                              r2(2),--  2: 正常振铃 1:4
+                              r3(3),--  3: 特殊振铃 1:2  
+                              r4(4),--  4: 香港振铃 0.4:0.2:0.4:4 
+                              r5(5),--  5: 长振铃 
+                              r6(6),--  6: 特殊振铃 1.2:2
+                              r7(7),--  7: HK Ring 1:3 
+                              r8(8),--  8: HK CNTRX 0.4:0.2:0.4:0.2:0.4:3.0
+                              r9(9),--  9: HK DN-A 0.4:0.2:0.4:3.0
+                              r10(10),--  10: HK ACB 0.4:0.2 
+                              r11(11),--  11: HK Reminder 0.4秒振铃（一声）
+                              r12(12),--  12: HK DN-B 1.2:3  
+                              r13(13),--  13: CNTRX_IN 0.4:0.2:0.4:0.2:2.6
+                              r14(14),--  14: 埃及长途振铃 2:1
+                              r15(15),--  15:用户自定义振铃方式0
+                              r16(16),--  16:用户自定义振铃方式1
+                              r17(17),--  17:用户自定义振铃方式2
+                              r18(18),--  18:用户自定义振铃方式3
+                              r19(19),--  19:用户自定义振铃方式4
+                              r20(20),--  20:用户自定义振铃方式5
+                              r21(21),--  21:用户自定义振铃方式6
+                              r22(22),--  22:用户自定义振铃方式7
+                              r23(23),--  23:用户自定义振铃方式8
+                              r24(24),--  24:用户自定义振铃方式9
+                              r25(25),--  25:用户自定义振铃方式10
+                              r26(26),--  26:用户自定义振铃方式11
+                              r27(27),--  27:用户自定义振铃方式12
+                              r28(28),--  28:用户自定义振铃方式13
+                              r29(29),--  29:用户自定义振铃方式14
+                              r30(30) --  30:用户自定义振铃方式15                                                  
+                         } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 5 }    
+
+    hwSPCMInitRingModeID       OBJECT-TYPE
+        SYNTAX      INTEGER{                     r1(1),--  1:NULL
+                                                 r2(2),--  2: FSK 振铃 1:4 
+                                                 r3(3),--  3: 特殊振铃(FSK) 1:2
+                                                 r4(4),--  4: 香港振铃(FSK) 0.4:0.2:0.4:4 
+                                                 r5(5),--  5: 特殊振铃(FSK)1.2:2
+                                                 r6(6),--  6: HK Ring (FSK)1:3
+                                                 r7(7),--  7: HK CNTRX (FSK) 0.4:0.2:0.4:0.2:0.4:3.0 
+                                                 r8(8),--  8: HK DN-A  (FSK) 0.4:0.2:0.4:3.0   
+                                                 r9(9),-- 9: HK DN-B  (FSK) 1.2:3    
+                                                 r10(10),--  10: CNTRX_IN (FSK) 0.4:0.2:0.4:0.2:2.6  
+                                                 r11(11),--  11: 埃及长途振铃(FSK) 2:1  
+                                                 r12(12),--  12: 用户自定义FSK振铃方式0  
+                                                 r13(13),--  13: 用户自定义FSK振铃方式1；
+                                                 r14(14),--  14: 用户自定义FSK振铃方式2
+                                                 r15(15),--  15: 用户自定义FSK振铃方式3
+                                                 r16(16),--  16: 用户自定义FSK振铃方式4
+                                                 r17(17),--  17: 用户自定义FSK振铃方式5
+                                                 r18(18),--  18: 用户自定义FSK振铃方式6
+                                                 r19(19),--  19: 用户自定义FSK振铃方式7
+                                                 r20(20),--  20: 用户自定义FSK振铃方式8
+                                                 r21(21),--  21: 用户自定义FSK振铃方式9
+                                                 r22(22),--  22: 用户自定义FSK振铃方式10
+                                                 r23(23),--  23: 用户自定义FSK振铃方式11
+                                                 r24(24),--  24: 用户自定义FSK振铃方式12
+                                                 r25(25),--  25: 用户自定义FSK振铃方式13
+                                                 r26(26),--  26: 用户自定义FSK振铃方式14
+                                                 r27(27) --  27: 用户自定义FSK振铃方式15
+                         } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 6 }    
+    hwSPCMRowStatus          OBJECT-TYPE
+        SYNTAX             RowStatus
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 7 }
+    
+
+    hwSPCMState       OBJECT-TYPE
+         SYNTAX          INTEGER{
+         					normal(1),
+         					fault(2)
+         				}
+                         
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+         " "
+    ::= { hwSPCMInterfaceEntry 8 }
+    
+END
+

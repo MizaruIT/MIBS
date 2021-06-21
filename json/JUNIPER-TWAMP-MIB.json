@@ -1,0 +1,1156 @@
+{
+  "imports": {
+    "class": "imports",
+    "DISMAN-PING-MIB": [
+      "pingCtlOwnerIndex",
+      "pingCtlTestName",
+      "pingProbeHistoryIndex"
+    ],
+    "HCNUM-TC": [
+      "CounterBasedGauge64"
+    ],
+    "JUNIPER-SMI": [
+      "jnxTwampMibRoot",
+      "jnxTwampNotificationPrefix"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "MODULE-IDENTITY",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "Counter32",
+      "iso",
+      "TimeTicks",
+      "MibIdentifier",
+      "Bits",
+      "Gauge32",
+      "OBJECT-TYPE",
+      "Integer32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "DateAndTime",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "jnxTwampMib": {
+    "name": "jnxTwampMib",
+    "oid": "1.3.6.1.4.1.2636.3.77.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2014-03-01 00:00",
+        "description": "Initial definition."
+      }
+    ],
+    "lastupdated": "201403010000Z",
+    "organization": "Juniper Networks, Inc.",
+    "contactinfo": " Juniper Technical Assistance Center Juniper Networks, Inc. 1194 N. Mathilda Avenue Sunnyvale, CA 94089 E-mail: support@juniper.net",
+    "description": "This mib provides data associated with the TWAMP feature"
+  },
+  "JnxTwampClientCollectionType": {
+    "name": "JnxTwampClientCollectionType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "currentTest": 1,
+          "lastCompletedTest": 2,
+          "movingAverage": 3,
+          "allTests": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "Each TWAMP entry can maintain several collections of probes and provide separate calculations over each collection. The types of collections include: currentTest -- the test currently being executed lastCompletedTest -- the most recently completed test movingAverage -- the 'n' most recent probes (n is configurable) allTests -- all the probes (since the entry was last reset). Objects with this type identify a specific collection."
+  },
+  "JnxTwampClientMeasurementType": {
+    "name": "JnxTwampClientMeasurementType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "roundTripTime": 1,
+          "rttJitter": 2,
+          "rttInterarrivalJitter": 3,
+          "egress": 4,
+          "egressJitter": 5,
+          "egressInterarrivalJitter": 6,
+          "ingress": 7,
+          "ingressJitter": 8,
+          "ingressInterarrivalJitter": 9
+        }
+      }
+    },
+    "status": "current",
+    "description": "For each individual probe, several different measurements can be made. These include the following (all measurements are provided in units of microseconds): roundTripTime -- this is the delay between the the transmission of a probe and the arrival of its response. rttJitter -- this is the difference between the current round trip time measurement and the previous one. rttInterarrivalJitter -- An estimate of the statistical variance of a packet's interarrival time. Defined in rfc1889 as: J=J+(|D(i-1,i)|-J)/16 where J is the interarrival jitter and D(i-1, i) is the current round trip jitter measurement. egress -- this is the delay beween the transmission of a probe and its arrival at its destination. egressJitter -- this is the difference between the current egress delay the previous measurement. egressInterarrivalJitter -- similar to rttInterarrivalJitter, but applied to egress jitter measurements. ingress -- this is the delay between the transmission of a probe response and its arrival at its destination. ingressJitter -- this is the difference between the current ingress delay and the previous measurement. ingressInterarrivalJitter -- similar to rttInterarrivalJitter, but applied to ingress jitter measurements. Note, due to clock synchronization artifacts, many one-way jitter measurements & calculations may include signifacant variations, in some cases orders of magnitude greater than the round trip times. Because of this, one-way jitter measurements will only be performed on samples which are less than 10 seconds apart."
+  },
+  "JnxTwampClientMeasurementSet": {
+    "name": "JnxTwampClientMeasurementSet",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "roundTripTime": 1,
+          "posRttJitter": 2,
+          "negRttJitter": 3,
+          "egress": 4,
+          "posEgressJitter": 5,
+          "negEgressJitter": 6,
+          "ingress": 7,
+          "posIngressJitter": 8,
+          "negIngressJitter": 9
+        }
+      }
+    },
+    "status": "current",
+    "description": "Over each collection of probes, TWAMP calculates statistics for several sets of measurements. These sets include the following: roundTripTime -- the set of round trip delays posRttJitter -- the set of positive round trip jitter measurements negRttJitter -- the set of negative round trip jitter measurements egress -- the set of outgoing (source to destination) one-way delays posEgressJitter -- the set of positive egress jitter measurements negEgressJitter -- the set of negative egress jitter measurements ingress -- the set of incoming (destination to source) one-way delays posIngressJitter -- the set of positive ingress jitter measurements negIngressJitter -- the set of negative ingress jitter measurements Objects with this type identify a specific set of measurements."
+  },
+  "JnxTwampPercentType": {
+    "name": "JnxTwampPercentType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 100000000
+          }
+        ]
+      }
+    },
+    "displayhint": "d-6",
+    "status": "current",
+    "description": "Displays a percentage as decimal with 6 digits precision."
+  },
+  "jnxTwampClientNode": {
+    "name": "jnxTwampClientNode",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1",
+    "class": "objectidentity",
+    "status": "current",
+    "description": "The node contains all the TWAMP client related tables."
+  },
+  "jnxTwampRpmIdentity": {
+    "name": "jnxTwampRpmIdentity",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rpm": 1,
+          "twamp": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is added to be binded to the traps. This object simply identifies if its an RPM type of test or a TWAMP type of test."
+  },
+  "jnxTwampClientResultsSampleTable": {
+    "name": "jnxTwampClientResultsSampleTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides measurements from the latest individual TWAMP probe samples. Within each sample, the specific measurement type is identified by jnxTwampClientResSampleType. Note, if the latest probe was unsuccessful, no measurement types will be available. See the definition of JnxTwampClientMeasurementType for details on the types of measurements available."
+  },
+  "jnxTwampClientResultsSampleEntry": {
+    "name": "jnxTwampClientResultsSampleEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlOwnerIndex",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlTestName",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampResSampleType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry provides a specific measurement type for a single probe."
+  },
+  "jnxTwampResSampleType": {
+    "name": "jnxTwampResSampleType",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampClientMeasurementType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the specific measurement type returned by jnxTwampResSampleValue."
+  },
+  "jnxTwampResSampleValue": {
+    "name": "jnxTwampResSampleValue",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object returns the measurement identified by the corresponding jnxTwampResSampleType."
+  },
+  "jnxTwampResSampleDate": {
+    "name": "jnxTwampResSampleDate",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the date and time of when this measurement was obtained."
+  },
+  "jnxTwampClientResultsSummaryTable": {
+    "name": "jnxTwampClientResultsSummaryTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides a summary of the results for a specific TWAMP entry (identified by pingCtlOwnerIndex/pingCtlTestName). The scope of the summary is identified by jnxTwampClientResSumCollection."
+  },
+  "jnxTwampClientResultsSummaryEntry": {
+    "name": "jnxTwampClientResultsSummaryEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlOwnerIndex",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlTestName",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampResSumCollection",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry in the table provides a summary of the TWAMP results over a single collection of probes(test session). For each TWAMP entry, there are several collections maintained: the current test, the most recently completed test, a configurable number of the most recent probes (aka 'moving average'), and a global collection representing all the probes. Each entry in this table summarizes the results for one of these collections."
+  },
+  "jnxTwampResSumCollection": {
+    "name": "jnxTwampResSumCollection",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampClientCollectionType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifes the collection of probes over which the summary data represented by the other objects in this table applies. Note, if a collection type is not supported or not configured, it will not be instantiated in this table."
+  },
+  "jnxTwampResSumSent": {
+    "name": "jnxTwampResSumSent",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the number of probes sent within the collection identified by jnxTwampResSumCollection."
+  },
+  "jnxTwampResSumReceived": {
+    "name": "jnxTwampResSumReceived",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the number of probes received within the collection identified by jnxTwampResSumCollection."
+  },
+  "jnxTwampResSumPercentLost": {
+    "name": "jnxTwampResSumPercentLost",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampPercentType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the percentage of probes lost within the collection identified by jnxTwampResSumCollection."
+  },
+  "jnxTwampResSumDate": {
+    "name": "jnxTwampResSumDate",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the date and time of when the most recent probe within the collection identified by jnxTwampResSumCollection was completed."
+  },
+  "jnxTwampClientResultsCalculatedTable": {
+    "name": "jnxTwampClientResultsCalculatedTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides a set of calculated values for each TWAMP entry, for each collection of probes maintained within that entry, and for each supported measurement set within that collection of probes. This table will skip over any measurement set for which there are 0 samples."
+  },
+  "jnxTwampClientResultsCalculatedEntry": {
+    "name": "jnxTwampClientResultsCalculatedEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlOwnerIndex",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlTestName",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampResSumCollection",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampResCalcSet",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "jnxTwampResCalcSet": {
+    "name": "jnxTwampResCalcSet",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampClientMeasurementSet",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the measurement set upon which the calculations returned by the other objects in this table are based."
+  },
+  "jnxTwampResCalcSamples": {
+    "name": "jnxTwampResCalcSamples",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of samples used in this calculations."
+  },
+  "jnxTwampResCalcMin": {
+    "name": "jnxTwampResCalcMin",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The minimum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampResCalcMax": {
+    "name": "jnxTwampResCalcMax",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampResCalcAverage": {
+    "name": "jnxTwampResCalcAverage",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The average of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampResCalcPkToPk": {
+    "name": "jnxTwampResCalcPkToPk",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The difference between the minimum and maximum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampResCalcStdDev": {
+    "name": "jnxTwampResCalcStdDev",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The standard deviation calculated over all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampResCalcSum": {
+    "name": "jnxTwampResCalcSum",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CounterBasedGauge64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The sum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampClientHistorySampleTable": {
+    "name": "jnxTwampClientHistorySampleTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides measurements for individual TWAMP probe samples(test sessions). In addition to the last completed sample, a configurable number of the most recent samples are available as well. Within each sample, the specific measurement type is identified by jnxTwampHistSampleType. Note, if probe was unsuccessful, no measurement types will be available for that history entry. See the definition of JnxTwampClientMeasurementType for details on of measurements available."
+  },
+  "jnxTwampClientHistorySampleEntry": {
+    "name": "jnxTwampClientHistorySampleEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlOwnerIndex",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlTestName",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingProbeHistoryIndex",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampHistSampleType",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "jnxTwampHistSampleType": {
+    "name": "jnxTwampHistSampleType",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampClientMeasurementType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the specific measurement type returned by jnxTwampHistSampleValue."
+  },
+  "jnxTwampHistSampleValue": {
+    "name": "jnxTwampHistSampleValue",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object returns the measurement identified by the corresponding jnxTwampHistSampleType."
+  },
+  "jnxTwampClientHistorySummaryTable": {
+    "name": "jnxTwampClientHistorySummaryTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides historical summary data for each collection of probes(test session) within each TWAMP Control Entry, similar to the jnxTwampClientResultsSummaryTable. In addition to the current summary, this table provides the same number of historical entries as the jnxTwampClientHistorySampleTable."
+  },
+  "jnxTwampClientHistorySummaryEntry": {
+    "name": "jnxTwampClientHistorySummaryEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlOwnerIndex",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlTestName",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingProbeHistoryIndex",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampHistSumCollection",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "jnxTwampHistSumCollection": {
+    "name": "jnxTwampHistSumCollection",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampClientCollectionType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Identifies the collection of probes whose results are summarized by this row. At this time, historical summaries are available only for the current test (currentTest(1))."
+  },
+  "jnxTwampHistSumSent": {
+    "name": "jnxTwampHistSumSent",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the number of probes sent within the collection identified by jnxTwampHistSumCollection."
+  },
+  "jnxTwampHistSumReceived": {
+    "name": "jnxTwampHistSumReceived",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the number of probes received within the collection identified by jnxTwampHistSumCollection."
+  },
+  "jnxTwampHistSumPercentLost": {
+    "name": "jnxTwampHistSumPercentLost",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampPercentType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the percentage of probes lost within the collection identified by jnxTwampHistSumCollection."
+  },
+  "jnxTwampClientHistoryCalculatedTable": {
+    "name": "jnxTwampClientHistoryCalculatedTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides a set of calculated values for each TWAMP control entry, for each test session maintained within that entry, and for each supported calculated type within that collection of probes, similar to the jnxTwampClientResultsCalculatedTable. In addition to the current summary, this table provides the same number of historical entries as the jnxTwampClientHistorySampleTable."
+  },
+  "jnxTwampClientHistoryCalculatedEntry": {
+    "name": "jnxTwampClientHistoryCalculatedEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlOwnerIndex",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlTestName",
+        "implied": 0
+      },
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingProbeHistoryIndex",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampHistSumCollection",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampHistCalcSet",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "jnxTwampHistCalcSet": {
+    "name": "jnxTwampHistCalcSet",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "JnxTwampClientMeasurementSet",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object identifies the measurement set upon which the calculations returned by the other objects in this table are based."
+  },
+  "jnxTwampHistCalcSamples": {
+    "name": "jnxTwampHistCalcSamples",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of samples used in this calculations."
+  },
+  "jnxTwampHistCalcMin": {
+    "name": "jnxTwampHistCalcMin",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The minimum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampHistCalcMax": {
+    "name": "jnxTwampHistCalcMax",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampHistCalcAverage": {
+    "name": "jnxTwampHistCalcAverage",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The average of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampHistCalcPkToPk": {
+    "name": "jnxTwampHistCalcPkToPk",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The difference between the minimum and maximum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampHistCalcStdDev": {
+    "name": "jnxTwampHistCalcStdDev",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The standard deviation calculated over all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampHistCalcSum": {
+    "name": "jnxTwampHistCalcSum",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.6.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CounterBasedGauge64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The sum of all the samples in the collection and measurement set associated with this row. Values are provided in units of microseconds."
+  },
+  "jnxTwampClientControlConnectionTable": {
+    "name": "jnxTwampClientControlConnectionTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of Client Sessions."
+  },
+  "jnxTwampClientCCEntry": {
+    "name": "jnxTwampClientCCEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampClientControlConnectionID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "TWAMP Client Session characteristics."
+  },
+  "jnxTwampClientControlConnectionID": {
+    "name": "jnxTwampClientControlConnectionID",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "TWAMP Client control session ID."
+  },
+  "jnxTwampClientCCName": {
+    "name": "jnxTwampClientCCName",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Text string containing the session's unique name."
+  },
+  "jnxTwampClientCCStatus": {
+    "name": "jnxTwampClientCCStatus",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active": 1,
+          "stopped": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If the control session is active, this would return 1. If the control session does not have any currently running test sessions and is not active, this would return 2."
+  },
+  "jnxTwampClientServerAddress": {
+    "name": "jnxTwampClientServerAddress",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Server IP address for TWAMP TCP control session."
+  },
+  "jnxTwampClientServerPort": {
+    "name": "jnxTwampClientServerPort",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Destination port for TWAMP TCP control connection."
+  },
+  "jnxTwampClientTSConfiguredCount": {
+    "name": "jnxTwampClientTSConfiguredCount",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number test sessions configured."
+  },
+  "jnxTwampClientTSActiveCount": {
+    "name": "jnxTwampClientTSActiveCount",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of test sessions currently running."
+  },
+  "jnxTwampClientAuthMode": {
+    "name": "jnxTwampClientAuthMode",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.7.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "authenticated": 2,
+          "encrypted": 3,
+          "controlOnlyEncrypted": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": " Authenticated mode for the control session."
+  },
+  "jnxTwampClientTestSessionsTable": {
+    "name": "jnxTwampClientTestSessionsTable",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of Test Sessions."
+  },
+  "jnxTwampClientTSEntry": {
+    "name": "jnxTwampClientTSEntry",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DISMAN-PING-MIB",
+        "object": "pingCtlOwnerIndex",
+        "implied": 0
+      },
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampClientTestSessionID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "TWAMP Test Session characteristics."
+  },
+  "jnxTwampClientTestSessionID": {
+    "name": "jnxTwampClientTestSessionID",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Test Session ID."
+  },
+  "jnxTwampClientTSName": {
+    "name": "jnxTwampClientTSName",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TWAMP Test Session Name."
+  },
+  "jnxTwampClientTSStatus": {
+    "name": "jnxTwampClientTSStatus",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active": 1,
+          "stopped": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TWAMP Test Session status."
+  },
+  "jnxTwampClientTSSenderAddress": {
+    "name": "jnxTwampClientTSSenderAddress",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Twamp Test Sender Address."
+  },
+  "jnxTwampClientTSSenderPort": {
+    "name": "jnxTwampClientTSSenderPort",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TWAMP Test Session Sender Port."
+  },
+  "jnxTwampClientTSReflectorAddress": {
+    "name": "jnxTwampClientTSReflectorAddress",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TWAMP Test Session Reflector Address."
+  },
+  "jnxTwampClientTSReflectorPort": {
+    "name": "jnxTwampClientTSReflectorPort",
+    "oid": "1.3.6.1.4.1.2636.3.77.1.1.8.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "TWAMP Test Session Reflector Port. "
+  },
+  "twampNotifications": {
+    "name": "twampNotifications",
+    "oid": "1.3.6.1.4.1.2636.4.27.1",
+    "class": "objectidentity"
+  },
+  "jnxTwampClientControlConnectionClosed": {
+    "name": "jnxTwampClientControlConnectionClosed",
+    "oid": "1.3.6.1.4.1.2636.4.27.1.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampClientCCName"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is generated when all the test iterations configured under the control connection finish running and control connection is closed."
+  },
+  "jnxTwampClientTestIterationFinished": {
+    "name": "jnxTwampClientTestIterationFinished",
+    "oid": "1.3.6.1.4.1.2636.4.27.1.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "JUNIPER-TWAMP-MIB",
+        "object": "jnxTwampClientCCName"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is generated when one test iteration is finished for all the test sessions configured under the control connection."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/JUNIPER-TWAMP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:43:11 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "JUNIPER-TWAMP-MIB"
+  }
+}

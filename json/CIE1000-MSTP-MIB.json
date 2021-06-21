@@ -1,0 +1,2371 @@
+{
+  "imports": {
+    "class": "imports",
+    "CIE1000-TC": [
+      "CIE1000Unsigned16",
+      "CIE1000DisplayString",
+      "CIE1000InterfaceIndex",
+      "CIE1000Unsigned8",
+      "CIE1000VlanListQuarter"
+    ],
+    "CISCO-IE1000-MIB": [
+      "cie1000SwitchMgmt"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "Gauge32",
+      "IpAddress",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "Unsigned32",
+      "Bits",
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "MibIdentifier",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "TruthValue"
+    ]
+  },
+  "cie1000MstpMib": {
+    "name": "cie1000MstpMib",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-11-13 00:00",
+        "description": "Add TCN counters"
+      },
+      {
+        "revision": "2015-11-04 00:00",
+        "description": "Added msti config table with msti value as the iteration key"
+      },
+      {
+        "revision": "2015-09-29 00:00",
+        "description": "Added range information for bridge parameters"
+      },
+      {
+        "revision": "2014-07-01 00:00",
+        "description": "Initial version"
+      }
+    ],
+    "lastupdated": "201511130000Z",
+    "organization": "Cisco Systems, Inc.",
+    "contactinfo": "Cisco Systems Customer Service Postal: 170 West Tasman Drive San Jose, CA 95134 USA Tel: +1 800 553-NETS E-mail: cs-snmp@cisco.com",
+    "description": "This is a private version of the 802.1Q-2005 MSTP MIB"
+  },
+  "CIE1000MSTPForceVersion": {
+    "name": "CIE1000MSTPForceVersion",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "stp": 0,
+          "rstp": 2,
+          "mstp": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "This enumeration control the STP protocol variant to run."
+  },
+  "CIE1000MstpPoint2Point": {
+    "name": "CIE1000MstpPoint2Point",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "forceTrue": 0,
+          "forceFalse": 1,
+          "auto": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "This enumeration describe the values of adminPointToPointMAC and operPointToPointMAC parameters. (Full duplex port administrative and operational status.) See 6.4.3 of IEEE Std 802.1D."
+  },
+  "CIE1000MstpPortState": {
+    "name": "CIE1000MstpPortState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disabled": 0,
+          "discarding": 1,
+          "learning": 2,
+          "forwarding": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "This enumeration describe the forwarding state of an interface."
+  },
+  "cie1000MstpMibObjects": {
+    "name": "cie1000MstpMibObjects",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1",
+    "class": "objectidentity"
+  },
+  "cie1000MstpConfig": {
+    "name": "cie1000MstpConfig",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2",
+    "class": "objectidentity"
+  },
+  "cie1000MstpConfigBridgeParams": {
+    "name": "cie1000MstpConfigBridgeParams",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1",
+    "class": "objectidentity"
+  },
+  "cie1000MstpConfigBridgeParamsBridgeMaxAge": {
+    "name": "cie1000MstpConfigBridgeParamsBridgeMaxAge",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Bridge Max Age, IEEE-802.1D-2004 sect 13.23.4"
+  },
+  "cie1000MstpConfigBridgeParamsBridgeHelloTime": {
+    "name": "cie1000MstpConfigBridgeParamsBridgeHelloTime",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Bridge Hello Time, 13.25.7 of IEEE-802.1Q-2005. Fixed value of two seconds by the standard, but this implementation allow a compatibility range from 1 to 2 seconds, in stipulated in 802.1Q-2005"
+  },
+  "cie1000MstpConfigBridgeParamsBridgeForwardDelay": {
+    "name": "cie1000MstpConfigBridgeParamsBridgeForwardDelay",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 4,
+            "max": 30
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Bridge Forward Delay, IEEE-802.1D-2004 sect 17.20"
+  },
+  "cie1000MstpConfigBridgeParamsForceVersion": {
+    "name": "cie1000MstpConfigBridgeParamsForceVersion",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000MSTPForceVersion",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "value of the Force Protocol Version parameter - 13.6.2 of IEEE-802.1Q-2005"
+  },
+  "cie1000MstpConfigBridgeParamsTxHoldCount": {
+    "name": "cie1000MstpConfigBridgeParamsTxHoldCount",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "TxHoldCount - 17.13.12 of IEEE Std 802.1D"
+  },
+  "cie1000MstpConfigBridgeParamsMaxHops": {
+    "name": "cie1000MstpConfigBridgeParamsMaxHops",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned8",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 6,
+            "max": 40
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "MaxHops - 13.22.1 of IEEE-802.1Q-2005"
+  },
+  "cie1000MstpConfigBridgeParamsBpduFiltering": {
+    "name": "cie1000MstpConfigBridgeParamsBpduFiltering",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "BPDU filtering for edge ports. Control whether a port explicitly configured as Edge will transmit and receive BPDUs"
+  },
+  "cie1000MstpConfigBridgeParamsBpduGuard": {
+    "name": "cie1000MstpConfigBridgeParamsBpduGuard",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "BPDU guard for edge ports. Control whether a port explicitly configured as Edge will disable itself upon reception of a BPDU. The port will enter the error-disabled state, and will be removed from the active topology. "
+  },
+  "cie1000MstpConfigBridgeParamsErrorRecoveryDelay": {
+    "name": "cie1000MstpConfigBridgeParamsErrorRecoveryDelay",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.1.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds until a STP inconsistent port is recovered. Valid values are zero (recovery disabled) or between 30 and 86400 (24 hours)"
+  },
+  "cie1000MstpConfigMstiParamTable": {
+    "name": "cie1000MstpConfigMstiParamTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of the bridge instance (MSTIs) parameters"
+  },
+  "cie1000MstpConfigMstiParamEntry": {
+    "name": "cie1000MstpConfigMstiParamEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiParamInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each MSTI has a set of parameters"
+  },
+  "cie1000MstpConfigMstiParamInstance": {
+    "name": "cie1000MstpConfigMstiParamInstance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bridge instance number. The CIST = 0, MSTI1 = 1, etc"
+  },
+  "cie1000MstpConfigMstiParamPriority": {
+    "name": "cie1000MstpConfigMstiParamPriority",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned8",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Bridge Priority"
+  },
+  "cie1000MstpConfigMstiConfig": {
+    "name": "cie1000MstpConfigMstiConfig",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3",
+    "class": "objectidentity"
+  },
+  "cie1000MstpConfigMstiConfigId": {
+    "name": "cie1000MstpConfigMstiConfigId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.1",
+    "class": "objectidentity"
+  },
+  "cie1000MstpConfigMstiConfigIdName": {
+    "name": "cie1000MstpConfigMstiConfigIdName",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 31
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The configuration name"
+  },
+  "cie1000MstpConfigMstiConfigIdRevision": {
+    "name": "cie1000MstpConfigMstiConfigIdRevision",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The configuration revision"
+  },
+  "cie1000MstpConfigMstiConfigTable": {
+    "name": "cie1000MstpConfigMstiConfigTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is the 802.1Q - 8.9 MST Configuration table For the purposes of calculating the Configuration Digest, the MST Configuration Table is considered to contain 4096 consecutive single octet elements, where each element of the table (with the exception of the first and last) contains an MSTID value."
+  },
+  "cie1000MstpConfigMstiConfigEntry": {
+    "name": "cie1000MstpConfigMstiConfigEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVid",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The first element of the table contains the value 0, the second element the MSTID value corresponding to VID 1, the third element the MSTID value corresponding to VID 2, and so on, with the next to last element of the table containing the MSTID value corresponding to VID 4094, and the last element containing the value 0."
+  },
+  "cie1000MstpConfigMstiConfigVid": {
+    "name": "cie1000MstpConfigMstiConfigVid",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4095
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Vlan id"
+  },
+  "cie1000MstpConfigMstiConfigMstid": {
+    "name": "cie1000MstpConfigMstiConfigMstid",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned8",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The MSTID value associated with the vlan id"
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapTable": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is the 802.1Q - 8.9 MST Configuration table For the purposes of calculating the Configuration Digest, the MST Configuration Table is considered to contain 8 consecutive single octet elements, where each element of the table contains an vlan bitmap (vlans that have the MSTI value specified are set to one)."
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapEntry": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVlanBitmapMstiValue",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The first element of the table contains vlan bitmap corresponding to MSTI 0, the second element contains vlan bitmap corresponding to MSTI 1 until the 7th element. MSTI range is 0-7."
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapMstiValue": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapMstiValue",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "MSTI value."
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans0To1K": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans0To1K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans1KTo2K": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans2KTo3K": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans3KTo4K": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.3.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000MstpConfigCistInterfaceParamTable": {
+    "name": "cie1000MstpConfigCistInterfaceParamTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of the CIST physical interface parameters"
+  },
+  "cie1000MstpConfigCistInterfaceParamEntry": {
+    "name": "cie1000MstpConfigCistInterfaceParamEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamInterfaceNo",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each CIST physical interface has a set of parameters"
+  },
+  "cie1000MstpConfigCistInterfaceParamInterfaceNo": {
+    "name": "cie1000MstpConfigCistInterfaceParamInterfaceNo",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number."
+  },
+  "cie1000MstpConfigCistInterfaceParamEnable": {
+    "name": "cie1000MstpConfigCistInterfaceParamEnable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Control whether port is controlled by xSTP. If disabled, the port forwarding state follow the MAC state"
+  },
+  "cie1000MstpConfigCistInterfaceParamAdminEdgePort": {
+    "name": "cie1000MstpConfigCistInterfaceParamAdminEdgePort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "adminEdgePort parameter - 18.3.3 of IEEE Std 802.1D"
+  },
+  "cie1000MstpConfigCistInterfaceParamAdminAutoEdgePort": {
+    "name": "cie1000MstpConfigCistInterfaceParamAdminAutoEdgePort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "adminAutoEdgePort parameter - 17.13.3 of IEEE Std 802.1D"
+  },
+  "cie1000MstpConfigCistInterfaceParamAdminPointToPointMAC": {
+    "name": "cie1000MstpConfigCistInterfaceParamAdminPointToPointMAC",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000MstpPoint2Point",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "adminPointToPointMAC parameter - 6.4.3 of IEEE Std 802.1D"
+  },
+  "cie1000MstpConfigCistInterfaceParamRestrictedRole": {
+    "name": "cie1000MstpConfigCistInterfaceParamRestrictedRole",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "restrictedRole parameter - 13.25.14 of IEEE Std 802.1Q-2005"
+  },
+  "cie1000MstpConfigCistInterfaceParamRestrictedTcn": {
+    "name": "cie1000MstpConfigCistInterfaceParamRestrictedTcn",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "restrictedRole parameter - 13.25.15 of IEEE Std 802.1Q-2005"
+  },
+  "cie1000MstpConfigCistInterfaceParamBpduGuard": {
+    "name": "cie1000MstpConfigCistInterfaceParamBpduGuard",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If enabled, causes the port to disable itself upon receiving valid BPDU's. Contrary to the similar bridge setting, the port Edge status does not effect this setting. A port entering error-disabled state due to this setting is subject to the bridge ErrorRecoveryDelay setting as well"
+  },
+  "cie1000MstpConfigAggrParams": {
+    "name": "cie1000MstpConfigAggrParams",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5",
+    "class": "objectidentity"
+  },
+  "cie1000MstpConfigAggrParamsEnable": {
+    "name": "cie1000MstpConfigAggrParamsEnable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Control whether port is controlled by xSTP. If disabled, the port forwarding state follow the MAC state"
+  },
+  "cie1000MstpConfigAggrParamsAdminEdgePort": {
+    "name": "cie1000MstpConfigAggrParamsAdminEdgePort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "adminEdgePort parameter - 18.3.3 of IEEE Std 802.1D"
+  },
+  "cie1000MstpConfigAggrParamsAdminAutoEdgePort": {
+    "name": "cie1000MstpConfigAggrParamsAdminAutoEdgePort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "adminAutoEdgePort parameter - 17.13.3 of IEEE Std 802.1D"
+  },
+  "cie1000MstpConfigAggrParamsAdminPointToPointMAC": {
+    "name": "cie1000MstpConfigAggrParamsAdminPointToPointMAC",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000MstpPoint2Point",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "adminPointToPointMAC parameter - 6.4.3 of IEEE Std 802.1D"
+  },
+  "cie1000MstpConfigAggrParamsRestrictedRole": {
+    "name": "cie1000MstpConfigAggrParamsRestrictedRole",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "restrictedRole parameter - 13.25.14 of IEEE Std 802.1Q-2005"
+  },
+  "cie1000MstpConfigAggrParamsRestrictedTcn": {
+    "name": "cie1000MstpConfigAggrParamsRestrictedTcn",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "restrictedRole parameter - 13.25.15 of IEEE Std 802.1Q-2005"
+  },
+  "cie1000MstpConfigAggrParamsBpduGuard": {
+    "name": "cie1000MstpConfigAggrParamsBpduGuard",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.5.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If enabled, causes the port to disable itself upon receiving valid BPDU's. Contrary to the similar bridge setting, the port Edge status does not effect this setting. A port entering error-disabled state due to this setting is subject to the bridge ErrorRecoveryDelay setting as well"
+  },
+  "cie1000MstpConfigMstiInterfaceParamTable": {
+    "name": "cie1000MstpConfigMstiInterfaceParamTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of the MSTI interface parameters"
+  },
+  "cie1000MstpConfigMstiInterfaceParamEntry": {
+    "name": "cie1000MstpConfigMstiInterfaceParamEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiInterfaceParamInterfaceNo",
+        "implied": 0
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiInterfaceParamInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each MSTI interface has a set of parameters"
+  },
+  "cie1000MstpConfigMstiInterfaceParamInterfaceNo": {
+    "name": "cie1000MstpConfigMstiInterfaceParamInterfaceNo",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number."
+  },
+  "cie1000MstpConfigMstiInterfaceParamInstance": {
+    "name": "cie1000MstpConfigMstiInterfaceParamInstance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bridge instance number. The CIST = 0, MSTI1 = 1, etc"
+  },
+  "cie1000MstpConfigMstiInterfaceParamAdminPathCost": {
+    "name": "cie1000MstpConfigMstiInterfaceParamAdminPathCost",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Path Cost - 13.37.1 of 802.1Q-2005"
+  },
+  "cie1000MstpConfigMstiInterfaceParamAdminPortPriority": {
+    "name": "cie1000MstpConfigMstiInterfaceParamAdminPortPriority",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned8",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "priority field for the Port Identifier - 13.24.12 of 802.1Q-2005"
+  },
+  "cie1000MstpConfigMstiAggrParamTable": {
+    "name": "cie1000MstpConfigMstiAggrParamTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This is a table of the MSTI aggregations parameters"
+  },
+  "cie1000MstpConfigMstiAggrParamEntry": {
+    "name": "cie1000MstpConfigMstiAggrParamEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiAggrParamInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The aggregations for each MSTI has a set of parameters"
+  },
+  "cie1000MstpConfigMstiAggrParamInstance": {
+    "name": "cie1000MstpConfigMstiAggrParamInstance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bridge instance number. The CIST = 0, MSTI1 = 1, etc"
+  },
+  "cie1000MstpConfigMstiAggrParamAdminPathCost": {
+    "name": "cie1000MstpConfigMstiAggrParamAdminPathCost",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Path Cost - 13.37.1 of 802.1Q-2005"
+  },
+  "cie1000MstpConfigMstiAggrParamAdminPortPriority": {
+    "name": "cie1000MstpConfigMstiAggrParamAdminPortPriority",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.2.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned8",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "priority field for the Port Identifier - 13.24.12 of 802.1Q-2005"
+  },
+  "cie1000MstpStatus": {
+    "name": "cie1000MstpStatus",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3",
+    "class": "objectidentity"
+  },
+  "cie1000MstpStatusBridgeTable": {
+    "name": "cie1000MstpStatusBridgeTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table represent the status of the bridge instances"
+  },
+  "cie1000MstpStatusBridgeEntry": {
+    "name": "cie1000MstpStatusBridgeEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A MSTP Bridge instance set of status objects"
+  },
+  "cie1000MstpStatusBridgeInstance": {
+    "name": "cie1000MstpStatusBridgeInstance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bridge instance number. The CIST = 0, MSTI1 = 1, etc"
+  },
+  "cie1000MstpStatusBridgeBridgeId": {
+    "name": "cie1000MstpStatusBridgeBridgeId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bridge Identifier of this bridge"
+  },
+  "cie1000MstpStatusBridgeTimeSinceTopologyChange": {
+    "name": "cie1000MstpStatusBridgeTimeSinceTopologyChange",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The count in seconds of the time elapsed since the Topology Change flag was last True"
+  },
+  "cie1000MstpStatusBridgeTopologyChangeCount": {
+    "name": "cie1000MstpStatusBridgeTopologyChangeCount",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The count of the times the Topology Change flag parameter for the Bridge has been set since the Bridge was powered on or initialized"
+  },
+  "cie1000MstpStatusBridgeTopologyChange": {
+    "name": "cie1000MstpStatusBridgeTopologyChange",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Topology Change Flag current status"
+  },
+  "cie1000MstpStatusBridgeDesignatedRoot": {
+    "name": "cie1000MstpStatusBridgeDesignatedRoot",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Designated Root Bridge"
+  },
+  "cie1000MstpStatusBridgeRootPathCost": {
+    "name": "cie1000MstpStatusBridgeRootPathCost",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Root Path Cost"
+  },
+  "cie1000MstpStatusBridgeRootPort": {
+    "name": "cie1000MstpStatusBridgeRootPort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Root Port"
+  },
+  "cie1000MstpStatusBridgeMaxAge": {
+    "name": "cie1000MstpStatusBridgeMaxAge",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Max Age, IEEE-802.1D-2004 sect 13.23.7"
+  },
+  "cie1000MstpStatusBridgeForwardDelay": {
+    "name": "cie1000MstpStatusBridgeForwardDelay",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Forward Delay, IEEE-802.1D-2004 sect 13.23.7"
+  },
+  "cie1000MstpStatusBridgeBridgeMaxAge": {
+    "name": "cie1000MstpStatusBridgeBridgeMaxAge",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bridge Max Age, IEEE-802.1D-2004 sect 13.23.4"
+  },
+  "cie1000MstpStatusBridgeBridgeHelloTime": {
+    "name": "cie1000MstpStatusBridgeBridgeHelloTime",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bridge Hello Time, IEEE-802.1D-2004 sect 13.23.4"
+  },
+  "cie1000MstpStatusBridgeBridgeForwardDelay": {
+    "name": "cie1000MstpStatusBridgeBridgeForwardDelay",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Bridge Forward Delay, IEEE-802.1D-2004 sect 13.23.4"
+  },
+  "cie1000MstpStatusBridgeTxHoldCount": {
+    "name": "cie1000MstpStatusBridgeTxHoldCount",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Hold Time / Transmission Limit, IEEE-802.1D-2004 sect 13.22"
+  },
+  "cie1000MstpStatusBridgeForceVersion": {
+    "name": "cie1000MstpStatusBridgeForceVersion",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000MSTPForceVersion",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Value of the Force Protocol Version parameter - IEEE-802.1D-2004 sect 17.16.1"
+  },
+  "cie1000MstpStatusBridgeCistRegionalRoot": {
+    "name": "cie1000MstpStatusBridgeCistRegionalRoot",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "CIST Regional Root Identifier (13.16.4)"
+  },
+  "cie1000MstpStatusBridgeCistInternalPathCost": {
+    "name": "cie1000MstpStatusBridgeCistInternalPathCost",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "CIST Path Cost"
+  },
+  "cie1000MstpStatusBridgeMaxHops": {
+    "name": "cie1000MstpStatusBridgeMaxHops",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned8",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "MaxHops (13.22.1)"
+  },
+  "cie1000MstpStatusInterfaceTable": {
+    "name": "cie1000MstpStatusInterfaceTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table represent the status of the interface instances"
+  },
+  "cie1000MstpStatusInterfaceEntry": {
+    "name": "cie1000MstpStatusInterfaceEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceInterfaceNo",
+        "implied": 0
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A MSTP interface instance set of status objects"
+  },
+  "cie1000MstpStatusInterfaceInterfaceNo": {
+    "name": "cie1000MstpStatusInterfaceInterfaceNo",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number."
+  },
+  "cie1000MstpStatusInterfaceInstance": {
+    "name": "cie1000MstpStatusInterfaceInstance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Bridge instance number. The CIST = 0, MSTI1 = 1, etc"
+  },
+  "cie1000MstpStatusInterfaceEnabled": {
+    "name": "cie1000MstpStatusInterfaceEnabled",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Whether port is controlled by xSTP"
+  },
+  "cie1000MstpStatusInterfaceActive": {
+    "name": "cie1000MstpStatusInterfaceActive",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Whether port is active"
+  },
+  "cie1000MstpStatusInterfaceParentPort": {
+    "name": "cie1000MstpStatusInterfaceParentPort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Parent port if physical port is aggregated. (Otherwise 0xffff)"
+  },
+  "cie1000MstpStatusInterfaceUpTime": {
+    "name": "cie1000MstpStatusInterfaceUpTime",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "seconds of the time elapsed since the Port was last reset or initialized"
+  },
+  "cie1000MstpStatusInterfacePortState": {
+    "name": "cie1000MstpStatusInterfacePortState",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000MstpPortState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of the Port"
+  },
+  "cie1000MstpStatusInterfacePortId": {
+    "name": "cie1000MstpStatusInterfacePortId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Unique Port identifier comprising two parts, the Port Number and the Port Priority field"
+  },
+  "cie1000MstpStatusInterfacePathCost": {
+    "name": "cie1000MstpStatusInterfacePathCost",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Path Cost (17.16.5 of IEEE Std 802.1D)"
+  },
+  "cie1000MstpStatusInterfaceDesignatedRoot": {
+    "name": "cie1000MstpStatusInterfaceDesignatedRoot",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Designated Root"
+  },
+  "cie1000MstpStatusInterfaceDesignatedCost": {
+    "name": "cie1000MstpStatusInterfaceDesignatedCost",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Designated Cost"
+  },
+  "cie1000MstpStatusInterfaceDesignatedBridge": {
+    "name": "cie1000MstpStatusInterfaceDesignatedBridge",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 8,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Designated Bridge"
+  },
+  "cie1000MstpStatusInterfaceDesignatedPort": {
+    "name": "cie1000MstpStatusInterfaceDesignatedPort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 2,
+            "max": 2
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Designated Port"
+  },
+  "cie1000MstpStatusInterfaceTcAck": {
+    "name": "cie1000MstpStatusInterfaceTcAck",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Topology Change Acknowledge"
+  },
+  "cie1000MstpStatusInterfaceHelloTime": {
+    "name": "cie1000MstpStatusInterfaceHelloTime",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Hello Time"
+  },
+  "cie1000MstpStatusInterfaceAdminEdgePort": {
+    "name": "cie1000MstpStatusInterfaceAdminEdgePort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "adminEdgePort (18.3.3 of IEEE Std 802.1D)"
+  },
+  "cie1000MstpStatusInterfaceOperEdgePort": {
+    "name": "cie1000MstpStatusInterfaceOperEdgePort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "operEdgePort (18.3.4 of IEEE Std 802.1D)"
+  },
+  "cie1000MstpStatusInterfaceAutoEdgePort": {
+    "name": "cie1000MstpStatusInterfaceAutoEdgePort",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "autoEdgePort (17.13.3 of IEEE Std 802.1D)"
+  },
+  "cie1000MstpStatusInterfaceMacOperational": {
+    "name": "cie1000MstpStatusInterfaceMacOperational",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of the MAC Operational parameter (6.4.2 of IEEE Std 802.1D,)"
+  },
+  "cie1000MstpStatusInterfaceAdminPointToPointMAC": {
+    "name": "cie1000MstpStatusInterfaceAdminPointToPointMAC",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000MstpPoint2Point",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of the adminPointToPointMAC parameter (6.4.3 of IEEE Std 802.1D)"
+  },
+  "cie1000MstpStatusInterfaceOperPointToPointMAC": {
+    "name": "cie1000MstpStatusInterfaceOperPointToPointMAC",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of the operPointToPointMAC parameter (6.4.3 of IEEE Std 802.1D)"
+  },
+  "cie1000MstpStatusInterfaceRestrictedRole": {
+    "name": "cie1000MstpStatusInterfaceRestrictedRole",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of the restrictedRole parameter for the Port (13.25.14)"
+  },
+  "cie1000MstpStatusInterfaceRestrictedTcn": {
+    "name": "cie1000MstpStatusInterfaceRestrictedTcn",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of the restrictedTcn parameter for the Port (13.25.15)"
+  },
+  "cie1000MstpStatusInterfacePortRole": {
+    "name": "cie1000MstpStatusInterfacePortRole",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current Port Role"
+  },
+  "cie1000MstpStatusInterfaceDisputed": {
+    "name": "cie1000MstpStatusInterfaceDisputed",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.2.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current value of the disputed variable for the CIST Port"
+  },
+  "cie1000MstpStatusInterfaceStatisticsTable": {
+    "name": "cie1000MstpStatusInterfaceStatisticsTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table represent the statistics of the CIST interfaces"
+  },
+  "cie1000MstpStatusInterfaceStatisticsEntry": {
+    "name": "cie1000MstpStatusInterfaceStatisticsEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsInterfaceNo",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A CIST interface set of statistics"
+  },
+  "cie1000MstpStatusInterfaceStatisticsInterfaceNo": {
+    "name": "cie1000MstpStatusInterfaceStatisticsInterfaceNo",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface number."
+  },
+  "cie1000MstpStatusInterfaceStatisticsStpFrameXmits": {
+    "name": "cie1000MstpStatusInterfaceStatisticsStpFrameXmits",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of STP frames transmitted"
+  },
+  "cie1000MstpStatusInterfaceStatisticsStpFrameReceived": {
+    "name": "cie1000MstpStatusInterfaceStatisticsStpFrameReceived",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of STP frames received"
+  },
+  "cie1000MstpStatusInterfaceStatisticsRstpFrameXmits": {
+    "name": "cie1000MstpStatusInterfaceStatisticsRstpFrameXmits",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of RSTP frames transmitted"
+  },
+  "cie1000MstpStatusInterfaceStatisticsRstpFrameReceived": {
+    "name": "cie1000MstpStatusInterfaceStatisticsRstpFrameReceived",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of RSTP frames received"
+  },
+  "cie1000MstpStatusInterfaceStatisticsMstpFrameXmits": {
+    "name": "cie1000MstpStatusInterfaceStatisticsMstpFrameXmits",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of MSTP frames transmitted"
+  },
+  "cie1000MstpStatusInterfaceStatisticsMstpFrameReceived": {
+    "name": "cie1000MstpStatusInterfaceStatisticsMstpFrameReceived",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of MSTP frames received"
+  },
+  "cie1000MstpStatusInterfaceStatisticsUnknownFramesReceived": {
+    "name": "cie1000MstpStatusInterfaceStatisticsUnknownFramesReceived",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of unknown frames received and discarded in error"
+  },
+  "cie1000MstpStatusInterfaceStatisticsIllegalFrameReceived": {
+    "name": "cie1000MstpStatusInterfaceStatisticsIllegalFrameReceived",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of illegal frames received and discarded in error"
+  },
+  "cie1000MstpStatusInterfaceStatisticsTcnFrameXmits": {
+    "name": "cie1000MstpStatusInterfaceStatisticsTcnFrameXmits",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of TCN frames transmitted"
+  },
+  "cie1000MstpStatusInterfaceStatisticsTcnFrameReceived": {
+    "name": "cie1000MstpStatusInterfaceStatisticsTcnFrameReceived",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.1.3.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of TCN frames received"
+  },
+  "cie1000MstpMibConformance": {
+    "name": "cie1000MstpMibConformance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2",
+    "class": "objectidentity"
+  },
+  "cie1000MstpMibCompliances": {
+    "name": "cie1000MstpMibCompliances",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.1",
+    "class": "objectidentity"
+  },
+  "cie1000MstpMibGroups": {
+    "name": "cie1000MstpMibGroups",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2",
+    "class": "objectidentity"
+  },
+  "cie1000MstpConfigBridgeParamsInfoGroup": {
+    "name": "cie1000MstpConfigBridgeParamsInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsBridgeMaxAge"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsBridgeHelloTime"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsBridgeForwardDelay"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsForceVersion"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsTxHoldCount"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsMaxHops"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsBpduFiltering"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsBpduGuard"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigBridgeParamsErrorRecoveryDelay"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigMstiParamTableInfoGroup": {
+    "name": "cie1000MstpConfigMstiParamTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiParamInstance"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiParamPriority"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigMstiConfigIdInfoGroup": {
+    "name": "cie1000MstpConfigMstiConfigIdInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigIdName"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigIdRevision"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigMstiConfigTableInfoGroup": {
+    "name": "cie1000MstpConfigMstiConfigTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVid"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigMstid"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigMstiConfigVlanBitmapTableInfoGroup": {
+    "name": "cie1000MstpConfigMstiConfigVlanBitmapTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVlanBitmapMstiValue"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans0To1K"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans1KTo2K"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans2KTo3K"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiConfigVlanBitmapAccessVlans3KTo4K"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigCistInterfaceParamTableInfoGroup": {
+    "name": "cie1000MstpConfigCistInterfaceParamTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamInterfaceNo"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamEnable"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamAdminEdgePort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamAdminAutoEdgePort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamAdminPointToPointMAC"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamRestrictedRole"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamRestrictedTcn"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigCistInterfaceParamBpduGuard"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigAggrParamsInfoGroup": {
+    "name": "cie1000MstpConfigAggrParamsInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigAggrParamsEnable"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigAggrParamsAdminEdgePort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigAggrParamsAdminAutoEdgePort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigAggrParamsAdminPointToPointMAC"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigAggrParamsRestrictedRole"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigAggrParamsRestrictedTcn"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigAggrParamsBpduGuard"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigMstiInterfaceParamTableInfoGroup": {
+    "name": "cie1000MstpConfigMstiInterfaceParamTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiInterfaceParamInterfaceNo"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiInterfaceParamInstance"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiInterfaceParamAdminPathCost"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiInterfaceParamAdminPortPriority"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpConfigMstiAggrParamTableInfoGroup": {
+    "name": "cie1000MstpConfigMstiAggrParamTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiAggrParamInstance"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiAggrParamAdminPathCost"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpConfigMstiAggrParamAdminPortPriority"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpStatusBridgeTableInfoGroup": {
+    "name": "cie1000MstpStatusBridgeTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.10",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeInstance"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeBridgeId"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeTimeSinceTopologyChange"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeTopologyChangeCount"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeTopologyChange"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeDesignatedRoot"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeRootPathCost"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeRootPort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeMaxAge"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeForwardDelay"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeBridgeMaxAge"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeBridgeHelloTime"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeBridgeForwardDelay"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeTxHoldCount"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeForceVersion"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeCistRegionalRoot"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeCistInternalPathCost"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusBridgeMaxHops"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpStatusInterfaceTableInfoGroup": {
+    "name": "cie1000MstpStatusInterfaceTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.11",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceInterfaceNo"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceInstance"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceEnabled"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceActive"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceParentPort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceUpTime"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfacePortState"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfacePortId"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfacePathCost"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceDesignatedRoot"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceDesignatedCost"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceDesignatedBridge"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceDesignatedPort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceTcAck"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceHelloTime"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceAdminEdgePort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceOperEdgePort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceAutoEdgePort"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceMacOperational"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceAdminPointToPointMAC"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceOperPointToPointMAC"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceRestrictedRole"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceRestrictedTcn"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfacePortRole"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceDisputed"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpStatusInterfaceStatisticsTableInfoGroup": {
+    "name": "cie1000MstpStatusInterfaceStatisticsTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.2.12",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsInterfaceNo"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsStpFrameXmits"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsStpFrameReceived"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsRstpFrameXmits"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsRstpFrameReceived"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsMstpFrameXmits"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsMstpFrameReceived"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsUnknownFramesReceived"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsIllegalFrameReceived"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsTcnFrameXmits"
+      },
+      {
+        "module": "CIE1000-MSTP-MIB",
+        "object": "cie1000MstpStatusInterfaceStatisticsTcnFrameReceived"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000MstpMibCompliance": {
+    "name": "cie1000MstpMibCompliance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.20.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cie1000MstpConfigBridgeParamsInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigMstiParamTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigMstiConfigIdInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigMstiConfigTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigMstiConfigVlanBitmapTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigCistInterfaceParamTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigAggrParamsInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigMstiInterfaceParamTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpConfigMstiAggrParamTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpStatusBridgeTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpStatusInterfaceTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      },
+      {
+        "object": "cie1000MstpStatusInterfaceStatisticsTableInfoGroup",
+        "module": "CIE1000-MSTP-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for the implementation."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CIE1000-MSTP-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:34:14 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CIE1000-MSTP-MIB"
+  }
+}

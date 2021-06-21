@@ -1,0 +1,266 @@
+{
+  "imports": {
+    "class": "imports",
+    "FC-MGMT-MIB": [
+      "fcmInstanceIndex",
+      "fcmSwitchIndex"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "OBJECT-TYPE",
+      "iso",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "Bits",
+      "IpAddress",
+      "Counter64",
+      "Gauge32",
+      "MibIdentifier",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "mib-2",
+      "TimeTicks",
+      "Counter32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ],
+    "T11-TC-MIB": [
+      "T11FabricIndex"
+    ]
+  },
+  "t11GsServerSessionMIB": {
+    "name": "t11GsServerSessionMIB",
+    "oid": "1.3.6.1.2.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2005-10-13 00:00",
+        "description": "Initial version of this MIB."
+      }
+    ],
+    "lastupdated": "200510130000Z",
+    "organization": "T11",
+    "contactinfo": " Claudio DeSanti Cisco Systems, Inc. 170 West Tasman Drive San Jose, CA 95134 USA EMail: cds@cisco.com Keith McCloghrie Cisco Systems, Inc. 170 West Tasman Drive San Jose, CA 95134 USA Email: kzm@cisco.com",
+    "description": "The MIB module for the management of Fibre Channel Server Sessions as defined generically in FC-GS-5 to represent a collection of one or more requests for the session's server. Such a session is started by a Server Session Begin (SSB) request and terminated by a Server Session End (SSE) request. In particular, GS-5 Server Sessions are used by Enhanced Zoning Management."
+  },
+  "t11GssMIBObjects": {
+    "name": "t11GssMIBObjects",
+    "oid": "1.3.6.1.2.1.1.1",
+    "class": "objectidentity"
+  },
+  "t11GssMIBConformance": {
+    "name": "t11GssMIBConformance",
+    "oid": "1.3.6.1.2.1.1.2",
+    "class": "objectidentity"
+  },
+  "t11GssMIBNotifications": {
+    "name": "t11GssMIBNotifications",
+    "oid": "1.3.6.1.2.1.1.0",
+    "class": "objectidentity"
+  },
+  "t11GssConfiguration": {
+    "name": "t11GssConfiguration",
+    "oid": "1.3.6.1.2.1.1.1.1",
+    "class": "objectidentity"
+  },
+  "t11GssSessionTable": {
+    "name": "t11GssSessionTable",
+    "oid": "1.3.6.1.2.1.1.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "reference": "ANSI INCITS xxx/200x, T11/Project 1677-D/Rev 8.2, Fibre Channel - Generic Services-5 (FC-GS-5), 4 October 2005, sections 4.9.5 and 6.4.10.2.",
+    "status": "current",
+    "description": "A table containing information about the active GS-5 Server sessions on one or more switches on all fabrics known to those switches."
+  },
+  "t11GssSessionEntry": {
+    "name": "t11GssSessionEntry",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "FC-MGMT-MIB",
+        "object": "fcmInstanceIndex",
+        "implied": 0
+      },
+      {
+        "module": "FC-MGMT-MIB",
+        "object": "fcmSwitchIndex",
+        "implied": 0
+      },
+      {
+        "module": "T11-GS-SERVER-SESSION-MIB",
+        "object": "t11GssSessionFabricIndex",
+        "implied": 0
+      }
+    ],
+    "reference": "ANSI INCITS xxx/200x, T11/Project 1677-D/Rev 8.2, Fibre Channel - Generic Services-5 (FC-GS-5), 4 October 2005, sections 4.9.5.5.",
+    "status": "current",
+    "description": "Each entry contains information specific to a GS-5 Server session for a particular fabric on a particular switch (identified by values of fcmInstanceIndex and fcmSwitchIndex). Note that each switch can have at most one Server session per fabric. Several different types of Servers are defined in FC-GS-5. The behavior of a Server with respect to commands received within a Server session is specified for each type of Server. For some types, parameter changes can only be made within the context of a session. That is, some types of changes can only made while a session is established. So, in order to make such changes via an SNMP SetRequest, some types of Servers require that a corresponding entry in this table exist, and in such cases, the required entry in this table is created implicitly (by the agent on receipt of the SetRequest) as and when necessary, with t11GssSessionOwnerType having a value of 'snmp'."
+  },
+  "t11GssSessionFabricIndex": {
+    "name": "t11GssSessionFabricIndex",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "T11FabricIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A unique index value which uniquely identifies a particular fabric. In a fabric conformant to FC-SW-4, multiple Virtual Fabrics can operate within one (or more) physical infrastructures, and this index value is used to uniquely identify a particular (physical or virtual) fabric within a physical infrastructure. In a fabric conformant to versions earlier than FC-SW-4, only a single fabric could operate within a physical infrastructure, and thus, the value of this fabric index was defined to always be 1."
+  },
+  "t11GssSessionOwnerType": {
+    "name": "t11GssSessionOwnerType",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "gsClient": 2,
+          "cli": 3,
+          "snmp": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the owner type for this session: other - none of the following. gsClient - a Fibre Channel Generic Services (e.g., GS-5) client. cli - Command Line Interface (CLI). snmp - this session was established due to an SNMP SetRequest. "
+  },
+  "t11GssSessionOwner": {
+    "name": "t11GssSessionOwner",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "ANSI INCITS xxx/200x, T11/Project 1677-D/Rev 8.2, Fibre Channel - Generic Services-5 (FC-GS-5), 4 October 2005, section 4.9.5.2. RFC 3513, Internet Protocol Version 6 (IPv6) Addressing Architecture, April 2003.",
+    "status": "current",
+    "description": "This object specifies the owner for this session. If the value of the corresponding instance of t11GssSessionOwnerType is 'gs5Client', this object will contain the FC_ID of the GS-5 client which issued the Server Session Begin (SSB) which initiated this session. If the value of the corresponding instance of t11GssSessionOwnerType object is 'cli', this object will contain the user name of the CLI (Command Line Interface) user on whose behalf the session was setup. If the value of the corresponding instance of t11GssSessionOwnerType is 'snmp', this object will contain the source IP address of the SNMP SetRequests which initiated the setup of this session, in the form: for IPv4, n.n.n.n, or, for IPv6, in any of the three conventional forms listed in section 2.2 of RFC 3513."
+  },
+  "t11GssSessionControl": {
+    "name": "t11GssSessionControl",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "commitZoneChanges": 1,
+          "terminateSession": 2,
+          "noop": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "reference": "ANSI INCITS xxx/200x, T11/Project 1677-D/Rev 8.2, Fibre Channel - Generic Services-5 (FC-GS-5), 4 October 2005, section 6.4.10.2.",
+    "status": "current",
+    "description": "This object can not be modified unless the corresponding instance of t11GssSessionOwnerType has the value 'snmp', and even then, only by the SNMP entity identified by the value of t11GssSessionOwner. A particular Server may impose additional constraints, e.g., a Zone Server will reject a commit when it is operating in Basic mode. Setting the object requests an action: commitZoneChanges - requests that the changes made within this session to the Zone Set Database be committed. terminateSession - requests that the session be terminated, with any outstanding changes made within this session being discarded. noop - requests nothing. When read, the value is always 'noop'."
+  },
+  "t11GssSessionCommitResult": {
+    "name": "t11GssSessionCommitResult",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "commitSuccessful": 1,
+          "commitInProgress": 2,
+          "commitFailed": 3,
+          "none": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "ANSI INCITS xxx/200x, T11/Project 1677-D/Rev 8.2, Fibre Channel - Generic Services-5 (FC-GS-5), 4 October 2005, section 6.4.10.2.3.",
+    "status": "current",
+    "description": "This object indicates the current state/outcome of the most recent 'commitChanges' request which was invoked via the corresponding instance of t11GssSessionControl: 'commitSuccessful' -- commit successful, 'commitInProgress' -- commit still in progress, 'commitFailed' -- commit failed, 'none' -- no request has been invoked via the corresponding instance of t11GssSessionControl."
+  },
+  "t11GssMIBCompliances": {
+    "name": "t11GssMIBCompliances",
+    "oid": "1.3.6.1.2.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "t11GssMIBGroups": {
+    "name": "t11GssMIBGroups",
+    "oid": "1.3.6.1.2.1.1.2.2",
+    "class": "objectidentity"
+  },
+  "t11GssMIBCompliance": {
+    "name": "t11GssMIBCompliance",
+    "oid": "1.3.6.1.2.1.1.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "t11GssActiveGroup",
+        "module": "T11-GS-SERVER-SESSION-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which support GS-5 Server sessions."
+  },
+  "t11GssActiveGroup": {
+    "name": "t11GssActiveGroup",
+    "oid": "1.3.6.1.2.1.1.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "T11-GS-SERVER-SESSION-MIB",
+        "object": "t11GssSessionOwnerType"
+      },
+      {
+        "module": "T11-GS-SERVER-SESSION-MIB",
+        "object": "t11GssSessionOwner"
+      },
+      {
+        "module": "T11-GS-SERVER-SESSION-MIB",
+        "object": "t11GssSessionControl"
+      },
+      {
+        "module": "T11-GS-SERVER-SESSION-MIB",
+        "object": "t11GssSessionCommitResult"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects containing information about active GS-5 Server sessions."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/T11-GS-SERVER-SESSION-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:05:43 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "T11-GS-SERVER-SESSION-MIB"
+  }
+}

@@ -1,0 +1,2580 @@
+{
+  "imports": {
+    "class": "imports",
+    "AN-MIB": [
+      "she"
+    ],
+    "IF-MIB": [
+      "ifSpeed",
+      "ifIndex",
+      "InterfaceIndex"
+    ],
+    "SHE-ALARMING-MIB": [
+      "sheAlarmTimeAndDate",
+      "sheAlarmSeverity",
+      "sheAlarmReportingSourceType",
+      "sheAlarmReportingSource"
+    ],
+    "SHE-TC-MIB": [
+      "SheControlStatusType"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "Gauge32",
+      "TimeTicks",
+      "Unsigned32",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "Counter64",
+      "Bits",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "IpAddress",
+      "MibIdentifier",
+      "OBJECT-TYPE",
+      "iso"
+    ],
+    "SNMPv2-TC": [
+      "PhysAddress",
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "DisplayString"
+    ]
+  },
+  "sheGBondMIB": {
+    "name": "sheGBondMIB",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2007-10-26 00:00",
+        "description": "Initial version. A ifIndex with ifType atmbond(234) will represent a GBondPort of bondingtype atm. GBondPort's of type ethernet are currently not supported via this MIB."
+      },
+      {
+        "revision": "2008-03-17 16:05",
+        "description": "Updated version for SHE R2.8."
+      },
+      {
+        "revision": "2008-06-09 13:24",
+        "description": "Remove restrictions regarding eth bonding support."
+      },
+      {
+        "revision": "2008-07-14 13:00",
+        "description": "Correct description of possible bonding groups on various card types."
+      },
+      {
+        "revision": "2008-10-09 10:23",
+        "description": "Add requestID parameter to GbondPortStack control group for ACI management system usage only."
+      },
+      {
+        "revision": "2009-12-08 14:12",
+        "description": "Descriptional update for all controlRequest parameters to identify all commands, which do not modify the NE configuration database."
+      }
+    ],
+    "lastupdated": "200912081300Z",
+    "organization": "Nokia Siemens Networks",
+    "contactinfo": "Gerd Barchmann COO BCS BBA RD SDE gerd.barchmann@nsn.com +49 3834 555654",
+    "description": "The objects in this MIB module are used to manage the multi-pair bonded xDSL Interfaces, defined in ITU-T recommendations G.998.1, G.998.2. This MIB module contain information for a used bonding scheme specific as GBOND-ATM or GBOND-ETH. The following references are used throughout this MIB module: [G.998.1] refers to: ITU-T Recommendation G.998.1: 'ATM-based multi-pair bonding', January 2005. [G.998.2] refers to: ITU-T Recommendation G.998.1: 'Ethernet-based multi-pair bonding', January 2005. [WT-157] refers to: DSL Forum Technical Report: 'Management Framework for xDSL Bonding', January 2007. Naming Conventions: BCE - Bonding Channel Entity CO - Central Office CPE - Customer Premises Equipment GBS - Generic Bonding Sublayer SNR - Signal to Noise Ratio"
+  },
+  "SheGBondControlRequestType": {
+    "name": "SheGBondControlRequestType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noRequest": 1,
+          "createGBondPort": 101,
+          "modifyGBondPortStack": 102,
+          "deleteGBondPort": 103,
+          "modifyGBondPortConfiguration": 110,
+          "modifyGBondPortThreshConfiguration": 111,
+          "modifyGBondAtmPortConfiguration": 121,
+          "modifyGBondEthPortConfiguration": 131
+        }
+      }
+    }
+  },
+  "SheGBondControlRequestResultType": {
+    "name": "SheGBondControlRequestResultType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noRequest": 1,
+          "comExecStarted": 30,
+          "paramFaulty": 31,
+          "requestBusy": 32,
+          "setDataFailed": 34,
+          "aswTimeout": 35,
+          "commandFailed": 36,
+          "commandSucceeded": 37,
+          "resourceUnavailable": 51,
+          "comFailedOnFirmwareRestrictions": 52,
+          "comFailedOnHWRestrictions": 53,
+          "comFailedOnUnsupportedBondingType": 54,
+          "comFailedOnUnsuitableLineConditions": 55
+        }
+      }
+    }
+  },
+  "SheGBondPortStackBondingType": {
+    "name": "SheGBondPortStackBondingType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "atmBond": 1,
+          "ethBond": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Describes if it is an ATM or Ethernet bond."
+  },
+  "TruthValueOrUnknown": {
+    "name": "TruthValueOrUnknown",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unknown": 0,
+          "true": 1,
+          "false": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "This textual convention is an extension of the TruthValue convention. The latter defines a boolean value with possible values of true(1) and false(2). This extension permits the additional value of unknown(0), which can be returned as a result of GET operation, when an exact true or false value of the object cannot be determined."
+  },
+  "SheGBondFltStatusType": {
+    "name": "SheGBondFltStatusType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "noPeer": 0,
+        "peerPowerLoss": 1,
+        "bceSubTypeMismatch": 2,
+        "lowRate": 3
+      }
+    },
+    "status": "current",
+    "description": "G.Bond (GBS) port Fault Status. This is a bitmap of possible conditions."
+  },
+  "SheGBondPortSideType": {
+    "name": "SheGBondPortSideType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "subscriber": 1,
+          "office": 2,
+          "unknown": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "G.Bond port mode of operation (subtype)."
+  },
+  "SheGBondEthPtmTcType": {
+    "name": "SheGBondEthPtmTcType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "tc6465": 1,
+          "tcHDLC": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "This textual convention represents possible PTM-TC types in G.bond/Eth ports. The following values are defined: tc6465 - 64/65-octet encapsulation, as defined in [802.3] Clause 61.3.3 tcHDLC - HDLC encapsulation, as defined in [G.998.2] Annex B"
+  },
+  "sheGBondObjects": {
+    "name": "sheGBondObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1",
+    "class": "objectidentity"
+  },
+  "sheGBondPort": {
+    "name": "sheGBondPort",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1",
+    "class": "objectidentity"
+  },
+  "sheGBondPortStackTable": {
+    "name": "sheGBondPortStackTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table should be used to build a bonding group."
+  },
+  "sheGBondPortStackEntry": {
+    "name": "sheGBondPortStackEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A ifIndex with ifType atmbond(234) will represent a GBondPort of bondingtype atm. A ifIndex with ifType ethbond(500) will represent a GBondPort of bondingtype eth. Note: The ifType ethbond is currently not defined by IANA and this value is a proprietary define!"
+  },
+  "sheGBondPortStackAssignedIfList": {
+    "name": "sheGBondPortStackAssignedIfList",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 3,
+            "max": 12
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The list of bonded interfaces. Each entry consist of three octets which consist of two octets for ifIndex and one octet for channelnumber like [16-bit ifIndex, 8-bit channelnumber]. The first two octets representing the ifIndex of the bonded interface. A single interface could only be one time member of this list. The third octet, represents a valid channelnumber because the maximum number of channels per interface is 2. Bonding of multiple channels from the same physical interface in one group is not allowed. A ifIndex-channelnumber couple could be always member of only one bond in the NE. Important Note: Only existing ifIndex-channelnumber combinations could be configured. The VCI setting of VccTp connections which are transported via the selected channels should have a restricted value range (32..255) to support needed SID numbering for atm bonding. The current available chipset HW and chipset firmware has additional restrictions for the amount of ifIndex numbers, which could be bonded in one group. These are: 1. All ifIndeces has to be placed on the same IU board. 2. A maximum number of 4 interfaces/channels could be bonded in one group. 3. On one IU board only Indeces which are members of the same group could be bonded. 4. Additional restriction for board IU_SHDSL48:IFX (only ethbond possible). On this IU board only Indeces which are members of the same group of always 4 consecutive ports could be bonded. Out of these groups the following bonds are possible: 1-2 and 3-4, 1-2-3 or 1-2-3-4 5. Additional restriction for board IU_VDSL48:IFX (only ethbond possible). Only ports which are members of the same group out of 8 consecutive ports could be bonded. These groups are: Group1(1,2,5,6) and Group2(3,4,7,8). Out of these groups the following bonds are possible: 1-2,5-6,3-4,7-8,1-2-5,3-4-7,1-2-5-6,1-4-7-8 6. Additional restriction for board IU_ADSL72:CGH (only atmbond possible). Only ports out of 8 consecutive ports could be bonded. Out of these groups the following bonds are possible: 1-2,3-4,5-6,7-8,1-2-3,5-6-7,1-2-3-4,5-6-7-8 R2.8 will only support ethbond for IU_SHDSL48:IFX!!"
+  },
+  "sheGBondPortStackBondingType": {
+    "name": "sheGBondPortStackBondingType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondPortStackBondingType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "atmBond",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Describes if it is an ATM or Ethernet bond. Depending on this parameter, only interfaces which support the requested bonding type could be added to the sheGBondPortStackAssignedIfList for this bondingport. Note: The used ifTypes for new created Gbond-port in the ifTable are atmbond(234) and ethbond(500). The value ethbond(500) is a proprietary defined value, because there is no official definition from IANA available up to now!"
+  },
+  "sheGBondPortStackControl": {
+    "name": "sheGBondPortStackControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2",
+    "class": "objectidentity"
+  },
+  "sheGBondPortStackControlRequest": {
+    "name": "sheGBondPortStackControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " createGBondPort (101): sheGBondPortStackControlAssignedIfList sheGBondPortStackControlBondingType modifyGBondPortStack (102): sheGBondPortStackControlIndex sheGBondPortStackControlAssignedIfList deleteGBondPort (103): sheGBondPortStackControlIndex "
+  },
+  "sheGBondPortStackControlIndex": {
+    "name": "sheGBondPortStackControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "IfIndex of the configured bonding-port."
+  },
+  "sheGBondPortStackControlStatus": {
+    "name": "sheGBondPortStackControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sheGBondPortStackControlTimer": {
+    "name": "sheGBondPortStackControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command."
+  },
+  "sheGBondPortStackControlReqResult": {
+    "name": "sheGBondPortStackControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheGBondPortStackControlTimeStamp": {
+    "name": "sheGBondPortStackControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheGBondPortStackControlAssignedIfList": {
+    "name": "sheGBondPortStackControlAssignedIfList",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 3,
+            "max": 12
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table"
+  },
+  "sheGBondPortStackControlBondingType": {
+    "name": "sheGBondPortStackControlBondingType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondPortStackBondingType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table. Could never be modified!"
+  },
+  "sheGBondPortStackControlACIRequestID": {
+    "name": "sheGBondPortStackControlACIRequestID",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This parameter is used by ACI management system to set an unique RequestID during GBondPortStack create command. The parameter has NO meaning for the NE himself and will just be returned with the sheGbondPortCreated trap."
+  },
+  "sheGBondPortConfTable": {
+    "name": "sheGBondPortConfTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table for Configuration of G.Bond GBS ports. Entries in this table MUST be maintained in a persistent manner"
+  },
+  "sheGBondPortConfEntry": {
+    "name": "sheGBondPortConfEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond Port Configuration table. Each entry represents an G.Bond port indexed by the ifIndex. Note that an G.Bond GBS port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex and channelnumber."
+  },
+  "sheGBondDiscoveryCode": {
+    "name": "sheGBondDiscoveryCode",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 6,
+            "max": 6
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "[802.3] 61.2.2.8.3, 61.2.2.8.4, 45.2.6.6.1, 45.2.6.8, 61A.2",
+    "status": "current",
+    "description": "A Discovery Code of the G.Bond port (GBS). A unique 6 octet long code used by the Discovery function. This object MUST be instantiated for the -O subtype GBS before writing operations on the sheGBondRemoteDiscoveryCode (Set_if_Clear and Clear_if_Same) are performed by BCEs associated with the GBS. The initial value of this object for -R subtype ports after reset is all zeroes. For -R subtype ports, the value of this object cannot be changed directly. This value may be changed as a result of writing operation on the sheGBondRemoteDiscoveryCode object of remote BCE of -O subtype, connected to one of the local BCEs associated with the GBS. Discovery MUST be performed when the link is Down. Attempts to change this object MUST be rejected (in case of SNMP with the error inconsistentValue), if the link is Up or Initializing. NOTE: NE will always ignore any setting for this parameter and IU select a valid code during handshake phase."
+  },
+  "sheGBondTargetUpDataRate": {
+    "name": "sheGBondTargetUpDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 9999999,
+        "format": "decimal"
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A desired G.Bond port Data Rate in the upstream direction, in Kbps, to be achieved during initialization, under restrictions placed upon the member BCEs by their respective configuration settings. This object represents a sum of individual BCE upstream data rates, modified to compensate for fragmentation and encapsulation overhead (e.g. for an Ethernet service, the target data rate of 10Mbps SHALL allow lossless transmission of full-duplex 10Mbps Ethernet frame stream with minimal inter-frame gap). Note that the target upstream data rate may not be achieved during initialization (e.g. due to unavailability of required BCEs) or the initial bandwidth could deteriorate, so that the actual upstream data rate (sheGBondUpDataRate) could be less than sheGBondTargetUpDataRate. The value between 1 and 1000000 indicates that the total upstream data rate of the G.Bond port after initialization SHALL be equal to the target data rate or less, if the target upstream data rate cannot be achieved under the restrictions configured for BCEs. In case the copper environment allows to achieve higher upstream data rate than that specified by this object, the excess capability SHALL be either converted to additional SNR margin or reclaimed by minimizing transmit power. The value of 9999999 means that the target data rate is not fixed and SHALL be set to the maximum attainable rate during initialization (Best Effort), under specified spectral restrictions and with desired SNR Margin per BCE. This object is valid for the -O subtype G.Bond ports and irrelevant for the -R subtypes. Changing of the Target Upstream Data Rate MUST be performed when the link is Down. Attempts to change this object MUST be rejected (In case of SNMP with the error inconsistentValue), if the link is Up or Initializing. This object MUST be maintained in a persistent manner. NOTE: Not configurable for VDSL2 based GBOND interfaces."
+  },
+  "sheGBondTargetDownDataRate": {
+    "name": "sheGBondTargetDownDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 9999999,
+        "format": "decimal"
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A desired G.Bond port Data Rate in the downstream direction, in Kbps, to be achieved during initialization, under restrictions placed upon the member BCEs by their respective configuration settings. This object represents a sum of individual BCE downstream data rates, modified to compensate for fragmentation and encapsulation overhead (e.g. for an Ethernet service, the target data rate of 10Mbps SHALL allow lossless transmission of full-duplex 10Mbps Ethernet frame stream with minimal inter-frame gap). Note that the target downstream data rate may not be achieved during initialization (e.g. due to unavailability of required BCEs) or the initial bandwidth could deteriorate, so that the actual downstream data rate (sheGBondDownDataRate) could be less than sheGBondTargetDownDataRate. The value between 1 and 1000000 indicates that the total downstream data rate of the G.Bond port after initialization SHALL be equal to the target data rate or less, if the target downstream data rate cannot be achieved under the restrictions configured for BCEs. In case the copper environment allows to achieve higher downstream data rate than that specified by this object, the excess capability SHALL be either converted to additional SNR margin or reclaimed by minimizing transmit power. The value of 9999999 means that the target data rate is not fixed and SHALL be set to the maximum attainable rate during initialization (Best Effort), under specified spectral restrictions and with desired SNR Margin per BCE. This object is valid for the -O subtype G.Bond ports and irrelevant for the -R subtypes. Changing of the Target Downstream Data Rate MUST be performed when the link is Down. Attempts to change this object MUST be rejected (In case of SNMP with the error inconsistentValue), if the link is Up or Initializing. This object MUST be maintained in a persistent manner. NOTE: Not configurable for VDSL2 based GBOND interfaces."
+  },
+  "sheGBondThreshLowUpRate": {
+    "name": "sheGBondThreshLowUpRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object configures the G.Bond port low upstream rate crossing alarm threshold. When the current value of sheGBondUpDataRate for this port reaches/drops below or exceeds this threshold, a sheGBondLowUpRateCrossing notification MAY be generated if enabled by sheGBondLowRateCrossingEnable. This object is valid for the -O subtype G.Bond ports and irrelevant for the -R subtypes. This object MUST be maintained in a persistent manner. NOTE: Not configurable for VDSL2 based GBOND interfaces."
+  },
+  "sheGBondThreshLowDownRate": {
+    "name": "sheGBondThreshLowDownRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object configures the G.Bond port low downstream rate crossing alarm threshold. When the current value of sheGBondDownDataRate for this port reaches/drops below or exceeds this threshold, a sheGBondLowDownRateCrossing notification MAY be generated if enabled by sheGBondLowRateCrossingEnable. This object is valid for the -O subtype G.Bond ports and irrelevant for the -R subtypes. This object MUST be maintained in a persistent manner. NOTE: Not configurable for VDSL2 based GBOND interfaces."
+  },
+  "sheGBondLowRateCrossingEnable": {
+    "name": "sheGBondLowRateCrossingEnable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates whether sheGBondLowUpRateCrossing and sheGBondLowDownRateCrossing notifications should be generated for this interface. Value of true(1) indicates that the notifications are enabled. Value of false(2) indicates that the notifications are disabled. This object is valid for the -O subtype G.Bond ports and irrelevant for the -R subtypes. This object MUST be maintained in a persistent manner. NOTE: Not configurable for VDSL2 based GBOND interfaces."
+  },
+  "sheGBondPortConfControl": {
+    "name": "sheGBondPortConfControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4",
+    "class": "objectidentity"
+  },
+  "sheGBondPortConfControlRequest": {
+    "name": "sheGBondPortConfControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " modifyGBondPortConfiguration (110): sheGBondPortControlIndex sheGBondPortControlDiscoveryCode (will be ignored by NE) sheGBondPortConfControlTargetUpDataRate (not configurable for VDSL2 based GBOND interfaces) sheGBondPortConfControlTargetDownDataRate (not configurable for VDSL2 based GBOND interfaces) modifyGBondPortThreshConfiguration (111): (not configurable for VDSL2 based GBOND interfaces) sheGBondPortControlIndex sheGBondPortConfControlThreshLowUpRate sheGBondPortConfControlThreshLowDownRate sheGBondPortConfControlLowRateCrossingEnable"
+  },
+  "sheGBondPortConfControlIndex": {
+    "name": "sheGBondPortConfControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "IfIndex of the configured gbond-port."
+  },
+  "sheGBondPortConfControlStatus": {
+    "name": "sheGBondPortConfControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sheGBondPortConfControlTimer": {
+    "name": "sheGBondPortConfControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sheGBondPortConfControlReqResult": {
+    "name": "sheGBondPortConfControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheGBondPortConfControlTimeStamp": {
+    "name": "sheGBondPortConfControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheGBondPortConfControlDiscoveryCode": {
+    "name": "sheGBondPortConfControlDiscoveryCode",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table"
+  },
+  "sheGBondPortConfControlTargetUpDataRate": {
+    "name": "sheGBondPortConfControlTargetUpDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondPortConfControlTargetDownDataRate": {
+    "name": "sheGBondPortConfControlTargetDownDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondPortConfControlThreshLowUpRate": {
+    "name": "sheGBondPortConfControlThreshLowUpRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondPortConfControlThreshLowDownRate": {
+    "name": "sheGBondPortConfControlThreshLowDownRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondPortConfControlLowRateCrossingEnable": {
+    "name": "sheGBondPortConfControlLowRateCrossingEnable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.4.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondPortCapabilityTable": {
+    "name": "sheGBondPortCapabilityTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table for Capabilities of G.Bond Ports. Entries in this table MUST be maintained in a persistent manner"
+  },
+  "sheGBondPortCapabilityEntry": {
+    "name": "sheGBondPortCapabilityEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond Port Capability table. Each entry represents an G.Bond port indexed by the ifIndex. Note that a G.Bond GBS port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex and channelnumber."
+  },
+  "sheGBondPeerBond": {
+    "name": "sheGBondPeerBond",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValueOrUnknown",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-157] 5.5.1.3",
+    "status": "current",
+    "description": "Bonding Capability of the G.Bond port (GBS) link partner. This object has a value of true(1) when the remote GBS supports the same bonding scheme as the local port. A value of false(2) is returned when the remote GBS does not support the same bonding scheme. Ports whose peers cannot be reached because of the link state, SHALL return a value if unknown(0). This object maps to the WT-157 attribute aGroupPeerBndScheme."
+  },
+  "sheGBondCapacity": {
+    "name": "sheGBondCapacity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-157] 5.5.1.8",
+    "status": "current",
+    "description": "Number of BCEs that can be aggregated by the local GBS. The number of BCEs currently assigned to a particular G.Bond port (sheGBondNumBCEs) is never greater than sheGBondCapacity. This object maps to the WT-157 attribute aGroupCapacity."
+  },
+  "sheGBondPeerCapacity": {
+    "name": "sheGBondPeerCapacity",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-157] 5.5.1.9",
+    "status": "current",
+    "description": "Number of BCEs that can be aggregated by the peer GBS port. Value of 0 is returned when peer Bonding Capacity is unknown (peer cannot be reached). This object maps to the WT-157 attribute aGroupRemoteCapacity."
+  },
+  "sheGBondPortStatusTable": {
+    "name": "sheGBondPortStatusTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides overall status information of G.Bond ports, complementing the generic status information from the ifTable of IF-MIB. Additional status information about connected BCEs is available from the relevant line MIBs This table contains live data from the equibcent. As such, it is NOT persistent."
+  },
+  "sheGBondPortStatusEntry": {
+    "name": "sheGBondPortStatusEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond Port Status table. Each entry represents an G.Bond port indexed by the ifIndex. Note that an G.Bond GBS port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex and channelnumber."
+  },
+  "sheGBondUpDataRate": {
+    "name": "sheGBondUpDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "units": "bps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A current G.Bond port operational Data Rate in the upstream direction, in bps. This object represents an estimation of the sum of individual BCE upstream data rates, modified to compensate for fragmentation and encapsulation overhead (e.g. for an Ethernet service, the target data rate of 10Mbps SHALL allow lossless transmission of full-duplex 10Mbps Ethernet frame stream with minimal inter-frame gap). Note that for symmetrical interfaces sheGBondUpDataRate == sheGBondDownDataRate == ifSpeed."
+  },
+  "sheGBondDownDataRate": {
+    "name": "sheGBondDownDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "units": "bps",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A current G.Bond port operational Data Rate in the downstream direction, in bps. This object represents an estimation of the sum of individual BCE downstream data rates, modified to compensate for fragmentation and encapsulation overhead (e.g. for an Ethernet service, the target data rate of 10Mbps SHALL allow lossless transmission of full-duplex 10Mbps Ethernet frame stream with minimal inter-frame gap). Note that for symmetrical interfaces sheGBondUpDataRate == sheGBondDownDataRate == ifSpeed."
+  },
+  "sheGBondFltStatus": {
+    "name": "sheGBondFltStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondFltStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IF-MIB, ifOperStatus; MAU-MIB, ifMauMediaAvailable",
+    "status": "current",
+    "description": "G.Bond (GBS) port Fault Status. This is a bitmap of possible conditions. The various bit positions are: noPeer - peer PHY cannot be reached (e.g. no BCEs attached, all BCEs are Down etc.). peerPowerLoss - peer PHY has indicated impending unit failure due to loss of local power ('Dying Gasp'). bceSubTypeMismatch - local BCEs in the aggregation group are not of the same sub-type, e.g. some BCEs in the local device are -O while others are -R subtype. lowRate - sheGBondUpRate/sheGBondDownRate of the port has reached or dropped below sheGBondThreshLowUpRate/ sheGBondThreshLowUpRate. This object is intended to supplement ifOperStatus object in IF-MIB."
+  },
+  "sheGBondPortSide": {
+    "name": "sheGBondPortSide",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondPortSideType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-157] 5.5.1.6",
+    "status": "current",
+    "description": "G.Bond port mode of operation (subtype). The value of 'subscriber' indicates the port is designated as '-R' subtype (all BCEs assigned to this port are of subtype '-R'). The value of the 'office' indicates that the port is designated as '-O' subtype (all BCEs assigned to this port are of subtype '-O'). The value of 'unknown' indicates that the port has no assigned BCEs yet or that the assigned BCEs are not of the same side (subTypeBCEMismatch). This object maps to the WT-157 attribute aGroupEnd."
+  },
+  "sheGBondNumBCEs": {
+    "name": "sheGBondNumBCEs",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-157] 5.5.1.9",
+    "status": "current",
+    "description": "Number of BCEs that is currently aggregated by the local GBS (assigned to the G.Bond port using ifStackTable). This number is never greater than sheGBondCapacity. This object SHALL be automatically incremented or decremented when a BCE is added or deleted to/from the G.Bond port using sheGbondPortStackTable. This object maps to the WT-157 attribute aGroupNumChannels"
+  },
+  "sheGBondPortNotifications": {
+    "name": "sheGBondPortNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7",
+    "class": "objectidentity"
+  },
+  "sheGBondLowUpRateCrossing": {
+    "name": "sheGBondLowUpRateCrossing",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondUpDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondThreshLowUpRate"
+      }
+    ],
+    "status": "current",
+    "description": "This notification indicates that the G.Bond port' upstream data rate has reached/dropped below or exceeded the low upstream rate threshold, specified by sheGBondThreshLowUpRate. This notification MAY be send for the -O subtype ports while the port is up, on the crossing event in both directions: from normal (rate is above the threshold) to low (rate equals the threshold or below it) and from low to normal. This notification is not applicable to the -R subtypes. It is RECOMMENDED that a small debouncing period of 2.5 sec, between the detection of the condition and notification, is implemented to prevent simultaneous LinkUp/LinkDown and sheGBondLowUpRateCrossing notifications to be sent. The adaptive nature of the G.Bond technology allows the port to adapt itself to the changes in the copper environment, e.g. an impulse noise, alien crosstalk or a micro-interruption may temporarily drop one or more BCEs in the aggregation group, causing a rate degradation of the aggregated G.Bond link. The dropped BCEs would then try to re-initialize, possibly at a lower rate than before, adjusting the rate to provide required target SNR margin. Generation of this notification is controlled by the sheGBondLowRateCrossingEnable object."
+  },
+  "sheGBondLowDownRateCrossing": {
+    "name": "sheGBondLowDownRateCrossing",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondDownDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondThreshLowDownRate"
+      }
+    ],
+    "status": "current",
+    "description": "This notification indicates that the G.Bond port' downstream data rate has reached/dropped below or exceeded the low downstream rate threshold, specified by sheGBondThreshLowDownRate. This notification MAY be send for the -O subtype ports while the port is up, on the crossing event in both directions: from normal (rate is above the threshold) to low (rate equals the threshold or below it) and from low to normal. This notification is not applicable to the -R subtypes. It is RECOMMENDED that a small debouncing period of 2.5 sec, between the detection of the condition and notification, is implemented to prevent simultaneous LinkUp/LinkDown and sheGBondLowDownRateCrossing notifications to be sent. The adaptive nature of the G.Bond technology allows the port to adapt itself to the changes in the copper environment, e.g. an impulse noise, alien crosstalk or a micro-interruption may temporarily drop one or more BCEs in the aggregation group, causing a rate degradation of the aggregated G.Bond link. The dropped BCEs would then try to re-initialize, possibly at a lower rate than before, adjusting the rate to provide required target SNR margin. Generation of this notification is controlled by the sheGBondLowRateCrossingEnable object."
+  },
+  "sheGBondPortConfNotifications": {
+    "name": "sheGBondPortConfNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.3",
+    "class": "objectidentity"
+  },
+  "sheGbondPortCreated": {
+    "name": "sheGbondPortCreated",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlAssignedIfList"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlBondingType"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlACIRequestID"
+      }
+    ],
+    "status": "current",
+    "description": "Event for successful portstack creation."
+  },
+  "sheGbondPortStackModified": {
+    "name": "sheGbondPortStackModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlAssignedIfList"
+      }
+    ],
+    "status": "current",
+    "description": "Event for successful portstack modification."
+  },
+  "sheGbondPortDeleted": {
+    "name": "sheGbondPortDeleted",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlTimeStamp"
+      }
+    ],
+    "status": "current",
+    "description": "Event for successful portstack delete."
+  },
+  "sheGBondPortConfigurationModified": {
+    "name": "sheGBondPortConfigurationModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.3.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlDiscoveryCode"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTargetUpDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTargetDownDataRate"
+      }
+    ],
+    "status": "current",
+    "description": "Event for successful port conf modification."
+  },
+  "sheGBondPortThreshConfigurationModified": {
+    "name": "sheGBondPortThreshConfigurationModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.3.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlThreshLowUpRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlThreshLowDownRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlLowRateCrossingEnable"
+      }
+    ],
+    "status": "current",
+    "description": "Event for successful port threshold modification."
+  },
+  "sheGbondPortReqResult": {
+    "name": "sheGbondPortReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.3.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlRequest"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Result notification for long running commands."
+  },
+  "sheGBondPortActivationFailed": {
+    "name": "sheGBondPortActivationFailed",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.1.1.7.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmTimeAndDate"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSource"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmReportingSourceType"
+      },
+      {
+        "module": "SHE-ALARMING-MIB",
+        "object": "sheAlarmSeverity"
+      }
+    ],
+    "status": "current",
+    "description": "Portalarm if the IU reject the gbond portactivation request."
+  },
+  "sheGBondAtmObjects": {
+    "name": "sheGBondAtmObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3",
+    "class": "objectidentity"
+  },
+  "sheGBondAtmPort": {
+    "name": "sheGBondAtmPort",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1",
+    "class": "objectidentity"
+  },
+  "sheGBondAtmPortConfTable": {
+    "name": "sheGBondAtmPortConfTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table for Configuration of G.Bond ATM ports. Entries in this table MUST be maintained in a persistent manner"
+  },
+  "sheGBondAtmPortConfEntry": {
+    "name": "sheGBondAtmPortConfEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond ATM Port Configuration table. Each entry represents an G.Bond ATM port indexed by the ifIndex. Additional configuration parameters are available via the sheGBondPortConfEntry of sheGBOND-MIB. Note that an G.Bond ATM port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex and channelnumber."
+  },
+  "sheGBondAtmUpMaxDataRate": {
+    "name": "sheGBondAtmUpMaxDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 9999999,
+        "format": "decimal"
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-only",
+    "reference": "[G.998.1] Sec. 11.4.1 - (4)",
+    "status": "current",
+    "description": "The maximum net upstream data rate a bonding group is allowed to achieve to carry an ATM stream.If set to '9999999', this parameter is ignored."
+  },
+  "sheGBondAtmDownMaxDataRate": {
+    "name": "sheGBondAtmDownMaxDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 9999999,
+        "format": "decimal"
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-only",
+    "reference": "[G.998.1] Sec. 11.4.1 - (4)",
+    "status": "current",
+    "description": "The maximum net downstream data rate a bonding group is allowed to achieve to carry an ATM stream.If set to '9999999', this parameter is ignored."
+  },
+  "sheGBondAtmUpDiffDelayTolerence": {
+    "name": "sheGBondAtmUpDiffDelayTolerence",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 8176
+          }
+        ]
+      }
+    },
+    "units": "msec",
+    "maxaccess": "read-only",
+    "reference": "[G.998.1] Sec. 11.4.1 - (6)",
+    "status": "current",
+    "description": "The maximum upstream differential delay among member links in a bonding group."
+  },
+  "sheGBondAtmDownDiffDelayTolerence": {
+    "name": "sheGBondAtmDownDiffDelayTolerence",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 8176
+          }
+        ]
+      }
+    },
+    "units": "msec",
+    "maxaccess": "read-only",
+    "reference": "[G.998.1] Sec. 11.4.1 - (6)",
+    "status": "current",
+    "description": "The maximum downstream differential delay among member links in a bonding group."
+  },
+  "sheGBondAtmPortConfControl": {
+    "name": "sheGBondAtmPortConfControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2",
+    "class": "objectidentity"
+  },
+  "sheGBondAtmPortConfControlRequest": {
+    "name": "sheGBondAtmPortConfControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " modifyGBondAtmPortConfiguration (121): sheGBondAtmPortControlIndex sheGBondAtmPortConfControlUpMaxDataRate sheGBondAtmPortConfControlDownMaxDataRate sheGBondAtmPortConfControlUpDiffDelayTolerence sheGBondAtmPortConfControlDownDiffDelayTolerence "
+  },
+  "sheGBondAtmPortConfControlIndex": {
+    "name": "sheGBondAtmPortConfControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "IfIndex of the configured gbond-port."
+  },
+  "sheGBondAtmPortConfControlStatus": {
+    "name": "sheGBondAtmPortConfControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sheGBondAtmPortConfControlTimer": {
+    "name": "sheGBondAtmPortConfControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sheGBondAtmPortConfControlReqResult": {
+    "name": "sheGBondAtmPortConfControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheGBondAtmPortConfControlTimeStamp": {
+    "name": "sheGBondAtmPortConfControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheGBondAtmPortConfControlUpMaxDataRate": {
+    "name": "sheGBondAtmPortConfControlUpMaxDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondAtmPortConfControlDownMaxDataRate": {
+    "name": "sheGBondAtmPortConfControlDownMaxDataRate",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000000
+          },
+          {
+            "min": 9999999,
+            "max": 9999999
+          }
+        ]
+      }
+    },
+    "units": "Kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondAtmPortConfControlUpDiffDelayTolerence": {
+    "name": "sheGBondAtmPortConfControlUpDiffDelayTolerence",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 8176
+          }
+        ]
+      }
+    },
+    "units": "msec",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondAtmPortConfControlDownDiffDelayTolerence": {
+    "name": "sheGBondAtmPortConfControlDownDiffDelayTolerence",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.2.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 8176
+          }
+        ]
+      }
+    },
+    "units": "msec",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondAtmPortStatusTable": {
+    "name": "sheGBondAtmPortStatusTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides overall status information of G.Bond ATM ports, complementing the generic status information from the ifTable of IF-MIB and sheGBondFltStatus of GBOND-MIB. Additional status information about connected BCEs is available from the relevant line MIBs This table contains live data from the equipment. As such, it is NOT persistent."
+  },
+  "sheGBondAtmPortStatusEntry": {
+    "name": "sheGBondAtmPortStatusEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond ATM port Status table. Each entry represents a G.Bond ATM port indexed by the ifIndex. Note that an G.Bond GBS port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex and channelnumber."
+  },
+  "sheGBondAtmShowTime": {
+    "name": "sheGBondAtmShowTime",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "reference": "[G.998.1] Sec. 11.4.2 - (3)",
+    "status": "current",
+    "description": "The accumulated time when a bonding group is in normal operation."
+  },
+  "sheGBondAtmUpRxCellLossCount": {
+    "name": "sheGBondAtmUpRxCellLossCount",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[G.998.1] Sec. 11.4.2 - (4)",
+    "status": "current",
+    "description": "The total number of cells that are lost at aggregation output in the upstream direction from a bonding group for the accumulation interval."
+  },
+  "sheGBondAtmDownRxCellLossCount": {
+    "name": "sheGBondAtmDownRxCellLossCount",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[G.998.1] Sec. 11.4.2 - (4)",
+    "status": "current",
+    "description": "The total number of cells that are lost at aggregation output in the downstream direction from a bonding group for the accumulation interval."
+  },
+  "sheGBondAtmPortConfNotifications": {
+    "name": "sheGBondAtmPortConfNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.4",
+    "class": "objectidentity"
+  },
+  "sheGbondAtmPortModified": {
+    "name": "sheGbondAtmPortModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.3.1.4.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlUpMaxDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlDownMaxDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlUpDiffDelayTolerence"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlDownDiffDelayTolerence"
+      }
+    ],
+    "status": "current",
+    "description": "Event for successful Atm port modification."
+  },
+  "sheGBondEthObjects": {
+    "name": "sheGBondEthObjects",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5",
+    "class": "objectidentity"
+  },
+  "sheGBondEthPort": {
+    "name": "sheGBondEthPort",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1",
+    "class": "objectidentity"
+  },
+  "sheGBondEthPortConfTable": {
+    "name": "sheGBondEthPortConfTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table for Configuration of G.Bond/Eth GBS ports. Entries in this table MUST be maintained in a persistent manner"
+  },
+  "sheGBondEthPortConfEntry": {
+    "name": "sheGBondEthPortConfEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond/Eth Port Configuration table. Each entry represents an G.Bond Ethernet port indexed by the ifIndex. Note that an G.Bond/Eth GBS port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex."
+  },
+  "sheGBondEthTcAdminType": {
+    "name": "sheGBondEthTcAdminType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondEthPtmTcType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "tc6465",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.1",
+    "status": "current",
+    "description": "Administrative (desired) PTM-TC encapsulation type of G.Bond/Eth port (GBS). Possible values are: tc6465(1) - 64/65-octet encapsulation tcHDLC(2) - HDLC encapsulation Attempts to set a port to a non-supported PTM-TC encapsulation type (see sheGBondEthTcTypesSupported) SHALL be rejected. Changing sheGBondEthTcAdminType is a traffic disruptive operation and as such SHALL be done when the link is Down. Attempts to cange this object SHALL be rejected if the link is Up or Initializing. This object maps to the WT-159 attribute aEthTcAdminType. This object MUST be maintained in a persistent manner."
+  },
+  "sheGBondEthPortConfControl": {
+    "name": "sheGBondEthPortConfControl",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2",
+    "class": "objectidentity"
+  },
+  "sheGBondEthPortConfControlRequest": {
+    "name": "sheGBondEthPortConfControlRequest",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": " modifyGBondEthPortConfiguration (131): sheGBondEthPortControlIndex sheGBondEthPortConfControlTcAdminType NOTE: Possible configuration depend on reported capability."
+  },
+  "sheGBondEthPortConfControlIndex": {
+    "name": "sheGBondEthPortConfControlIndex",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "IfIndex of the configured xdsl-interface."
+  },
+  "sheGBondEthPortConfControlStatus": {
+    "name": "sheGBondEthPortConfControlStatus",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sheGBondEthPortConfControlTimer": {
+    "name": "sheGBondEthPortConfControlTimer",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sheGBondEthPortConfControlReqResult": {
+    "name": "sheGBondEthPortConfControlReqResult",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sheGBondEthPortConfControlTimeStamp": {
+    "name": "sheGBondEthPortConfControlTimeStamp",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "sec",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sheGBondEthPortConfControlTcAdminType": {
+    "name": "sheGBondEthPortConfControlTcAdminType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondEthPtmTcType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "look at table."
+  },
+  "sheGBondEthPortCapabilityTable": {
+    "name": "sheGBondEthPortCapabilityTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table for Capabilities of G.Bond/Eth Ports. Entries in this table MUST be maintained in a persistent manner."
+  },
+  "sheGBondEthPortCapabilityEntry": {
+    "name": "sheGBondEthPortCapabilityEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond/Eth Port Capability table. Each entry represents an G.Bond port indexed by the ifIndex. Note that a G.Bond GBS port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex."
+  },
+  "sheGBondEthTcTypesSupported": {
+    "name": "sheGBondEthTcTypesSupported",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "tc6465": 0,
+        "tcHDLC": 1
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.3",
+    "status": "current",
+    "description": "PTM-TC Encapsulation types supported by the G.Bond/Eth port. This is a bitmap of possible encapsulation types. The various bit positions are: tc6465 - GBS is capable of 64/65-octet encapsulation tcHDLC - GBS is capable of HDLC encapsulation A desired encapsulation is determined by sheGBondEthTcAdminType, while sheGBondEthTcOperType reflects the current operating mode. This object maps to the WT-159 attribute aEthTcTypesSupported."
+  },
+  "sheGBondEthPortStatusTable": {
+    "name": "sheGBondEthPortStatusTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides overall status information of G.Bond ports, complementing the generic status information from the ifTable of IF-MIB. Additional status information about connected BCEs is available from the relevant line MIBs This table contains live data from the equipment. As such, it is NOT persistent."
+  },
+  "sheGBondEthPortStatusEntry": {
+    "name": "sheGBondEthPortStatusEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond/Eth Port Status table. Each entry represents an G.Bond/Eth port indexed by the ifIndex. Note that an G.Bond GBS port runs on top of a single or multiple BCE port(s), which are also indexed by ifIndex."
+  },
+  "sheGBondEthTcOperType": {
+    "name": "sheGBondEthTcOperType",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SheGBondEthPtmTcType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.2",
+    "status": "current",
+    "description": "Current operational encapsulation type of the G.Bond/Eth port. Possible values are: tc6465(1) - GBS uses 64/65-octet encapsulation tcHDLC(2) - GBS uses HDLC encapsulation The operational PTM-TC encapsulation type can be configured via sheGBondEthTcAdminType variable. This objects maps to the WT-159 aEthTcOperType."
+  },
+  "sheGBondEthInErrors": {
+    "name": "sheGBondEthInErrors",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.4",
+    "status": "current",
+    "description": "A number of fragments that have been received across the gamma interface and discarded. This object maps to the WT-159 attribute aEthRxErrors. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthInSmallFragments": {
+    "name": "sheGBondEthInSmallFragments",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.5",
+    "status": "current",
+    "description": "A number of fragments smaller than minFragmentSize (64 Bytes), that have been received across the gamma interface and discarded. This object maps to the WT-159 attribute aEthRxSmallFragments. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthInLargeFragments": {
+    "name": "sheGBondEthInLargeFragments",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.6",
+    "status": "current",
+    "description": "A number of fragments larger than maxFragmentSize (512 Bytes), which have been received across the gamma interface and discarded. This object maps to the WT-159 attribute aEthRxLargeFragments. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthInBadFragments": {
+    "name": "sheGBondEthInBadFragments",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.7",
+    "status": "current",
+    "description": "A number of fragments which do not fit into the sequence expected by the frame assembly function, that have been received across the gamma interface and discarded (the frame buffer is flushed to the next valid frame start). This object maps to the WT-159 attribute aEthRxBadFragments. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthInLostFragments": {
+    "name": "sheGBondEthInLostFragments",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.8",
+    "status": "current",
+    "description": "A number of gaps in the sequence of fragments, which have been received across the gamma interface (the frame buffer is flushed to the next valid frame start, when fragment/fragments expected by the frame assembly function is/are not received). This object maps to the WT-159 attribute aEthRxLostFragments. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthInLostStarts": {
+    "name": "sheGBondEthInLostStarts",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.9",
+    "status": "current",
+    "description": "A number of missing StartOfPacket indicators expected by the frame assembly function. This object maps to the WT-159 attribute aEthRxLostStarts. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthInLostEnds": {
+    "name": "sheGBondEthInLostEnds",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.10",
+    "status": "current",
+    "description": "A number of missing EndOfPacket indicators expected by the frame assembly function. This object maps to the WT-159 attribute aEthRxLostEnds. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthInOverflows": {
+    "name": "sheGBondEthInOverflows",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.3.11",
+    "status": "current",
+    "description": "A number of fragments, received across the gamma interface and discarded, which would have caused the frame assembly buffer to overflow. This object maps to the WT-159 attribute aEthRxOverflows. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthPortConfNotifications": {
+    "name": "sheGBondEthPortConfNotifications",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.5",
+    "class": "objectidentity"
+  },
+  "sheGbondEthPortModified": {
+    "name": "sheGbondEthPortModified",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.1.5.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlTcAdminType"
+      }
+    ],
+    "status": "current",
+    "description": "Event for successful Eth port modification."
+  },
+  "sheGBondEthBce": {
+    "name": "sheGBondEthBce",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.2",
+    "class": "objectidentity"
+  },
+  "sheGBondEthBceStatusTable": {
+    "name": "sheGBondEthBceStatusTable",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides common status information of G.Bond/Eth BCE ports. This table contains live data from the equipment. As such, it is NOT persistent."
+  },
+  "sheGBondEthBceStatusEntry": {
+    "name": "sheGBondEthBceStatusEntry",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the G.Bond/Eth BCE Status table. Each entry represents common aspects of a G.Bond/Eth BCE port indexed by the ifIndex. Note that a BCE port can be stacked below a single GBS port, also indexed by ifIndex, possibly together with other BCE ports."
+  },
+  "sheGBondEthBceTcInCodingErrors": {
+    "name": "sheGBondEthBceTcInCodingErrors",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.7.5",
+    "status": "current",
+    "description": "A number of PTM-TC encapsulation errors. This counter is incremented for each encapsulation error detected by the PTM-TC receive function. This object maps to WT-159 attribute aChannelPtmTcRxCodingViolations. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondEthBceTcInCrcErrors": {
+    "name": "sheGBondEthBceTcInCrcErrors",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.5.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "[WT-159] 5.5.7.6",
+    "status": "current",
+    "description": "A number of PTM-TC CRC errors. This counter is incremented for each CRC error detected by the PTM-TC receive function. This object maps to WT-159 attribute aChannelPtmTcRxCrcErrors. Discontinuities in the value of this counter can occur at re-initialization of the management system, and at other times as indicated by the value of ifCounterDiscontinuityTime, defined in IF-MIB."
+  },
+  "sheGBondConformance": {
+    "name": "sheGBondConformance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100",
+    "class": "objectidentity"
+  },
+  "sheGBondCompliances": {
+    "name": "sheGBondCompliances",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.1",
+    "class": "objectidentity"
+  },
+  "sheGBondCompliance": {
+    "name": "sheGBondCompliance",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "sheGBondBasicGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondDiscoveryGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondAlarmConfGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondNotificationGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondEthBasicGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondEthBceGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondAtmBasicGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondPortStackGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondPortControlGroup",
+        "module": "SHE-GBOND-MIB"
+      },
+      {
+        "object": "sheGBondPortConfNotificationGroup",
+        "module": "SHE-GBOND-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SHE G.Bond interfaces. "
+  },
+  "sheGBondGroups": {
+    "name": "sheGBondGroups",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2",
+    "class": "objectidentity"
+  },
+  "sheGBondBasicGroup": {
+    "name": "sheGBondBasicGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondUpDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondDownDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondTargetUpDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondTargetDownDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondCapacity"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondNumBCEs"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortSide"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondFltStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects representing management information common to all types of G.Bond ports."
+  },
+  "sheGBondDiscoveryGroup": {
+    "name": "sheGBondDiscoveryGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPeerBond"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPeerCapacity"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondDiscoveryCode"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects supporting OPTIONAL G.Bond discovery in G.Bond ports."
+  },
+  "sheGBondAlarmConfGroup": {
+    "name": "sheGBondAlarmConfGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondThreshLowUpRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondThreshLowDownRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondLowRateCrossingEnable"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects required for configuration of alarm thresholds and notifications in G.Bond ports."
+  },
+  "sheGBondNotificationGroup": {
+    "name": "sheGBondNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondLowUpRateCrossing"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondLowDownRateCrossing"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortActivationFailed"
+      }
+    ],
+    "status": "current",
+    "description": "This group supports notifications of significant conditions associated with G.Bond ports."
+  },
+  "sheGBondEthBasicGroup": {
+    "name": "sheGBondEthBasicGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthTcTypesSupported"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthTcAdminType"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthTcOperType"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInErrors"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInSmallFragments"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInLargeFragments"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInBadFragments"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInLostFragments"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInLostStarts"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInLostEnds"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthInOverflows"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthBceTcInCodingErrors"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthBceTcInCrcErrors"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects representing management information for G.Bond/Eth GBS ports."
+  },
+  "sheGBondEthBceGroup": {
+    "name": "sheGBondEthBceGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthBceTcInCodingErrors"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthBceTcInCrcErrors"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects representing OPTIONAL management information for G.Bond/Eth BCE ports."
+  },
+  "sheGBondAtmBasicGroup": {
+    "name": "sheGBondAtmBasicGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmUpMaxDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmDownMaxDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmUpDiffDelayTolerence"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmDownDiffDelayTolerence"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmShowTime"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmUpRxCellLossCount"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmDownRxCellLossCount"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects representing management information for G.Bond ATM ports."
+  },
+  "sheGBondPortStackGroup": {
+    "name": "sheGBondPortStackGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackAssignedIfList"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackBondingType"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheGBondPortControlGroup": {
+    "name": "sheGBondPortControlGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.9",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlRequest"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlStatus"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlTimer"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlReqResult"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlAssignedIfList"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlBondingType"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortStackControlACIRequestID"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlRequest"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlStatus"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTimer"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlReqResult"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlDiscoveryCode"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTargetUpDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlTargetDownDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlThreshLowUpRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlThreshLowDownRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfControlLowRateCrossingEnable"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlRequest"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlStatus"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlTimer"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlReqResult"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlUpMaxDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlDownMaxDataRate"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlUpDiffDelayTolerence"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondAtmPortConfControlDownDiffDelayTolerence"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlRequest"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlIndex"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlStatus"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlTimer"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlReqResult"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlTimeStamp"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondEthPortConfControlTcAdminType"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sheGBondPortConfNotificationGroup": {
+    "name": "sheGBondPortConfNotificationGroup",
+    "oid": "1.3.6.1.4.1.231.7.1.2.1.26.100.2.10",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGbondPortCreated"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGbondPortStackModified"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGbondPortDeleted"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortConfigurationModified"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGBondPortThreshConfigurationModified"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGbondAtmPortModified"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGbondEthPortModified"
+      },
+      {
+        "module": "SHE-GBOND-MIB",
+        "object": "sheGbondPortReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SHE-GBOND-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:07:27 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SHE-GBOND-MIB"
+  }
+}

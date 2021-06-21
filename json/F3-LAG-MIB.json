@@ -1,0 +1,999 @@
+{
+  "imports": {
+    "class": "imports",
+    "ADVA-MIB": [
+      "fsp150cm"
+    ],
+    "CM-COMMON-MIB": [
+      "CmPmBinAction"
+    ],
+    "CM-ENTITY-MIB": [
+      "slotIndex",
+      "neIndex",
+      "shelfIndex"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "Integer32",
+      "TimeTicks",
+      "Counter64",
+      "NOTIFICATION-TYPE",
+      "Gauge32",
+      "Unsigned32",
+      "MibIdentifier",
+      "Bits",
+      "iso",
+      "OBJECT-IDENTITY",
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY",
+      "IpAddress"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "RowStatus",
+      "DisplayString",
+      "DateAndTime",
+      "StorageType",
+      "VariablePointer"
+    ]
+  },
+  "f3LagMIB": {
+    "name": "f3LagMIB",
+    "oid": "1.3.6.1.4.1.2544.1.12.14",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2016-04-06 00:00",
+        "description": "Notes from release 201604060000Z, (i) Updated description of f3LagMode (ii) Added new objects f3LagFrameDistAlgorithm, f3LagDiscardWrongConversation Notes from release 201012160000Z, (i)Added new object f3LagPortMember Notes from release 201012140000Z, (i) Added new objects f3LagCcmDefectDetectionEnabled, f3LagStatsAction, f3LagPortStatsAction (ii)Updated description of f3LagRowStatus, f3LagPortRowStatus Notes from release 201011030000Z, Post review changes Notes from release 200903160000Z This release is applicable to the FSP150CM Aggregation 5.1 devices. Notes from release 200803030000Z, (1)MIB version ready for release FSP150CM Aggregation 5.1."
+      }
+    ],
+    "lastupdated": "201604060000Z",
+    "organization": "ADVA Optical Networking",
+    "contactinfo": " Polo Jiang ADVA Optical Networking, Inc. Tel: +86 755 8621-7445 E-mail: pjiang@advaoptical.com Postal: 518068 9/F, Xi Hai Ming Zhu, Building F, 1 Taoyuan Road, Nanshan District, Shenzhen, PRC",
+    "description": "This module defines the vendor specific 802.3ad LAG MIB definitions used by the FSP150CM 5.1 product lines, as extensions to the standard IEEE 802.3ad (802.3-2005). Copyright (C) ADVA Optical Networking."
+  },
+  "f3LagObjects": {
+    "name": "f3LagObjects",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1",
+    "class": "objectidentity"
+  },
+  "f3LagConformance": {
+    "name": "f3LagConformance",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.2",
+    "class": "objectidentity"
+  },
+  "AggMode": {
+    "name": "AggMode",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active-standby": 1,
+          "loadsharing": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Defines the LAG behavior. A LAG with mode active-standby - exhibits 1:1 protection behavior loadsharing - exhibits port aggregation behavior An active-standby LAG supports 0-2 member ports. One member is in Active role while the other is in Standby role. A loadsharing LAG can have multiple (0-x) member ports, where x is as follows. x = 2 for GE112Pro, GE114Pro, GE206V (Network ports only) x = 2 for XG210 Network ports, x = 10 for XG210 Access ports x = 4 for XG116Pro, XG120Pro (10G ports) x = 6 for XG116Pro GE ports x = 10 for XG120Pro GE ports In CM Aggregation Shelf, the loadsharing LAG can have 2-8 member ports."
+  },
+  "AggPortState": {
+    "name": "AggPortState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active": 1,
+          "standby": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The AggPortState provides current state of the member port. Active: the member port is ready for transporting and is in working now. Standby: the member port is ready for transporting, but is not working now."
+  },
+  "LagFrameDistributionAlgorithmType": {
+    "name": "LagFrameDistributionAlgorithmType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "activeStandby": 1,
+          "srcdstMacHash": 2,
+          "serviceAssignment": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The frame distribution algorithm used by the LAG for transmitting frames on the individual LAG member ports."
+  },
+  "LinkAssignMode": {
+    "name": "LinkAssignMode",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "auto": 1,
+          "provisionedLinkList": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The link assignment mode used to designate a particular link for carrying the service."
+  },
+  "f3LagTable": {
+    "name": "f3LagTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to the Link Aggregation Groups. Entries can be created/deleted in this table by management application action."
+  },
+  "f3LagEntry": {
+    "name": "f3LagEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing information applicable to a particular security user."
+  },
+  "f3LagIndex": {
+    "name": "f3LagIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.1",
+    "status": "current",
+    "description": "An integer index value used to uniquely identify this Lag. It should be the Lag Logical index."
+  },
+  "f3LagIfIndex": {
+    "name": "f3LagIfIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object has the same value as ifIndex for LAG logical Port. An integer index value used to uniquely identify this LAG logical Port."
+  },
+  "f3LagName": {
+    "name": "f3LagName",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.3",
+    "status": "current",
+    "description": "This object allows SNMP management entities to name the LAG aggregator."
+  },
+  "f3LagProtocols": {
+    "name": "f3LagProtocols",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "When this object is enabled, the LACP will run as 802.3ad defines; When this object is disabled, LACP/LAMP protocols will not run and the LAG member port is fixed to an assigned LAG aggregator. "
+  },
+  "f3LagLacpControl": {
+    "name": "f3LagLacpControl",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Determines whether or not the Link Aggregation Control Protocol is enabled or disabled for the LAG. When disabled, the LAG shall ignore LACP frames for the purpose of selecting the active link (port) and shall select its active link (port) solely upon the status of the LAG member links (ports). However, when disabled, the LACP protocol shall remain active (i.e. LACP frames are transmitted when needed, etc.)."
+  },
+  "f3LagMode": {
+    "name": "f3LagMode",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AggMode",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the LAG behavior. A LAG with mode active-standby - exhibits 1:1 protection behavior loadsharing - exhibits port aggregation behavior An active-standby LAG supports 0-2 member ports. One member is in Active role while the other is in Standby role. A loadsharing LAG can have multiple (0-x) member ports, where x is as follows. x = 2 for GE112Pro, GE114Pro, GE206V (Network ports only) x = 2 for XG210 Network ports, x = 10 for XG210 Access ports x = 4 for XG116Pro, XG120Pro (10G ports) x = 6 for XG116Pro GE ports x = 10 for XG120Pro GE ports In CM Aggregation Shelf, the loadsharing LAG can have 2-8 member ports."
+  },
+  "f3LagCcmDefectsDetectionEnabled": {
+    "name": "f3LagCcmDefectsDetectionEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows for a LAG to use CCM defects DefRemoteCCM and DefRDICCM as an indication of Signal Fail for the LAG member ports. When enabled, a LAG member will stop carrying service frames when a DefRemoteCCM or DefRDICCM is detected on a port level CFM DOWN MEP associated with the LAG member port. Please note that port level CFM DOWN MEPs need to be created on LAG member ports for this feature to work."
+  },
+  "f3LagStatsAction": {
+    "name": "f3LagStatsAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmPmBinAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Allows the Manager to clear the LAG level statistics (f3LagStatsTable)."
+  },
+  "f3LagStorageType": {
+    "name": "f3LagStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of storage configured for this entry."
+  },
+  "f3LagRowStatus": {
+    "name": "f3LagRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3LagRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with f3LagRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3LagRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "f3LagIgnorePartnerColMaxDelay": {
+    "name": "f3LagIgnorePartnerColMaxDelay",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to configure LAG instance to ignore Collector Max Delay value in the received LACP PDU. Setting this value to TRUE will result in no hold-off timer to be started, regardless of the received Collector Max Delay value."
+  },
+  "f3LagFrameDistAlgorithm": {
+    "name": "f3LagFrameDistAlgorithm",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LagFrameDistributionAlgorithmType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The frame distribution algorithm used by the LAG for transmitting frames on the individual LAG member ports. For an active-standby LAG, this will be active-standby. A loadsharing LAG will follow service-assignment frame distribution. The srcdst-mac-hash method is not supported on CC-NIDS."
+  },
+  "f3LagDiscardWrongConversation": {
+    "name": "f3LagDiscardWrongConversation",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to control and identify whether frames received on a LAG member port are to be discarded if the service associated with the frame (ingress membership) does not match the service-to-link mapping of the LAG Service Map."
+  },
+  "f3LagStatsTable": {
+    "name": "f3LagStatsTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to the LAG statistics. Entries cannot be created in this table by management application action."
+  },
+  "f3LagStatsEntry": {
+    "name": "f3LagStatsEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing information on the LAG logical port statistics."
+  },
+  "f3LagStatsIndex": {
+    "name": "f3LagStatsIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The unique identifier to access a unique row in the f3LagStatsTable."
+  },
+  "f3LagStatsOctetsTxOK": {
+    "name": "f3LagStatsOctetsTxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.17",
+    "status": "current",
+    "description": "A count of the data and padding octets transmitted by this Aggregator on all Aggregation Ports that are (or have been) members of the aggregation."
+  },
+  "f3LagStatsOctetsRxOK": {
+    "name": "f3LagStatsOctetsRxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.18",
+    "status": "current",
+    "description": "A count of the data and padding octets received by this Aggregator, from the Aggregation Ports that are (or have been) members of the aggregation."
+  },
+  "f3LagStatsFramesTxOK": {
+    "name": "f3LagStatsFramesTxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.19",
+    "status": "current",
+    "description": "A count of the data frames transmitted by this Aggregator on all Aggregation Ports that are (or have been) members of the aggregation."
+  },
+  "f3LagStatsFramesRxOK": {
+    "name": "f3LagStatsFramesRxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.20",
+    "status": "current",
+    "description": "A count of the data frames received by this Aggregator, from the Aggregation Ports that are (or have been) members of the aggregation."
+  },
+  "f3LagStatsMulticastFramesTxOK": {
+    "name": "f3LagStatsMulticastFramesTxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.21",
+    "status": "current",
+    "description": "A count of the data frames transmitted by this Aggregator on all Aggregation Ports that are (or have been) members of the aggregation, to a group destination address other than the broadcast address."
+  },
+  "f3LagStatsMulticastFramesRxOK": {
+    "name": "f3LagStatsMulticastFramesRxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.22",
+    "status": "current",
+    "description": "A count of the data frames received by this Aggregator, from the Aggregation Ports that are (or have been) members of the aggregation, that were addressed to an active group address other than the broadcast address."
+  },
+  "f3LagStatsBroadcastFramesTxOK": {
+    "name": "f3LagStatsBroadcastFramesTxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.23",
+    "status": "current",
+    "description": "A count of the broadcast data frames transmitted by this Aggregator on all Aggregation Ports that are (or have been) members of the aggregation."
+  },
+  "f3LagStatsBroadcastFramesRxOK": {
+    "name": "f3LagStatsBroadcastFramesRxOK",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.24",
+    "status": "current",
+    "description": "A count of the broadcast data frames received by this Aggregator, from the Aggregation Ports that are (or have been) members of the aggregation."
+  },
+  "f3LagStatsFramesWithTxErrors": {
+    "name": "f3LagStatsFramesWithTxErrors",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.27",
+    "status": "current",
+    "description": "A count of data frames requested to be transmitted by this Aggregator that experienced transmission errors on ports that are (or have been) members of the aggregation."
+  },
+  "f3LagStatsFramesWithRxErrors": {
+    "name": "f3LagStatsFramesWithRxErrors",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.28",
+    "status": "current",
+    "description": "A count of data frames discarded on reception by all ports that are (or have been) members of the aggregation, or that were discarded by the Collection function of the Aggregator, or that were discarded by the Aggregator due to the detection of an illegal Slow Protocols PDU."
+  },
+  "f3LagStatsUnknownProtocolFrames": {
+    "name": "f3LagStatsUnknownProtocolFrames",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE 802.3 Subclause 30.7.1.1.29",
+    "status": "current",
+    "description": "A count of data frames discarded on reception by all ports that are (or have been) members of the aggregation, due to the detection of an unknown Slow Protocols PDU."
+  },
+  "f3LagPortTable": {
+    "name": "f3LagPortTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to the LAG member ports. Entries can be created/deleted in this table by management application action."
+  },
+  "f3LagPortEntry": {
+    "name": "f3LagPortEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing information applicable to a particular security user."
+  },
+  "f3LagPortIndex": {
+    "name": "f3LagPortIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The unique identifier for each Aggregation Port."
+  },
+  "f3LagPortMember": {
+    "name": "f3LagPortMember",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the OID of the LAG member port."
+  },
+  "f3LagPortLacpForceOutOfSync": {
+    "name": "f3LagPortLacpForceOutOfSync",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A boolean value which enables or disables the port from participating as an active port in the Link Aggregation Group, causing the link (port) to transmit OUT_OF_SYNC via LACP."
+  },
+  "f3LagPortState": {
+    "name": "f3LagPortState",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AggPortState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object can be used to show the current status of the member port. Active: the member port is ready for transporting and is in working now. Standby: the member port is ready for transporting, but is not working now."
+  },
+  "f3LagPortStatsAction": {
+    "name": "f3LagPortStatsAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmPmBinAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Allows the Manager to clear the LAG Port level statistics (dot3adAggPortStatsTable)."
+  },
+  "f3LagPortStorageType": {
+    "name": "f3LagPortStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of storage configured for this entry."
+  },
+  "f3LagPortRowStatus": {
+    "name": "f3LagPortRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3LagPortRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with f3LagPortRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3LagPortRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "f3LagServiceMapTable": {
+    "name": "f3LagServiceMapTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to the LAG service map entry. Entries can be created/deleted in this table by management application action."
+  },
+  "f3LagServiceMapEntry": {
+    "name": "f3LagServiceMapEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry containing information applicable to a particular security user."
+  },
+  "f3LagServiceMapIndex": {
+    "name": "f3LagServiceMapIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The unique identifier for each entry/row in the Service Map."
+  },
+  "f3LagServiceMapServiceObj": {
+    "name": "f3LagServiceMapServiceObj",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the OID of the LAG service object."
+  },
+  "f3LagServiceMapLinkAssignMode": {
+    "name": "f3LagServiceMapLinkAssignMode",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LinkAssignMode",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The assign mode value."
+  },
+  "f3LagServiceMapStorageType": {
+    "name": "f3LagServiceMapStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of storage configured for this entry."
+  },
+  "f3LagServiceMapRowStatus": {
+    "name": "f3LagServiceMapRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3LagServiceMapRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with f3LagServiceMapRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3LagServiceMapRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "f3LagServiceMapMemberLinkList": {
+    "name": "f3LagServiceMapMemberLinkList",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The member link list value, describe by ifindex value string split with comma."
+  },
+  "f3LagServiceMapCurrentMemberLink": {
+    "name": "f3LagServiceMapCurrentMemberLink",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current member link ifindex value."
+  },
+  "f3LagCompliances": {
+    "name": "f3LagCompliances",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.2.1",
+    "class": "objectidentity"
+  },
+  "f3LagGroups": {
+    "name": "f3LagGroups",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.2.2",
+    "class": "objectidentity"
+  },
+  "f3LagCompliance": {
+    "name": "f3LagCompliance",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "f3LagObjectGroup",
+        "module": "F3-LAG-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Describes the requirements for conformance to the f3Lag group."
+  },
+  "f3LagObjectGroup": {
+    "name": "f3LagObjectGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.14.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagIndex"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagIfIndex"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagName"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagProtocols"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagLacpControl"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagMode"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagCcmDefectsDetectionEnabled"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsAction"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStorageType"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagRowStatus"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagIgnorePartnerColMaxDelay"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagFrameDistAlgorithm"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagDiscardWrongConversation"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsIndex"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsOctetsTxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsOctetsRxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsFramesTxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsFramesRxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsMulticastFramesTxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsMulticastFramesRxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsBroadcastFramesTxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsBroadcastFramesRxOK"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsFramesWithTxErrors"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsFramesWithRxErrors"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagStatsUnknownProtocolFrames"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortIndex"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortMember"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortLacpForceOutOfSync"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortState"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortStatsAction"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortStorageType"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagPortRowStatus"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapIndex"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapServiceObj"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapLinkAssignMode"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapStorageType"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapRowStatus"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapMemberLinkList"
+      },
+      {
+        "module": "F3-LAG-MIB",
+        "object": "f3LagServiceMapCurrentMemberLink"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the f3Lag group."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/F3-LAG-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:03:46 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "F3-LAG-MIB"
+  }
+}

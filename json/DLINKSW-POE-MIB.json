@@ -1,0 +1,986 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "POWER-ETHERNET-MIB": [
+      "pethPsePortShortCounter",
+      "pethPsePortIndex",
+      "pethPsePortOverLoadCounter",
+      "pethMainPseGroupIndex",
+      "pethPsePortPowerDeniedCounter"
+    ],
+    "Q-BRIDGE-MIB": [
+      "PortList"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "Gauge32",
+      "Integer32",
+      "MibIdentifier",
+      "Counter32",
+      "Unsigned32",
+      "Counter64",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "Bits",
+      "MODULE-IDENTITY",
+      "iso",
+      "NOTIFICATION-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TruthValue"
+    ]
+  },
+  "dlinkSwPoeExtMIB": {
+    "name": "dlinkSwPoeExtMIB",
+    "oid": "1.3.6.1.4.1.171.14.24",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-05-29 00:00",
+        "description": "Initial version of this MIB module."
+      },
+      {
+        "revision": "2013-09-24 00:00",
+        "description": "Add dPoeGroupIfLedMode node."
+      },
+      {
+        "revision": "2017-03-15 00:00",
+        "description": "Add dPoeIfPdAliveCfgTable table to support PD alive check feature."
+      }
+    ],
+    "lastupdated": "201703150000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "A MIB module for extending POWER-ETHERNET-MIB specified in RFC 3621. "
+  },
+  "dPoeMIBNotifications": {
+    "name": "dPoeMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.24.0",
+    "class": "objectidentity"
+  },
+  "dPoeMIBObjects": {
+    "name": "dPoeMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.24.1",
+    "class": "objectidentity"
+  },
+  "dPoeMIBConformance": {
+    "name": "dPoeMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.24.2",
+    "class": "objectidentity"
+  },
+  "dPoeGroupCfgTable": {
+    "name": "dPoeGroupCfgTable",
+    "oid": "1.3.6.1.4.1.171.14.24.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of group configurations for PoE. Group means box in the stack or module in a rack. For non-modular devices, the pethMainPseGroupIndex is 1. "
+  },
+  "dPoeGroupCfgEntry": {
+    "name": "dPoeGroupCfgEntry",
+    "oid": "1.3.6.1.4.1.171.14.24.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethMainPseGroupIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry contains the system configuration of the PoE on a group."
+  },
+  "dPoeGroupPolicyPreempt": {
+    "name": "dPoeGroupPolicyPreempt",
+    "oid": "1.3.6.1.4.1.171.14.24.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object configures whether to disconnect the PD which is powered with lower priority in order to release the power to the new connected PD with higher priority under power shortage condition. If this object is 'false', then the policy is first in first serviced. Thus the new PD will not be serviced if the power budget is running out. If this object is 'true', then the power provisioned to PD with lower priority can be preempted to release the power to the new connected PD with higher priority. "
+  },
+  "dPoeGroupClearIfStatistic": {
+    "name": "dPoeGroupClearIfStatistic",
+    "oid": "1.3.6.1.4.1.171.14.24.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PortList",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to clear the PoE statistics of pethPsePortEntry for specified ports. "
+  },
+  "dPoeGroupIfLedMode": {
+    "name": "dPoeGroupIfLedMode",
+    "oid": "1.3.6.1.4.1.171.14.24.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "poeMode": 1,
+          "linkMode": 2,
+          "invalid": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "For some devices,port LED can indicate either poe status or link status. This object is used to configure or display port LED mode. poeMode(1) - indicates poe status. linkMode(2) - indicates link status. For other devices have LEDs to indicate poe status and link status separately, this object only can get value of invalid(3) to mean this node is meaningless. "
+  },
+  "dPoeGroupInfoTable": {
+    "name": "dPoeGroupInfoTable",
+    "oid": "1.3.6.1.4.1.171.14.24.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of PoE information for groups."
+  },
+  "dPoeGroupInfoEntry": {
+    "name": "dPoeGroupInfoEntry",
+    "oid": "1.3.6.1.4.1.171.14.24.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethMainPseGroupIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry contains the system information of the PoE on a group."
+  },
+  "dPoeGroupMaxPorts": {
+    "name": "dPoeGroupMaxPorts",
+    "oid": "1.3.6.1.4.1.171.14.24.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the maximum number of ports that the group can support."
+  },
+  "dPoeGroupHWVersion": {
+    "name": "dPoeGroupHWVersion",
+    "oid": "1.3.6.1.4.1.171.14.24.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates H/W version of PoE chip."
+  },
+  "dPoeGroupSWVersion": {
+    "name": "dPoeGroupSWVersion",
+    "oid": "1.3.6.1.4.1.171.14.24.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates firmware version of PoE chip."
+  },
+  "dPoeIfObjects": {
+    "name": "dPoeIfObjects",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3",
+    "class": "objectidentity"
+  },
+  "dPoeIfCfgTable": {
+    "name": "dPoeIfCfgTable",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of PoE configuration information for ports."
+  },
+  "dPoeIfCfgEntry": {
+    "name": "dPoeIfCfgEntry",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethMainPseGroupIndex",
+        "implied": 0
+      },
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry contains PoE configuration on a port."
+  },
+  "dPoeIfState": {
+    "name": "dPoeIfState",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "auto": 1,
+          "never": 2,
+          "static": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "auto",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the PoE state of the entry. auto(1) - the port will automatically detect the PD and provision power to the PD. The max wattage value which can be provisioned to the port is determined by dPoeIfMaxPower. If dPoeIfMaxPower is unspecified, then the class of the PD auto determines the maximum wattage which can be provisioned. The PD will not be provisioned if it requests more wattage than the max wattage which is determined. never(2) - indicates the port will not supply power to connected PD; static(3) - indicates manager pre-allocate power budget to the port by configuring the dPoeIfMaxPower object. The power budget is allocated to the port even though there is no PD connected to the port. If dPoeIfMaxPower is not configured, default value is 15400mW for 802.3af and 30000mW for 802.3at."
+  },
+  "dPoeIfMaxPower": {
+    "name": "dPoeIfMaxPower",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 0
+          },
+          {
+            "min": 1000,
+            "max": 30000
+          }
+        ]
+      }
+    },
+    "units": "milliwatts",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the max wattage value which can be provisioned to the port. Note: This object is valid only while the dPoeIfState object is configured as auto or static."
+  },
+  "dPoeIfTimeRange": {
+    "name": "dPoeIfTimeRange",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the name of time-range profile to delineate the activation period. A zero length string indicates the time-range is not specified. Note: This object is valid only while the dPoeIfState is 'auto'."
+  },
+  "dPoeIfLegacyPdEnabled": {
+    "name": "dPoeIfLegacyPdEnabled",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the state of legacy PD support."
+  },
+  "dPoeIfInfoObjects": {
+    "name": "dPoeIfInfoObjects",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2",
+    "class": "objectidentity"
+  },
+  "dPoeIfStatusTable": {
+    "name": "dPoeIfStatusTable",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of PoE status for ports."
+  },
+  "dPoeIfStatusEntry": {
+    "name": "dPoeIfStatusEntry",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethMainPseGroupIndex",
+        "implied": 0
+      },
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry consists of PoE status for a port."
+  },
+  "dPoeIfDetectStatus": {
+    "name": "dPoeIfDetectStatus",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disabled": 1,
+          "searching": 2,
+          "requesting": 3,
+          "delivering": 4,
+          "faulty": 5
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the operational status of the port PD detection. disabled(1) - PSE function is disabled. searching(2) - Remote PD is not connected. requesting(3) - Remote PD is inserted, but the PSE doesn't provide power yet. delivering(4) - Remote PD is now powering by PoE system. faulty(5) - Device detection or a powered device is in a faulty state. "
+  },
+  "dPoeIfFaultyType": {
+    "name": "dPoeIfFaultyType",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notApplicable": 0,
+          "mpsAbsent": 1,
+          "pdShort": 2,
+          "overload": 3,
+          "powerDenied": 4,
+          "thermalShutdown": 5,
+          "startupFailure": 6,
+          "classificationFailure": 7
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the specific faulty type. It is meaningful only when dPoeIfDetectStatus object is 'faulty'. notApplicable(0) - indicates this object is meaningless, e.g. the dPoeIfDetectStatus is not 'faulty'. mpsAbsent(1) - indicates MPS(Maintain Power Signature) Absent pdShort(2) - indicates PD Short overload(3) - indicates Overload powerDenied(4) - indicates Power Denied thermalShutdown(5)- indicates Thermal Shutdown startupFailure(6) - indicates Startup Failure classificationFailure(7) - indicates Classification Failure(IEEE 802.3at) "
+  },
+  "dPoeIfMeasurementTable": {
+    "name": "dPoeIfMeasurementTable",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of POE measurement information for ports."
+  },
+  "dPoeIfMeasurementEntry": {
+    "name": "dPoeIfMeasurementEntry",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethMainPseGroupIndex",
+        "implied": 0
+      },
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry consists of PoE measurement information of a port."
+  },
+  "dPoeIfVoltage": {
+    "name": "dPoeIfVoltage",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "millivolts",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the voltage of the port in millivolts."
+  },
+  "dPoeIfCurrent": {
+    "name": "dPoeIfCurrent",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milliamperes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current of port in milliamperes."
+  },
+  "dPoeIfTemperature": {
+    "name": "dPoeIfTemperature",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "Degree Centigrade",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the temperature of port in degrees centigrade."
+  },
+  "dPoeIfPower": {
+    "name": "dPoeIfPower",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates consumption power of port in milliwatts."
+  },
+  "dPoeIfPdAliveCfgTable": {
+    "name": "dPoeIfPdAliveCfgTable",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table consists of a list of configuration for the PD alive check function for ports. The PD alive check feature provides the solution for PD device that has the stop working or no response problem via Ping mechanism. Detailed Process: The detailed processes are described as follows: 1. The system needs to periodically monitor the specific PD by using Ping function. If there is no response, system takes one of the following actions: (1) Reset: Switch resets (disable then enable) PoE power on the port which connects to a PD under monitoring. (2) Notify: Switch sends logs and traps to notify the administrator. (3) Both: Switch sends logs and traps, and resets the PoE port power. 2. The system should implement the retry mechanism to check PD aliveness, hence the system will reset the PoE port power feeding after the retry by using Ping without any response from a PD. 3. If the action is Reset or Both, the system needs to wait for PD recovery from rebooting and then executes the Ping function again. Besides, the waiting time can be configured by users. 4. If PoE schedule (time range) function is configured on the port which enables the PD Alive Check function, the time range function has the top priority, and therefore PD Alive Check function will not work while PoE time range function is still active. 5. This function only takes effect on PoE enabled port with power feeding. Note: It is required to setup IP settings properly that the PD can be reachable for Ping, otherwise this function cannot work as expected. Limitation 1. Support Ping Function: If the PD does not support ICMP, this function cannot work normally. 2. Direct-Connected PD: The Reset Action can only work on the direct-connected PD. If the PD is not connected directly, the Reset Action may not work as expected. 3. PD Also Acts as PSE: If the direct-connected PD is also a PSE, all the next level PDs connect to this PSE will be power cycling whenever PD Alive Check function takes effect on 'Reset' or 'Both' Action."
+  },
+  "dPoeIfPdAliveCfgEntry": {
+    "name": "dPoeIfPdAliveCfgEntry",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethMainPseGroupIndex",
+        "implied": 0
+      },
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry contains configuration for PD alive check on a port."
+  },
+  "dPoeIfPdAliveCfgState": {
+    "name": "dPoeIfPdAliveCfgState",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enabled": 1,
+          "disabled": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "disabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the the PD alive function sate. enabled - Enable the PD alive check function disabled - Disable the PD alive check function. "
+  },
+  "dPoeIfPdAliveCfgPdIpType": {
+    "name": "dPoeIfPdAliveCfgPdIpType",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the IP address type of the target PD."
+  },
+  "dPoeIfPdAliveCfgPdIpAddr": {
+    "name": "dPoeIfPdAliveCfgPdIpAddr",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the IP address of the target PD."
+  },
+  "dPoeIfPdAliveCfgInterval": {
+    "name": "dPoeIfPdAliveCfgInterval",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 300
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 30,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the time interval for system issues ping request to detect the target PD. The valid range for interval time is 10s to 300s."
+  },
+  "dPoeIfPdAliveCfgRetry": {
+    "name": "dPoeIfPdAliveCfgRetry",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 5
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "units": "times",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the retry count of ping request when PD has no response. The valid range for retry count is 0 to 5 times."
+  },
+  "dPoeIfPdAliveCfgWaitTime": {
+    "name": "dPoeIfPdAliveCfgWaitTime",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 30,
+            "max": 300
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 90,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the waiting time for PD reboot. The valid range for waiting time is 30s to 300s."
+  },
+  "dPoeIfPdAliveCfgAction": {
+    "name": "dPoeIfPdAliveCfgAction",
+    "oid": "1.3.6.1.4.1.171.14.24.1.3.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "reset": 1,
+          "notify": 2,
+          "both": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "both",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the action when PD doesn't reply the ping request. reset- System will reset the PoE port state . notify- System will send log and trap to notify the administrator. both- System will send log and trap first and reset the PoE port state."
+  },
+  "dPoeIfPowerDeniedNotification": {
+    "name": "dPoeIfPowerDeniedNotification",
+    "oid": "1.3.6.1.4.1.171.14.24.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortPowerDeniedCounter"
+      }
+    ],
+    "status": "current",
+    "description": " This Notification indicates if PSE state diagram enters the state POWER_DENIED. At least 500 msec must elapse between notifications being emitted by the same object instance."
+  },
+  "dPoeIfPowerOverLoadNotification": {
+    "name": "dPoeIfPowerOverLoadNotification",
+    "oid": "1.3.6.1.4.1.171.14.24.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortOverLoadCounter"
+      }
+    ],
+    "status": "current",
+    "description": " This Notification indicates if PSE state diagram enters the state ERROR_DELAY_OVER. At least 500 msec must elapse between notifications being emitted by the same object instance."
+  },
+  "dPoeIfPowerShortCircuitNotification": {
+    "name": "dPoeIfPowerShortCircuitNotification",
+    "oid": "1.3.6.1.4.1.171.14.24.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortShortCounter"
+      }
+    ],
+    "status": "current",
+    "description": " This Notification indicates if PSE state diagram enters the state ERROR_DELAY_SHORT. At least 500 msec must elapse between notifications being emitted by the same object instance."
+  },
+  "dPoeIfPdAliveFailOccurNotification": {
+    "name": "dPoeIfPdAliveFailOccurNotification",
+    "oid": "1.3.6.1.4.1.171.14.24.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethMainPseGroupIndex"
+      },
+      {
+        "module": "POWER-ETHERNET-MIB",
+        "object": "pethPsePortIndex"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgPdIpType"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgPdIpAddr"
+      }
+    ],
+    "status": "current",
+    "description": " This Notification indicates if the PD device has the stop working or no response problem."
+  },
+  "dPoeMIBCompliances": {
+    "name": "dPoeMIBCompliances",
+    "oid": "1.3.6.1.4.1.171.14.24.2.1",
+    "class": "objectidentity"
+  },
+  "dPoeMIBGroups": {
+    "name": "dPoeMIBGroups",
+    "oid": "1.3.6.1.4.1.171.14.24.2.2",
+    "class": "objectidentity"
+  },
+  "dPoeMIBCompliance": {
+    "name": "dPoeMIBCompliance",
+    "oid": "1.3.6.1.4.1.171.14.24.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dPoeGroupCfgGroup",
+        "module": "DLINKSW-POE-MIB"
+      },
+      {
+        "object": "dPoeIfCfgGroup",
+        "module": "DLINKSW-POE-MIB"
+      },
+      {
+        "object": "dPoeGroupInfoGroup",
+        "module": "DLINKSW-POE-MIB"
+      },
+      {
+        "object": "dPoeIfInfoGroup",
+        "module": "DLINKSW-POE-MIB"
+      },
+      {
+        "object": "dPoeIfErrorStateNotificationGroup",
+        "module": "DLINKSW-POE-MIB"
+      },
+      {
+        "object": "dPoeIfPdAliveCfgGroup",
+        "module": "DLINKSW-POE-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-POE-MIB."
+  },
+  "dPoeGroupCfgGroup": {
+    "name": "dPoeGroupCfgGroup",
+    "oid": "1.3.6.1.4.1.171.14.24.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeGroupPolicyPreempt"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeGroupIfLedMode"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects to configure or display the group-specific PoE information."
+  },
+  "dPoeIfCfgGroup": {
+    "name": "dPoeIfCfgGroup",
+    "oid": "1.3.6.1.4.1.171.14.24.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeGroupClearIfStatistic"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfState"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfMaxPower"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfTimeRange"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfLegacyPdEnabled"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects configure or display the ports information."
+  },
+  "dPoeGroupInfoGroup": {
+    "name": "dPoeGroupInfoGroup",
+    "oid": "1.3.6.1.4.1.171.14.24.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeGroupMaxPorts"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeGroupHWVersion"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeGroupSWVersion"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects display the groups information."
+  },
+  "dPoeIfInfoGroup": {
+    "name": "dPoeIfInfoGroup",
+    "oid": "1.3.6.1.4.1.171.14.24.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfDetectStatus"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfFaultyType"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfVoltage"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfCurrent"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfTemperature"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPower"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects display the ports information."
+  },
+  "dPoeIfErrorStateNotificationGroup": {
+    "name": "dPoeIfErrorStateNotificationGroup",
+    "oid": "1.3.6.1.4.1.171.14.24.2.2.5",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPowerDeniedNotification"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPowerOverLoadNotification"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPowerShortCircuitNotification"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides ports error state notifications."
+  },
+  "dPoeIfPdAliveCfgGroup": {
+    "name": "dPoeIfPdAliveCfgGroup",
+    "oid": "1.3.6.1.4.1.171.14.24.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgState"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgPdIpType"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgPdIpAddr"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgInterval"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgRetry"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgWaitTime"
+      },
+      {
+        "module": "DLINKSW-POE-MIB",
+        "object": "dPoeIfPdAliveCfgAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects display the PD alive check configuration."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-POE-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:47:15 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-POE-MIB"
+  }
+}

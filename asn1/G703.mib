@@ -1,0 +1,346 @@
+-- Ericsson Television Limited Standard MIB disclaimer
+-- ###################################################
+-- SNMP MIBs for Ericsson Television Limited products are developed 
+-- primarily for use by Ericsson Television Limited control solutions.
+-- Where MIBs are provided to a third party or other non-Ericsson 
+-- Television Limited person, for the purposes of their development 
+-- of a non-Ericsson Television Limited control or monitoring solution, 
+-- they are provided free of charge, and without obligation on the
+-- part of Ericsson Television Limited to offer priority support, or
+-- changes to suit the third party.  
+
+Board-G703-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+   OBJECT-TYPE
+      FROM RFC-1212
+   modules
+      FROM ETV-Base-MIB
+   SlotNumber, Uint32
+      FROM ETV-Types-TC;
+
+
+-- MIB module for handling G.703 boards used by TTV.
+
+g703Table OBJECT-TYPE
+   SYNTAX    SEQUENCE OF G703Entry
+   ACCESS    not-accessible
+   STATUS    mandatory
+   DESCRIPTION
+         "This table controls the parameter setting of the TTV G.703 board"
+  ::= { modules 32 }
+
+g703Entry OBJECT-TYPE
+   SYNTAX    G703Entry
+   ACCESS    not-accessible
+   STATUS    mandatory
+   DESCRIPTION
+        "An entry in the g703Table"
+   INDEX     { g703SlotNumber, g703PortNumber }
+   ::= { g703Table 1 }
+   
+ -- **************************************************************************************
+ -- Altered g703TxDs3Framing to g703TxFraming as a request by James Hammond
+ -- so that one OID manages both DS-3 and E3 Framing Mode options. Removed 
+ -- g703TxE3Framing OID.
+ -- g703TxFraming         	INTEGER, --11: 0=none, 1=M13 2=C-bit, 3=G.751, 4=G.832   (TX)
+ -- g703TxE3Framing         INTEGER, --22: 1=none, 2=G.832,       (TX)
+ -- JT 19/03/2003
+ -- End of Removal ***********************************************************************
+G703Entry ::= SEQUENCE {
+ g703SlotNumber         	SlotNumber,
+ g703PortNumber         	INTEGER, --2: Port number
+ g703OperationMode      	INTEGER, --3: 1=backwards compatible, 2=MkII mode
+ g703ReedSolomon        	INTEGER, --4: Reed-Solomon 1=disable, 2=enable (only in MkII operation mode)
+ g703Interleaver        	INTEGER, --5: Interleaver/Deinterleaver 1=disable, 2=enable (only MkII mode)
+ g703TxClockMode          	INTEGER, --6: 1=master, 2=slave (only applies in MkII TX operation mode)
+ g703TxE3ErrorProtect     	INTEGER, --7: Error Protection 1=disable, 2=enable (only in E3 TX)
+ g703TxRandomizer         	INTEGER, --8: 1=disable, 2=enable (only MkII TX)
+ g703TxSignalLevelOut     	INTEGER, --9: 1=normal, 2=high (TX)
+ g703TxPdhRate            	INTEGER, --10: 1=E3(34Mbps) 2=DS3(45Mbps)  (TX)
+ g703TxFraming         		INTEGER, --11: 0=none, 1=M13 2=C-bit, 3=G.751, 4=G.832   (TX)
+ g703TxOutputRate         	INTEGER, --12:
+ g703TxPacketLength       	INTEGER, --13:
+ g703RxInputSensitivity   	INTEGER, --14: 1=normal, 2=high (RX)
+ --status parameters
+ g703ReedSolomonStatus  	INTEGER, --15:
+ g703RandomizerStatus   	INTEGER, --16
+ g703InterleaverStatus  	INTEGER, --17
+ g703RxInPacketLength     	INTEGER, --18: 1=188, 2=204
+ g703RxInputRate          	Uint32,  --19
+ g703RxPdhStatus          	INTEGER, --20: 1=E3(34Mbps) 2=DS3(45Mbps) (only RX)
+ g703RxFramingStatus   		INTEGER, --21: 1=None, 2=M13, 3=C-bit, 4=G.751, 5=G.832 (only RX) 
+ g703AlarmStatus        	Uint32   --998
+}
+--------Setup parameters
+g703SlotNumber OBJECT-TYPE
+   SYNTAX      SlotNumber
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The number of the slot where the G.703 board is placed."
+   ::= { g703Entry 1 }
+
+g703PortNumber  OBJECT-TYPE
+    SYNTAX     INTEGER
+    ACCESS     read-only
+    STATUS     mandatory
+    DESCRIPTION
+         "Port Number"
+    ::= { g703Entry 2 }
+
+g703OperationMode  OBJECT-TYPE
+    SYNTAX     INTEGER{
+               compatible(1),
+               mkII(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "The operation mode of the G.703 board
+        1=backwards compatible ('old'), 2=MkII mode."
+    ::= { g703Entry 3 }
+
+g703ReedSolomon  OBJECT-TYPE
+    SYNTAX     INTEGER{
+               disable(1),
+               enable(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Controls Reed-Solomon encoder/decoder (only in MkII operation mode).
+        for TX boards: Can only be enabled when packet len is 204"
+    ::= { g703Entry 4 }
+
+ g703Interleaver   OBJECT-TYPE
+    SYNTAX     INTEGER{
+               disable(1),
+               enable(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Controls interleaver/deinterleaver (only in MkII operation mode).
+        (For TX board: can only be enabled when pkt len =204, RS encoding on, Randomizer on."
+    ::= { g703Entry 5 }
+
+g703TxClockMode     OBJECT-TYPE
+    SYNTAX     INTEGER{
+               master(1),
+               slave(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+       "The clock mode of the board. Only for MkII TX
+       1=master, 2=slave (take clock from TSP board)"
+   ::= { g703Entry 6 }
+
+ g703TxE3ErrorProtect     OBJECT-TYPE
+    SYNTAX     INTEGER{
+               disable(1),
+               enable(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Turns DVB-C Error protection on/off.
+        Only in Compatible mode with E3 TX and 204byte packet."
+    ::= { g703Entry 7 }
+
+ g703TxRandomizer         OBJECT-TYPE
+    SYNTAX     INTEGER{
+               disable(1),
+               enable(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Randomizer on/off. Can only be enabled in MkII mode,
+         TX, pkt len 204, RS encoding on"
+    ::= { g703Entry 8 }
+
+g703TxSignalLevelOut  OBJECT-TYPE
+    SYNTAX     INTEGER{
+               normal(1),
+               high(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Output signal level on G703"
+    ::= { g703Entry 9 }
+
+g703TxPdhRate    OBJECT-TYPE
+    SYNTAX     INTEGER{
+               pdh34(1),
+               pdh45(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Output mode 1 = E3 (34Mbps) 2=DS3(45Mbps)."
+    ::= { g703Entry 10 }
+    
+ -- ***************************************************************************
+ -- Altered g703TxDs3Framing to g703TxFraming as a request by James Hammond
+ -- so that one OID manages both DS-3 and E3 Framing Mode options. Added the 
+ -- G.832 option and altered the description.
+ -- JT 19/03/2003
+ -- *************************************************************************** 
+ g703TxFraming      OBJECT-TYPE
+    SYNTAX     INTEGER{
+               none(1),
+               cBit(2),
+               m13(3),
+               g751(4),
+               g832(5)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Physical Layer TX Framing mode."
+    ::= { g703Entry 11 }
+ 
+g703TxOutputRate OBJECT-TYPE
+    SYNTAX      INTEGER
+    ACCESS      read-write
+    STATUS      mandatory
+    DESCRIPTION
+          "This is the total output bitrate, in bits per second"
+    ::= { g703Entry 12 }
+
+g703TxPacketLength OBJECT-TYPE
+    SYNTAX      INTEGER {
+                  packetLength188(1),
+                  packetLength204(2)
+               }
+    ACCESS      read-write
+    STATUS      mandatory
+    DESCRIPTION
+         "This parameter is used to set the output packet length.
+         1 = 188 byte packets, 2 = 204 byte packets."
+   ::= { g703Entry 13 }
+
+g703RxInputSensitivity   OBJECT-TYPE
+    SYNTAX     INTEGER{
+               normal(1),
+               high(2)
+    }
+    ACCESS     read-write
+    STATUS     mandatory
+    DESCRIPTION
+        "Input signal sensitivity. 1 for normal signals, 2 for high sensitivity."
+    ::= { g703Entry 14 }
+
+ -- *************************** status parameters
+  g703ReedSolomonStatus          OBJECT-TYPE
+    SYNTAX     INTEGER{
+               off(1),
+               on(2)
+    }
+    ACCESS     read-only
+    STATUS     mandatory
+    DESCRIPTION
+       "Shows the status of the Reed-Solomon encoder (tx) or decoder (rx)"
+    ::= { g703Entry 15 }
+
+  g703RandomizerStatus    OBJECT-TYPE
+     SYNTAX     INTEGER{
+                off(1),
+                on(2)
+     }
+     ACCESS     read-only
+     STATUS     mandatory
+     DESCRIPTION
+        "Shows the status of the Randomizer(tx) or De-Randomizer(rx)"
+     ::= { g703Entry 16 }
+
+  g703InterleaverStatus    OBJECT-TYPE
+     SYNTAX     INTEGER{
+                off(1),
+                on(2)
+     }
+     ACCESS     read-only
+     STATUS     mandatory
+     DESCRIPTION
+        "Shows the status of the Interleaver(tx) or De-Interleaver(rx)"
+     ::= { g703Entry 17 }
+
+ g703RxInPacketLength       OBJECT-TYPE
+    SYNTAX     INTEGER{
+               packetLength188(1),
+               packetLength204(2)
+    }
+    ACCESS     read-only
+    STATUS     mandatory
+    DESCRIPTION
+        "Input packet length."
+    ::= { g703Entry 18 }
+
+ g703RxInputRate            OBJECT-TYPE
+    SYNTAX     Uint32
+    ACCESS     read-only
+    STATUS     mandatory
+    DESCRIPTION
+        "Input bit rate"
+   ::= { g703Entry 19 }
+
+
+ g703RxPdhStatus      OBJECT-TYPE
+    SYNTAX     INTEGER{
+               pdh34(1),
+               pdh45(2)
+    }
+    ACCESS     read-only
+    STATUS     mandatory
+    DESCRIPTION
+        "Shows the input PDH rate."
+    ::= { g703Entry 20 }
+
+ g703RxFramingStatus   OBJECT-TYPE
+    SYNTAX     INTEGER{
+               none(1),
+               m13(2),
+               cBit(3),
+               g751(4),
+               g832(5)
+    }
+    ACCESS     read-only
+    STATUS     mandatory
+    DESCRIPTION
+        "Shows the framing status of the input stream."
+   ::= { g703Entry 21 }
+   
+ -- ***************************************************************************
+ -- removed g703TxE3Framing as requested by James Hammond
+ -- so that one OID manages both DS-3 and E3 Framing Mode options JT 19/03/2003
+ -- g703TxE3Framing      OBJECT-TYPE
+ --   SYNTAX     INTEGER{
+ --              none(1),
+ --              g832(2)
+ --   }
+ --   ACCESS     read-write
+ --   STATUS     mandatory
+ --   DESCRIPTION
+ --       "E3 framing. (34TX board)."
+ --   ::= { g703Entry 22 }
+ -- End of Removal ************************************************************
+
+g703AlarmStatus OBJECT-TYPE
+   SYNTAX      Uint32
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The alarm information from the G703 board.
+         Bit No.  Alarm
+         2        G703 No Sync
+         3        G703 Loss of Signal
+         4        G703 Parity Errors
+         5        G703 Reed-Solomon Errors
+         6        G703 Out of Regulation
+         7        G703 MPEG Rate too high"
+   ::= { g703Entry 998 }
+
+END

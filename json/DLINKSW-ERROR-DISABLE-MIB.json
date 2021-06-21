@@ -1,0 +1,580 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "Q-BRIDGE-MIB": [
+      "VlanIdOrNone",
+      "VlanId"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "OBJECT-TYPE",
+      "Gauge32",
+      "Bits",
+      "Counter32",
+      "iso",
+      "Counter64",
+      "Unsigned32",
+      "IpAddress",
+      "Integer32",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "dlinkSwErrDisableMIB": {
+    "name": "dlinkSwErrDisableMIB",
+    "oid": "1.3.6.1.4.1.171.14.45",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-05-02 00:00",
+        "description": "This is the first version of the MIB file."
+      },
+      {
+        "revision": "2013-07-08 00:00",
+        "description": "Modified the object dErrDisIfStatusDisReason to dErrDisIfStatusDisReasonIndex, make this object to be the third index of dErrDisIfStatusEntry, to display more than one reason on a port or vlan interface if more than one reason is recocovering on the port or vlan interface."
+      },
+      {
+        "revision": "2014-04-11 00:00",
+        "description": "Add scheduledShutdown and scheduledHibernation into DErrDisReasonID. Modify description of dErrDisIfStatusTimeLeft, using 0xFFFFFFFF to indicates no automatic recovery."
+      }
+    ],
+    "lastupdated": "201307080000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "This MIB module defines objects for error disabled."
+  },
+  "DErrDisReasonID": {
+    "name": "DErrDisReasonID",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "loopbackDetect": 1,
+          "l2ptGuard": 2,
+          "psecureViolation": 3,
+          "stormControl": 4,
+          "bpduProtect": 5,
+          "arpRateLimit": 6,
+          "dhcpRateLimit": 7,
+          "ddm": 8,
+          "scheduledShutdown": 9,
+          "scheduledHibernation": 10
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer-value assigned to various conditions that can error disable a system entity. loopbackDetect: Loopback Detection l2ptGuard: L2 Protocol Tunneling. psecureViolation: Port Security violation. stormControl: (broadcast/multicast/unicast)storm control. bpduProtect: BPDU protected. arpRateLimit: ARP rate limit. dhcpRateLimit: DHCP rate limit. ddm: Digital Diagnostics Monitoring scheduledShutdown: Scheduled Port-shutdown by Power Saving scheduledHibernation:Scheduled Hibernation by Power Saving "
+  },
+  "dErrDisableMIBNotifications": {
+    "name": "dErrDisableMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.45.0",
+    "class": "objectidentity"
+  },
+  "dErrDisableMIBObjects": {
+    "name": "dErrDisableMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.45.1",
+    "class": "objectidentity"
+  },
+  "dErrDisableMIBConformance": {
+    "name": "dErrDisableMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.45.2",
+    "class": "objectidentity"
+  },
+  "dErrDisRecoveryTable": {
+    "name": "dErrDisRecoveryTable",
+    "oid": "1.3.6.1.4.1.171.14.45.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the recovery mechanism for the features with error-disable functionality. Transceiver monitoring module (the DErrDisReasonID is 'ddm') can also put a SFP port which is in abnormal status in error disabled state. This error disable cannot be auto recovered but can only be manually recovered. As a result, there is no entry for error cause is 'ddm' in this table. "
+  },
+  "dErrDisRecoveryEntry": {
+    "name": "dErrDisRecoveryEntry",
+    "oid": "1.3.6.1.4.1.171.14.45.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisRecoveryIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is created for each feature which has error-disable functionality."
+  },
+  "dErrDisRecoveryIndex": {
+    "name": "dErrDisRecoveryIndex",
+    "oid": "1.3.6.1.4.1.171.14.45.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DErrDisReasonID",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the cause of error-disable."
+  },
+  "dErrDisRecoveryEnable": {
+    "name": "dErrDisRecoveryEnable",
+    "oid": "1.3.6.1.4.1.171.14.45.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object specifies whether the system can automatically recover a system entity that has been disabled by the cause."
+  },
+  "dErrDisRecoveryInterval": {
+    "name": "dErrDisRecoveryInterval",
+    "oid": "1.3.6.1.4.1.171.14.45.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 5,
+            "max": 86400
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 300,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Specifies the error-recovery time interval on specific cause to recover the port/interface from the error disabled situation."
+  },
+  "dErrDisIfStatusTableNum": {
+    "name": "dErrDisIfStatusTableNum",
+    "oid": "1.3.6.1.4.1.171.14.45.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the number of entries present in the dErrDisIfStatusTable."
+  },
+  "dErrDisIfStatusTable": {
+    "name": "dErrDisIfStatusTable",
+    "oid": "1.3.6.1.4.1.171.14.45.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides next recovery timeout information about an interface disabled by a feature."
+  },
+  "dErrDisIfStatusEntry": {
+    "name": "dErrDisIfStatusEntry",
+    "oid": "1.3.6.1.4.1.171.14.45.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisIfStatusIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisIfStatusVlanIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisIfStatusDisReasonIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry indicates next recovery timeout information about an interface or (interface, vlan) disabled by a feature."
+  },
+  "dErrDisIfStatusIfIndex": {
+    "name": "dErrDisIfStatusIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.45.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object is the interface index of the interface disabled by a feature."
+  },
+  "dErrDisIfStatusVlanIndex": {
+    "name": "dErrDisIfStatusVlanIndex",
+    "oid": "1.3.6.1.4.1.171.14.45.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanIdOrNone",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the VLAN in the given interface that has been error-disabled. If the physical interface is error-disabled then the value of this object is 0."
+  },
+  "dErrDisIfStatusDisReasonIndex": {
+    "name": "dErrDisIfStatusDisReasonIndex",
+    "oid": "1.3.6.1.4.1.171.14.45.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DErrDisReasonID",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the reason which cause the interface disabled."
+  },
+  "dErrDisIfStatusTimeLeft": {
+    "name": "dErrDisIfStatusTimeLeft",
+    "oid": "1.3.6.1.4.1.171.14.45.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the time left that the interface will be automatically recovered. Value 0xFFFFFFFF indicates the interface won't be automatically recovered."
+  },
+  "dErrDisNotificationEnable": {
+    "name": "dErrDisNotificationEnable",
+    "oid": "1.3.6.1.4.1.171.14.45.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "errDisableAsserted": 0,
+        "errDisableCleared": 1
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates whether a specified notification is enabled or not. If a bit corresponding to a notification is set to 1, then the specified notification can be generated. errDisableAsserted(0) - Controls the notifications for a port/vlan entering into error disabled state. errDisableCleared(1) - Controls the notifications for a port/vlan exiting from error disabled state. "
+  },
+  "dErrDisNotifRate": {
+    "name": "dErrDisNotifRate",
+    "oid": "1.3.6.1.4.1.171.14.45.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 1000
+          }
+        ]
+      }
+    },
+    "units": "notifications per minute",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Expressed in the number of notifications can be generated per minute. This object configures the rate-limit of SNMP Notification for errDisable feature. A value of 0 indicates that an SNMP Notification is generated for every error disabled event."
+  },
+  "dErrDisNotifyInfo": {
+    "name": "dErrDisNotifyInfo",
+    "oid": "1.3.6.1.4.1.171.14.45.1.6",
+    "class": "objectidentity"
+  },
+  "dErrDisNotifyInfoPortIfIndex": {
+    "name": "dErrDisNotifyInfoPortIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.45.1.6.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the port number of error disabled port."
+  },
+  "dErrDisNotifyInfoLoopDetectedVID": {
+    "name": "dErrDisNotifyInfoLoopDetectedVID",
+    "oid": "1.3.6.1.4.1.171.14.45.1.6.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanId",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the VLAN ID that has detected a loopback."
+  },
+  "dErrDisNotifyInfoReasonID": {
+    "name": "dErrDisNotifyInfoReasonID",
+    "oid": "1.3.6.1.4.1.171.14.45.1.6.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DErrDisReasonID",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the condition which cause a port/vlan enter into error disabled state."
+  },
+  "dErrDisNotifyPortDisabledAssert": {
+    "name": "dErrDisNotifyPortDisabledAssert",
+    "oid": "1.3.6.1.4.1.171.14.45.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoPortIfIndex"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoReasonID"
+      }
+    ],
+    "status": "current",
+    "description": "The trap is sent when a port enters into error disabled state."
+  },
+  "dErrDisNotifyPortDisabledClear": {
+    "name": "dErrDisNotifyPortDisabledClear",
+    "oid": "1.3.6.1.4.1.171.14.45.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoPortIfIndex"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoReasonID"
+      }
+    ],
+    "status": "current",
+    "description": "The trap is sent when a port loop restarts after the interval time."
+  },
+  "dErrDisNotifyVlanDisabledAssert": {
+    "name": "dErrDisNotifyVlanDisabledAssert",
+    "oid": "1.3.6.1.4.1.171.14.45.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoPortIfIndex"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoReasonID"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoLoopDetectedVID"
+      }
+    ],
+    "status": "current",
+    "description": "The trap is sent when a Port with a VID loop occurs."
+  },
+  "dErrDisNotifyVlanDisabledClear": {
+    "name": "dErrDisNotifyVlanDisabledClear",
+    "oid": "1.3.6.1.4.1.171.14.45.0.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoPortIfIndex"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoReasonID"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoLoopDetectedVID"
+      }
+    ],
+    "status": "current",
+    "description": "The trap is sent when a Port with a VID restarts after the interval time."
+  },
+  "dErrDisMIBCompliances": {
+    "name": "dErrDisMIBCompliances",
+    "oid": "1.3.6.1.4.1.171.14.45.2.1",
+    "class": "objectidentity"
+  },
+  "dErrDisMIBGroups": {
+    "name": "dErrDisMIBGroups",
+    "oid": "1.3.6.1.4.1.171.14.45.2.2",
+    "class": "objectidentity"
+  },
+  "dErrDisMIBCompliance": {
+    "name": "dErrDisMIBCompliance",
+    "oid": "1.3.6.1.4.1.171.14.45.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dErrDisRecoveryCfgGroup",
+        "module": "DLINKSW-ERROR-DISABLE-MIB"
+      },
+      {
+        "object": "dErrDisIfStatusGroup",
+        "module": "DLINKSW-ERROR-DISABLE-MIB"
+      },
+      {
+        "object": "dErrDisNotifyCfgGroup",
+        "module": "DLINKSW-ERROR-DISABLE-MIB"
+      },
+      {
+        "object": "dErrDisNotificationGroup",
+        "module": "DLINKSW-ERROR-DISABLE-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-ERROR-DISABLE-MIB."
+  },
+  "dErrDisRecoveryCfgGroup": {
+    "name": "dErrDisRecoveryCfgGroup",
+    "oid": "1.3.6.1.4.1.171.14.45.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisRecoveryEnable"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisRecoveryInterval"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects to configure the error recovery of the error-disable feature."
+  },
+  "dErrDisIfStatusGroup": {
+    "name": "dErrDisIfStatusGroup",
+    "oid": "1.3.6.1.4.1.171.14.45.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisIfStatusTableNum"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisIfStatusTimeLeft"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects which indicate error-disable interface status."
+  },
+  "dErrDisNotifyCfgGroup": {
+    "name": "dErrDisNotifyCfgGroup",
+    "oid": "1.3.6.1.4.1.171.14.45.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotificationEnable"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifRate"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoPortIfIndex"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoReasonID"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyInfoLoopDetectedVID"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects to configure the error recovery of the error-disable feature."
+  },
+  "dErrDisNotificationGroup": {
+    "name": "dErrDisNotificationGroup",
+    "oid": "1.3.6.1.4.1.171.14.45.2.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyPortDisabledAssert"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyPortDisabledClear"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyVlanDisabledAssert"
+      },
+      {
+        "module": "DLINKSW-ERROR-DISABLE-MIB",
+        "object": "dErrDisNotifyVlanDisabledClear"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of notifications used for monitoring ErrDisable status"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-ERROR-DISABLE-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:01:42 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-ERROR-DISABLE-MIB"
+  }
+}

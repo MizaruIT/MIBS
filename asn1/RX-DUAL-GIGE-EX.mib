@@ -1,0 +1,432 @@
+-- Ericsson Television Limited Standard MIB disclaimer
+-- ###################################################
+-- SNMP MIBs for Ericsson Television Limited products are developed 
+-- primarily for use by Ericsson Television Limited control solutions.
+-- Where MIBs are provided to a third party or other non-Ericsson 
+-- Television Limited person, for the purposes of their development 
+-- of a non-Ericsson Television Limited control or monitoring solution, 
+-- they are provided free of charge, and without obligation on the
+-- part of Ericsson Television Limited to offer priority support, or
+-- changes to suit the third party.
+
+RX-DUAL-GIGE-EX DEFINITIONS ::= BEGIN
+
+IMPORTS
+   IpAddress, Counter
+      FROM RFC1155-SMI
+   OBJECT-TYPE
+      FROM RFC-1212
+   DisplayString
+      FROM RFC1213-MIB
+   modules
+      FROM ETV-Base-MIB
+   Uint32, Uint16, Uint8, RowStatus
+      FROM ETV-Types-TC;
+	  
+--keep comp with small mib
+	  
+rcMLR    OBJECT-TYPE
+    SYNTAX          INTEGER { initialVersion(1) }
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "MDI - Media Loss Rate (MLR)"
+    ::= { etv-rxDualGigE 1 }
+
+rcDF    OBJECT-TYPE
+    SYNTAX          INTEGER { initialVersion(1) }
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "MDI - Delay Factor (DF)"
+    ::= { etv-rxDualGigE 2 }   
+
+--Table of general IP parameters for the module
+
+etv-rxDualGigE OBJECT IDENTIFIER ::= { modules 1087 }
+
+ipTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF IpEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table controls general IP parameter settings."
+   ::= { etv-rxDualGigE 3 }
+
+ipEntry OBJECT-TYPE
+   SYNTAX      IpEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the IpTable."
+   INDEX       { ipPortNumber }
+   ::= { ipTable 1 }
+
+IpEntry ::= SEQUENCE {
+   ipPortNumber             INTEGER,
+   ipIPAddress              IpAddress,
+   ipSubnetMask             IpAddress,
+   ipGateway                IpAddress,
+   ipVlanTag				Uint16,
+   ipVlanEnable				INTEGER,
+   ipIcmpEnable				INTEGER,
+   ipArpEnable				INTEGER,
+   ipUtilThreshold			Uint8, 
+   ipCurrNetUtil			Uint8,
+   ipLineSpeed				Uint8,
+   ipCurrentLineSpeed		Uint8,
+   ipMac					NetworkAddress,
+   ipIgmpVersion			Uint8,
+   ipUpTime					Uint32
+}
+ipPortNumber OBJECT-TYPE
+   SYNTAX      INTEGER
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The number of the slot where the board is placed."
+   ::= { ipEntry 1 }
+
+ipIPAddress OBJECT-TYPE
+   SYNTAX      IpAddress
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the Ip address of the board."
+   ::= { ipEntry 2 }
+
+ipSubnetMask OBJECT-TYPE
+   SYNTAX      IpAddress
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the subnet mask of the board."
+   ::= { ipEntry 3 }
+
+ipGateway OBJECT-TYPE
+   SYNTAX      IpAddress
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the default gateway used by the board."
+   ::= { ipEntry 4 }
+   
+ipVlanTag OBJECT-TYPE
+   SYNTAX      Uint16(0..65535)
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipVlanTag"
+   ::= { ipEntry 5 }
+
+ipVlanEnable OBJECT-TYPE
+   SYNTAX      INTEGER
+				{disable(0),
+                enable(1)}
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipVlanEnable"
+   ::= { ipEntry 6 }
+   
+ipIcmpEnable OBJECT-TYPE
+   SYNTAX      INTEGER
+				{disable(0),
+                enable(1)}
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipIcmpEnable"
+   ::= { ipEntry 7 }
+   
+ipArpEnable OBJECT-TYPE
+   SYNTAX      INTEGER
+				{disable(0),
+                enable(1)}
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipArpEnable"
+   ::= { ipEntry 8 }
+   
+ipUtilThreshold OBJECT-TYPE
+   SYNTAX      Uint8(0..100)
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipUtilThreshold"
+   ::= { ipEntry 9 }
+   
+ipCurrNetUtil OBJECT-TYPE
+   SYNTAX      Uint8(0..100)
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipCurrNetUtil"
+   ::= { ipEntry 10 }
+   
+ipLineSpeed OBJECT-TYPE
+   SYNTAX      Uint8(0..3)
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipLineMode"
+   ::= { ipEntry 11 }
+   
+ipCurrentLineSpeed OBJECT-TYPE
+   SYNTAX      Uint8(0..3)
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipLineMode"
+   ::= { ipEntry 12 }
+   
+ipMac OBJECT-TYPE
+   SYNTAX      NetworkAddress
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipMac"
+   ::= { ipEntry 13 }
+   
+ipIgmpVersion OBJECT-TYPE
+   SYNTAX      Uint8(1..3)
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipIgmpVersion"
+   ::= { ipEntry 14 }
+   
+ipUpTime OBJECT-TYPE
+   SYNTAX      Uint32
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipUpTime"
+   ::= { ipEntry 15 }
+   
+--Table of multicast IP parameters for the module
+   
+ipMcastTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF IpMcastEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table controls general IP parameter settings."
+   ::= { etv-rxDualGigE 4 }
+
+ipMcastEntry OBJECT-TYPE
+   SYNTAX      IpMcastEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the IpTable."
+   INDEX       { ipMcastPortNumber }
+   ::= { ipMcastTable 1 }
+
+IpMcastEntry ::= SEQUENCE {
+   ipMcastPortNumber        INTEGER,
+   ipMcastIPAddress         IpAddress,
+   ipSourceIPAddress        IpAddress,
+   ipPort					Uint16,
+   ipColPort				Uint16,
+   ipRowPort				Uint16,
+}
+
+ipMcastPortNumber OBJECT-TYPE
+   SYNTAX      INTEGER
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The number of the slot where the board is placed."
+   ::= { ipMcastEntry 1 }
+
+ipMcastIPAddress OBJECT-TYPE
+   SYNTAX      IpAddress
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipMcastIPAddress"
+   ::= { ipMcastEntry 2 }
+   
+ipSourceIPAddress OBJECT-TYPE
+   SYNTAX      IpAddress
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipSourceIPAddress"
+   ::= { ipMcastEntry 3 }
+   
+ipPort OBJECT-TYPE
+   SYNTAX      Uint16
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipPort"
+   ::= { ipMcastEntry 4 }
+   
+ipColPort OBJECT-TYPE
+   SYNTAX      Uint16
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipColPort"
+   ::= { ipMcastEntry 5 }
+   
+ipRowPort OBJECT-TYPE
+   SYNTAX      Uint16
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "ipRowPort"
+   ::= { ipMcastEntry 6 }      
+   
+--Card's config
+   
+ipMacMode    OBJECT-TYPE
+    SYNTAX          INTEGER { same(1), diff(0) }
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "ipMacMode"
+    ::= { etv-rxDualGigE 5 }
+	
+ipSnmpEnable    OBJECT-TYPE
+    SYNTAX          INTEGER {disable(0), enable(1)}
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "ipSnmpEnable"
+    ::= { etv-rxDualGigE 6 }
+	
+ipFecEnable    OBJECT-TYPE
+    SYNTAX          INTEGER {disable(0), enable(1)}
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "ipFecEnable"
+    ::= { etv-rxDualGigE 7 }
+	
+ipBufferLevel    OBJECT-TYPE
+    SYNTAX          Uint8(0..60)
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "ipBufferLevel"
+    ::= { etv-rxDualGigE 8 }
+	
+ipCurrentBufferLevel    OBJECT-TYPE
+    SYNTAX          Uint16
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "ipCurrentBufferLevel"
+    ::= { etv-rxDualGigE 9 } 
+	
+ipCurrentInputPort OBJECT-TYPE
+    SYNTAX          Uint8( 0..1 )
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "ipCurrentInputPort"
+    ::= { etv-rxDualGigE 10 }
+	
+ipRedundancyMode OBJECT-TYPE
+    SYNTAX          Uint8( 0..1 )
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "ipCurrentInputPort"
+    ::= { etv-rxDualGigE 11 }
+	
+ipAutoRevertDelay OBJECT-TYPE
+    SYNTAX          Uint8
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "ipAutoRevertDelay"
+    ::= { etv-rxDualGigE 12 }   
+    
+rcMLRthreshold   OBJECT-TYPE
+    SYNTAX          INTEGER { initialVersion(1) }
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "Max MDI Delay Factor Threshold"
+    ::= { etv-rxDualGigE 13 }
+
+rcDFthreshold   OBJECT-TYPE
+    SYNTAX          INTEGER { initialVersion(1) }
+    ACCESS          read-write
+    STATUS          mandatory
+    DESCRIPTION     "Max MDI Delay Factor Threshold"
+    ::= { etv-rxDualGigE 14 }          
+    
+--Card's statistic               
+   
+ipLastIpReceived OBJECT-TYPE
+   SYNTAX      IpAddress
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipLastIpReceived"
+   ::= { etv-rxDualGigE 15 }
+	                            
+ipColNum OBJECT-TYPE
+   SYNTAX      Uint8
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipColNum"
+   ::= { etv-rxDualGigE 16 }   
+   
+ipRowNum OBJECT-TYPE
+   SYNTAX      Uint8
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipRowNum"
+   ::= { etv-rxDualGigE 17 }  
+   
+ipTSperUDP OBJECT-TYPE
+   SYNTAX      Uint8
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipTSperUDP"
+   ::= { etv-rxDualGigE 18 }    
+   
+ipEncapsulation OBJECT-TYPE
+   SYNTAX      Uint8
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "ipEncapsulation"
+   ::= { etv-rxDualGigE 19 }  
+   
+ipFecLatency    OBJECT-TYPE
+    SYNTAX          Uint16
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "ipFecLatency"
+    ::= { etv-rxDualGigE 20 }
+
+                       
+ipIpPacketsReceived    OBJECT-TYPE
+    SYNTAX          Uint32
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "ipIpPacketsReceived"
+    ::= { etv-rxDualGigE 21 }  
+    
+ipCorrectedPktCnt    OBJECT-TYPE
+    SYNTAX          Uint32
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "Corrected Packet Count"
+    ::= { etv-rxDualGigE 22 }
+
+ipLostPktCnt    OBJECT-TYPE
+    SYNTAX          Uint32
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "Lost Packet Count"
+    ::= { etv-rxDualGigE 23 }
+	
+ipAlarms    OBJECT-TYPE
+    SYNTAX          Uint32
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION     "Alarms"
+    ::= { etv-rxDualGigE 24 }
+
+END

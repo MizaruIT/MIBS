@@ -1,0 +1,501 @@
+{
+  "imports": {
+    "class": "imports",
+    "H3C-FC-TC-MIB": [
+      "H3cFcVsanIndex",
+      "H3cFcAddress",
+      "H3cFcStartOper",
+      "H3cFcAddressType"
+    ],
+    "H3C-VSAN-MIB": [
+      "h3cSan"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "Gauge32",
+      "iso",
+      "MODULE-IDENTITY",
+      "TimeTicks",
+      "NOTIFICATION-TYPE",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "Bits",
+      "IpAddress",
+      "Unsigned32",
+      "Integer32",
+      "Counter64",
+      "OBJECT-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "RowStatus",
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "h3cFcPing": {
+    "name": "h3cFcPing",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-03-15 00:00",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "201303150000Z",
+    "organization": "Hangzhou H3C Tech. Co., Ltd.",
+    "contactinfo": "Platform Team Hangzhou H3C Tech. Co., Ltd. Hai-Dian District Beijing P.R. China http://www.h3c.com Zip:100085",
+    "description": "This MIB module is for the management of the Fibre Channel Ping functionality."
+  },
+  "h3cFcPingObjects": {
+    "name": "h3cFcPingObjects",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1",
+    "class": "objectidentity"
+  },
+  "h3cFcPingConfigurations": {
+    "name": "h3cFcPingConfigurations",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1",
+    "class": "objectidentity"
+  },
+  "h3cFcPingStatistics": {
+    "name": "h3cFcPingStatistics",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2",
+    "class": "objectidentity"
+  },
+  "h3cFcPingNotifications": {
+    "name": "h3cFcPingNotifications",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.3",
+    "class": "objectidentity"
+  },
+  "h3cFcPingNotifyPrefix": {
+    "name": "h3cFcPingNotifyPrefix",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.3.0",
+    "class": "objectidentity"
+  },
+  "h3cFcPingTable": {
+    "name": "h3cFcPingTable",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of FC ping entries containing a group of FC ping requests that need to be executed at the agent."
+  },
+  "h3cFcPingEntry": {
+    "name": "h3cFcPingEntry",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A FC ping request entry that need to be executed at the agent."
+  },
+  "h3cFcPingIndex": {
+    "name": "h3cFcPingIndex",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The index of the current FC ping entry. This object identifies a FC ping request entry uniquely in a specified VSAN (Virtual Storage Area Network)."
+  },
+  "h3cFcPingVsan": {
+    "name": "h3cFcPingVsan",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "H3cFcVsanIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The VSAN on which the FC ping request will be performed. If the corresponding instance value of h3cFcPingOperStatus is 'inProgress', the object cannot be modified."
+  },
+  "h3cFcPingAddressType": {
+    "name": "h3cFcPingAddressType",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "H3cFcAddressType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "fcid",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of the corresponding instance of h3cFcPingAddress object."
+  },
+  "h3cFcPingAddress": {
+    "name": "h3cFcPingAddress",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "H3cFcAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The address to which the route will be pinged. This object will contain an 8 octet long WWN(World Wide Name), if the value of the associated instance of h3cFcPingAddressType object is 'wwn'. This object will contain a 3 octet long Fibre Channel Address ID, if the value of the associated instance of h3cFcPingAddressType object is 'fcid'."
+  },
+  "h3cFcPingPacketCount": {
+    "name": "h3cFcPingPacketCount",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The number of FC ping packets to be sent to the target in this sequence."
+  },
+  "h3cFcPingPayloadSize": {
+    "name": "h3cFcPingPayloadSize",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object specifies the size of the FC ping packet payload to be sent to the target in this sequence."
+  },
+  "h3cFcPingTimeout": {
+    "name": "h3cFcPingTimeout",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The value of timeout for this FC ping request."
+  },
+  "h3cFcPingDelay": {
+    "name": "h3cFcPingDelay",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The minimum amount of time to wait before sending the next packet in a sequence, after receiving a response or declaring a timeout for a previously transmitted packet."
+  },
+  "h3cFcPingAgeInterval": {
+    "name": "h3cFcPingAgeInterval",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 500,
+            "max": 900
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 500,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The interval time after a FC ping test completes before the entry is aged out."
+  },
+  "h3cFcPingAdminStatus": {
+    "name": "h3cFcPingAdminStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "H3cFcStartOper",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "disable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The administrative status of each h3cFcPingEntry. The object has two values: enable - Activate the entry. disable - Deactivate the entry. When the FC ping entry is executing, this object cannot be modified. If this object is read at such a time, a value of 'enable' will be returned. When the test finishes, the value of this object will be set to 'disable'."
+  },
+  "h3cFcPingOperStatus": {
+    "name": "h3cFcPingOperStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "inProgress": 1,
+          "complete": 2,
+          "disabled": 3,
+          "failed": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the operational status of this h3cFcPingEntry. The value specifications are listed as follows: inProgress - FC ping is in progress. complete - FC ping is complete. disabled - FC ping is disabled. failed - FC ping has failed due to resource limitations."
+  },
+  "h3cFcPingTrapOnCompletion": {
+    "name": "h3cFcPingTrapOnCompletion",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates that if h3cFcPingCompletionNotify notification should be generated or not when the corresponding ping sequence completes."
+  },
+  "h3cFcPingRowStatus": {
+    "name": "h3cFcPingRowStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this conceptual row."
+  },
+  "h3cFcPingStatTable": {
+    "name": "h3cFcPingStatTable",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of FC ping statistics. This table notes the FC ping statistics of a FC ping test associated with an entry in the h3cFcPingTable."
+  },
+  "h3cFcPingStatEntry": {
+    "name": "h3cFcPingStatEntry",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A FC ping statistics entry. An entry will be created automatically in this table when the h3cFcPingRowStatus of a ping request in the h3cFcPingTable is set to 'active'. The entry in this table will have the same indices as the entry that in the h3cFcPingTable. An entry in this table will be deleted when the corresponding entry in the h3cFcPingTable is deleted."
+  },
+  "h3cFcPingReqPackets": {
+    "name": "h3cFcPingReqPackets",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of FC ping packets request in this sequence."
+  },
+  "h3cFcPingResPackets": {
+    "name": "h3cFcPingResPackets",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of FC ping packets response in this sequence."
+  },
+  "h3cFcPingMinTime": {
+    "name": "h3cFcPingMinTime",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "microseconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The minimum round trip time of all the packets that have been sent in this sequence."
+  },
+  "h3cFcPingAverageTime": {
+    "name": "h3cFcPingAverageTime",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "microseconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The average round trip time of all the packets that have been sent in this sequence."
+  },
+  "h3cFcPingMaxTime": {
+    "name": "h3cFcPingMaxTime",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "microseconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum round trip time of all the packets that have been sent in this sequence."
+  },
+  "h3cFcPingTimeoutNum": {
+    "name": "h3cFcPingTimeoutNum",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of timeouts encountered in this sequence."
+  },
+  "h3cFcPingCompletionNotify": {
+    "name": "h3cFcPingCompletionNotify",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.5.1.3.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingIndex"
+      },
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingVsan"
+      },
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingAddressType"
+      },
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingAddress"
+      },
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingReqPackets"
+      },
+      {
+        "module": "H3C-FC-PING-MIB",
+        "object": "h3cFcPingResPackets"
+      }
+    ],
+    "status": "current",
+    "description": "When a FC ping test is finished and the instance of h3cFcPingTrapOnCompletion associated with the test is set to 'true', this notification occurred."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/H3C-FC-PING-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 20:00:55 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "H3C-FC-PING-MIB"
+  }
+}

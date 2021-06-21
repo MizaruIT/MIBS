@@ -1,0 +1,293 @@
+{
+  "imports": {
+    "class": "imports",
+    "H3C-VSAN-MIB": [
+      "h3cSan"
+    ],
+    "IF-MIB": [
+      "ifDescr",
+      "ifIndex"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Integer32",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "Bits",
+      "Unsigned32",
+      "IpAddress",
+      "MibIdentifier",
+      "MODULE-IDENTITY",
+      "OBJECT-TYPE",
+      "Counter64",
+      "Gauge32",
+      "TimeTicks",
+      "iso",
+      "NOTIFICATION-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "RowStatus"
+    ]
+  },
+  "h3cSanAgg": {
+    "name": "h3cSanAgg",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-02-25 09:40",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "201302250940Z",
+    "organization": "Hangzhou H3C Tech. Co., Ltd.",
+    "contactinfo": "Platform Team Hangzhou H3C Tech. Co., Ltd. Hai-Dian District Beijing P.R. China http://www.h3c.com Zip:100085 ",
+    "description": "This MIB module is for configuring and monitoring SAN (Storage Area Networks) aggregation group related MIB objects. This MIB can be used to add or delete a SAN aggregation group, and make one or more FC (Fiber Channel) ports join or leave the group, as well as show their states."
+  },
+  "H3cMemberList": {
+    "name": "H3cMemberList",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "status": "current",
+    "description": "A list of values concerning the member ports in a SAN aggregation group. Each 4 octets within this value list specifies a member in a SAN aggregation group. A zero-length string value means this list has no member, and the maximum length of this string depends on the maximum number of members a SAN aggregation supports."
+  },
+  "h3cSanAggMibObjects": {
+    "name": "h3cSanAggMibObjects",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.1",
+    "class": "objectidentity"
+  },
+  "h3cSanAggMaxMemberNumber": {
+    "name": "h3cSanAggMaxMemberNumber",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This value specifies the maximum member number that a SAN aggregation group supports, and this restriction depends on product customization."
+  },
+  "h3cSanAggGroupTable": {
+    "name": "h3cSanAggGroupTable",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of SAN aggregation objects to be used in configuring and monitoring a SAN aggregation group and its members."
+  },
+  "h3cSanAggGroupEntry": {
+    "name": "h3cSanAggGroupEntry",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "H3C-SAN-AGG-MIB",
+        "object": "h3cSanAggGroupNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A group of SAN aggregation objects to be used in configuring and monitoring a SAN aggregation group and its members."
+  },
+  "h3cSanAggGroupNumber": {
+    "name": "h3cSanAggGroupNumber",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The serial number of the current SAN aggregation group."
+  },
+  "h3cSanAggGroupIndex": {
+    "name": "h3cSanAggGroupIndex",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The ifIndex of the current SAN aggregation group."
+  },
+  "h3cSanAggMemberList": {
+    "name": "h3cSanAggMemberList",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "H3cMemberList",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "List of member's ifIndex in the current SAN aggregation group. If there is no member in the SAN aggregation group, the list length should be zero. Otherwise each member's ifIndex value occupies 4 octets. The greatest length of this list depends on the maximum number of members a SAN aggregation group supports, which can be customized and therefore is not a fixed value. When getting the group members' ifIndexes, the result was sorted in ascending order of ifIndex values. However, when setting the group members' ifIndexes, the sequence of ifIndex values is not required."
+  },
+  "h3cSanAggMemberStateList": {
+    "name": "h3cSanAggMemberStateList",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "H3cMemberList",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "List of member's state in current SAN aggregation group, where the state value is sorted in ascending order of member's ifIndex, which is consistent with the 'get' result of 'h3cSanAggMemberList'. The explanation of this value's length is as same as the 'h3cSanAggMemberList'. Each member's state value occupies 4 octets. The value specifications are listed as follows: 1: This member hasn't passed the link negotiation. 2: This member has passed the link negotiation but has not been selected. 3: This member has been selected."
+  },
+  "h3cSanAggGroupRowStatus": {
+    "name": "h3cSanAggGroupRowStatus",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "RowStatus. Now only three states are supported: createAndGo, active, and destroy."
+  },
+  "h3cSanAggObjForNotification": {
+    "name": "h3cSanAggObjForNotification",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.3",
+    "class": "objectidentity"
+  },
+  "h3cSanAggGroupPreviousSpeed": {
+    "name": "h3cSanAggGroupPreviousSpeed",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "gigabit bps",
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The previous speed of the SAN aggregation group."
+  },
+  "h3cSanAggGroupCurrentSpeed": {
+    "name": "h3cSanAggGroupCurrentSpeed",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "gigabit bps",
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The current speed of the SAN aggregation group."
+  },
+  "h3cSanAggNotifications": {
+    "name": "h3cSanAggNotifications",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.4",
+    "class": "objectidentity"
+  },
+  "h3cSanAggNotificationPrefix": {
+    "name": "h3cSanAggNotificationPrefix",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.4.0",
+    "class": "objectidentity"
+  },
+  "h3cSanAggGroupSpeedChange": {
+    "name": "h3cSanAggGroupSpeedChange",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.4.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "H3C-SAN-AGG-MIB",
+        "object": "h3cSanAggGroupNumber"
+      },
+      {
+        "module": "H3C-SAN-AGG-MIB",
+        "object": "h3cSanAggGroupPreviousSpeed"
+      },
+      {
+        "module": "H3C-SAN-AGG-MIB",
+        "object": "h3cSanAggGroupCurrentSpeed"
+      }
+    ],
+    "status": "current",
+    "description": "This event will be triggered whenever a SAN aggregation group changes its speed."
+  },
+  "h3cSanAggMemberInactive": {
+    "name": "h3cSanAggMemberInactive",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.4.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "H3C-SAN-AGG-MIB",
+        "object": "h3cSanAggGroupNumber"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifDescr"
+      }
+    ],
+    "status": "current",
+    "description": "This event will be triggered whenever any member in a SAN aggregation group is made inactive."
+  },
+  "h3cSanAggMemberActive": {
+    "name": "h3cSanAggMemberActive",
+    "oid": "1.3.6.1.4.1.2011.10.2.127.2.4.0.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "H3C-SAN-AGG-MIB",
+        "object": "h3cSanAggGroupNumber"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "IF-MIB",
+        "object": "ifDescr"
+      }
+    ],
+    "status": "current",
+    "description": "This event will be triggered whenever any member in a SAN aggregation group is made active."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/H3C-SAN-AGG-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:50:00 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "H3C-SAN-AGG-MIB"
+  }
+}

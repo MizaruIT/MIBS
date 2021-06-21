@@ -1,0 +1,688 @@
+{
+  "imports": {
+    "class": "imports",
+    "PRVT-QOS-MIB": [
+      "serviceAccessSwitch"
+    ],
+    "PRVT-SERV-MIB": [
+      "sdpInfoEntry",
+      "sapPortId",
+      "sapEncapValue",
+      "sdpId",
+      "svcId",
+      "sapBaseInfoEntry"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Bits",
+      "iso",
+      "TimeTicks",
+      "MODULE-IDENTITY",
+      "Gauge32",
+      "MibIdentifier",
+      "OBJECT-TYPE",
+      "Counter64",
+      "Unsigned32",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "Integer32",
+      "OBJECT-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "RowStatus"
+    ]
+  },
+  "prvtL2TunnelingMIB": {
+    "name": "prvtL2TunnelingMIB",
+    "oid": "1.3.6.1.4.1.738.1.7.3",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2009-10-20 00:00",
+        "description": "Initial version."
+      }
+    ],
+    "lastupdated": "200910200000Z",
+    "organization": "BATM Advanced Communication",
+    "contactinfo": " BATM/Telco Systems Support team Email: For North America: techsupport@telco.com For North Europe: support@batm.de, info@batm.de For the rest of the world: techsupport@telco.com",
+    "description": "This document is the SNMP MIB module to manage tunneling feature, designed for service providers."
+  },
+  "prvtL2TunnNotifications": {
+    "name": "prvtL2TunnNotifications",
+    "oid": "1.3.6.1.4.1.738.1.7.3.0",
+    "class": "objectidentity"
+  },
+  "prvtL2TunnObjects": {
+    "name": "prvtL2TunnObjects",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1",
+    "class": "objectidentity"
+  },
+  "prvtL2TunnConformance": {
+    "name": "prvtL2TunnConformance",
+    "oid": "1.3.6.1.4.1.738.1.7.3.2",
+    "class": "objectidentity"
+  },
+  "prvtL2TunnEnable": {
+    "name": "prvtL2TunnEnable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enable": 1,
+          "disable": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "disable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable/Disable L2Tunneling feature"
+  },
+  "prvtL2TunnProfileTable": {
+    "name": "prvtL2TunnProfileTable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A Table that contain all predefined and defined profiles."
+  },
+  "prvtL2TunnProfileEntry": {
+    "name": "prvtL2TunnProfileEntry",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2TunnProfileName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table contains a TLS tunneling profile"
+  },
+  "prvtL2TunnProfileName": {
+    "name": "prvtL2TunnProfileName",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 33,
+            "max": 33
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "TLS profile name. There will be three special profiles that will represent predefined policies: - Discard-All, - Tunnel-BPDUs-only - Tunnel-All. "
+  },
+  "prvtL2TunnProfileRowStatus": {
+    "name": "prvtL2TunnProfileRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "TLS profile rowStatus. It is not possible to modify the predefined profiles."
+  },
+  "prvtL2ProtocolsTable": {
+    "name": "prvtL2ProtocolsTable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table that contain all predefine and custom defined L2Protocols"
+  },
+  "prvtL2ProtocolsEntry": {
+    "name": "prvtL2ProtocolsEntry",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry is a L2 protocol with the replacement multicast MAC addresses. "
+  },
+  "prvtL2ProtocolName": {
+    "name": "prvtL2ProtocolName",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 17,
+            "max": 17
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "L2 Protocol Name. There will the follow default protocol: - xSTP - LACP/LAMP - Link OAM (802.3ah) - Port Authentication (802.1x) - E-LMI - LLDP - All other bridge block of protocols - All Bridges - GARP Block of Protocols - Provider Bridge STP."
+  },
+  "prvtL2ProtocolEthertype": {
+    "name": "prvtL2ProtocolEthertype",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Protocol Ethertype."
+  },
+  "prvtL2ProtocolMAC": {
+    "name": "prvtL2ProtocolMAC",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The protocol Multicast MAC address used for PDU distribution. "
+  },
+  "prvtL2ReplaceMAC": {
+    "name": "prvtL2ReplaceMAC",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Replacement multicast MAC addresses."
+  },
+  "prvtL2ProtocolRowStatus": {
+    "name": "prvtL2ProtocolRowStatus",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "prvtL2CustomProtocols RowStatus used for CREATE/DELETE the custom protocols. It is not possible to modify the predefined protocols."
+  },
+  "prvtL2TunnProfMapProtoTable": {
+    "name": "prvtL2TunnProfMapProtoTable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A Table that contain actions configured for each L2 protcol per TLS tunneling profile."
+  },
+  "prvtL2TunnProfMapProtoEntry": {
+    "name": "prvtL2TunnProfMapProtoEntry",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2TunnProfileName",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table contain th action for specified profile and L2 protocol"
+  },
+  "prvtL2TunnAction": {
+    "name": "prvtL2TunnAction",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "tunnel": 1,
+          "discard": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "discard",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Define action discard/tunnel per TLS tunneled protocol "
+  },
+  "prvtL2TunnSAPPointsTable": {
+    "name": "prvtL2TunnSAPPointsTable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A Table that contain an assigment of a profile to a SAP."
+  },
+  "prvtL2TunnSAPPointsEntry": {
+    "name": "prvtL2TunnSAPPointsEntry",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "prvtL2TunnSAPPointsEntry",
+      "module": "PRVT-L2TUNNELING-MIB",
+      "object": "sapBaseInfoEntry"
+    },
+    "status": "current",
+    "description": "An entry in this table contain information about the map between SAP and L2Tunneling profile."
+  },
+  "profileSAP": {
+    "name": "profileSAP",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 33,
+            "max": 33
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Profile Id associated to a SAP point. Setting this object with an empty string will disable the profile."
+  },
+  "prvtL2TunnSDPPointsTable": {
+    "name": "prvtL2TunnSDPPointsTable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A Table that contain an assigment of a profile to a SDP."
+  },
+  "prvtL2TunnSDPPointsEntry": {
+    "name": "prvtL2TunnSDPPointsEntry",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "prvtL2TunnSDPPointsEntry",
+      "module": "PRVT-L2TUNNELING-MIB",
+      "object": "sdpInfoEntry"
+    },
+    "status": "current",
+    "description": "An entry in this table contain information about the map between SDP and L2Tunneling profile."
+  },
+  "profileSDP": {
+    "name": "profileSDP",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 33,
+            "max": 33
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Profile Id associated to an SDP point. Setting this object with an empty string will disable the profile."
+  },
+  "prvtL2TunnClearStatistics": {
+    "name": "prvtL2TunnClearStatistics",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 0,
+          "clear": 1
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Clear L2Tunneling statistics for each tunneling point"
+  },
+  "prvtL2TunnSapStatisticsTable": {
+    "name": "prvtL2TunnSapStatisticsTable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A Table that provide statistics for each tunneling point per protocol."
+  },
+  "prvtL2TunnSapStatisticsEntry": {
+    "name": "prvtL2TunnSapStatisticsEntry",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-SERV-MIB",
+        "object": "svcId",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-SERV-MIB",
+        "object": "sapPortId",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-SERV-MIB",
+        "object": "sapEncapValue",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table contain the number of SAP tunneling RX and TX packets ."
+  },
+  "l2TunnSapRxPackets": {
+    "name": "l2TunnSapRxPackets",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of SAP Rx L2Tunneling packets"
+  },
+  "l2TunnSapTxPackets": {
+    "name": "l2TunnSapTxPackets",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of SAP Tx L2Tunneling packets"
+  },
+  "prvtL2TunnSdpStatisticsTable": {
+    "name": "prvtL2TunnSdpStatisticsTable",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A Table that provide statistics for each tunneling point per protocol."
+  },
+  "prvtL2TunnSdpStatisticsEntry": {
+    "name": "prvtL2TunnSdpStatisticsEntry",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PRVT-SERV-MIB",
+        "object": "svcId",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-SERV-MIB",
+        "object": "sdpId",
+        "implied": 0
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table contain the number of SDP tunneling RX and TX packets ."
+  },
+  "l2TunnSdpRxPackets": {
+    "name": "l2TunnSdpRxPackets",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of SDP Rx L2Tunneling packets"
+  },
+  "l2TunnSdpTxPackets": {
+    "name": "l2TunnSdpTxPackets",
+    "oid": "1.3.6.1.4.1.738.1.7.3.1.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of SDP Tx L2Tunneling packets"
+  },
+  "prvtL2TunnCompliances": {
+    "name": "prvtL2TunnCompliances",
+    "oid": "1.3.6.1.4.1.738.1.7.3.2.1",
+    "class": "objectidentity"
+  },
+  "prvtL2TunnGroups": {
+    "name": "prvtL2TunnGroups",
+    "oid": "1.3.6.1.4.1.738.1.7.3.2.2",
+    "class": "objectidentity"
+  },
+  "prvtL2TunnCompliance": {
+    "name": "prvtL2TunnCompliance",
+    "oid": "1.3.6.1.4.1.738.1.7.3.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "prvtL2TunnProtocolGroup",
+        "module": "PRVT-L2TUNNELING-MIB"
+      },
+      {
+        "object": "prvtL2TunnProfileGroup",
+        "module": "PRVT-L2TUNNELING-MIB"
+      },
+      {
+        "object": "prvtL2TunnPointGroup",
+        "module": "PRVT-L2TUNNELING-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for L2Tunneling."
+  },
+  "prvtL2TunnProtocolGroup": {
+    "name": "prvtL2TunnProtocolGroup",
+    "oid": "1.3.6.1.4.1.738.1.7.3.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolName"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ReplaceMAC"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolEthertype"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolMAC"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ReplaceMAC"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2ProtocolRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "The group of objects regarding Layer 2 protocol with a special MAC address ."
+  },
+  "prvtL2TunnProfileGroup": {
+    "name": "prvtL2TunnProfileGroup",
+    "oid": "1.3.6.1.4.1.738.1.7.3.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2TunnEnable"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2TunnProfileName"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2TunnProfileRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "The group of objects used to configure a L2Tunneling profile ."
+  },
+  "prvtL2TunnPointGroup": {
+    "name": "prvtL2TunnPointGroup",
+    "oid": "1.3.6.1.4.1.738.1.7.3.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "prvtL2TunnAction"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "profileSDP"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "profileSAP"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "l2TunnSapRxPackets"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "l2TunnSapTxPackets"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "l2TunnSdpRxPackets"
+      },
+      {
+        "module": "PRVT-L2TUNNELING-MIB",
+        "object": "l2TunnSdpTxPackets"
+      }
+    ],
+    "status": "current",
+    "description": "The group of objects used L2Tunneling point ."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PRVT-L2TUNNELING-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:12:25 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PRVT-L2TUNNELING-MIB"
+  }
+}

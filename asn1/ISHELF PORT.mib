@@ -1,0 +1,1612 @@
+ISHELF-PORT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    Unsigned32,
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY
+        FROM SNMPv2-SMI
+
+    RowStatus,
+    MacAddress,
+    TruthValue
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfPort,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfAdminState,
+    IShelfBlockedCallTreatment,
+    IShelfCircuit,
+    IShelfDdsDataRate,
+    IShelfEthernetPortMode,
+    IShelfEthernetTrafficMode,
+    IShelfHookState,
+    IShelfImpedance,
+    IShelfLabel,
+    IShelfLocation,
+    IShelfLocationType,
+    IShelfLoopback,
+    IShelfOltBandwidthPointer,
+    IShelfOntLogicalId,
+    IShelfOntSubscriberLineCardIndex,
+    IShelfOperState,
+    IShelfSupervisoryMode,
+    IShelfTransmissionMode,
+    IShelfSystemGain,
+    IShelfDs3FrameFormat,
+    IShelfDs3LBO,
+    IShelfDs3Timing,
+    IShelfDs3FERFAlarms,
+    IShelfDs3ATMMode,
+    IShelfDs3CellPayloadScramble,
+    IShelfOltPonIndex,
+    IShelfOltSdvPonBandwidthRate,
+    IShelfOltPonSdvStreams
+        FROM ISHELF-TC
+    ;
+
+iShelfPortMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION
+        "The MIB module for managing the Ports/Circuits provisioning."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 5 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntPotsPortTable - POTS Circuit/Port located on ONT.
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltOntPOTSTable 1000 ROW
+-- %CLICMDPREFIX port:ont
+-- %CLICMDABBR pots
+-- %CLISHOWGROUP pots
+iShelfOntPotsPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntPotsPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "This table defines the ONT POTS port provisioning."
+    ::= { iShelfPort 1 }
+
+iShelfOntPotsPortEntry OBJECT-TYPE
+    SYNTAX      IShelfOntPotsPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row is a separate ONT POTS port."
+    INDEX       { iShelfOntPotsPortLogicalId,
+                  iShelfOntPotsPortSLCIndex,
+                  iShelfOntPotsPortIndex }
+    ::= { iShelfOntPotsPortTable 1 }
+
+IShelfOntPotsPortEntry ::=
+    SEQUENCE {
+        iShelfOntPotsPortLogicalId
+            IShelfOntLogicalId,
+        iShelfOntPotsPortSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntPotsPortIndex
+            INTEGER,
+        iShelfOntPotsPortConserveAdminState
+            IShelfAdminState,
+        iShelfOntPotsPortHookState
+            IShelfHookState,
+        iShelfOntPotsPortImpedance
+            Unsigned32,
+        iShelfOntPotsPortRxGain
+            INTEGER,
+        iShelfOntPotsPortTxGain
+            INTEGER,
+        iShelfOntPotsPortLabel
+            IShelfLabel,
+        iShelfOntPotsPortAdminState
+            IShelfAdminState,
+        iShelfOntPotsPortOperState
+            IShelfOperState,
+        iShelfOntPotsPortLoopbackConfig
+            IShelfLoopback,
+        iShelfOntPotsPortLoopbackStatus
+            IShelfLoopback,
+        iShelfOntPotsPortTransmissionMode
+            IShelfTransmissionMode,
+        iShelfOntPotsPortSupervisoryMode
+            IShelfSupervisoryMode,
+        iShelfOntPotsPortRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL LogicalId
+-- %CLISHOWGROUP pots.1
+-- %CLISHOWGROUP pots.2
+-- %CLISHOWGROUP pots.3
+iShelfOntPotsPortLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The logical ID of the ONT where the POTS port resides."
+    ::= { iShelfOntPotsPortEntry 1 }
+
+-- %CLICOLLABEL SlcIdx
+-- %CLISHOWGROUP pots.1
+iShelfOntPotsPortSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The line card on the ONT containing the POTS port."
+    ::= { iShelfOntPotsPortEntry 2 }
+
+-- %CLICOLLABEL Port
+-- %CLISHOWGROUP pots.1
+-- %CLIWIDTH 3
+iShelfOntPotsPortIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The POTS port."
+    ::= { iShelfOntPotsPortEntry 3 }
+
+-- %CLICOLLABEL ConsAdmin
+-- %CLISHOWGROUP pots.1
+-- %SETINACTIVE
+iShelfOntPotsPortConserveAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The conserve admin state is the administrative state of the port when the
+         ONT is operating on battery backup power. When operating on battery, locking
+         the state means battery conservation is active and the port will be shut down.
+         Unlocking the state means battery power is not conserved. The unlocked state
+         is used for a critical service that must remain operational if battery backup
+         power is active."
+    DEFVAL      { unlock }
+    ::= { iShelfOntPotsPortEntry 4 }
+
+-- %DEEPOBJ osiOltOntPOTSHookState
+-- %CLICOLLABEL Hook
+-- %CLISHOWGROUP pots.1
+iShelfOntPotsPortHookState OBJECT-TYPE
+    SYNTAX      IShelfHookState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current hook state, or telephone receiver position, of the POTS port."
+    ::= { iShelfOntPotsPortEntry 5 }
+
+-- %CLICOLLABEL Imp
+-- %CLISHOWGROUP pots.1
+iShelfOntPotsPortImpedance OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current POTS port impedance setting. The unit is ohms."
+    ::= { iShelfOntPotsPortEntry 6 }
+
+-- %CLICOLLABEL RxGain
+-- %CLISHOWGROUP pots.1
+-- %DEEPOBJ osiOltOntPOTSRxGain
+iShelfOntPotsPortRxGain OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current POTS port receiver gain setting."
+    ::= { iShelfOntPotsPortEntry 7 }
+
+-- %CLICOLLABEL TxGain
+-- %CLISHOWGROUP pots.1
+-- %DEEPOBJ osiOltOntPOTSTxGain
+iShelfOntPotsPortTxGain OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current POTS port transmitter gain setting."
+    ::= { iShelfOntPotsPortEntry 8 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP pots.2
+-- %SETINACTIVE
+iShelfOntPotsPortLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is the user description of the port."
+    ::= { iShelfOntPotsPortEntry 9 }
+
+-- %CLICOLLABEL Admin
+-- %CLISHOWGROUP pots.2
+-- %SETINACTIVE
+iShelfOntPotsPortAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This indicates the desired administrative state of the port."
+    DEFVAL      { unlock }
+    ::= { iShelfOntPotsPortEntry 10 }
+
+-- %DEEPOBJ osiOltOntPOTSOperState
+-- %CLICOLLABEL Oper
+-- %CLISHOWGROUP pots.2
+iShelfOntPotsPortOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current operational status of the port."
+    ::= { iShelfOntPotsPortEntry 11 }
+
+-- %CLICOLLABEL LoopbackCfg
+-- %CLISHOWGROUP pots.3
+-- %SETINACTIVE
+iShelfOntPotsPortLoopbackConfig OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This indicates the desired loopback state of the port."
+    DEFVAL      { none }
+    ::= { iShelfOntPotsPortEntry 12 }
+
+-- %CLICOLLABEL Loopback
+-- %CLISHOWGROUP pots.3
+iShelfOntPotsPortLoopbackStatus OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current loopback state of the port."
+    ::= { iShelfOntPotsPortEntry 13 }
+
+-- %CLICOLLABEL XMode
+-- %CLISHOWGROUP pots.3
+-- %SETINACTIVE
+iShelfOntPotsPortTransmissionMode OBJECT-TYPE
+    SYNTAX      IShelfTransmissionMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the on-hook transmission (OHT) mode.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { partTimeOht }
+    ::= { iShelfOntPotsPortEntry 14 }
+    
+-- %CLICOLLABEL SupMode
+-- %CLISHOWGROUP pots.3
+-- %SETINACTIVE
+iShelfOntPotsPortSupervisoryMode OBJECT-TYPE
+    SYNTAX      IShelfSupervisoryMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the supervisory signaling mode for the line.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { loopStart }
+    ::= { iShelfOntPotsPortEntry 15 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntPotsPortRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntPotsPortEntry 16 }
+
+--
+-- TBD iShelfToCircuitTable, iShelfPotsR4eCircuitTable, iShelfUvgCircuitTable (UVGC+UVGR)
+--
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntEthernetTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltOntEthernetTable 1000 ROW
+-- %CLICMDPREFIX port:ont
+-- %CLICMDABBR ethernet
+-- %CLISHOWGROUP ethernet
+iShelfOntEthernetTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntEthernetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The ONT ethernet port table is used to provision the
+         ethernet port(s) for service and for monitoring the current
+         state of the port.
+
+         The table is used to manage all ethernet ports for each
+         ONT supported by the system.
+
+         Rows in this table are automatically created when an ONT is
+         provisioned.
+
+         The table is indexed by ONT logical ID, ONT subscriber line
+         card index, and ethernet port number."
+    ::= { iShelfPort 2 }
+
+iShelfOntEthernetEntry OBJECT-TYPE
+    SYNTAX      IShelfOntEthernetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry corresponds to a single ONT ethernet port."
+    INDEX       { iShelfOntEthernetLocationType,
+                  iShelfOntEthernetLocation,
+                  iShelfOntEthernetSLCIndex,
+                  iShelfOntEthernetPort }
+    ::= { iShelfOntEthernetTable 1 }
+
+IShelfOntEthernetEntry ::=
+    SEQUENCE {
+        iShelfOntEthernetLocationType
+            IShelfLocationType,
+        iShelfOntEthernetLocation
+            IShelfLocation,
+        iShelfOntEthernetSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntEthernetPort
+            INTEGER,
+        iShelfOntEthernetConserveAdminState
+            IShelfAdminState,
+        iShelfOntEthernetAdminMode
+            IShelfEthernetPortMode,
+        iShelfOntEthernetOperMode
+            IShelfEthernetPortMode,
+        iShelfOntEthernetBandwidthProfilePointer
+            IShelfOltBandwidthPointer,
+        iShelfOntEthernetTrafficMode
+            IShelfEthernetTrafficMode,
+        iShelfOntEthernetMacAddress
+            MacAddress,
+        iShelfOntEthernetLabel
+            IShelfLabel,
+        iShelfOntEthernetAdminState
+            IShelfAdminState,
+        iShelfOntEthernetOperState
+            IShelfOperState,
+        iShelfOntEthernetRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL LocationType
+-- %CLISHOWGROUP ethernet.1
+iShelfOntEthernetLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetEntry 1 }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP ethernet.1
+-- %CLISHOWGROUP ethernet.2
+iShelfOntEthernetLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetEntry 2 }
+
+-- %CLICOLLABEL SlcIdx
+-- %CLISHOWGROUP ethernet.1
+iShelfOntEthernetSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetEntry 3 }
+
+-- %CLICOLLABEL Port
+-- %CLISHOWGROUP ethernet.1
+iShelfOntEthernetPort OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetEntry 4 }
+
+-- %CLICOLLABEL ConsAdmin
+-- %CLISHOWGROUP ethernet.1
+-- %SETINACTIVE
+iShelfOntEthernetConserveAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The conserve admin state is the administrative state of the port when the
+         ONT is operating on battery backup power. When operating on battery, locking
+         the state means battery conservation is active and the port will be shut down.
+         Unlocking the state means battery power is not conserved. The unlocked state
+         is used for a critical service that must remain operational if battery backup
+         power is active."
+    DEFVAL      { lock }
+    ::= { iShelfOntEthernetEntry 5 }
+
+-- %CLICOLLABEL AdminMode
+-- %CLISHOWGROUP ethernet.1
+-- %SETINACTIVE
+iShelfOntEthernetAdminMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { auto }
+    ::= { iShelfOntEthernetEntry 6 }
+
+-- %DEEPOBJ osiOltOntEthernetOperMode
+-- %CLICOLLABEL OperMode
+-- %CLISHOWGROUP ethernet.1
+iShelfOntEthernetOperMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetEntry 7 }
+
+-- %CLICOLLABEL BWProf
+-- %CLISHOWGROUP ethernet.1
+-- %SETINACTIVE
+iShelfOntEthernetBandwidthProfilePointer OBJECT-TYPE
+    SYNTAX      IShelfOltBandwidthPointer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { 0 }
+    ::= { iShelfOntEthernetEntry 8 }
+
+-- %CLICOLLABEL TraffMode
+-- %CLISHOWGROUP ethernet.1
+-- %SETINACTIVE
+iShelfOntEthernetTrafficMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetTrafficMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { utisp }
+    ::= { iShelfOntEthernetEntry 9 }
+
+-- %DEEPOBJ osiOltOntEthernetMacAddress
+-- %CLICOLLABEL MAC
+-- %CLISHOWGROUP ethernet.2
+iShelfOntEthernetMacAddress OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntEthernetEntry 10 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP ethernet.2
+-- %SETINACTIVE
+iShelfOntEthernetLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is the user description of the port."
+    ::= { iShelfOntEthernetEntry 11 }
+
+-- %CLICOLLABEL Admin
+-- %CLISHOWGROUP ethernet.2
+-- %SETINACTIVE
+iShelfOntEthernetAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This indicates the desired administrative state of the port."
+    DEFVAL      { unlock }
+    ::= { iShelfOntEthernetEntry 12 }
+
+-- %DEEPOBJ osiOltOntEthernetOperState
+-- %CLICOLLABEL Oper
+-- %CLISHOWGROUP ethernet.2
+iShelfOntEthernetOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current operational status of the port."
+    ::= { iShelfOntEthernetEntry 13 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntEthernetRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntEthernetEntry 14 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntRfTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET osiOltOntRFVideoTable 1000 ROW
+-- %CLICMDPREFIX port:ont
+-- %CLICMDABBR rf
+-- %CLISHOWGROUP rf
+iShelfOntRfPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntRfPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPort 3 }
+
+iShelfOntRfPortEntry OBJECT-TYPE
+    SYNTAX      IShelfOntRfPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntRfPortLogicalId,
+                  iShelfOntRfPortSLCIndex,
+                  iShelfOntRfPortIndex }
+    ::= { iShelfOntRfPortTable 1 }
+
+IShelfOntRfPortEntry ::=
+    SEQUENCE {
+        iShelfOntRfPortLogicalId
+            IShelfOntLogicalId,
+        iShelfOntRfPortSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntRfPortIndex
+            INTEGER,
+        iShelfOntRfPortConserveAdminState
+            IShelfAdminState,
+        iShelfOntRfPortLabel
+            IShelfLabel,
+        iShelfOntRfPortAdminState
+            IShelfAdminState,
+        iShelfOntRfPortOperState
+            IShelfOperState,
+        iShelfOntRfPortRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL LogicalId
+-- %CLISHOWGROUP rf.1
+-- %CLISHOWGROUP rf.2
+iShelfOntRfPortLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntRfPortEntry 1 }
+
+-- %CLICOLLABEL SlcIdx
+-- %CLISHOWGROUP rf.1
+iShelfOntRfPortSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "SLCIndex may be i-rf, n-exp1, or n-exp2"
+    ::= { iShelfOntRfPortEntry 2 }
+
+-- %CLICOLLABEL Port
+-- %CLISHOWGROUP rf.1
+iShelfOntRfPortIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Port Index is 1 for i-rf or 1..4 for n-exp1 and n-exp2."
+    ::= { iShelfOntRfPortEntry 3 }
+
+-- %CLICOLLABEL ConsAdmin
+-- %CLISHOWGROUP rf.1
+-- %SETINACTIVE
+iShelfOntRfPortConserveAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The conserve admin state is the administrative state of the port when the
+         ONT is operating on battery backup power. When operating on battery, locking
+         the state means battery conservation is active and the port will be shut down.
+         Unlocking the state means battery power is not conserved. The unlocked state
+         is used for a critical service that must remain operational if battery backup
+         power is active."
+    DEFVAL      { lock }
+    ::= { iShelfOntRfPortEntry 4 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP rf.1
+-- %SETINACTIVE
+iShelfOntRfPortLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This is the user description of the port."
+    ::= { iShelfOntRfPortEntry 5 }
+
+-- %CLICOLLABEL Admin
+-- %CLISHOWGROUP rf.2
+-- %SETINACTIVE
+iShelfOntRfPortAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This indicates the desired administrative state of the port."
+    DEFVAL      { lock }
+    ::= { iShelfOntRfPortEntry 6 }
+
+-- %DEEPOBJ osiOltOntRFVideoOperState
+-- %CLICOLLABEL Oper
+-- %CLISHOWGROUP rf.2
+iShelfOntRfPortOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current operational status of the port."
+    ::= { iShelfOntRfPortEntry 7 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntRfPortRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntRfPortEntry 8 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfPotsPortTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX port
+-- %CLICMDABBR pots
+-- %CLISHOWGROUP pots
+iShelfPotsPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfPotsPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPort 4 }
+
+iShelfPotsPortEntry OBJECT-TYPE
+    SYNTAX      IShelfPotsPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfPotsPortLocation,
+                  iShelfPotsPortCircuit }
+    ::= { iShelfPotsPortTable 1 }
+
+IShelfPotsPortEntry ::=
+    SEQUENCE {
+        iShelfPotsPortLocation
+            IShelfLocation,
+        iShelfPotsPortCircuit
+            IShelfCircuit,
+        iShelfPotsPortSystemGain
+            IShelfSystemGain,
+        iShelfPotsPortImpedance
+            IShelfImpedance,
+        iShelfPotsPortEnableCompression
+            TruthValue,
+        iShelfPotsPortBlockedCallTreatment
+            IShelfBlockedCallTreatment,
+        iShelfPotsPortLabel
+            IShelfLabel,
+        iShelfPotsPortAdminState
+            IShelfAdminState,
+        iShelfPotsPortOperState
+            IShelfOperState,
+        iShelfPotsPortRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP pots.1
+-- %CLISHOWGROUP pots.2
+iShelfPotsPortLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Identifies the Node/Shelf/Slot of the host card"
+    ::= { iShelfPotsPortEntry 1 }
+
+-- %CLISHOWGROUP pots.1
+-- %CLISHOWGROUP pots.2
+iShelfPotsPortCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Identifies the POTS circuit 1..8 of the host card"
+    ::= { iShelfPotsPortEntry 2 }
+
+-- %CLISHOWGROUP pots.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfPotsPortSystemGain OBJECT-TYPE
+    SYNTAX      IShelfSystemGain
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Sets the gain for the pots circuit"
+    DEFVAL      { enhanced }
+    ::= { iShelfPotsPortEntry 3 }
+
+-- %CLISHOWGROUP pots.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfPotsPortImpedance OBJECT-TYPE
+    SYNTAX      IShelfImpedance
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Sets the impedance for the pots circuit.
+         NOTE: The impedance for the circuit should be set to the
+              same impedance as the device it is connected to."
+    DEFVAL      { imp900 }
+    ::= { iShelfPotsPortEntry 4 }
+
+-- %CLISHOWGROUP pots.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfPotsPortEnableCompression OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Indicates if compression is enabled for the circuit"
+    DEFVAL      { true }
+    ::= { iShelfPotsPortEntry 5 }
+
+-- %CLISHOWGROUP pots.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfPotsPortBlockedCallTreatment OBJECT-TYPE
+    SYNTAX      IShelfBlockedCallTreatment
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Indicates the blocked call treatment for the circuit"
+    DEFVAL      { busyTone }
+    ::= { iShelfPotsPortEntry 6 }
+
+-- %CLISHOWGROUP pots.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfPotsPortLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "A user description of the circuit"
+    ::= { iShelfPotsPortEntry 7 }
+
+-- %CLISHOWGROUP pots.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfPotsPortAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The desired administrative state for the circuit"
+    DEFVAL      { unlock }
+    ::= { iShelfPotsPortEntry 8 }
+
+-- %CLISHOWGROUP pots.2
+iShelfPotsPortOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operational state for the circuit"
+    ::= { iShelfPotsPortEntry 9 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfPotsPortRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfPotsPortEntry 10 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfDdsPortTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX port
+-- %CLICMDABBR dds
+-- %CLISHOWGROUP dds
+iShelfDdsPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfDdsPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPort 5 }
+
+iShelfDdsPortEntry OBJECT-TYPE
+    SYNTAX      IShelfDdsPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfDdsPortLocation,
+                  iShelfDdsPortCircuit }
+    ::= { iShelfDdsPortTable 1 }
+
+IShelfDdsPortEntry ::=
+    SEQUENCE {
+        iShelfDdsPortLocation
+            IShelfLocation,
+        iShelfDdsPortCircuit
+            IShelfCircuit,
+        iShelfDdsPortDataRate
+            IShelfDdsDataRate,
+        iShelfDdsPortErrorCorrection
+            TruthValue,
+        iShelfDdsPortLatchingLoopback
+            TruthValue,
+        iShelfDdsPortEnableEnhancedSignalQualityDetector
+            TruthValue,
+        iShelfDdsPortSwitch56ServiceOption
+            INTEGER,
+        iShelfDdsPortEnableSecondaryChannel
+            TruthValue,
+        iSheldDdsPortDigitalTandemOperation
+            TruthValue,
+        iShelfDdsPortZeroSuppression
+            TruthValue,
+        iShelfDdsPortLabel
+            IShelfLabel,
+        iShelfDdsPortAdminState
+            IShelfAdminState,
+        iShelfDdsPortOperState
+            IShelfOperState,
+        iShelfDdsPortRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP dds.1
+iShelfDdsPortLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Node/Shelf/Slot location of the DDS circuit"
+    ::= { iShelfDdsPortEntry 1 }
+
+-- %CLISHOWGROUP dds.1
+iShelfDdsPortCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Circuit number of the DDS circuit (5 or 6)"
+    ::= { iShelfDdsPortEntry 2 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortDataRate OBJECT-TYPE
+    SYNTAX      IShelfDdsDataRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Desired data rate in Kbps."
+    DEFVAL      { kbps56 }
+    ::= { iShelfDdsPortEntry 3 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortErrorCorrection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Enable error correction for the circuit"
+    DEFVAL      { false }
+    ::= { iShelfDdsPortEntry 4 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortLatchingLoopback OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Enable latching loopback for the circuit"
+    DEFVAL      { false }
+    ::= { iShelfDdsPortEntry 5 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortEnableEnhancedSignalQualityDetector OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "enable enhanced signal quality detector for the circuit"
+    DEFVAL      { false }
+    ::= { iShelfDdsPortEntry 6 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortSwitch56ServiceOption OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    disabled(1),
+                    standard(2),
+                    enhanced(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "enable switch-56 service (standard or enhanced) for the
+         circuit."
+    DEFVAL      { disabled }
+    ::= { iShelfDdsPortEntry 7 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortEnableSecondaryChannel OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "enable the secondary channel for the circuit"
+    DEFVAL      { false }
+    ::= { iShelfDdsPortEntry 8 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iSheldDdsPortDigitalTandemOperation OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "enable digital tandem operation for the circuit"
+    DEFVAL      { false }
+    ::= { iShelfDdsPortEntry 9 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortZeroSuppression OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "enable zero suppression for the circuit"
+    DEFVAL      { false }
+    ::= { iShelfDdsPortEntry 10 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "user description of the circuit"
+    ::= { iShelfDdsPortEntry 11 }
+
+-- %CLIOPTION
+-- %CLISHOWGROUP dds.1
+-- %SETINACTIVE
+iShelfDdsPortAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "desired operational state of the circuit"
+    DEFVAL      { unlock }
+    ::= { iShelfDdsPortEntry 12 }
+
+-- %CLISHOWGROUP dds.1
+iShelfDdsPortOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "the operational state of the circuit"
+    ::= { iShelfDdsPortEntry 13 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfDdsPortRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfDdsPortEntry 14 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfPortServicesTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX port
+-- %CLICMDABBR services
+-- %CLISHOWGROUP services
+iShelfPortServicesTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfPortServicesEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPort 6 }
+
+iShelfPortServicesEntry OBJECT-TYPE
+    SYNTAX      IShelfPortServicesEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfPortServicesLocationType,
+                  iShelfPortServicesLocation,
+                  iShelfPortServicesCircuit,
+                  iShelfPortServicesServiceType }
+    ::= { iShelfPortServicesTable 1 }
+
+IShelfPortServicesEntry ::=
+    SEQUENCE {
+        iShelfPortServicesLocationType
+            IShelfLocationType,
+        iShelfPortServicesLocation
+            IShelfLocation,
+        iShelfPortServicesCircuit
+            IShelfCircuit,
+        iShelfPortServicesServiceType
+            INTEGER,
+        iShelfPortServicesPortType
+            INTEGER,
+        iShelfPortServicesCount
+            INTEGER
+    }
+
+-- %CLISHOWGROUP services.1
+iShelfPortServicesLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies whether the port location
+         is addressed as logical or physical."
+    ::= { iShelfPortServicesEntry 1 }
+
+-- %CLISHOWGROUP services.1
+iShelfPortServicesLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Node/Shelf/Slot location of the Port for physical addressing
+         or the logical ONT identifier for logical addressing."
+    ::= { iShelfPortServicesEntry 2 }
+
+-- %CLISHOWGROUP services.1
+iShelfPortServicesCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Circuit number of the Port"
+    ::= { iShelfPortServicesEntry 3 }
+
+-- %CLISHOWGROUP services.1
+-- %CLICOLLABEL ServiceType
+iShelfPortServicesServiceType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    dynamicHost(1),
+                    staticHost(2),
+                    staticSubnet(3),
+                    macRelay(4),
+                    switchedDigitalVideo(5),
+                    pppoe(6),
+                    transparentLan(7),
+                    idlc(8),
+                    udlc(9),
+                    semiPermCrossConnect(10),
+                    rfVideo(11)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Service configured on the port"
+    ::= { iShelfPortServicesEntry 4 }
+
+-- %CLISHOWGROUP services.1
+-- %CLICOLLABEL PortType
+iShelfPortServicesPortType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ethernet(1),
+                    pots(2),
+                    t1(3),
+                    rf(4)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The equipment type of the port"
+    ::= { iShelfPortServicesEntry 5 }
+
+-- %CLISHOWGROUP services.1
+-- %CLICOLLABEL Instances
+iShelfPortServicesCount OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The number of instances of a given service"
+    ::= { iShelfPortServicesEntry 6 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfDs3PortTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX port
+-- %CLICMDABBR ds3
+-- %CLISHOWGROUP ds3
+iShelfDs3PortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfDs3PortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPort 7 }
+
+iShelfDs3PortEntry OBJECT-TYPE
+    SYNTAX      IShelfDs3PortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfDs3PortLocation }
+    ::= { iShelfDs3PortTable 1 }
+
+IShelfDs3PortEntry ::=
+    SEQUENCE {
+        iShelfDs3PortLocation
+            IShelfLocation,
+        iShelfDs3PortFrameFormat
+            IShelfDs3FrameFormat,
+        iShelfDs3PortLBO
+            IShelfDs3LBO,
+        iShelfDs3PortFERFAlarms
+            IShelfDs3FERFAlarms,
+        iShelfDs3PortTiming
+            IShelfDs3Timing,
+        iShelfDs3PortATMMode
+            IShelfDs3ATMMode,
+        iShelfDs3PortCellPayloadScramble
+            IShelfDs3CellPayloadScramble,
+        iShelfDs3PortLabel
+            IShelfLabel,
+        iShelfDs3PortAdminState
+            IShelfAdminState,
+        iShelfDs3PortOperState
+            IShelfOperState,
+        iShelfDs3PortLoopbackConfig
+            IShelfLoopback,
+        iShelfDs3PortLoopbackStatus
+            IShelfLoopback,
+        iShelfDs3PortRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ds3.1
+iShelfDs3PortLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Identifies the Node/Shelf/Slot of the host card"
+    ::= { iShelfDs3PortEntry 1 }
+
+-- %CLISHOWGROUP ds3.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortFrameFormat OBJECT-TYPE
+    SYNTAX      IShelfDs3FrameFormat
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Sets the Frame Format for the DS3 port"
+    DEFVAL      { cBit }
+    ::= { iShelfDs3PortEntry 2 }
+
+-- %CLISHOWGROUP ds3.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortLBO OBJECT-TYPE
+    SYNTAX      IShelfDs3LBO
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Determines selection of DS3 Line Build Out."
+    DEFVAL      { shorthaul }
+    ::= { iShelfDs3PortEntry 3 }
+
+-- %CLISHOWGROUP ds3.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortFERFAlarms OBJECT-TYPE
+    SYNTAX      IShelfDs3FERFAlarms
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Determines selection of the DS3 automatic FERF Alarms."
+    DEFVAL      { enabled }
+    ::= { iShelfDs3PortEntry 4 }
+
+-- %CLISHOWGROUP ds3.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortTiming OBJECT-TYPE
+    SYNTAX      IShelfDs3Timing
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Determines selection of DS3 Timing."
+    DEFVAL      { recovered }
+    ::= { iShelfDs3PortEntry 5 }
+
+-- %CLISHOWGROUP ds3.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortATMMode OBJECT-TYPE
+    SYNTAX      IShelfDs3ATMMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION " Determines selection of the DS3 ATM Mode."
+    DEFVAL      { plcp }
+    ::= { iShelfDs3PortEntry 6 }
+
+-- %CLISHOWGROUP ds3.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortCellPayloadScramble OBJECT-TYPE
+    SYNTAX      IShelfDs3CellPayloadScramble
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION " Determines selection of the DS3 Cell Payload Scrambling."
+    DEFVAL      { enabled }
+    ::= { iShelfDs3PortEntry 7 }
+
+-- %CLISHOWGROUP ds3.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "A user description of the circuit"
+    ::= { iShelfDs3PortEntry 8 }
+
+-- %CLISHOWGROUP ds3.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The desired administrative state for the circuit"
+    DEFVAL      { unlock }
+    ::= { iShelfDs3PortEntry 9 }
+
+-- %CLISHOWGROUP ds3.2
+iShelfDs3PortOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operational state for the circuit"
+    ::= { iShelfDs3PortEntry 10 }
+
+-- %CLICOLLABEL LoopbackCfg
+-- %CLISHOWGROUP ds3.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortLoopbackConfig OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This indicates the desired loopback state of the port."
+    DEFVAL      { none }
+    ::= { iShelfDs3PortEntry 11 }
+
+-- %CLICOLLABEL Loopback
+-- %CLISHOWGROUP ds3.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfDs3PortLoopbackStatus OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current loopback state of the port."
+    ::= { iShelfDs3PortEntry 12 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfDs3PortRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfDs3PortEntry 13 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltPonPortTable
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX port
+-- %CLICMDABBR olt
+-- %CLISHOWGROUP olt
+iShelfOltPonPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltPonPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPort 8 }
+
+iShelfOltPonPortEntry OBJECT-TYPE
+    SYNTAX      IShelfOltPonPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOltPonPortLocation,
+                  iShelfOltPonPortPonIndex }
+    ::= { iShelfOltPonPortTable 1 }
+
+IShelfOltPonPortEntry ::=
+    SEQUENCE {
+        iShelfOltPonPortLocation
+            IShelfLocation,
+        iShelfOltPonPortPonIndex
+            IShelfOltPonIndex,
+        iShelfOltPonPortMaxSdvStreams
+            IShelfOltPonSdvStreams,
+        iShelfOltPonPortSdvStreamAlertLevel
+            IShelfOltPonSdvStreams,
+        iShelfOltPonPortMaxSdvBw
+            IShelfOltSdvPonBandwidthRate,
+        iShelfOltPonPortSdvBwAlertLevel
+            IShelfOltSdvPonBandwidthRate,
+        iShelfOltPonPortAdminState
+            IShelfAdminState,
+        iShelfOltPonPortOperState
+            IShelfOperState,
+        iShelfOltPonPortLabel
+            IShelfLabel,
+        iShelfOltPonPortLoopbackConfig
+            IShelfLoopback,
+        iShelfOltPonPortLoopbackStatus
+            IShelfLoopback,
+        iShelfOltPonPortRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL location
+-- %CLISHOWGROUP olt.1
+-- %CLISHOWGROUP olt.2
+-- %CLIWIDTH 8
+iShelfOltPonPortLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Identifies the Node/Shelf/Slot of this OLT PON port config"
+    ::= { iShelfOltPonPortEntry 1 }
+
+-- %CLICOLLABEL ponidx
+-- %CLISHOWGROUP olt.1
+-- %CLISHOWGROUP olt.2
+-- %CLIWIDTH 3
+iShelfOltPonPortPonIndex OBJECT-TYPE
+    SYNTAX      IShelfOltPonIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The PON index on the OLT card. There are 2 types of OLT cards:
+                 a two PON and a four PON version."
+    ::= { iShelfOltPonPortEntry 2 }
+
+-- %CLISHOWGROUP olt.1
+-- %CLIWIDTH 12
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortMaxSdvStreams OBJECT-TYPE
+    SYNTAX      IShelfOltPonSdvStreams
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Determines the maximum number of SDV Streams for this PON."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonPortEntry 3 }
+
+-- %CLISHOWGROUP olt.1
+-- %CLIWIDTH 12
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortSdvStreamAlertLevel OBJECT-TYPE
+    SYNTAX      IShelfOltPonSdvStreams
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Determines the SDV Stream alert level."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonPortEntry 4 }
+
+-- %CLISHOWGROUP olt.1
+-- %CLIWIDTH 8
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortMaxSdvBw OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION " Determines selection of the maximum SDV Bandwidth."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonPortEntry 5 }
+
+-- %CLISHOWGROUP olt.1
+-- %CLIWIDTH 8
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortSdvBwAlertLevel OBJECT-TYPE
+    SYNTAX      IShelfOltSdvPonBandwidthRate
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION " Determines selection of the SDV Bandwidth Alert Level."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonPortEntry 6 }
+
+-- %CLISHOWGROUP olt.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The desired administrative state for the OLT PON port"
+    DEFVAL      { unlock }
+    ::= { iShelfOltPonPortEntry 7 }
+
+-- %CLISHOWGROUP olt.2
+iShelfOltPonPortOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operational state for the OLT PON port"
+    ::= { iShelfOltPonPortEntry 8 }
+
+-- %CLISHOWGROUP olt.2
+-- %CLIWIDTH 20
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "A user description of the OLT PON port"
+    ::= { iShelfOltPonPortEntry 9 }
+
+-- %CLICOLLABEL LoopbackCfg
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP olt.2
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortLoopbackConfig OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "This indicates the desired loopback state of the OLT PON port."
+    DEFVAL      { none }
+    ::= { iShelfOltPonPortEntry 10 }
+
+-- %CLICOLLABEL LoopbackStat
+-- %CLISHOWGROUP olt.2
+-- %CLIWIDTH 12
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonPortLoopbackStatus OBJECT-TYPE
+    SYNTAX      IShelfLoopback
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This indicates the current loopback state of the OLT PON port."
+    ::= { iShelfOltPonPortEntry 11 }
+
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOltPonPortRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltPonPortEntry 12 }
+END

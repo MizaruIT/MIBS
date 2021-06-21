@@ -1,0 +1,1128 @@
+{
+  "imports": {
+    "class": "imports",
+    "SIAE-TREE-MIB": [
+      "siaeMib",
+      "siaeMicroelettronicaSpa"
+    ],
+    "SIAE-USER-MIB": [
+      "accessControlLoginIpAddress"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "iso",
+      "Gauge32",
+      "Counter64",
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "MibIdentifier",
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "Counter32",
+      "MODULE-IDENTITY",
+      "IpAddress",
+      "Integer32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "smalarm": {
+    "name": "smalarm",
+    "oid": "1.3.6.1.4.1.3373.1103.4",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2016-10-04 00:00",
+        "description": "Fixed alarmIpSnmpAgentAddress type. "
+      },
+      {
+        "revision": "2015-07-17 00:00",
+        "description": "Fixed alarmTrap OID. "
+      },
+      {
+        "revision": "2015-03-23 00:00",
+        "description": "Removed alarmTrapNumber from alarmLogFTPStatusTrap. "
+      },
+      {
+        "revision": "2015-03-16 00:00",
+        "description": "MAX-ACCESS clause of alarmTrapNumber is back to read-only value in order to allow a manager to synchronize alarms. "
+      },
+      {
+        "revision": "2014-06-23 00:00",
+        "description": "Removed circular dependence from SIAE-EQUIP-MIB in IMPORTS. Added alarmIpSnmpAgentAddress. Changed MAX-ACCESS clause of alarmObjectId, alarmObjectVal, alarmTrapDescription and alarmTrapNumber from read-only to accessible-for-notify. "
+      },
+      {
+        "revision": "2014-03-03 00:00",
+        "description": "MIB version 01.00.01 Added alarmTable "
+      },
+      {
+        "revision": "2014-02-03 00:00",
+        "description": "Improved description of alarmMibVersion "
+      },
+      {
+        "revision": "2013-04-16 00:00",
+        "description": "Initial version 01.00.00 "
+      }
+    ],
+    "lastupdated": "201610040000Z",
+    "organization": "SIAE MICROELETTRONICA spa",
+    "contactinfo": "SIAE MICROELETTONICA s.p.a. Via Michelangelo Buonarroti, 21 20093 - Cologno Monzese Milano - ITALY Phone : +39-02-27325-1 E-mail: help@siaemic.com ",
+    "description": "Logger of the transitions of NE alarms and active alarm table. "
+  },
+  "AlarmStatus": {
+    "name": "AlarmStatus",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cleared": 1,
+          "activeReportableStatus": 2,
+          "activeReportableWarning": 3,
+          "activeReportableMinor": 4,
+          "activeReportableMajor": 5,
+          "activeReportableCritical": 6
+        }
+      }
+    },
+    "status": "current",
+    "description": "This textual convenion defines the status of an alarm. The active status is related to the perceived severity. "
+  },
+  "AlarmSeverityCode": {
+    "name": "AlarmSeverityCode",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "statusTrapEnable": 2,
+          "warningTrapEnable": 3,
+          "minorTrapEnable": 4,
+          "majorTrapEnable": 5,
+          "criticalTrapEnable": 6,
+          "statusTrapDisable": 18,
+          "warningTrapDisable": 19,
+          "minorTrapDisable": 20,
+          "majorTrapDisable": 21,
+          "criticalTrapDisable": 22
+        }
+      }
+    },
+    "status": "current",
+    "description": "This textual convention defines the perceived severity associated to an alarm. "
+  },
+  "siaeNotificationEntry": {
+    "name": "siaeNotificationEntry",
+    "oid": "1.3.6.1.4.1.3373.1103.4.2",
+    "class": "objectidentity"
+  },
+  "alarmTrap": {
+    "name": "alarmTrap",
+    "oid": "1.3.6.1.4.1.3373.1103.0",
+    "class": "objectidentity"
+  },
+  "alarmMibVersion": {
+    "name": "alarmMibVersion",
+    "oid": "1.3.6.1.4.1.3373.1103.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Numerical version of this module. The string version of this MIB have the following format: XX.YY.ZZ so, for example, the value 1 should be interpreted as 00.00.01 and the value 10001 should be interpreted as 01.00.01."
+  },
+  "alarmLogTable": {
+    "name": "alarmLogTable",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with Alarm records of the logger."
+  },
+  "alarmLogRecord": {
+    "name": "alarmLogRecord",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmLogRecordId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Alarm record of the logger."
+  },
+  "alarmLogRecordId": {
+    "name": "alarmLogRecordId",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object is used as Index of alarmLogTable."
+  },
+  "alarmLogObjectId": {
+    "name": "alarmLogObjectId",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Object Identifier of the Managed Object with Alarms or Controls active (not cleared Alarm Status)."
+  },
+  "alarmLogObjectVal": {
+    "name": "alarmLogObjectVal",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Alarm Status with associated severity."
+  },
+  "alarmLogObjectSev": {
+    "name": "alarmLogObjectSev",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmSeverityCode",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Severity associated to the Alarm "
+  },
+  "alarmLogDescription": {
+    "name": "alarmLogDescription",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "ASCII string used to describe the event."
+  },
+  "alarmLogEventTime": {
+    "name": "alarmLogEventTime",
+    "oid": "1.3.6.1.4.1.3373.1103.4.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time (in secs) when the event was registered in the Log since 01-Gen-1970."
+  },
+  "alarmLogActionRequest": {
+    "name": "alarmLogActionRequest",
+    "oid": "1.3.6.1.4.1.3373.1103.4.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notActive": 0,
+          "delete": 1,
+          "read": 2
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to delete or to read the LOG using Ftp (file transfer)."
+  },
+  "alarmLogFTPfile": {
+    "name": "alarmLogFTPfile",
+    "oid": "1.3.6.1.4.1.3373.1103.4.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Path and file name used when the log is transferred using Ftp (action = read)."
+  },
+  "alarmLogAlarmSeverityEnable": {
+    "name": "alarmLogAlarmSeverityEnable",
+    "oid": "1.3.6.1.4.1.3373.1103.4.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "31",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object enables the event record write in the log according to the severity: Bit0 = Status Bit1 = Warning Bit2 = Minor Bit3 = Major Bit4 = Critical."
+  },
+  "alarmLogStartHourEnable": {
+    "name": "alarmLogStartHourEnable",
+    "oid": "1.3.6.1.4.1.3373.1103.4.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 23
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object defines whit AlarmLogEndHourEnable the period during a day when the alarm records must be written in the log."
+  },
+  "alarmLogEndHourEnable": {
+    "name": "alarmLogEndHourEnable",
+    "oid": "1.3.6.1.4.1.3373.1103.4.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 23
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 23,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object defines whit AlarmLogStartHourEnable the period during a day when the alarm records must be written in the log."
+  },
+  "alarmLogStartTimeFilter": {
+    "name": "alarmLogStartTimeFilter",
+    "oid": "1.3.6.1.4.1.3373.1103.4.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The events with EventTime greater than this object are read/delete from the log. Null value means no filter."
+  },
+  "alarmLogEndTimeFilter": {
+    "name": "alarmLogEndTimeFilter",
+    "oid": "1.3.6.1.4.1.3373.1103.4.10",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The events with EventTime less than this object are read/delete from the log. Null value means no filter."
+  },
+  "alarmLogManagedObjectFilter": {
+    "name": "alarmLogManagedObjectFilter",
+    "oid": "1.3.6.1.4.1.3373.1103.4.11",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "(1, 3, 6, 1, 4, 1, 3373)",
+        "format": "oid"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The Object Identifier of the Managed Object that has to be read/delete from the log. Null value means no filter."
+  },
+  "alarmLogAlarmSeverityFilter": {
+    "name": "alarmLogAlarmSeverityFilter",
+    "oid": "1.3.6.1.4.1.3373.1103.4.12",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "31",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object defines the alarm severity of the records that must be read/delete from the log. Bit0 = Status Bit1 = Warning Bit2 = Minor Bit3 = Major Bit4 = Critical."
+  },
+  "alarmLogFTPStatus": {
+    "name": "alarmLogFTPStatus",
+    "oid": "1.3.6.1.4.1.3373.1103.4.14",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "transferring": 1,
+          "completed": 2,
+          "interrupted": 3,
+          "empty": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "completed",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Status of alarm logger Ftp transfer operation."
+  },
+  "alarmLogFTPStatusTrapNotification": {
+    "name": "alarmLogFTPStatusTrapNotification",
+    "oid": "1.3.6.1.4.1.3373.1103.4.15",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "trapDisable": 1,
+          "trapEnable": 2,
+          "trapEnableWithACK": 34
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "trapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enables/disables the trap generation on FTP tranfer operation."
+  },
+  "alarmLogLastEventTime": {
+    "name": "alarmLogLastEventTime",
+    "oid": "1.3.6.1.4.1.3373.1103.4.16",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "It is the Event time of the last alarm inserted into the alarm log."
+  },
+  "alarmActiveTable": {
+    "name": "alarmActiveTable",
+    "oid": "1.3.6.1.4.1.3373.1103.4.17",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with one record for each Alarms&Controls that is active in the NE."
+  },
+  "alarmActiveRecord": {
+    "name": "alarmActiveRecord",
+    "oid": "1.3.6.1.4.1.3373.1103.4.17.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmActiveObjectId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Alarms&Controls record."
+  },
+  "alarmActiveObjectId": {
+    "name": "alarmActiveObjectId",
+    "oid": "1.3.6.1.4.1.3373.1103.4.17.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Object Identifier of the Managed Object with Alarms or Controls active (not cleared Alarm Status)."
+  },
+  "alarmActiveObjectVal": {
+    "name": "alarmActiveObjectVal",
+    "oid": "1.3.6.1.4.1.3373.1103.4.17.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Alarm Status with associated severity."
+  },
+  "alarmActiveDescription": {
+    "name": "alarmActiveDescription",
+    "oid": "1.3.6.1.4.1.3373.1103.4.17.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "ASCII string used to describe the event."
+  },
+  "alarmActiveEventTime": {
+    "name": "alarmActiveEventTime",
+    "oid": "1.3.6.1.4.1.3373.1103.4.17.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time when the Alarm became active. In seconds since 01/01/70."
+  },
+  "alarmActiveFloodingStatus": {
+    "name": "alarmActiveFloodingStatus",
+    "oid": "1.3.6.1.4.1.3373.1103.4.17.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "off": 1,
+          "on": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the 'flooding' status."
+  },
+  "alarmSyntesysCritical": {
+    "name": "alarmSyntesysCritical",
+    "oid": "1.3.6.1.4.1.3373.1103.4.18",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cleared": 1,
+          "activeReportableCritical": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "OR of all Critical Alarms."
+  },
+  "alarmSyntesysCriticalSeverityCode": {
+    "name": "alarmSyntesysCriticalSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.4.19",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "criticalTrapEnable": 6,
+          "criticalTrapDisable": 22
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "criticalTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to the alarmSyntesysCritical and enables/disables the trap generation on status change event."
+  },
+  "alarmSyntesysMajor": {
+    "name": "alarmSyntesysMajor",
+    "oid": "1.3.6.1.4.1.3373.1103.4.20",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cleared": 1,
+          "activeReportableMajor": 5
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "OR of all Major Alarms."
+  },
+  "alarmSyntesysMajorSeverityCode": {
+    "name": "alarmSyntesysMajorSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.4.21",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "majorTrapEnable": 5,
+          "majorTrapDisable": 21
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "majorTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to alarmSyntesysMajor and enables/disables the trap generation on status change event."
+  },
+  "alarmSyntesysMinor": {
+    "name": "alarmSyntesysMinor",
+    "oid": "1.3.6.1.4.1.3373.1103.4.22",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cleared": 1,
+          "activeReportableMinor": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "OR of all Minor Alarms."
+  },
+  "alarmSyntesysMinorSeverityCode": {
+    "name": "alarmSyntesysMinorSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.4.23",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "minorTrapEnable": 4,
+          "minorTrapDisable": 20
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "minorTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to alarmSyntesysMinor and enables/disables the trap generation on status change event."
+  },
+  "alarmSyntesysWarning": {
+    "name": "alarmSyntesysWarning",
+    "oid": "1.3.6.1.4.1.3373.1103.4.24",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cleared": 1,
+          "activeReportableWarning": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "OR of all Warning Alarms."
+  },
+  "alarmSyntesysWarningSeverityCode": {
+    "name": "alarmSyntesysWarningSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.4.25",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "warningTrapEnable": 3,
+          "warningTrapDisable": 19
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "warningTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to alarmSyntesysStatus and enables/disables the trap generation on status change event."
+  },
+  "alarmSyntesysStatus": {
+    "name": "alarmSyntesysStatus",
+    "oid": "1.3.6.1.4.1.3373.1103.4.26",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "cleared": 1,
+          "activeReportableStatus": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "OR of all Warning Alarms."
+  },
+  "alarmSyntesysStatusSeverityCode": {
+    "name": "alarmSyntesysStatusSeverityCode",
+    "oid": "1.3.6.1.4.1.3373.1103.4.27",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "statusTrapEnable": 2,
+          "statusTrapDisable": 18
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "statusTrapEnable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the severity associated to alarmSyntesysStatus and enables/disables the trap generation on status change event."
+  },
+  "alarmAntiFlooding": {
+    "name": "alarmAntiFlooding",
+    "oid": "1.3.6.1.4.1.3373.1103.4.28",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "enable": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "disable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enables or disables the alarm anti-flooding (filtering) algorithm. According to such algorithm if the number of event notifications that an alarm receives within a specified time period, namely the observation period, exceeds a given high threshold value, the alarm enters a 'flooding' state. Once an alarm has entered such flooding state, its status is forced to active, according to its related severity, and no further event notifications are processed (neither trapped nor logged). An alarm exits the flooding state when the number of event notifications, received within a subsequent observation period, drops below a given low thresold value. On exiting the flooding state, the trap and log status of an alarm get aligned to the last notified event."
+  },
+  "alarmAntiFloodingWindow": {
+    "name": "alarmAntiFloodingWindow",
+    "oid": "1.3.6.1.4.1.3373.1103.4.29",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 10,
+            "max": 120
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 60,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the time duration in seconds of the observation period, during which the number of event notifications of any alarm is checked to determine the alarm flooding state."
+  },
+  "alarmAntiFloodingHighWater": {
+    "name": "alarmAntiFloodingHighWater",
+    "oid": "1.3.6.1.4.1.3373.1103.4.30",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 3,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the threshold value of the number of event notifications, occurring during the observation period, beyond which an alarm enters the flooding state."
+  },
+  "alarmAntiFloodingLowWater": {
+    "name": "alarmAntiFloodingLowWater",
+    "oid": "1.3.6.1.4.1.3373.1103.4.31",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Defines the threshold value of the number of event notifications, occurring during the observation period, below which an alarm exits the flooding state. The value being assigned to this leaf must be strictly lower than the current value of leaf alarmAntiFloodingHighWater."
+  },
+  "alarmItemTable": {
+    "name": "alarmItemTable",
+    "oid": "1.3.6.1.4.1.3373.1103.4.32",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table with record of available alarms in the NE. This table reports every created alarm in the NE. "
+  },
+  "alarmRecord": {
+    "name": "alarmRecord",
+    "oid": "1.3.6.1.4.1.3373.1103.4.32.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmOid",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Alarm record."
+  },
+  "alarmOid": {
+    "name": "alarmOid",
+    "oid": "1.3.6.1.4.1.3373.1103.4.32.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Object Identifier of the Managed Object with Alarms or Controls active (not cleared Alarm Status)."
+  },
+  "alarmDescription": {
+    "name": "alarmDescription",
+    "oid": "1.3.6.1.4.1.3373.1103.4.32.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "ASCII string used to describe the alarm."
+  },
+  "alarmObjectId": {
+    "name": "alarmObjectId",
+    "oid": "1.3.6.1.4.1.3373.1103.4.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "OID of the status changed alarm "
+  },
+  "alarmObjectVal": {
+    "name": "alarmObjectVal",
+    "oid": "1.3.6.1.4.1.3373.1103.4.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AlarmStatus",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "INTEGER value of the status changed alarm "
+  },
+  "alarmTrapDescription": {
+    "name": "alarmTrapDescription",
+    "oid": "1.3.6.1.4.1.3373.1103.4.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 127
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Optional Description of the notification "
+  },
+  "alarmTrapNumber": {
+    "name": "alarmTrapNumber",
+    "oid": "1.3.6.1.4.1.3373.1103.4.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Sequential number of trap sent from NE "
+  },
+  "alarmIpSnmpAgentAddress": {
+    "name": "alarmIpSnmpAgentAddress",
+    "oid": "1.3.6.1.4.1.3373.1103.4.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Reflects the value of equipIpSnmpAgentAddress. "
+  },
+  "alarmTrapObject": {
+    "name": "alarmTrapObject",
+    "oid": "1.3.6.1.4.1.3373.1103.0.3373",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmIpSnmpAgentAddress"
+      },
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmObjectId"
+      },
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmObjectVal"
+      },
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmTrapDescription"
+      },
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmTrapNumber"
+      }
+    ],
+    "status": "current",
+    "description": "This event is generated for every changed alarm status. "
+  },
+  "alarmLogFTPStatusTrap": {
+    "name": "alarmLogFTPStatusTrap",
+    "oid": "1.3.6.1.4.1.3373.1103.0.401",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmIpSnmpAgentAddress"
+      },
+      {
+        "module": "SIAE-ALARM-MIB",
+        "object": "alarmLogFTPStatus"
+      },
+      {
+        "module": "SIAE-USER-MIB",
+        "object": "accessControlLoginIpAddress"
+      }
+    ],
+    "status": "current",
+    "description": "This event is generated when the status of FTP transfer is changed. The data passed with the event are: 1) alarmIpSnmpAgentAddress 2) alarmLogFTPStatus 3) accessControlLoginIpAddress"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SIAE-ALARM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:11:07 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SIAE-ALARM-MIB"
+  }
+}

@@ -1,0 +1,658 @@
+HUAWEI-MTA-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+	MODULE-IDENTITY, OBJECT-TYPE
+		FROM SNMPv2-SMI
+
+	Integer32
+		FROM SNMPv2-SMI
+	RowStatus
+		FROM SNMPv2-TC
+        hwFrameIndex,hwSlotIndex,hwPortIndex
+                FROM HUAWEI-DEVICE-MIB
+	huaweiUtility 
+                FROM HUAWEI-MIB;
+
+hwMTA MODULE-IDENTITY
+			LAST-UPDATED "200210010900Z"
+			ORGANIZATION
+				"
+				固网MIB标准化委员会 "
+			CONTACT-INFO
+				"
+				联系地址：中国广东深圳华为技术有限公司
+				联系人：MIb 标准小组
+				联系电话：0755－26540808
+				"
+	DESCRIPTION "V01_01 第一次制定 
+				mta MIB:HUAWEI-MTA-MIB.mib V1.0 版本是由固网MIB标准化委员会环境
+				MTA MIB小组负责制订，参与评审的专家有：
+				tangrong 17270/huawei, liguanrong 26321/huawei, liaoshunquan 24705/huawei, 
+				wangxinran 19281/huawei, liuguoping 17383/huawei, wangxiaoman 20905/huawei, 
+				luohui 14047/huawei, chenjiangming 18851/huawei, liuchenglong 25279/huawei, 
+				zhuyangbin 30583/huawei, weijiahong 14192/huawei, zhoupeng 22164/huawei, 
+				xucongyuan 17403/huawei "
+	::= { huaweiUtility 14 }
+
+		hwMTAMibObjects       OBJECT IDENTIFIER  ::= { hwMTA   1 }
+		hwMTAMibTrap OBJECT IDENTIFIER ::= { hwMTA 2 }
+	hwMTATrapOid      OBJECT IDENTIFIER    ::= { hwMTAMibTrap  1 }
+	hwMTATrapsDefine  OBJECT IDENTIFIER    ::= { hwMTAMibTrap  2 }
+	hwMTATraps        OBJECT IDENTIFIER    ::= { hwMTATrapsDefine  0 }
+			
+		hwMTAMibCompance      OBJECT IDENTIFIER  ::= { hwMTA   3 }
+
+  mtaTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF MtaEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      "MTA表"
+    ::= { hwMTAMibObjects 1 }
+
+  mtaEntry OBJECT-TYPE
+    SYNTAX      MtaEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+      "MTA表实体"
+    INDEX    {  
+              hwFrameIndex,
+              hwSlotIndex,
+              hwPortIndex
+             }
+    ::= { mtaTable 1 }
+
+  MtaEntry ::=
+    SEQUENCE
+    {
+      hwMtaState	INTEGER,
+      hwMtaHardWareVersion	OCTET STRING,
+      hwMtaSoftWareVersion	OCTET STRING,
+      hwMtaProtocol	INTEGER,
+      hwChannel1Mode	INTEGER,
+      hwChannel1Rate	INTEGER,
+      hwChannel1DteDce	INTEGER,
+      hwChannel1Clock	INTEGER,
+      hwChannel1SignalLinePhase	Integer32,
+      hwChannel1AsynLen	Integer32,
+      hwChannel1BChannelNo	INTEGER,
+      hwChannel1EnvolopPhase	INTEGER,
+      hwChannel1Status	INTEGER,
+      hwChannel2Mode	INTEGER,
+      hwChannel2Rate	INTEGER,
+      hwChannel2DteDce	INTEGER,
+      hwChannel2Clock	INTEGER,
+      hwChannel2SignalLinePhase	Integer32,
+      hwChannel2AsynLen	Integer32,
+      hwChannel2BChannelNo	INTEGER,
+      hwChannel2EnvolopPhase	INTEGER,
+      hwChannel2Status	INTEGER,
+      hwChannel3Mode	INTEGER,
+      hwChannel3Rate	INTEGER,
+      hwChannel3DteDce	INTEGER,
+      hwChannel3Clock	INTEGER,
+      hwChannel3SignalLinePhase	Integer32,
+      hwChannel3AsynLen	Integer32,
+      hwChannel3BChannelNo	INTEGER,
+      hwChannel3EnvolopPhase	INTEGER,
+      hwChannel3Status	INTEGER,
+      hwUserIdentity	OCTET STRING,
+      hwMaintainOper	INTEGER,
+      hwLoopObject	INTEGER,
+      hwChannel1AlarmStatus	Integer32,
+      hwChannel2AlarmStatus	Integer32,
+      hwChannel3AlarmStatus	Integer32,
+      hwBChannel1AlarmStatus	Integer32,
+      hwBChannel2AlarmStatus	Integer32,
+      hwRowStatus	RowStatus
+    }
+
+  hwMtaState OBJECT-TYPE
+    SYNTAX      INTEGER{normal(1),waitCfg(2),cfgError(3),selfTestError(4),fault(5)}
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+          表示MTA的当前状态,1：正常,2：等待配置,3：新配置错误,4：自检故障,5：MTA故障 
+          the current state of MTA device, including 1.normal, 2.waiting config, 
+          3.new config error, 4.self detect failed, 5.MTA fault
+        "
+    ::= { mtaEntry 1 }
+
+  hwMtaHardWareVersion OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..20))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+          MTA设备当前的硬件版本号 
+          the current hardware version of MTA device
+        "
+    ::= { mtaEntry 2 }
+
+  hwMtaSoftWareVersion OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..20))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+          MTA设备当前的软件版本号
+          the current software version of MTA device
+        "
+    ::= { mtaEntry 3 }
+
+  hwMtaProtocol OBJECT-TYPE
+    SYNTAX      INTEGER{honet(1), x50SBitLoop(2),x50SBitEqu1(3), x50SBitEqu0(4), i460(5)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          MTA设备复用协议, 1:HONET自定义复用协议 2: X.50 S 比特环回  3: X.50 S 比特=1  4: X.50 S 比特=0 
+          5:I.460协议(4,5现在都不支持)
+          the protocol that MTA support, including:1. Defined privately by HONET, 2. x.50 s bit loop, 
+          3. x.50 s bit=1, 4. x.50 s bit=0 5. I.460 protocol. ( the 4th and 5th is not supported now)
+           "
+    DEFVAL      { 3 }
+    ::= { mtaEntry 4 }
+
+  hwChannel1Mode OBJECT-TYPE
+    SYNTAX      INTEGER{syn(1),asyn(2),prohibit(3)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          表示通道1是工作在同步方式还是异步方式：1: 同步 2: 异步 3: 禁用
+          determine working mode of channel 1: a syn. mode, an asyn. mode, or a prohibited mode
+           "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 5 }
+
+  hwChannel1Rate OBJECT-TYPE
+    SYNTAX      INTEGER {r2400bps(1),r4800bps(2),r9600bps(3),r19200bps(4),r64000bps(5),r128000bps(6) }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          表示通道1的业务速率
+          determine the service speed of channel 1
+           "
+    DEFVAL      { 2 }
+    ::= { mtaEntry 6 }
+
+  hwChannel1DteDce OBJECT-TYPE
+    SYNTAX      INTEGER{dCE(1),dTE(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          决定MTA通道1是作为DCE还是作为DTE，一般用作DCE设备
+          determine the polarity of channel 1: DCE or DTE
+           "
+    DEFVAL      { 2 }
+    ::= { mtaEntry 7 }
+
+  hwChannel1Clock OBJECT-TYPE
+    SYNTAX      INTEGER{internal(1),external(2),slave(3)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          通道1时钟锁定方式，Internal表示使用设备自身的时钟，External表示锁定上级时钟，Slave表示锁定外挂设备的时钟
+          the clock locked mode of channel 1: 1. Internal means the clock in MTA device, 
+          2.External means the superior device's clock, 3. Slave means the clock of device access to this channel
+           "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 8 }
+
+  hwChannel1SignalLinePhase OBJECT-TYPE
+    SYNTAX      Integer32(0..15)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "
+          即2进制的0000到1111，从低位到高位每个BIT位依次表示：时钟发是否反相,时钟收是否反相,数据发是否反相,数据收是否反相 1:反相 0:正相
+          the signal line phase of channel 1, determined by four bits of which the less significant defines 
+          the clock sending phase, the 2th the clock receiving phase, the 3th the data sending phase, the 4th the data receiving phase.
+          and value 1 means reverse phase, value 0 means in-phase.
+           "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 9 }
+
+  hwChannel1AsynLen OBJECT-TYPE
+    SYNTAX      Integer32(6..12)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          通道1工作在异步方式下的字长，包括起始位、数据位和终止位的总长度
+          the word length of channel 1 working in the asynchro mode, including the starting bit,the data bits and the end bit
+           "
+    DEFVAL      { 8 }
+    ::= { mtaEntry 10 }
+
+  hwChannel1BChannelNo OBJECT-TYPE
+    SYNTAX      INTEGER {b1(1),b2(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示数据通道1的上下行数据在2B+D的哪个B通道上承载
+        determins the B channel N.O. to carry the data in channel 1
+           "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 11 }
+
+  hwChannel1EnvolopPhase OBJECT-TYPE
+    SYNTAX      INTEGER{sequence(1),interleave(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示通道1占用包络的方式：1:顺相 2：隔相
+        determins the envolop phase to carry the data in channel 1
+           "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 12 }
+
+  hwChannel1Status OBJECT-TYPE
+    SYNTAX      INTEGER{idle(1),normal(2),localLoop(3),remoteLoop(4),block(5),bChannelLocalLof(6),dteNotReady(7),bChannelRemoteLof(8),bChannelLocalLoop(9),bChannelRemoteLoop(10),fault(11)}
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        空闲(1),工作正常(2),近端环回(3),远端环回(4),闭塞(5),对应B通道本端帧失步(6),外接设备未就绪(7),对应B通道对端帧失步(8),对应B通道近端环回(9),对应B通道远端环回(10),故障(11)
+        describes the current state of channel 1
+         "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 13 }
+
+  hwChannel2Mode OBJECT-TYPE
+    SYNTAX      INTEGER{syn(1),asyn(2),prohibit(3)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          表示通道2是工作在同步方式还是异步方式：1: 同步 2: 异步 3: 禁用
+          determine working mode of channel 2: a syn. mode, an asyn. mode, or a prohibited mode
+         "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 14 }
+
+  hwChannel2Rate OBJECT-TYPE
+    SYNTAX      INTEGER {
+                         r2400bps(1),
+                         r4800bps(2),
+                         r9600bps(3),
+                         r19200bps(4),
+                         r64000bps(5),
+                         r128000bps(6) 
+                         }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          表示通道2的业务速率
+          determine the service speed of channel 2
+       "
+    DEFVAL      { 2 }
+    ::= { mtaEntry 15 }
+
+  hwChannel2DteDce OBJECT-TYPE
+    SYNTAX      INTEGER{dCE(1),dTE(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          决定MTA通道2是作为DCE还是作为DTE，一般用作DCE设备
+          determine the polarity of channel 2: DCE or DTE
+         "
+    DEFVAL      { 2 }
+    ::= { mtaEntry 16 }
+
+  hwChannel2Clock OBJECT-TYPE
+    SYNTAX      INTEGER{internal(1),external(2),slave(3)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        通道2时钟锁定方式，Internal表示使用使用设备自身的时钟，External表示锁定上级时钟，Slave表示锁定外挂设备的时钟
+        the clock locked mode of channel 2: 1. Internal means the clock in MTA device, 
+        2.External means the superior device's clock, 3. Slave means the clock of device access to this channel
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 17 }
+
+  hwChannel2SignalLinePhase OBJECT-TYPE
+    SYNTAX      Integer32(0..15)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          即2进制的0000到1111，从低位到高位每个BIT位依次表示：时钟发是否反相,时钟收是否反相,数据发是否反相,数据收是否反相 1:反相 0:正相 
+          the signal line phase of channel 2, determined by four bits of which the less significant defines 
+          the clock sending phase, the 2th the clock receiving phase, the 3th the data sending phase, the 4th the data receiving phase.
+          and value 1 means reverse phase, value 0 means in-phase.
+        "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 18 }
+
+  hwChannel2AsynLen OBJECT-TYPE
+    SYNTAX      Integer32(6..12)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        通道工作在异步方式下的字长，包括起始位、数据位和终止位的总长度
+        the word length of channel 2 working in the asynchro mode, including the starting bit,the data bits and the end bit
+        "
+    DEFVAL      { 8 }
+    ::= { mtaEntry 19 }
+
+  hwChannel2BChannelNo OBJECT-TYPE
+    SYNTAX      INTEGER{b1(1),b2(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示数据通道2的上下行数据在2B+D的哪个B通道上承载
+        determins the B channel N.O. to carry the data in channel 2
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 20 }
+
+  hwChannel2EnvolopPhase OBJECT-TYPE
+    SYNTAX      INTEGER{sequencal(1),interleave(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示通道2数据占用包络的方式：1:顺相 2：隔相
+        determins the envolop phase to carry the data in channel 2
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 21 }
+
+  hwChannel2Status OBJECT-TYPE
+    SYNTAX      INTEGER{idle(1),normal(2),localLoop(3),remoteLoop(4),block(5),bChannelLocalLof(6),dteNotReady(7),bChannelRemoteLof(8),bChannelLocalLoop(9),bChannelRemoteLoop(10),fault(11)}
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        空闲(1),工作正常(2),近端环回(3),远端环回(4),闭塞(5),对应B通道本端帧失步(6),外接设备未就绪(7),对应B通道对端帧失步(8),对应B通道近端环回(9),对应B通道远端环回(10),故障(11) 
+        describes the current state of channel 2
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 22 }
+
+  hwChannel3Mode OBJECT-TYPE
+    SYNTAX      INTEGER{syn(1),asyn(2),prohibit(3)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示通道3是工作在同步方式还是异步方式：1: 同步 2: 异步 3: 禁用
+        determine working mode of channel 3: a syn. mode, an asyn. mode, or a prohibited mode
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 23 }
+
+  hwChannel3Rate OBJECT-TYPE
+    SYNTAX      INTEGER {r2400bps(1),r4800bps(2),r9600bps(3),r19200bps(4),r64000bps(5),r128000bps(6) }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          表示通道3的业务速率
+          determine the service speed of channel 3
+         "
+    DEFVAL      { 2 }
+    ::= { mtaEntry 24 }
+
+  hwChannel3DteDce OBJECT-TYPE
+    SYNTAX      INTEGER{dCE(1),dTE(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          决定MTA通道3是作为DCE还是作为DTE，一般用作DCE设备
+          determine the polarity of channel 3: DCE or DTE
+        "
+    DEFVAL      { 2 }
+    ::= { mtaEntry 25 }
+
+  hwChannel3Clock OBJECT-TYPE
+    SYNTAX      INTEGER{internal(1),external(2),slave(3)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          通道3时钟锁定方式，Internal表示使用设备自身的时钟，External表示锁定上级时钟，Slave表示锁定外挂设备的时钟
+          the clock locked mode of channel 3: 1. Internal means the clock in MTA device, 
+          2.External means the superior device's clock, 3. Slave means the clock of device access to this channel
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 26 }
+
+  hwChannel3SignalLinePhase OBJECT-TYPE
+    SYNTAX      Integer32(0..15)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          即2进制的0000到1111，从低位到高位每个BIT位依次表示：时钟发是否反相,时钟收是否反相,数据发是否反相,数据收是否反相 1:反相 0:正相
+          the signal line phase of channel 1, determined by four bits of which the less significant defines 
+          the clock sending phase, the 2th the clock receiving phase, the 3th the data sending phase, the 4th the data receiving phase.
+          and value 1 means reverse phase, value 0 means in-phase.
+        "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 27 }
+
+  hwChannel3AsynLen OBJECT-TYPE
+    SYNTAX      Integer32(6..12)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+          通道3工作在异步方式下的字长，包括起始位、数据位和终止位的总长度
+          the word length of channel 3 working in the asynchro mode, including the starting bit,the data bits and the end bit
+        "
+    DEFVAL      { 8 }
+    ::= { mtaEntry 28 }
+
+  hwChannel3BChannelNo OBJECT-TYPE
+    SYNTAX      INTEGER{b1(1),b2(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示数据通道3的上下行数据在2B+D的哪个B通道上承载
+        determins the B channel N.O. to carry the data in channel 3
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 29 }
+
+  hwChannel3EnvolopPhase OBJECT-TYPE
+    SYNTAX      INTEGER{sequencal(1),interleave(2)}
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示通道3占用包络的方式：1:顺相 2：隔相
+        determins the envolop phase to carry the data in channel 3
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 30 }
+
+  hwChannel3Status OBJECT-TYPE
+    SYNTAX      INTEGER{
+                       idle(1),
+                       normal(2),
+                       localLoop(3),
+                       remoteLoop(4),
+                       block(5),
+                       bChannelLocalLof(6),
+                       dteNotReady(7),
+                       bChannelRemoteLof(8),
+                       bChannelLocalLoop(9),
+                       bChannelRemoteLoop(10),
+                       fault(11)
+                       }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        空闲(1),工作正常(2),近端环回(3),远端环回(4),闭塞(5),对应B通道本端帧失步(6),外接设备未就绪(7),对应B通道对端帧失步(8),对应B通道近端环回(9),对应B通道远端环回(10),故障(11) 
+        describes the current state of channel 3
+        "
+    DEFVAL      { 1 }
+    ::= { mtaEntry 31 }
+
+  hwUserIdentity OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..9))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示该MTA的标识字符串，不同设备可以相同 (SIZE(0..9)) 
+        the identity label of this MTA, and two or more MTAs may have the same identity label
+        "
+    DEFVAL      { '0'b  }
+    ::= { mtaEntry 32 }
+
+  hwMaintainOper OBJECT-TYPE
+    SYNTAX      INTEGER{noOperation(1),cancelLoop(2),localLoop(3),remoteLoop(4),reset(5)}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " 
+        1：不可操作 2：取消环回 3:近端环回 4：远端环回 5：复位, 表示可以对MTA进行的维护操作，
+        不可操作(1)只是为了GET用, 用于SET则没有意义, MTA取消环回时取消所有的环回,因此不应该指定环回对象,
+        对于近端环回和远端环回, 必须要指明环回对象,
+        MTA复位是指复位整个MTA终端, 系统复位之后环回也消失
+        defines the maintain operation type, no operation(1) is just for GET, and is of no meaning
+        for SET, CancelLoop(2) cancels all loops of the MTA, thus should not be set alongside Loop Object,
+        LocalLoop and RemoteLoop must be bound to the Loop Object,
+        reset operation will reset the MTA, and MTA will not be at loop state.
+        "
+    ::= { mtaEntry 33 }
+
+  hwLoopObject OBJECT-TYPE
+    SYNTAX      INTEGER{
+                        noOperation(1),
+                        dataChannel1(2),
+                        dataChannel2(3),
+                        dataChannel3(4),
+                        b1Channel(5),
+                        b2Channel(6),
+                        doubleBPlusDChannel(7)
+                        }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " 
+        表示进行环回操作时的操作对象, GET本节点的时候返回noOperation(1), 对于SET操作,
+        noOperation(1)没有意义
+        defines the loop object when setting LocalLoop or RemoteLoop operation,
+        Getting this object will get value noOperation(1), while is of no meaning when Setting
+        "
+    ::= { mtaEntry 34 }
+
+  hwChannel1AlarmStatus OBJECT-TYPE
+    SYNTAX      Integer32(0..1)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        为1表示通道1外接设备未就绪告警，为0表示不存在外接设备未就绪告警
+        describes the current alarm status of channel 1, 
+        1 means the device access to MTA channel 1 is not ready,
+        while 0 means the device is ready
+        "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 35 }
+
+  hwChannel2AlarmStatus OBJECT-TYPE
+    SYNTAX      Integer32(0..1)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        为1表示通道2外接设备未就绪告警，为0表示不存在外接设备未就绪告警
+        describes the current alarm status of channel 2, 
+        1 means the device access to MTA channel 1 is not ready,
+        while 0 means the device is ready
+        "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 36 }
+
+  hwChannel3AlarmStatus OBJECT-TYPE
+    SYNTAX      Integer32(0..1)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        为1表示通道3外接设备未就绪告警，为0表示不存在外接设备未就绪告警
+        describes the current alarm status of channel 3, 
+        1 means the device access to MTA channel 1 is not ready,
+        while 0 means the device is ready
+        "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 37 }
+    
+  hwBChannel1AlarmStatus OBJECT-TYPE
+    SYNTAX      Integer32(0..3)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        B通道1的告警状态,为2进制的00..11, 
+        低位为1表示B1通道存在本端帧失步告警, 为0表示不存在相应告警
+        高位为1表示B1通道存在对端帧失步告警, 为0表示不存在相应告警
+        describes the current alarm status of B channel 1,
+        determined by two bits of which the less significant defines whether
+        adaptive loss of multi-frame alignment of B channel 1 happened 
+        to MTA local equipment, 1 means yes, 0 means no,
+        the most significant bit defines whether adaptive loss 
+        of multi-frame alignment of B channel 1 happened 
+        to MTA remote equipment, 1 means yes, 0 means no,
+        "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 38 }
+
+  hwBChannel2AlarmStatus OBJECT-TYPE
+    SYNTAX      Integer32(0..3)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        " 
+        B2通道的告警状态,为2进制的00..11, 
+        低位为1表示B2通道存在本端帧失步告警, 为0表示不存在相应告警
+        高位为1表示B2通道存在对端帧失步告警, 为0表示不存在相应告警
+        describes the current alarm status of B channel 2,
+        determined by two bits of which the less significant defines whether
+        adaptive loss of multi-frame alignment of B channel 2 happened 
+        to MTA local equipment, 1 means yes, 0 means no,
+        the most significant bit defines whether adaptive loss 
+        of multi-frame alignment of B channel 1 happened 
+        to MTA remote equipment, 1 means yes, 0 means no,
+        "
+    DEFVAL      { 0 }
+    ::= { mtaEntry 39 }
+
+
+  hwRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        " 
+        目前只支持CreateAndGo(4)和Destroy(6)两种类型
+        MTA supports the operation createAndGo(4) and Destroy(6) only
+        "
+    ::= { mtaEntry 40 }
+
+
+
+
+
+END

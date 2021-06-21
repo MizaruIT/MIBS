@@ -1,0 +1,112 @@
+-- ============================================================================
+-- Copyright (C) 2003 by  HUAWEI TECHNOLOGIES. All rights reserved.
+--
+-- Description:  Added for the Time Local,including the DST's information and the type of the inerface's time.
+-- Reference:  hwSysTime,including the local time and current timezone.
+-- Version: V1.03
+-- History:
+-- yubiao  2005-11-18 Added 
+-- ============================================================================
+	HUAWEI-TIMELOCALIZATION-MIB DEFINITIONS ::= BEGIN
+ 
+		IMPORTS
+
+			Integer32, OBJECT-TYPE, MODULE-IDENTITY					
+				FROM SNMPv2-SMI	
+			huaweiUtility			
+				FROM HUAWEI-MIB	;
+	
+
+		DSTDateAndTime ::= TEXTUAL-CONVENTION
+		    --DISPLAY-HINT "1d-1d,1d:1d:1d or 1d 1d 1d,1d:1d:1d"
+		    STATUS       current
+		    DESCRIPTION
+		            "A date-time of Daylight Saving Time.
+		
+		             octets  date      range             week          range
+		             -----   ------    -----             --------      -----
+		               1     month     1..12             month         1..12
+		               2     mday      1..31             week          1..5
+		               3     hour      0..23             wday          0..6  (Sunday = 0)
+		               4     minutes   0..59             hour          0..23
+		               5     seconds   0..59             minutes       0..59
+		               6                                 seconds       0..59
+		
+		            Note: If 5 Bytes, to calculate Daylight Saving Time with date.
+		            If 6 Bytes, to calculate Daylight Saving Time with week."
+		    SYNTAX       OCTET STRING (SIZE (5 | 6))
+	
+		hwTimeLocalization MODULE-IDENTITY
+			LAST-UPDATED "0511191426Z"
+			ORGANIZATION "Fix-Net Dep, Huawei Technologies Co.,Ltd."
+			CONTACT-INFO 
+				"Huawei Longgang Production Base,
+				Shenzhen,   P.R.C.
+				http://www.huawei.com
+				Zip:518129
+				"
+			DESCRIPTION 
+				"huawei time Localization mib."						
+			::= { huaweiUtility 66 }
+
+		hwDstPara  OBJECT IDENTIFIER ::= { hwTimeLocalization 1 }
+
+		hwDstStartTime OBJECT-TYPE
+			SYNTAX DSTDateAndTime
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Start time of Daylight Saving Time.
+				"
+			::= { hwDstPara 1 }
+		
+		hwDstEndTime OBJECT-TYPE
+			SYNTAX DSTDateAndTime
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				End time of Daylight Saving Time.
+				"
+			::= { hwDstPara 2 }
+		
+		hwDstAdjustTime OBJECT-TYPE
+			SYNTAX INTEGER
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				The adjust time of Daylight Saving Time. Units is minute, the default is 60 minutes.				
+				"
+			DEFVAL { 60 }
+			::= { hwDstPara 3 }
+		
+		hwTimeStamp OBJECT  IDENTIFIER   ::= { hwTimeLocalization 2 }
+		        		
+		hwTimeStampMode OBJECT-TYPE
+			SYNTAX INTEGER
+			{
+			    local(1),
+			    utc(2)
+			}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"This variable indicates the time stamp mode of management interface.
+				for example, the time stamp in trap and syslog info. The value local means
+				that the time stamp use the local time of the node, The value utc means 
+				that the time stamp use the UTC(Universal Time Coordinated) time.
+				The default mode is the local time. "
+			DEFVAL { utc }
+			::= { hwTimeStamp 1 }
+		
+		hwTimezone   OBJECT-TYPE
+           SYNTAX OCTET STRING  (SIZE (0..9))
+           MAX-ACCESS   read-write
+           STATUS       current
+           DESCRIPTION
+              "This variable indicates the timezone of the system, format: GMT+HH:MM or GMT-HH:MM, for example: GMT+11:30 or GMT-11:30." 
+           ::= { hwTimeLocalization 3 }      
+		     				
+	END

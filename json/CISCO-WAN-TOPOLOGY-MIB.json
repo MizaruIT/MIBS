@@ -1,0 +1,1037 @@
+{
+  "imports": {
+    "class": "imports",
+    "CISCO-SMI": [
+      "ciscoMgmt"
+    ],
+    "IANAifType-MIB": [
+      "IANAifType"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "PNNI-MIB": [
+      "PnniNodeId"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MibIdentifier",
+      "iso",
+      "NOTIFICATION-TYPE",
+      "TRAP-TYPE",
+      "Gauge32",
+      "TimeTicks",
+      "MODULE-IDENTITY",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "OBJECT-TYPE",
+      "Counter32",
+      "Bits",
+      "Integer32",
+      "Unsigned32",
+      "Counter64"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ],
+    "SNMPv2-TC-v1": [
+      "TruthValue",
+      "TimeStamp",
+      "RowStatus"
+    ]
+  },
+  "ciscoWanTopologyMIB": {
+    "name": "ciscoWanTopologyMIB",
+    "oid": "1.3.6.1.4.1.9.9.234",
+    "class": "objectidentity"
+  },
+  "ciscoWanTopologyMIBNotifs": {
+    "name": "ciscoWanTopologyMIBNotifs",
+    "oid": "1.3.6.1.4.1.9.9.234.0",
+    "class": "objectidentity"
+  },
+  "ciscoWanTopologyMIBObjects": {
+    "name": "ciscoWanTopologyMIBObjects",
+    "oid": "1.3.6.1.4.1.9.9.234.1",
+    "class": "objectidentity"
+  },
+  "cwtMIBConformance": {
+    "name": "cwtMIBConformance",
+    "oid": "1.3.6.1.4.1.9.9.234.2",
+    "class": "objectidentity"
+  },
+  "cwtSystemGroup": {
+    "name": "cwtSystemGroup",
+    "oid": "1.3.6.1.4.1.9.9.234.1.1",
+    "class": "objectidentity"
+  },
+  "cwtNodalInfoGroup": {
+    "name": "cwtNodalInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2",
+    "class": "objectidentity"
+  },
+  "cwtFeederInfoGroup": {
+    "name": "cwtFeederInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3",
+    "class": "objectidentity"
+  },
+  "cwtMIBCompliances": {
+    "name": "cwtMIBCompliances",
+    "oid": "1.3.6.1.4.1.9.9.234.2.1",
+    "class": "objectidentity"
+  },
+  "cwtMIBGroups": {
+    "name": "cwtMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.234.2.2",
+    "class": "objectidentity"
+  },
+  "CwtNodeInfoTableIndex": {
+    "name": "CwtNodeInfoTableIndex",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1024
+          }
+        ]
+      }
+    }
+  },
+  "cwtGatewayAdminStatus": {
+    "name": "cwtGatewayAdminStatus",
+    "oid": "1.3.6.1.4.1.9.9.234.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disable": 1,
+          "enable": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "disable",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The value of this object determines whether this node is a Gateway Node or not. A value of `enable' configures this node to be the Gateway Node, and enables the generation of the topology database. A value of `disable' configures this node to not be a Gateway Node, and deletes the topology database if it exists."
+  },
+  "cwtGatewayNodeOperStatus": {
+    "name": "cwtGatewayNodeOperStatus",
+    "oid": "1.3.6.1.4.1.9.9.234.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disabled": 1,
+          "enabled": 2,
+          "disabling": 3,
+          "enabling": 4,
+          "enabledAndFull": 5
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This is the operational status of the Gateway Node. 'disabled' indicates that this node is not a Gateway Node and no topology database is available on this node. 'enabled' indicates that this node has been configured as the Gateway Node and the topology database has been built. 'disabling' indicates that this node is no longer the Gateway Node and is in the process of deleting the topology database. 'enabling' indicates that this node has been configured as the Gateway Node and is in the process of building the topology database. 'enabledAndFull' indicates that this node has been configured as the Gateway Node but its topology database is full. The management station should always poll this object first before taking action to: a) 'enable' or 'disable' the Gateway Node b) remove an entry or entries from 'cwtNodeInfoTable' and its corresponding entries from 'cwtFeederInfoTable'. If the object returns 'disabled', the management station can 'enable' the Gateway Node if it desires. If the object returns 'enabled', the management station can 'disable' the Gateway Node if it desires. If the object returns 'enabling' or 'disabling', the management station should not take any actions. If the object returns 'enabledAndFull', the management station can take one of the following actions: a) remove enties from the cwtNodeInfoTable b) 'disable' and then 'enable' the Gateway Node, which would cause the node to delete and then rebuild the topology database. "
+  },
+  "cwtDBLastChange": {
+    "name": "cwtDBLastChange",
+    "oid": "1.3.6.1.4.1.9.9.234.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The value of MIB II's sysUpTime object at the time that: a) the topology database is last changed on this node. b) the cwtGatewayAdminStatus is last changed. c) the cwtGatewayNodeOperStatus enters the 'enabledAndFull' state."
+  },
+  "cwtNodeInfoTable": {
+    "name": "cwtNodeInfoTable",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "A table of node topology information is to be maintained for the management station. This table contains the information for the nodes in the peer group."
+  },
+  "cwtNodeInfoEntry": {
+    "name": "cwtNodeInfoEntry",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtIndex",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "This is a row entry in the topology node info table. Each entry corresponds to one node in the network."
+  },
+  "cwtIndex": {
+    "name": "cwtIndex",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CwtNodeInfoTableIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This is the index into the topology database array. This value should remain persistent while the topology database exists, which means that it'll be consistent across boots. However, if this node is disabled as the gateway node, and later on enabled (by changing the value of cwtGatewayAdminStatus), then the cwtIndex may be different for the same node info entry in the topology database."
+  },
+  "cwtGatewayNodeFlag": {
+    "name": "cwtGatewayNodeFlag",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This variable indicates if the corresponding entry is a Gateway Node or not. If this value contains 'true', the corresponding node is a Gateway Node. If this value contains 'false', then the corresponding node is not a Gateway Node."
+  },
+  "cwtNodeId": {
+    "name": "cwtNodeId",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PnniNodeId",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "reference": "ATM Forum PNNI 1.0 Section 5.3.3",
+    "status": "mandatory",
+    "description": "The unique Id which identifies the node in the entry. This value is different from cwtIndex because it is a unique number which identifies a node in the ATM network, while cwtIndex is an index for an entry in the topology database. The same physical node can have different cwtIndex in different topology databases."
+  },
+  "cwtNodeName": {
+    "name": "cwtNodeName",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The configured name of the node."
+  },
+  "cwtPrimIPIfType": {
+    "name": "cwtPrimIPIfType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IANAifType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the type of interface for the associated instance of cwtPrimIP."
+  },
+  "cwtPrimIPIfName": {
+    "name": "cwtPrimIPIfName",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the name of the interface for the associated instance of cwtPrimIP."
+  },
+  "cwtPrimIPAddrType": {
+    "name": "cwtPrimIPAddrType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the type of address contained in the associated instance of cwtPrimIP."
+  },
+  "cwtPrimIP": {
+    "name": "cwtPrimIP",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "Primary IP address of the corresponding node. This value is taken from the PNNI Nodal PTSE. The primary IP address is used by the NMS to manage the switch. The type of interface (i.e. ATM interface, LAN interface, etc) for this IP address is specified by cwtPrimIPIfType. The NMS will use this IP address first, but if it can not connect to the switch on this address, then it will try to contact the switch using the secondary IP address instead."
+  },
+  "cwtSecIPIfType": {
+    "name": "cwtSecIPIfType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IANAifType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the type of interface for the associated instance of cwtSecIP."
+  },
+  "cwtSecIPIfName": {
+    "name": "cwtSecIPIfName",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the name of the interface for the associated instance of cwtSecIP."
+  },
+  "cwtSecIPAddrType": {
+    "name": "cwtSecIPAddrType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the type of address contained in the associated instance of cwtSecIP."
+  },
+  "cwtSecIP": {
+    "name": "cwtSecIP",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "Secondary IP address of the corresponding node. This value is taken from the PNNI Nodal PTSE. This value is used by the NMS to manage the switch. Please refer to the Description section of cwtPrimIP for more information."
+  },
+  "cwtSysObjId": {
+    "name": "cwtSysObjId",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "reference": "RFC 1907",
+    "status": "mandatory",
+    "description": "This variable contains the sysObjectID of the node, which is used to identify different hardware platforms. The actual values are defined in CISCO-PRODUCTS-MIB."
+  },
+  "cwtNodeInfoTimeOutFlag": {
+    "name": "cwtNodeInfoTimeOutFlag",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This variable indicates if the PTSE of this node is currently contained in the PNNI PTSE database. The nodal information in the persistent topology database is derived from the PTSEs in the PNNI PTSE database. The entries in the PNNI PTSE database times out if no new PTSE is received from a node after a certain time. If that happens, this object is set to 'false'. This object would allow the NMS to determine whether this node currently has connectivity with the rest of the network."
+  },
+  "cwtRowStatus": {
+    "name": "cwtRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.234.1.2.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "In our implementation, we'll be supporting 'active', 'createAndGo', and 'destroy'. The value of this variable is set to 'active' by the managed system for each valid entry. If a management station wants to delete an entry from the database, this value is set to 'destroy'. If a management station wants to create a new entry, this value is set to 'createAndGo'."
+  },
+  "cwtFeederInfoTable": {
+    "name": "cwtFeederInfoTable",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "A table of 'feeder' information to be maintained for the management station. This table contains the information for the 'feeders' in this peer group."
+  },
+  "cwtFeederInfoEntry": {
+    "name": "cwtFeederInfoEntry",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederIndex",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "This is a row entry in the feeder info table. Each entry corresponds to one 'feeder' in the network."
+  },
+  "cwtFeederIndex": {
+    "name": "cwtFeederIndex",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This is the index into the feeder database array. This value should remain persistent while the feeder database exists, which means that it'll be consistent across boots. However, if this node is disabled as the gateway node, and later on enabled, then the 'cwtFeederIndex' may be different for the same feeder info entry in the 'feeder database'."
+  },
+  "cwtLocalNodeId": {
+    "name": "cwtLocalNodeId",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PnniNodeId",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "ATM Forum PNNI 1.0 Section 5.3.3",
+    "status": "mandatory",
+    "description": "The unique Id which identifies the node the feeder is attached to."
+  },
+  "cwtLocalIfIndex": {
+    "name": "cwtLocalIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This variable contains the 'ifIndex' of the local port this feeder is connected to."
+  },
+  "cwtLocalIfName": {
+    "name": "cwtLocalIfName",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The textual name of the interface of the local port this feeder is connected to. This should contain the same 'ifName' associated with the 'cwtLocalIfIndex'. If this interface does not have a textual name, the value of this object is a zero length string."
+  },
+  "cwtFeederShelf": {
+    "name": "cwtFeederShelf",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This variable contains the physcial shelf number of the feeder module."
+  },
+  "cwtFeederSlot": {
+    "name": "cwtFeederSlot",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This variable contains the physical slot number of the feeder module."
+  },
+  "cwtFeederPort": {
+    "name": "cwtFeederPort",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1024
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This variable contains the physical port number of the feeder module."
+  },
+  "cwtFeederLMIType": {
+    "name": "cwtFeederLMIType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "feeder": 1,
+          "xLMI": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object identifies the 'link' type. feeder(1) is applicable when cwtFeederType contains a value other than fdrNON(12). xLMI(2) is applicable only when cwtFeederType contains a value of fdrNON(12). Both feeder(1) and xLMI(2) are CISCO proprietary interfaces. xLMI stands for 'extended local management interface."
+  },
+  "cwtFeederType": {
+    "name": "cwtFeederType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "fdrIPX": 1,
+          "fdrBPX": 2,
+          "fdrIpxAF": 3,
+          "fdrBASIS": 4,
+          "fdrUNKNOWN": 5,
+          "fdrUNI": 6,
+          "fdrAPS": 7,
+          "fdrIGX": 8,
+          "fdrIgxAF": 9,
+          "fdrVSI": 10,
+          "fdrPAR": 11,
+          "fdrNON": 12
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This identifies the feeder type. fdrNON(12) is applicable when cwfLMIType is xLMI(2). Other values are applicable when cwtFeederLMIType is feeder(1). The possible values are : fdrIPX -- Feeder is an IPX node in a routing network fdrBPX -- Feeder is an BPX node in a routing network fdrIpxAF -- Feeder is a stand-alone IPX node fdrBASIS -- Feeder is a stand-alone BASIS node fdrUNKNOWN -- Feeder is unknown fdrUNI -- Feeder is a UNI AIT (phase 0) fdrAPS -- Feeder is an APS (Adjunct Processor Shelf) fdrIGX -- Feeder is an IGX node in a routing network fdrIgxAF -- Feeder is a stand-alone IGX node fdrVSI -- Feeder is an VSI Controller fdrPAR -- Feeder is a PAR fdrNON -- This is non-feeder type"
+  },
+  "cwtFeederName": {
+    "name": "cwtFeederName",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The configured name of the feeder."
+  },
+  "cwtFeederLanIPAddrType": {
+    "name": "cwtFeederLanIPAddrType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object specifies the type of address contained in the associated instance of cwtFeederLanIP."
+  },
+  "cwtFeederLanIP": {
+    "name": "cwtFeederLanIP",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object specifies the LAN IP address of the 'feeder'. The type of this address is specified by cwtFeederLanIPAddrType."
+  },
+  "cwtFeederAtmIPAddrType": {
+    "name": "cwtFeederAtmIPAddrType",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object specifies the type of address contained in the associated instance of cwtFeederAtmIP."
+  },
+  "cwtFeederAtmIP": {
+    "name": "cwtFeederAtmIP",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object identifies the ATM IP address of the 'feeder'. The type of this address is specified by cwtFeederAtmIP."
+  },
+  "cwtFeederModelNumber": {
+    "name": "cwtFeederModelNumber",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This variable contains the 'model number' of the corresponding feeder. This is an implementation specific integer value which is used to differentiate between feeder platforms."
+  },
+  "cwtFeederRowStatus": {
+    "name": "cwtFeederRowStatus",
+    "oid": "1.3.6.1.4.1.9.9.234.1.3.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "In our implementation, we'll be supporting 'active', and 'destroy'. The value of this variable is set to 'active' by the managed system for each valid entry. If a management station wants to delete an entry from the database, this value is set to 'destroy'."
+  },
+  "cwtConfigGatewayStatus": {
+    "name": "cwtConfigGatewayStatus",
+    "oid": "1.3.6.1.4.1.9.9.2340.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtGatewayAdminStatus"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtDBLastChange"
+      }
+    ],
+    "description": "This notification is generated when the gateway node admin status is changed."
+  },
+  "cwtTopoInfoAdd": {
+    "name": "cwtTopoInfoAdd",
+    "oid": "1.3.6.1.4.1.9.9.2340.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtGatewayNodeFlag"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtNodeId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtNodeName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIPIfType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIPIfName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIP"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIPIfType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIPIfName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIP"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSysObjId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtNodeInfoTimeOutFlag"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtDBLastChange"
+      }
+    ],
+    "description": "This notification is generated when a new topology nodal info entry is added in the topology database."
+  },
+  "cwtTopoInfoModify": {
+    "name": "cwtTopoInfoModify",
+    "oid": "1.3.6.1.4.1.9.9.2340.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtGatewayNodeFlag"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtNodeId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtNodeName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIPIfType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIPIfName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtPrimIP"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIPIfType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIPIfName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSecIP"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtSysObjId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtNodeInfoTimeOutFlag"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtDBLastChange"
+      }
+    ],
+    "description": "This notification is generated when an existing topology nodal info entry is modified in the topology database."
+  },
+  "cwtTopoInfoDelete": {
+    "name": "cwtTopoInfoDelete",
+    "oid": "1.3.6.1.4.1.9.9.2340.4",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtNodeId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtDBLastChange"
+      }
+    ],
+    "description": "This notification is generated when an existing topology nodal info entry is deleted in the topology database."
+  },
+  "cwtTopoDbFull": {
+    "name": "cwtTopoDbFull",
+    "oid": "1.3.6.1.4.1.9.9.2340.5",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtDBLastChange"
+      }
+    ],
+    "description": "This notification is generated when the topology database becomes full."
+  },
+  "cwtFeederInfoAdd": {
+    "name": "cwtFeederInfoAdd",
+    "oid": "1.3.6.1.4.1.9.9.2340.6",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtLocalNodeId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtLocalIfIndex"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtLocalIfName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederShelf"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederSlot"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederPort"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederLMIType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederLanIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederLanIP"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederAtmIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederAtmIP"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederModelNumber"
+      }
+    ],
+    "description": "This notification is generated when a new feeder info entry is added in the database."
+  },
+  "cwtFeederInfoModify": {
+    "name": "cwtFeederInfoModify",
+    "oid": "1.3.6.1.4.1.9.9.2340.7",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtLocalNodeId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtLocalIfIndex"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederLMIType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederName"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederLanIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederLanIP"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederAtmIPAddrType"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederAtmIP"
+      }
+    ],
+    "description": "This notification is generated when an existing feeder info entry is modified in the database."
+  },
+  "cwtFeederInfoDelete": {
+    "name": "cwtFeederInfoDelete",
+    "oid": "1.3.6.1.4.1.9.9.2340.8",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtLocalNodeId"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtLocalIfIndex"
+      },
+      {
+        "module": "CISCO-WAN-TOPOLOGY-MIB",
+        "object": "cwtFeederName"
+      }
+    ],
+    "description": "This notification is generated when an existing feeder info entry is deleted in the database."
+  },
+  "cwtSystemMIBGroups": {
+    "name": "cwtSystemMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.234.2.2.1",
+    "class": "objectidentity"
+  },
+  "cwtNodalMIBGroups": {
+    "name": "cwtNodalMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.234.2.2.2",
+    "class": "objectidentity"
+  },
+  "cwtFeederMIBGroups": {
+    "name": "cwtFeederMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.234.2.2.3",
+    "class": "objectidentity"
+  },
+  "cwtNotificationsGroup": {
+    "name": "cwtNotificationsGroup",
+    "oid": "1.3.6.1.4.1.9.9.234.2.2.4",
+    "class": "objectidentity"
+  },
+  "cwtNotificationsGroup2": {
+    "name": "cwtNotificationsGroup2",
+    "oid": "1.3.6.1.4.1.9.9.234.2.2.5",
+    "class": "objectidentity"
+  },
+  "cwtMIBCompliance": {
+    "name": "cwtMIBCompliance",
+    "oid": "1.3.6.1.4.1.9.9.234.2.1.1",
+    "class": "objectidentity"
+  },
+  "cwtMIBCompliance2": {
+    "name": "cwtMIBCompliance2",
+    "oid": "1.3.6.1.4.1.9.9.234.2.1.2",
+    "class": "objectidentity"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CISCO-WAN-TOPOLOGY-MIB-V1SMI.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:05:51 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CISCO-WAN-TOPOLOGY-MIB"
+  }
+}

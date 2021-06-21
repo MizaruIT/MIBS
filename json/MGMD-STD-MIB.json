@@ -1,0 +1,1838 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndexOrZero",
+      "InterfaceIndex"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MibIdentifier",
+      "IpAddress",
+      "Counter32",
+      "iso",
+      "Integer32",
+      "Counter64",
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "Bits",
+      "OBJECT-IDENTITY",
+      "mib-2",
+      "Unsigned32",
+      "Gauge32",
+      "NOTIFICATION-TYPE",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "RowStatus",
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "mgmdStdMIB": {
+    "name": "mgmdStdMIB",
+    "oid": "1.3.6.1.2.1.185",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2009-03-30 00:00",
+        "description": "This MIB obsoletes both RFC 2933 and RFC 3019."
+      }
+    ],
+    "lastupdated": "200903300000Z",
+    "organization": "INTERNET ENGINEERING TASK FORCE MULTICAST and ANYCAST GROUP MEMBERSHIP Working Group. www: http://www.ietf.org/html.charters/magma-charter.html EMail: magma@ietf.org",
+    "contactinfo": "Julian Chesterfield University of Cambridge, Computer Laboratory, 15 JJ Thompson Avenue, Cambridge, CB3 0FD UK EMail: julian.chesterfield@cl.cam.ac.uk",
+    "description": "The MIB module for MGMD management. A new version of MGMD combining RFC 2933 and RFC 3019. Includes IGMPv3 and MLDv2 source filtering changes. Copyright (c) 2009 IETF Trust and the persons identified as authors of the code. All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. - Neither the name of Internet Society, IETF or IETF Trust, nor the names of specific contributors, may be used to endorse or promote products derived from this software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. This version of this MIB module is part of RFC 5519; see the RFC itself for full legal notices."
+  },
+  "mgmdMIBObjects": {
+    "name": "mgmdMIBObjects",
+    "oid": "1.3.6.1.2.1.185.1",
+    "class": "objectidentity"
+  },
+  "mgmdHostInterfaceTable": {
+    "name": "mgmdHostInterfaceTable",
+    "oid": "1.3.6.1.2.1.185.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the interfaces on which IGMP or MLD is enabled."
+  },
+  "mgmdHostInterfaceEntry": {
+    "name": "mgmdHostInterfaceEntry",
+    "oid": "1.3.6.1.2.1.185.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceQuerierType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) representing an interface on which IGMP or MLD is enabled."
+  },
+  "mgmdHostInterfaceIfIndex": {
+    "name": "mgmdHostInterfaceIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ifIndex value of the interface for which IGMP or MLD is enabled. The table is indexed by the ifIndex value and the InetAddressType to allow for interfaces that may be configured in both IPv4 and IPv6 modes."
+  },
+  "mgmdHostInterfaceQuerierType": {
+    "name": "mgmdHostInterfaceQuerierType",
+    "oid": "1.3.6.1.2.1.185.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of this interface. This entry along with the ifIndex value acts as an index to the mgmdHostInterface table. A physical interface may be configured in multiple modes concurrently, e.g., in IPv4 and IPv6 modes connected to the same interface; however, the traffic is considered to be logically separate."
+  },
+  "mgmdHostInterfaceQuerier": {
+    "name": "mgmdHostInterfaceQuerier",
+    "oid": "1.3.6.1.2.1.185.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The address of the IGMP or MLD Querier on the IP subnet to which this interface is attached. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdHostInterfaceQuerierType variable in the mgmdHostInterface table."
+  },
+  "mgmdHostInterfaceStatus": {
+    "name": "mgmdHostInterfaceStatus",
+    "oid": "1.3.6.1.2.1.185.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The activation of a row enables the host side of IGMP or MLD on the interface. The destruction of a row disables the host side of IGMP or MLD on the interface."
+  },
+  "mgmdHostInterfaceVersion": {
+    "name": "mgmdHostInterfaceVersion",
+    "oid": "1.3.6.1.2.1.185.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 3
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The maximum version of MGMD that the host can run on this interface. A value of 1 is only applicable for IPv4, and indicates that the host only supports IGMPv1 on the interface. A value of 2 indicates that the host also supports IGMPv2 (for IPv4) or MLDv1 (for IPv6). A value of 3 indicates that the host also supports IGMPv3 (for IPv4) or MLDv2 (for IPv6)."
+  },
+  "mgmdHostInterfaceVersion1QuerierTimer": {
+    "name": "mgmdHostInterfaceVersion1QuerierTimer",
+    "oid": "1.3.6.1.2.1.185.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 2236, Section 4 and RFC 3376, Section 7.2.1",
+    "status": "current",
+    "description": "The time remaining until the host assumes that there are no IGMPv1 routers present on the interface. While this is non-zero, the host will reply to all queries with version 1 membership reports. This variable applies to IGMPv2 or 3 hosts that are forced to run in v1 for compatibility with v1 routers present on the interface. This object may only be present when the corresponding value of mgmdHostInterfaceQuerierType is ipv4."
+  },
+  "mgmdHostInterfaceVersion2QuerierTimer": {
+    "name": "mgmdHostInterfaceVersion2QuerierTimer",
+    "oid": "1.3.6.1.2.1.185.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "RFC 3376, Section 7.2.1 and RFC 3810, Section 8.2.1",
+    "status": "current",
+    "description": "The time remaining until the host assumes that there are no MGMDv2 routers present on the interface. While this is non-zero, the host will reply to all queries with version 1 or 2 membership reports. This variable applies to MGMDv3 hosts that are forced to run in v2 for compatibility with v2 hosts or routers present on the interface."
+  },
+  "mgmdHostInterfaceVersion3Robustness": {
+    "name": "mgmdHostInterfaceVersion3Robustness",
+    "oid": "1.3.6.1.2.1.185.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "RFC 3376, Section 8.1 and RFC 3810, Section 9.14.1",
+    "status": "current",
+    "description": "The robustness variable utilised by an MGMDv3 host in sending state-change reports for multicast routers. To ensure the state-change report is not missed, the host retransmits the state-change report [mgmdHostInterfaceVersion3Robustness - 1] times. The variable must be a non-zero value."
+  },
+  "mgmdRouterInterfaceTable": {
+    "name": "mgmdRouterInterfaceTable",
+    "oid": "1.3.6.1.2.1.185.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the interfaces on which IGMP or MLD is enabled."
+  },
+  "mgmdRouterInterfaceEntry": {
+    "name": "mgmdRouterInterfaceEntry",
+    "oid": "1.3.6.1.2.1.185.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceQuerierType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) representing an interface on which IGMP or MLD is enabled."
+  },
+  "mgmdRouterInterfaceIfIndex": {
+    "name": "mgmdRouterInterfaceIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The ifIndex value of the interface for which IGMP or MLD is enabled. The table is indexed by the ifIndex value and the InetAddressType to allow for interfaces that may be configured in both IPv4 and IPv6 modes."
+  },
+  "mgmdRouterInterfaceQuerierType": {
+    "name": "mgmdRouterInterfaceQuerierType",
+    "oid": "1.3.6.1.2.1.185.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of this interface. This entry along with the ifIndex value acts as the index to the mgmdRouterInterface table. A physical interface may be configured in multiple modes concurrently, e.g., in IPv4 and IPv6 modes connected to the same interface; however, the traffic is considered to be logically separate."
+  },
+  "mgmdRouterInterfaceQuerier": {
+    "name": "mgmdRouterInterfaceQuerier",
+    "oid": "1.3.6.1.2.1.185.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The address of the IGMP or MLD Querier on the IP subnet to which this interface is attached. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdRouterInterfaceQuerierType variable in the mgmdRouterInterface table."
+  },
+  "mgmdRouterInterfaceQueryInterval": {
+    "name": "mgmdRouterInterfaceQueryInterval",
+    "oid": "1.3.6.1.2.1.185.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 31744
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 125,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The frequency at which IGMP or MLD Host-Query packets are transmitted on this interface."
+  },
+  "mgmdRouterInterfaceStatus": {
+    "name": "mgmdRouterInterfaceStatus",
+    "oid": "1.3.6.1.2.1.185.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The activation of a row enables the router side of IGMP or MLD on the interface. The destruction of a row disables the router side of IGMP or MLD on the interface."
+  },
+  "mgmdRouterInterfaceVersion": {
+    "name": "mgmdRouterInterfaceVersion",
+    "oid": "1.3.6.1.2.1.185.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 3
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 3,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The version of MGMD that is running on this interface. Value 1 applies to IGMPv1 routers only. Value 2 applies to IGMPv2 and MLDv1 routers, and value 3 applies to IGMPv3 and MLDv2 routers. This object can be used to configure a router capable of running either version. For IGMP and MLD to function correctly, all routers on a LAN must be configured to run the same version on that LAN."
+  },
+  "mgmdRouterInterfaceQueryMaxResponseTime": {
+    "name": "mgmdRouterInterfaceQueryMaxResponseTime",
+    "oid": "1.3.6.1.2.1.185.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 31744
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 100,
+        "format": "decimal"
+      }
+    },
+    "units": "tenths of seconds",
+    "maxaccess": "read-create",
+    "reference": "RFC 3810, Section 9.3",
+    "status": "current",
+    "description": "The maximum query response interval advertised in MGMDv2 or IGMPv3 queries on this interface."
+  },
+  "mgmdRouterInterfaceQuerierUpTime": {
+    "name": "mgmdRouterInterfaceQuerierUpTime",
+    "oid": "1.3.6.1.2.1.185.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time since mgmdRouterInterfaceQuerier was last changed."
+  },
+  "mgmdRouterInterfaceQuerierExpiryTime": {
+    "name": "mgmdRouterInterfaceQuerierExpiryTime",
+    "oid": "1.3.6.1.2.1.185.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The amount of time remaining before the Other Querier Present Timer expires. If the local system is the querier, the value of this object is zero."
+  },
+  "mgmdRouterInterfaceWrongVersionQueries": {
+    "name": "mgmdRouterInterfaceWrongVersionQueries",
+    "oid": "1.3.6.1.2.1.185.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of general queries received whose IGMP or MLD version does not match the equivalent mgmdRouterInterfaceVersion, over the lifetime of the row entry. Both IGMP and MLD require that all routers on a LAN be configured to run the same version. Thus, if any general queries are received with the wrong version, this indicates a configuration error."
+  },
+  "mgmdRouterInterfaceJoins": {
+    "name": "mgmdRouterInterfaceJoins",
+    "oid": "1.3.6.1.2.1.185.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of times a group membership has been added on this interface, that is, the number of times an entry for this interface has been added to the Cache Table. This object can give an indication of the amount of activity between samples over time."
+  },
+  "mgmdRouterInterfaceProxyIfIndex": {
+    "name": "mgmdRouterInterfaceProxyIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Some devices implement a form of IGMP or MLD proxying whereby memberships learned on the interface represented by this row cause Host Membership Reports to be sent on the interface whose ifIndex value is given by this object. Such a device would implement the mgmdV2RouterBaseMIBGroup only on its router interfaces (those interfaces with non-zero mgmdRouterInterfaceProxyIfIndex). Typically, the value of this object is 0, indicating that no proxying is being done."
+  },
+  "mgmdRouterInterfaceGroups": {
+    "name": "mgmdRouterInterfaceGroups",
+    "oid": "1.3.6.1.2.1.185.1.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current number of entries for this interface in the mgmdRouterCacheTable."
+  },
+  "mgmdRouterInterfaceRobustness": {
+    "name": "mgmdRouterInterfaceRobustness",
+    "oid": "1.3.6.1.2.1.185.1.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Robustness Variable allows tuning for the expected packet loss on a subnet. If a subnet is expected to be lossy, the Robustness Variable may be increased. IGMP and MLD are robust to (Robustness Variable-1) packet losses."
+  },
+  "mgmdRouterInterfaceLastMemberQueryInterval": {
+    "name": "mgmdRouterInterfaceLastMemberQueryInterval",
+    "oid": "1.3.6.1.2.1.185.1.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 31744
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "tenths of seconds",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The Last Member Query Interval is the Max Query Response Interval inserted into group-specific queries sent in response to leave group messages, and is also the amount of time between group-specific query messages. This value may be tuned to modify the leave latency of the network. A reduced value results in reduced time to detect the loss of the last member of a group. The value of this object is irrelevant if mgmdRouterInterfaceVersion is 1."
+  },
+  "mgmdRouterInterfaceLastMemberQueryCount": {
+    "name": "mgmdRouterInterfaceLastMemberQueryCount",
+    "oid": "1.3.6.1.2.1.185.1.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Represents the number of group-specific and group-and- source-specific queries sent by the router before it assumes there are no local members."
+  },
+  "mgmdRouterInterfaceStartupQueryCount": {
+    "name": "mgmdRouterInterfaceStartupQueryCount",
+    "oid": "1.3.6.1.2.1.185.1.2.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Represents the number of Queries sent out on startup, separated by the Startup Query Interval."
+  },
+  "mgmdRouterInterfaceStartupQueryInterval": {
+    "name": "mgmdRouterInterfaceStartupQueryInterval",
+    "oid": "1.3.6.1.2.1.185.1.2.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 31744
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable represents the interval between General Queries sent by a Querier on startup."
+  },
+  "mgmdHostCacheTable": {
+    "name": "mgmdHostCacheTable",
+    "oid": "1.3.6.1.2.1.185.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the IP multicast groups for which the host is a member on a particular interface."
+  },
+  "mgmdHostCacheEntry": {
+    "name": "mgmdHostCacheEntry",
+    "oid": "1.3.6.1.2.1.185.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostCacheAddressType",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostCacheAddress",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostCacheIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) in the mgmdHostCacheTable."
+  },
+  "mgmdHostCacheAddressType": {
+    "name": "mgmdHostCacheAddressType",
+    "oid": "1.3.6.1.2.1.185.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of the mgmdHostCacheTable entry. This value applies to both the mgmdHostCacheAddress and the mgmdHostCacheLastReporter entries."
+  },
+  "mgmdHostCacheAddress": {
+    "name": "mgmdHostCacheAddress",
+    "oid": "1.3.6.1.2.1.185.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The IP multicast group address for which this entry contains information. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdHostCacheAddressType variable in the mgmdHostCache table."
+  },
+  "mgmdHostCacheIfIndex": {
+    "name": "mgmdHostCacheIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The interface for which this entry contains information for an IP multicast group address."
+  },
+  "mgmdHostCacheUpTime": {
+    "name": "mgmdHostCacheUpTime",
+    "oid": "1.3.6.1.2.1.185.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time elapsed since this entry was created."
+  },
+  "mgmdHostCacheLastReporter": {
+    "name": "mgmdHostCacheLastReporter",
+    "oid": "1.3.6.1.2.1.185.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address of the source of the last membership report received for this IP multicast group address on this interface. If no membership report has been received, this object has a value of 0. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdHostCacheAddressType variable in the mgmdHostCache table."
+  },
+  "mgmdHostCacheSourceFilterMode": {
+    "name": "mgmdHostCacheSourceFilterMode",
+    "oid": "1.3.6.1.2.1.185.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "include": 1,
+          "exclude": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The state in which the interface is currently set. The value indicates the relevance of the corresponding source list entries in the mgmdHostSecListTable for MGMDv3 interfaces."
+  },
+  "mgmdRouterCacheTable": {
+    "name": "mgmdRouterCacheTable",
+    "oid": "1.3.6.1.2.1.185.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the IP multicast groups for which there are members on a particular router interface."
+  },
+  "mgmdRouterCacheEntry": {
+    "name": "mgmdRouterCacheEntry",
+    "oid": "1.3.6.1.2.1.185.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheAddressType",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheAddress",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) in the mgmdRouterCacheTable."
+  },
+  "mgmdRouterCacheAddressType": {
+    "name": "mgmdRouterCacheAddressType",
+    "oid": "1.3.6.1.2.1.185.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of the mgmdRouterCacheTable entry. This value applies to both the mgmdRouterCacheAddress and the mgmdRouterCacheLastReporter entries."
+  },
+  "mgmdRouterCacheAddress": {
+    "name": "mgmdRouterCacheAddress",
+    "oid": "1.3.6.1.2.1.185.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The IP multicast group address for which this entry contains information. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdRouterCacheAddressType variable in the mgmdRouterCache table."
+  },
+  "mgmdRouterCacheIfIndex": {
+    "name": "mgmdRouterCacheIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The interface for which this entry contains information for an IP multicast group address."
+  },
+  "mgmdRouterCacheLastReporter": {
+    "name": "mgmdRouterCacheLastReporter",
+    "oid": "1.3.6.1.2.1.185.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP address of the source of the last membership report received for this IP multicast group address on this interface. If no membership report has been received, this object has the value 0. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdRouterCacheAddressType variable in the mgmdRouterCache table."
+  },
+  "mgmdRouterCacheUpTime": {
+    "name": "mgmdRouterCacheUpTime",
+    "oid": "1.3.6.1.2.1.185.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time elapsed since this entry was created."
+  },
+  "mgmdRouterCacheExpiryTime": {
+    "name": "mgmdRouterCacheExpiryTime",
+    "oid": "1.3.6.1.2.1.185.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This value represents the time remaining before the Group Membership Interval state expires. The value must always be greater than or equal to 1."
+  },
+  "mgmdRouterCacheExcludeModeExpiryTimer": {
+    "name": "mgmdRouterCacheExcludeModeExpiryTimer",
+    "oid": "1.3.6.1.2.1.185.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This value is applicable only to MGMDv3-compatible nodes and represents the time remaining before the interface EXCLUDE state expires and the interface state transitions to INCLUDE mode. This value can never be greater than mgmdRouterCacheExpiryTime."
+  },
+  "mgmdRouterCacheVersion1HostTimer": {
+    "name": "mgmdRouterCacheVersion1HostTimer",
+    "oid": "1.3.6.1.2.1.185.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time remaining until the local router will assume that there are no longer any MGMD version 1 members on the IP subnet attached to this interface. This entry only applies to IGMPv1 hosts, and is not implemented for MLD. Upon hearing any MGMDv1 Membership Report (IGMPv1 only), this value is reset to the group membership timer. While this time remaining is non-zero, the local router ignores any MGMDv2 Leave messages (IGMPv2 only) for this group that it receives on this interface."
+  },
+  "mgmdRouterCacheVersion2HostTimer": {
+    "name": "mgmdRouterCacheVersion2HostTimer",
+    "oid": "1.3.6.1.2.1.185.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time remaining until the local router will assume that there are no longer any MGMD version 2 members on the IP subnet attached to this interface. This entry applies to both IGMP and MLD hosts. Upon hearing any MGMDv2 Membership Report, this value is reset to the group membership timer. Assuming no MGMDv1 hosts have been detected, the local router does not ignore any MGMDv2 Leave messages for this group that it receives on this interface."
+  },
+  "mgmdRouterCacheSourceFilterMode": {
+    "name": "mgmdRouterCacheSourceFilterMode",
+    "oid": "1.3.6.1.2.1.185.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "include": 1,
+          "exclude": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current cache state, applicable to MGMDv3-compatible nodes. The value indicates whether the state is INCLUDE or EXCLUDE."
+  },
+  "mgmdInverseHostCacheTable": {
+    "name": "mgmdInverseHostCacheTable",
+    "oid": "1.3.6.1.2.1.185.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the interfaces that are members of a particular group. This is an inverse lookup table for entries in the mgmdHostCacheTable."
+  },
+  "mgmdInverseHostCacheEntry": {
+    "name": "mgmdInverseHostCacheEntry",
+    "oid": "1.3.6.1.2.1.185.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseHostCacheIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseHostCacheAddressType",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseHostCacheAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) in the mgmdInverseHostCacheTable."
+  },
+  "mgmdInverseHostCacheIfIndex": {
+    "name": "mgmdInverseHostCacheIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The interface for which this entry contains information."
+  },
+  "mgmdInverseHostCacheAddressType": {
+    "name": "mgmdInverseHostCacheAddressType",
+    "oid": "1.3.6.1.2.1.185.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of the mgmdInverseHostCacheTable entry."
+  },
+  "mgmdInverseHostCacheAddress": {
+    "name": "mgmdInverseHostCacheAddress",
+    "oid": "1.3.6.1.2.1.185.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP multicast group address for which this entry contains information about an interface. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdInverseHostCacheAddressType variable in the mgmdInverseHostCache table."
+  },
+  "mgmdInverseRouterCacheTable": {
+    "name": "mgmdInverseRouterCacheTable",
+    "oid": "1.3.6.1.2.1.185.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the interfaces that are members of a particular group. This is an inverse lookup table for entries in the mgmdRouterCacheTable."
+  },
+  "mgmdInverseRouterCacheEntry": {
+    "name": "mgmdInverseRouterCacheEntry",
+    "oid": "1.3.6.1.2.1.185.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseRouterCacheIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseRouterCacheAddressType",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseRouterCacheAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) in the mgmdInverseRouterCacheTable."
+  },
+  "mgmdInverseRouterCacheIfIndex": {
+    "name": "mgmdInverseRouterCacheIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The interface for which this entry contains information for an IP multicast group address."
+  },
+  "mgmdInverseRouterCacheAddressType": {
+    "name": "mgmdInverseRouterCacheAddressType",
+    "oid": "1.3.6.1.2.1.185.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of the mgmdInverseRouterCacheTable entry."
+  },
+  "mgmdInverseRouterCacheAddress": {
+    "name": "mgmdInverseRouterCacheAddress",
+    "oid": "1.3.6.1.2.1.185.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The IP multicast group address for which this entry contains information. The InetAddressType, e.g., IPv4 or IPv6, is identified by the mgmdInverseRouterCacheAddressType variable in the mgmdInverseRouterCache table."
+  },
+  "mgmdHostSrcListTable": {
+    "name": "mgmdHostSrcListTable",
+    "oid": "1.3.6.1.2.1.185.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the Source List entries corresponding to each interface and multicast group pair on a host."
+  },
+  "mgmdHostSrcListEntry": {
+    "name": "mgmdHostSrcListEntry",
+    "oid": "1.3.6.1.2.1.185.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostSrcListAddressType",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostSrcListAddress",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostSrcListIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostSrcListHostAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) in the mgmdHostSrcListTable."
+  },
+  "mgmdHostSrcListAddressType": {
+    "name": "mgmdHostSrcListAddressType",
+    "oid": "1.3.6.1.2.1.185.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of the InetAddress variables in this table. This value applies to the mgmdHostSrcListHostAddress and mgmdHostSrcListAddress entries."
+  },
+  "mgmdHostSrcListAddress": {
+    "name": "mgmdHostSrcListAddress",
+    "oid": "1.3.6.1.2.1.185.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The IP multicast group address for which this entry contains information."
+  },
+  "mgmdHostSrcListIfIndex": {
+    "name": "mgmdHostSrcListIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The interface for which this entry contains information for an IP multicast group address."
+  },
+  "mgmdHostSrcListHostAddress": {
+    "name": "mgmdHostSrcListHostAddress",
+    "oid": "1.3.6.1.2.1.185.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The host address to which this entry corresponds. The mgmdHostCacheSourceFilterMode value for this group address and interface indicates whether this host address is included or excluded."
+  },
+  "mgmdHostSrcListExpire": {
+    "name": "mgmdHostSrcListExpire",
+    "oid": "1.3.6.1.2.1.185.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This value indicates the relevance of the SrcList entry, whereby a non-zero value indicates this is an INCLUDE state value, and a zero value indicates this to be an EXCLUDE state value."
+  },
+  "mgmdRouterSrcListTable": {
+    "name": "mgmdRouterSrcListTable",
+    "oid": "1.3.6.1.2.1.185.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The (conceptual) table listing the Source List entries corresponding to each interface and multicast group pair on a Router."
+  },
+  "mgmdRouterSrcListEntry": {
+    "name": "mgmdRouterSrcListEntry",
+    "oid": "1.3.6.1.2.1.185.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterSrcListAddressType",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterSrcListAddress",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterSrcListIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterSrcListHostAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry (conceptual row) in the mgmdRouterSrcListTable."
+  },
+  "mgmdRouterSrcListAddressType": {
+    "name": "mgmdRouterSrcListAddressType",
+    "oid": "1.3.6.1.2.1.185.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ipv4": 1,
+          "ipv6": 2
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The address type of the InetAddress variables in this table. This value applies to the mgmdRouterSrcListHostAddress and mgmdRouterSrcListAddress entries."
+  },
+  "mgmdRouterSrcListAddress": {
+    "name": "mgmdRouterSrcListAddress",
+    "oid": "1.3.6.1.2.1.185.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The IP multicast group address for which this entry contains information."
+  },
+  "mgmdRouterSrcListIfIndex": {
+    "name": "mgmdRouterSrcListIfIndex",
+    "oid": "1.3.6.1.2.1.185.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The interface for which this entry contains information for an IP multicast group address."
+  },
+  "mgmdRouterSrcListHostAddress": {
+    "name": "mgmdRouterSrcListHostAddress",
+    "oid": "1.3.6.1.2.1.185.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 4,
+            "max": 4
+          },
+          {
+            "min": 16,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The host address to which this entry corresponds. The mgmdRouterCacheSourceFilterMode value for this group address and interface indicates whether this host address is included or excluded."
+  },
+  "mgmdRouterSrcListExpire": {
+    "name": "mgmdRouterSrcListExpire",
+    "oid": "1.3.6.1.2.1.185.1.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This value indicates the relevance of the SrcList entry, whereby a non-zero value indicates this is an INCLUDE state value, and a zero value indicates this to be an EXCLUDE state value."
+  },
+  "mgmdMIBConformance": {
+    "name": "mgmdMIBConformance",
+    "oid": "1.3.6.1.2.1.185.2",
+    "class": "objectidentity"
+  },
+  "mgmdMIBCompliance": {
+    "name": "mgmdMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1",
+    "class": "objectidentity"
+  },
+  "mgmdMIBGroups": {
+    "name": "mgmdMIBGroups",
+    "oid": "1.3.6.1.2.1.185.2.2",
+    "class": "objectidentity"
+  },
+  "mgmdIgmpV1HostReadMIBCompliance": {
+    "name": "mgmdIgmpV1HostReadMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdHostBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-only compliance statement for hosts running IGMPv1 [RFC1112] and implementing the MGMD MIB. IGMPv1 hosts must support the IPv4 address type."
+  },
+  "mgmdIgmpV1RouterReadMIBCompliance": {
+    "name": "mgmdIgmpV1RouterReadMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdRouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-only compliance statement for routers running IGMPv1 [RFC1112] and implementing the MGMD MIB. IGMPv1 routers only support the IPv4 address type. Non-accessible index objects that only need IPv4 support are: OBJECT mgmdRouterCacheAddressType SYNTAX InetAddressType { ipv4(1) } OBJECT mgmdRouterCacheAddress SYNTAX InetAddress (SIZE(4)) OBJECT mgmdRouterInterfaceQuerierType SYNTAX InetAddressType { ipv4(1) } OBJECT mgmdInverseRouterCacheAddressType SYNTAX InetAddressType { ipv4(1) } "
+  },
+  "mgmdIgmpV1RouterWriteMIBCompliance": {
+    "name": "mgmdIgmpV1RouterWriteMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.3",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdRouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-create compliance statement for routers running IGMPv1 [RFC1112] and implementing the MGMD MIB. IGMPv1 routers only support the IPv4 address type. Non-accessible index objects that only need IPv4 support are: OBJECT mgmdRouterCacheAddressType SYNTAX InetAddressType { ipv4(1) } OBJECT mgmdRouterCacheAddress SYNTAX InetAddress (SIZE(4)) OBJECT mgmdRouterInterfaceQuerierType SYNTAX InetAddressType { ipv4(1) } OBJECT mgmdInverseRouterCacheAddressType SYNTAX InetAddressType { ipv4(1) } "
+  },
+  "mgmdIgmpV2MldV1HostReadMIBCompliance": {
+    "name": "mgmdIgmpV2MldV1HostReadMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.4",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdHostBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2HostMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-only compliance statement for hosts running IGMPv2 [RFC2236] or MLDv1 [RFC2710] and implementing the MGMD MIB. IGMPv2 hosts only support the IPv4 address type and MLDv1 hosts only support the IPv6 address type."
+  },
+  "mgmdIgmpV2MldV1HostWriteMIBCompliance": {
+    "name": "mgmdIgmpV2MldV1HostWriteMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.5",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdHostBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2HostMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-create compliance statement for hosts running IGMPv2 [RFC2236] or MLDv1 [RFC2710] and implementing the MGMD MIB. IGMPv2 hosts only support the IPv4 address type and MLDv1 hosts only support the IPv6 address type."
+  },
+  "mgmdIgmpV2MldV1RouterReadMIBCompliance": {
+    "name": "mgmdIgmpV2MldV1RouterReadMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.6",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdRouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2RouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-only compliance statement for routers running IGMPv2 [RFC2236] or MLDv1 [RFC2710] and implementing the MGMD MIB. IGMPv2 routers only support the IPv4 address type and MLDv1 routers only support the IPv6 address type."
+  },
+  "mgmdIgmpV2V3MldV1V2RouterWriteMIBCompliance": {
+    "name": "mgmdIgmpV2V3MldV1V2RouterWriteMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.7",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdRouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2RouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2ProxyMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-create compliance statement for routers running IGMPv2 [RFC2236], IGMPv3 [RFC3376], MLDv1 [RFC2710], or MLDv2 [RFC3810] and implementing the MGMD MIB. IGMPv2 and IGMPv3 routers only support the IPv4 address type, while MLDv1 and MLDv2 routers only support the IPv6 address type."
+  },
+  "mgmdIgmpV3MldV2HostReadMIBCompliance": {
+    "name": "mgmdIgmpV3MldV2HostReadMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.8",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdHostBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2HostMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV3HostMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for hosts running IGMPv3 [RFC3376] or MLDv2 [RFC3810] and implementing the MGMD MIB. IGMPv3 hosts only support the IPv4 address type and MLDv2 hosts only support the IPv6 address type."
+  },
+  "mgmdIgmpV3MldV2HostWriteMIBCompliance": {
+    "name": "mgmdIgmpV3MldV2HostWriteMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.9",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdHostBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2HostMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV3HostMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdHostExtendedMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for hosts running IGMPv3 [RFC3376] or MLDv2 [RFC3810] and implementing the MGMD MIB. IGMPv3 hosts only support the IPv4 address type and MLDv2 hosts only support the IPv6 address type."
+  },
+  "mgmdIgmpV3MldV2RouterReadMIBCompliance": {
+    "name": "mgmdIgmpV3MldV2RouterReadMIBCompliance",
+    "oid": "1.3.6.1.2.1.185.2.1.10",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mgmdRouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV2RouterBaseMIBGroup",
+        "module": "MGMD-STD-MIB"
+      },
+      {
+        "object": "mgmdV3RouterMIBGroup",
+        "module": "MGMD-STD-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "A read-only compliance statement for routers running IGMPv3 [RFC3376] or MLDv2 [RFC3810] and implementing the MGMD MIB. IGMPv3 routers only support the IPv4 address type and MLDv2 routers only support the IPv6 address type."
+  },
+  "mgmdHostBaseMIBGroup": {
+    "name": "mgmdHostBaseMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceStatus"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceVersion"
+      }
+    ],
+    "status": "current",
+    "description": "The basic collection of objects providing management of MGMD version 1, 2, or 3 for hosts."
+  },
+  "mgmdRouterBaseMIBGroup": {
+    "name": "mgmdRouterBaseMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceStatus"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceQueryInterval"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheUpTime"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheExpiryTime"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceVersion"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceJoins"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceGroups"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheLastReporter"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceQuerierUpTime"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceQuerierExpiryTime"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceQuerier"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseRouterCacheAddress"
+      }
+    ],
+    "status": "current",
+    "description": "The basic collection of objects providing management of MGMD version 1, 2, or 3 for routers."
+  },
+  "mgmdV2HostMIBGroup": {
+    "name": "mgmdV2HostMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceVersion1QuerierTimer"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of additional read-only objects for management of IGMP version 2 in hosts for MGMD version 2 compliance."
+  },
+  "mgmdHostExtendedMIBGroup": {
+    "name": "mgmdHostExtendedMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostCacheLastReporter"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostCacheUpTime"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceQuerier"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdInverseHostCacheAddress"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of optional objects for MGMD hosts."
+  },
+  "mgmdV2RouterBaseMIBGroup": {
+    "name": "mgmdV2RouterBaseMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceWrongVersionQueries"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceLastMemberQueryCount"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceStartupQueryCount"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceStartupQueryInterval"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheVersion1HostTimer"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceQueryMaxResponseTime"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceRobustness"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceLastMemberQueryInterval"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of additional read-only objects for management of MGMD version 2 in routers."
+  },
+  "mgmdV2ProxyMIBGroup": {
+    "name": "mgmdV2ProxyMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterInterfaceProxyIfIndex"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of additional read-create objects for management of MGMD proxy devices."
+  },
+  "mgmdV3HostMIBGroup": {
+    "name": "mgmdV3HostMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceVersion2QuerierTimer"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostCacheSourceFilterMode"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostInterfaceVersion3Robustness"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdHostSrcListExpire"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of additional objects for management of MGMD version 3 in hosts."
+  },
+  "mgmdV3RouterMIBGroup": {
+    "name": "mgmdV3RouterMIBGroup",
+    "oid": "1.3.6.1.2.1.185.2.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheSourceFilterMode"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheVersion2HostTimer"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterCacheExcludeModeExpiryTimer"
+      },
+      {
+        "module": "MGMD-STD-MIB",
+        "object": "mgmdRouterSrcListExpire"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of additional read-only objects for management of MGMD version 3 in routers."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/MGMD-STD-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:11:04 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "MGMD-STD-MIB"
+  }
+}

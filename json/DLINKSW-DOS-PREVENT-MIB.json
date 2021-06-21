@@ -1,0 +1,555 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Gauge32",
+      "IpAddress",
+      "Counter64",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY",
+      "iso",
+      "Unsigned32",
+      "OBJECT-IDENTITY",
+      "Bits",
+      "MibIdentifier",
+      "TimeTicks",
+      "Counter32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "dlinkSwDosPrevMIB": {
+    "name": "dlinkSwDosPrevMIB",
+    "oid": "1.3.6.1.4.1.171.14.59",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-05-30 00:00",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "201305300000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "This MIB contains managed objects for the DOS Protection application of the device."
+  },
+  "DosAttackType": {
+    "name": "DosAttackType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "landAttack": 1,
+          "blatAttack": 2,
+          "smurfAttack": 3,
+          "tcpNullScan": 4,
+          "tcpXmasScan": 5,
+          "tcpSynFin": 6,
+          "tcpSynSrcPortLess1024": 7,
+          "arpMacSaMismatch": 8,
+          "fraggleAttack": 9,
+          "icmpRedirectAttack": 10,
+          "icmpUnreachableAttack": 11,
+          "ipRouteRecordAttack": 12,
+          "ipSourceRouteAttack": 13,
+          "pingDeathAttack": 14,
+          "tcpFlagSynRst": 15,
+          "tcpOverMacMcbc": 16,
+          "tcpSynWithData": 17,
+          "tcpTinyFragAttack": 18,
+          "tcpUdpPortZero": 19,
+          "tracertAttack": 20,
+          "winNukeAttack": 21,
+          "pingFlood": 22,
+          "synFlood": 23,
+          "teardrop": 24,
+          "all": 999
+        }
+      }
+    },
+    "status": "current",
+    "description": "This data type indicates a well-known DoS type which can be detected. Note that a particular agent may support only certain DoS attack types. Thus, the valid values of this object are project dependent. An agent may respond with an error (e.g., 'inconsistentValue ') to a management SET operation which attempts to modify the value to one which is not supported by the managed device."
+  },
+  "dDosPrevMIBNotifications": {
+    "name": "dDosPrevMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.59.0",
+    "class": "objectidentity"
+  },
+  "dDosPrevMIBObjects": {
+    "name": "dDosPrevMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.59.1",
+    "class": "objectidentity"
+  },
+  "dDosPrevMIBConformance": {
+    "name": "dDosPrevMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.59.2",
+    "class": "objectidentity"
+  },
+  "dDosPrevGlobalNotifsEnabled": {
+    "name": "dDosPrevGlobalNotifsEnabled",
+    "oid": "1.3.6.1.4.1.171.14.59.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set to 'true' to enable global SNMP notification for DoS prevention feature. Setting the object to 'false' will disable SNMP notifications."
+  },
+  "dDosPrevNotifyInfo": {
+    "name": "dDosPrevNotifyInfo",
+    "oid": "1.3.6.1.4.1.171.14.59.1.2",
+    "class": "objectidentity"
+  },
+  "dDosPrevNotiInfoDropFramesCount": {
+    "name": "dDosPrevNotiInfoDropFramesCount",
+    "oid": "1.3.6.1.4.1.171.14.59.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the total dropped packets due to DoS attack in the past 5 minutes."
+  },
+  "dDosPrevNotiInfoDropIpAddr": {
+    "name": "dDosPrevNotiInfoDropIpAddr",
+    "oid": "1.3.6.1.4.1.171.14.59.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "If the DoS packet is from the end station, represent the IP address of attacker; otherwise represent the router's IP."
+  },
+  "dDosPrevNotiInfoDropPortNumber": {
+    "name": "dDosPrevNotiInfoDropPortNumber",
+    "oid": "1.3.6.1.4.1.171.14.59.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object indicates the attacked port number."
+  },
+  "dDosPrevCtrlTable": {
+    "name": "dDosPrevCtrlTable",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table includes the settings of all DoS prevention types supported by the Switch. Note: the special attack type 'all' is not included in this table."
+  },
+  "dDosPrevCtrlEntry": {
+    "name": "dDosPrevCtrlEntry",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCtrlAttackType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A single entry in the DoS prevention control table."
+  },
+  "dDoSPrevCtrlAttackType": {
+    "name": "dDoSPrevCtrlAttackType",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DosAttackType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the DoS attack type."
+  },
+  "dDoSPrevCtrlEnabled": {
+    "name": "dDoSPrevCtrlEnabled",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the state of the DoS attack type. Setting this object to 'false' will reset other columnar objects in the same row."
+  },
+  "dDoSPrevCtrlActionType": {
+    "name": "dDoSPrevCtrlActionType",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "drop": 1,
+          "redirect": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "drop",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the action for the DoS prevention type. If this object is set to 'redirect' and dDoSPrevCtrlEnabled is 'true', the configuration will not take effect until a valid redirect port (dDoSPrevCtrlRedirectPort) is specified. If redirect port is not valid, the switch behaves same as 'drop' is set."
+  },
+  "dDoSPrevCtrlRedirectPort": {
+    "name": "dDoSPrevCtrlRedirectPort",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the port to which the attacking packet will be redirected. A value of 0 means redirect port is unspecified. This object can only be modified for entries whose value of dDoSPrevCtrlEnabled is 'true' and dDoSPrevCtrlActionType is 'redirect'. Otherwise, inconsistentValue error will be returned."
+  },
+  "dDoSPrevCtrlRedirectPriority": {
+    "name": "dDoSPrevCtrlRedirectPriority",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 8
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 8,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object configures the priority for the redirected attacking packets. Valid priority values are from 0 to 7. A value of 8 indicates that the original priority will not be changed when the packet is redirected. This object can only be modified for entries whose value of dDoSPrevCtrlEnabled is 'true', dDoSPrevCtrlActionType is 'redirect' and dDoSPrevCtrlRedirectPort is specified. Otherwise, inconsistentValue error will be returned."
+  },
+  "dDoSPrevCtrlRedirectRateLimit": {
+    "name": "dDoSPrevCtrlRedirectRateLimit",
+    "oid": "1.3.6.1.4.1.171.14.59.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 100000000
+          }
+        ]
+      }
+    },
+    "units": "kbps",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the rate-limit (kilobit per second) for redirecting DoS attacking packets. The valid range and granularity is project dependent. A value of 0 indicates that there is no limit for redirecting DoS attacking packets. This object can only be modified for entries whose value of dDoSPrevCtrlEnabled is 'true', dDoSPrevCtrlActionType is 'redirect' and dDoSPrevCtrlRedirectPort is specified. Otherwise, inconsistentValue error will be returned."
+  },
+  "dDoSPrevCounterTable": {
+    "name": "dDoSPrevCounterTable",
+    "oid": "1.3.6.1.4.1.171.14.59.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The table contains the counters of DoS prevention types supported by the Switch. This table only contains one entry of attack type is 'all' if per DoS-type counters is not supported."
+  },
+  "dDoSPrevCounterEntry": {
+    "name": "dDoSPrevCounterEntry",
+    "oid": "1.3.6.1.4.1.171.14.59.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCounterAttackType",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A single entry in the DoS prevention counter table."
+  },
+  "dDoSPrevCounterAttackType": {
+    "name": "dDoSPrevCounterAttackType",
+    "oid": "1.3.6.1.4.1.171.14.59.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DosAttackType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the DoS attack type."
+  },
+  "dDoSPrevCounterFrameCount": {
+    "name": "dDoSPrevCounterFrameCount",
+    "oid": "1.3.6.1.4.1.171.14.59.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the number of frames detected for the DoS attack prevention type."
+  },
+  "dDoSPrevCounterClearCounter": {
+    "name": "dDoSPrevCounterClearCounter",
+    "oid": "1.3.6.1.4.1.171.14.59.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "clear": 1,
+          "noOp": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "noOp",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to reset the counter of the specific attack type when set to 'clear'. No action is taken if this object is set to 'noOp'. When read, the value 'noOp' is returned."
+  },
+  "dDosPreveAttackDetected": {
+    "name": "dDosPreveAttackDetected",
+    "oid": "1.3.6.1.4.1.171.14.59.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPrevNotiInfoDropFramesCount"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when dDosPrevGlobalNotifsEnabled is 'true' and the DoS attack occurs in the past 5 minutes."
+  },
+  "dDosPreveAttackDetectedPacket": {
+    "name": "dDosPreveAttackDetectedPacket",
+    "oid": "1.3.6.1.4.1.171.14.59.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCtrlAttackType"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPrevNotiInfoDropIpAddr"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPrevNotiInfoDropPortNumber"
+      }
+    ],
+    "status": "current",
+    "description": "This trap is sent when dDosPrevGlobalNotifsEnabled is 'true' and the DoS attack occurs to detect the dropped attack packets."
+  },
+  "dDosPrevMIBCompliances": {
+    "name": "dDosPrevMIBCompliances",
+    "oid": "1.3.6.1.4.1.171.14.59.2.1",
+    "class": "objectidentity"
+  },
+  "dDosPrevMIBGroups": {
+    "name": "dDosPrevMIBGroups",
+    "oid": "1.3.6.1.4.1.171.14.59.2.2",
+    "class": "objectidentity"
+  },
+  "dDosPrevMIBCompliance": {
+    "name": "dDosPrevMIBCompliance",
+    "oid": "1.3.6.1.4.1.171.14.59.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dDosPrevBasicGroup",
+        "module": "DLINKSW-DOS-PREVENT-MIB"
+      },
+      {
+        "object": "dDosPrevNotifyObjectGroup",
+        "module": "DLINKSW-DOS-PREVENT-MIB"
+      },
+      {
+        "object": "dDosPrevNotificationsGroup",
+        "module": "DLINKSW-DOS-PREVENT-MIB"
+      },
+      {
+        "object": "dDosPrevActionRedirectCtrlGroup",
+        "module": "DLINKSW-DOS-PREVENT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for the DoS Prevention MIB."
+  },
+  "dDosPrevBasicGroup": {
+    "name": "dDosPrevBasicGroup",
+    "oid": "1.3.6.1.4.1.171.14.59.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCtrlEnabled"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCounterFrameCount"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCounterClearCounter"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects provides basic control for DoS Prevention."
+  },
+  "dDosPrevActionRedirectCtrlGroup": {
+    "name": "dDosPrevActionRedirectCtrlGroup",
+    "oid": "1.3.6.1.4.1.171.14.59.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCtrlActionType"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCtrlRedirectPort"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCtrlRedirectPriority"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDoSPrevCtrlRedirectRateLimit"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects provides the advanced action control for DoS Prevention."
+  },
+  "dDosPrevNotifyObjectGroup": {
+    "name": "dDosPrevNotifyObjectGroup",
+    "oid": "1.3.6.1.4.1.171.14.59.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPrevGlobalNotifsEnabled"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPrevNotiInfoDropFramesCount"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPrevNotiInfoDropIpAddr"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPrevNotiInfoDropPortNumber"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects provides the control and information of DoS notifications."
+  },
+  "dDosPrevNotificationsGroup": {
+    "name": "dDosPrevNotificationsGroup",
+    "oid": "1.3.6.1.4.1.171.14.59.2.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPreveAttackDetected"
+      },
+      {
+        "module": "DLINKSW-DOS-PREVENT-MIB",
+        "object": "dDosPreveAttackDetectedPacket"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects provides DoS notifications."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-DOS-PREVENT-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:25:22 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-DOS-PREVENT-MIB"
+  }
+}

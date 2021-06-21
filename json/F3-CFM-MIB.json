@@ -1,0 +1,1830 @@
+{
+  "imports": {
+    "class": "imports",
+    "ADVA-MIB": [
+      "fsp150cm"
+    ],
+    "CM-COMMON-MIB": [
+      "OperationalState",
+      "VlanPriority",
+      "CmPmBinAction",
+      "SecondaryState",
+      "PerfCounter64",
+      "AdminState"
+    ],
+    "CM-ENTITY-MIB": [
+      "slotIndex",
+      "shelfIndex",
+      "neIndex"
+    ],
+    "CM-FACILITY-MIB": [
+      "cmEthernetTrafficPortIndex",
+      "cmEthernetAccPortIndex",
+      "cmEthernetNetPortIndex"
+    ],
+    "IEEE8021-CFM-MIB": [
+      "dot1agCfmMepIdentifier",
+      "dot1agCfmMepEntry",
+      "dot1agCfmMaIndex",
+      "dot1agCfmMdIndex",
+      "dot1agCfmMaCompEntry",
+      "Dot1agCfmMepId",
+      "Dot1agCfmMDLevel"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter64",
+      "Counter32",
+      "iso",
+      "TimeTicks",
+      "MODULE-IDENTITY",
+      "Gauge32",
+      "OBJECT-IDENTITY",
+      "MibIdentifier",
+      "IpAddress",
+      "OBJECT-TYPE",
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "Integer32",
+      "Unsigned32"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "DisplayString",
+      "TruthValue",
+      "VariablePointer",
+      "RowStatus",
+      "MacAddress",
+      "StorageType"
+    ]
+  },
+  "f3CfmMIB": {
+    "name": "f3CfmMIB",
+    "oid": "1.3.6.1.4.1.2544.1.12.13",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2011-11-22 00:00",
+        "description": " Notes from release 201302130000Z, (i)Added TEXTUAL-CONVENTION CfmSignalFailTriggers (ii)Added scalar cfmSignalFailTriggers Notes from release 201111220000Z, (i)Added the following objects to support CFM MEPs and Server MEPs on pluggable cards: -cfmMepOperationalState, cfmMepSecondaryState -cfmServerMepAdminState, cfmServerMepOperationalState, cfmServerMepSecondaryState Notes from release 201012160000Z, -Formalized the OBJECT-GROUP definitions Notes from release 201012160000Z, -Updated description of cfmAccPortQosShaperIndex Notes from release 201012140000Z, -Added object cfmMepStatsAction Notes from release 201005130000Z, (1)New scalars slmMulticastMacAddress, slmOpcode, slrOpcode are added Notes from release 201003310000Z, (1)New table cfmServerMepTable is added Notes from release 200903190000Z, (1)MIB version ready for release of FSP150CC devices GE101 and GE206."
+      }
+    ],
+    "lastupdated": "201111220000Z",
+    "organization": "ADVA Optical Networking",
+    "contactinfo": " Raghav Trivedi ADVA Optical Networking, Inc. Tel: +1 972 759-1239 E-mail: rtrivedi@advaoptical.com Postal: 2301 N. Greenville Ave. #300 Richardson, TX USA 75082",
+    "description": "This module defines the CFM (8021AG) Extension MIB definitions used by the F3 (FSP150CM/CC) product lines. Copyright (C) ADVA Optical Networking."
+  },
+  "cfmExtSvc": {
+    "name": "cfmExtSvc",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1",
+    "class": "objectidentity"
+  },
+  "cfmExtSvcObjects": {
+    "name": "cfmExtSvcObjects",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1",
+    "class": "objectidentity"
+  },
+  "cfmExtSvcConformance": {
+    "name": "cfmExtSvcConformance",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2",
+    "class": "objectidentity"
+  },
+  "CfmAisGenTriggerTypes": {
+    "name": "CfmAisGenTriggerTypes",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "bAisDefRemoteCCM": 0,
+        "bAisDefErrorCCM": 1,
+        "bAisDefXconCCM": 2,
+        "bAisDefAis": 3
+      }
+    },
+    "status": "current",
+    "description": "Bit Mask that specifies all the defects that can trigger AIS to be generated."
+  },
+  "CfmAisInterval": {
+    "name": "CfmAisInterval",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "aisInterval1sec": 1,
+          "aisInterval1min": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "AIS interval which is the frequency of ETH-AIS frame generation. Note the values of the 1 second and 1 minute integers which are aligned with the values defined for the AIS interval for AIS PDU in Y.1731."
+  },
+  "CfmLmmDmmInterval": {
+    "name": "CfmLmmDmmInterval",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "interval10msec": 1,
+          "interval100msec": 2,
+          "interval1sec": 3,
+          "interval10sec": 4,
+          "interval1min": 5
+        }
+      }
+    },
+    "status": "current",
+    "description": "Y.1731 Loss or delay measurement frame transmission interval."
+  },
+  "CfmMepDefects": {
+    "name": "CfmMepDefects",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "bDefAIS": 0
+      }
+    },
+    "status": "current",
+    "description": "A MEP can detect and report a number of defects such as RDI, MACStatus, RMEP CCM, Error CCM, Xconn CCM. These are are defined in Dot1agCfmMepDefects in standard 802.1ag MIB. Y.1731 adds additional defects such as AIS defect which is defined here. bDefAIS(0) A MEP received an ETH-AIS frame/indication. "
+  },
+  "CfmLLFTriggerTypes": {
+    "name": "CfmLLFTriggerTypes",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "bAis": 0,
+        "bCcmIfStatusTlv": 1,
+        "bRemoteCCM": 2,
+        "bRDI": 3
+      }
+    },
+    "status": "current",
+    "description": "Bit Mask that specifies all the conditions that trigger a link loss forwarding."
+  },
+  "CfmSignalFailTriggers": {
+    "name": "CfmSignalFailTriggers",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "rdiCcm": 0,
+        "remoteCcm": 1,
+        "erroredCcm": 2,
+        "xconCcm": 3,
+        "ais": 4
+      }
+    },
+    "status": "current",
+    "description": "Bit Mask that specifies all the conditions that trigger Signal Fail."
+  },
+  "CfmSlmEnabledTypes": {
+    "name": "CfmSlmEnabledTypes",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "cos0": 0,
+        "cos1": 1,
+        "cos2": 2,
+        "cos3": 3,
+        "cos4": 4,
+        "cos5": 5,
+        "cos6": 6,
+        "cos7": 7
+      }
+    },
+    "status": "current",
+    "description": "Bit Mask that specifies all the priorities."
+  },
+  "cfmExtScalars": {
+    "name": "cfmExtScalars",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.1",
+    "class": "objectidentity"
+  },
+  "cfmEthType": {
+    "name": "cfmEthType",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the system level Ethernet type for CFM."
+  },
+  "cfmMacAddress": {
+    "name": "cfmMacAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the system level Mac address for CFM."
+  },
+  "slmMulticastMacAddress": {
+    "name": "slmMulticastMacAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object can be used to configure the Synthetic Loss Measurement(SLM) Multicast MAC Address."
+  },
+  "slmOpcode": {
+    "name": "slmOpcode",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object can be used to configure the Operation Code for the Synthetic Loss Measurement(SLM) message."
+  },
+  "slrOpcode": {
+    "name": "slrOpcode",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object can be used to configure the Operation Code for the Synthetic Loss Response(SLR) message."
+  },
+  "cfmSignalFailTriggers": {
+    "name": "cfmSignalFailTriggers",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CfmSignalFailTriggers",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object can be used to configure the list of defects which constitute Signal Fail condition."
+  },
+  "cfmMepTable": {
+    "name": "cfmMepTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Additional MEP configuration such as Y.1731 configuration."
+  },
+  "cfmMepEntry": {
+    "name": "cfmMepEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "cfmMepEntry",
+      "module": "F3-CFM-MIB",
+      "object": "dot1agCfmMepEntry"
+    },
+    "status": "current",
+    "description": "A list of additional MEP parameters such the Y.1731 parameters."
+  },
+  "cfmMepAdminState": {
+    "name": "cfmMepAdminState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AdminState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object represents the Administrative State of the CFM MEPs."
+  },
+  "cfmMepAisGenTriggerTypes": {
+    "name": "cfmMepAisGenTriggerTypes",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CfmAisGenTriggerTypes",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A bit mask which indicates all the defects that result in triggering an AIS for the higher level MEP or transmission of ETH-AIS."
+  },
+  "cfmMepAisClientMdLevel": {
+    "name": "cfmMepAisClientMdLevel",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMDLevel",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "AIS Client MD level which is the MD level used to identify any higher level local MEPs for which AIS defect needs to be set or MD level of the ETH-AIS frame generated if there are no local MEPs at this MD level."
+  },
+  "cfmMepAisInterval": {
+    "name": "cfmMepAisInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CfmAisInterval",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "ETH-AIS frame transmission interval if decision is made to transmit the ETH-AIS frame."
+  },
+  "cfmMepAisGenEnabled": {
+    "name": "cfmMepAisGenEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This flag enables/disables propagation of ETH-AIS to client MD levels."
+  },
+  "cfmMepAisPriority": {
+    "name": "cfmMepAisPriority",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanPriority",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This VLAN priority of the ETH-AIS frame."
+  },
+  "cfmMepLmTxCountAllPriosEnabled": {
+    "name": "cfmMepLmTxCountAllPriosEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute is used when Y.1731 probes are created and LMM frames are transmitted. As per Y.1731, loss measurement should be done per priority class. The implementation is restricted to support counting of frames for only one priority that can be modified. As an added value there is an option to count all priorities. This flag is used to decide whether to put cumulative data frame counts for all the priorities into the LMM that is transmitted by the MEP instead of data frame counts for a provisioned individual priority."
+  },
+  "cfmMepLmRxCountAllPriosEnabled": {
+    "name": "cfmMepLmRxCountAllPriosEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute is used when Y.1731 probes are created and LMR frames are transmitted. As per Y.1731, loss measurement should be done per priority class. The implementation is restricted to support counting of frames for only one priority that can be modified. As an added value there is an option to count all priorities. This flag is used to decide whether to put cumulative data frame counts for all the priorities into the LMR that is transmitted by the MEP instead of data frame counts for a provisioned individual priority. LMR is sent by a MEP when an LMM is received."
+  },
+  "cfmMepLmDualEndedCountAllPriosEnabled": {
+    "name": "cfmMepLmDualEndedCountAllPriosEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute is used when Y.1731 probes are created and CCM frames are transmitted with loss measurement counts. As per Y.1731, loss measurement should be done per priority class. The implementation is restricted to support counting of frames for only one priority that can be modified. As an added value there is an option to count all priorities. This flag is used to decide whether to put cumulative data frame counts for all the priorities into the CCM instead of data frame counts for a provisioned individual priority."
+  },
+  "cfmMepLmCountInProfileEnabled": {
+    "name": "cfmMepLmCountInProfileEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "As per the Y.1731 data frames counted for loss measurement shall be in-profile (green) data frames. As an added value, this flag is provided for the device to count all frames instead of green frames only. This flag could be set to false in cases where the remote device is not color aware and/or capable of color marking. Even if the device is capable of color marking and is color aware if the outer tag is not an S-TAG it makes sense to set this flag to false. As defined in IEEE 802.1ad the S-TAG has the drop eligibility bit that is used to mark the frames green or yellow."
+  },
+  "cfmMepLmTxPriority": {
+    "name": "cfmMepLmTxPriority",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanPriority",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute is used if cfmMepLmTxCountAllPrios is false. This attribute serves three purposes: - It is the VLAN priority of the LMM. - Data frames transmitted and received with this VLAN priority are counted by the MEP. The transmit count is sent in the LMM and the receive count is used to complete the list of four counts used for the loss measurement. - If an LMR is received with a VLAN priority other than this the LMR is dropped."
+  },
+  "cfmMepDmPriority": {
+    "name": "cfmMepDmPriority",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanPriority",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This attribute specifies the DMM frame VLAN priority."
+  },
+  "cfmMepRxCCMs": {
+    "name": "cfmMepRxCCMs",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This provides the total number of received CCMs on the MEP."
+  },
+  "cfmMepErrCCMs": {
+    "name": "cfmMepErrCCMs",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This provides the total number of errored CCMs on the MEP."
+  },
+  "cfmMepLLFTriggerTypes": {
+    "name": "cfmMepLLFTriggerTypes",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CfmLLFTriggerTypes",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This bit mask indicates the CFM triggers that result in link loss forwarding."
+  },
+  "cfmMepDefects": {
+    "name": "cfmMepDefects",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CfmMepDefects",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This bit mask indicates defects that not defined in standard 802.1ag MIB such as AIS defect."
+  },
+  "cfmMepTagEtherType": {
+    "name": "cfmMepTagEtherType",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows management of Ether Type for MEP VLAN Tag for the MEPs."
+  },
+  "cfmMepStatsAction": {
+    "name": "cfmMepStatsAction",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CmPmBinAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Allows the Manager to clear the CFM level statistics : cfmMepRxCCMs, cfmMepErrCCMs."
+  },
+  "cfmMepLbmInterval": {
+    "name": "cfmMepLbmInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "ETH-LBM frame transmission interval."
+  },
+  "cfmMepOperationalState": {
+    "name": "cfmMepOperationalState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OperationalState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the Operational State of the CFM MEP."
+  },
+  "cfmMepSecondaryState": {
+    "name": "cfmMepSecondaryState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SecondaryState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the Secondary State of the CFM MEP."
+  },
+  "cfmMepSlmEnabled": {
+    "name": "cfmMepSlmEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CfmSlmEnabledTypes",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This bit mask indicates the whether SLM is enabled per each COS."
+  },
+  "cfmMepAssociatedObject": {
+    "name": "cfmMepAssociatedObject",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.2.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object represents the associated port, it could be port, flow or flow point."
+  },
+  "cfmAccPortQosShaperTable": {
+    "name": "cfmAccPortQosShaperTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of configurable profile entries for CFM QoS Shapers for Access Port."
+  },
+  "cfmAccPortQosShaperEntry": {
+    "name": "cfmAccPortQosShaperEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "shelfIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "slotIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmEthernetAccPortIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A list of parameters that set up the CFM QoS Queue profiles. This shaper is created automatically when the first Down MEP is created on a Access Port."
+  },
+  "cfmAccPortQosShaperIndex": {
+    "name": "cfmAccPortQosShaperIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A unique index associated with the type of Access Port Based Shaper. Index 1 refers to the Shaper associated with PORT-based Down MEPs, Index 2 refers to the Shaper associated with the VID-based Down MEPs."
+  },
+  "cfmAccPortQosShaperCIR": {
+    "name": "cfmAccPortQosShaperCIR",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the queue CIR."
+  },
+  "cfmAccPortQosShaperBufSize": {
+    "name": "cfmAccPortQosShaperBufSize",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the queue buffer size."
+  },
+  "cfmAccPortQosShaperAdminState": {
+    "name": "cfmAccPortQosShaperAdminState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AdminState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows the management of the Shaper Administrative State. Only 'in-service' and 'management' states are allowed."
+  },
+  "cfmNetPortQosShaperTable": {
+    "name": "cfmNetPortQosShaperTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of configurable profile entries for CFM QoS Shapers for Network Port."
+  },
+  "cfmNetPortQosShaperEntry": {
+    "name": "cfmNetPortQosShaperEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "shelfIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "slotIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmEthernetNetPortIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperTypeIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A list of parameters that set up the CFM QoS Queue profiles. This shaper is created automatically when the first Down MEP is created on a Network Port."
+  },
+  "cfmNetPortQosShaperTypeIndex": {
+    "name": "cfmNetPortQosShaperTypeIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A unique index associated with the type of Network Port Based Shaper. Index 1 refers to the Shaper associated with PORT-based Down MEPs, Index 2 refers to the Shaper associated with the VID-based Down MEPs."
+  },
+  "cfmNetPortQosShaperCIR": {
+    "name": "cfmNetPortQosShaperCIR",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the queue CIR."
+  },
+  "cfmNetPortQosShaperBufSize": {
+    "name": "cfmNetPortQosShaperBufSize",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the queue buffer size."
+  },
+  "cfmNetPortQosShaperAdminState": {
+    "name": "cfmNetPortQosShaperAdminState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AdminState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows the management of the Shaper Administrative State. Only 'in-service' and 'management' states are allowed."
+  },
+  "cfmServerMepTable": {
+    "name": "cfmServerMepTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Server MEP management table."
+  },
+  "cfmServerMepEntry": {
+    "name": "cfmServerMepEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This allows management of Server MEPs."
+  },
+  "cfmServerMepIndex": {
+    "name": "cfmServerMepIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The integer index value corresponding to a Server MEP."
+  },
+  "cfmServerMepAssociatedPort": {
+    "name": "cfmServerMepAssociatedPort",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This is the port on which the CFM Server MEP is created."
+  },
+  "cfmServerMepAisClientMdLevel": {
+    "name": "cfmServerMepAisClientMdLevel",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Dot1agCfmMDLevel",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "AIS Client MD level which is the MD level used to identify any higher level local MEPs for which AIS defect needs to be set or MD level of the ETH-AIS frame generated if there are no local MEPs at this MD level."
+  },
+  "cfmServerMepAisInterval": {
+    "name": "cfmServerMepAisInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CfmAisInterval",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "ETH-AIS frame transmission interval if decision is made to transmit the ETH-AIS frame."
+  },
+  "cfmServerMepAisGenEnabled": {
+    "name": "cfmServerMepAisGenEnabled",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This flag enables/disables propagation of ETH-AIS to client MD levels."
+  },
+  "cfmServerMepAisPriority": {
+    "name": "cfmServerMepAisPriority",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VlanPriority",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This VLAN priority of the ETH-AIS frame."
+  },
+  "cfmServerMepStorageType": {
+    "name": "cfmServerMepStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of storage configured for this entry."
+  },
+  "cfmServerMepRowStatus": {
+    "name": "cfmServerMepRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of cfmServerMepRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with cfmServerMepRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The cfmServerMepRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "cfmServerMepAdminState": {
+    "name": "cfmServerMepAdminState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AdminState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object represents the Administrative State of the Server MEP."
+  },
+  "cfmServerMepOperationalState": {
+    "name": "cfmServerMepOperationalState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OperationalState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the Operational State of the Server MEP."
+  },
+  "cfmServerMepSecondaryState": {
+    "name": "cfmServerMepSecondaryState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.5.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SecondaryState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the Secondary State of the CFM MEP."
+  },
+  "cfmDownMEPQosShaperTable": {
+    "name": "cfmDownMEPQosShaperTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of configurable profile entries for CFM QoS Shapers for down MEPs."
+  },
+  "cfmDownMEPQosShaperEntry": {
+    "name": "cfmDownMEPQosShaperEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "neIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "shelfIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-ENTITY-MIB",
+        "object": "slotIndex",
+        "implied": 0
+      },
+      {
+        "module": "CM-FACILITY-MIB",
+        "object": "cmEthernetTrafficPortIndex",
+        "implied": 0
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmDownMEPQosShaperType",
+        "implied": 0
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmDownMEPQosShaperIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A list of parameters that set up the CFM QoS Queue profiles. This shaper is created automatically when the first Down MEP is created on a Port. Note, this queues is valid for port based Down MEPs, VID based down MEPs on NNI port."
+  },
+  "cfmDownMEPQosShaperIndex": {
+    "name": "cfmDownMEPQosShaperIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A unique index associated with the Shaper for Down MEPs."
+  },
+  "cfmDownMEPQosShaperType": {
+    "name": "cfmDownMEPQosShaperType",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Type of Shaper for Down MEPs. 1 refers to the Shaper associated with Down MEPs(for both port based and VID based) fot Transimit direction, 2 refers to the Shaper associated with Down MEPs(for both port based and VID based) fot Receiving direction"
+  },
+  "cfmDownMEPQosShaperCIR": {
+    "name": "cfmDownMEPQosShaperCIR",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the queue CIR."
+  },
+  "cfmDownMEPQosShaperProfile": {
+    "name": "cfmDownMEPQosShaperProfile",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object identifies the OID of cmQosQueueProfileIndex in the cmQosQueueProfileTable."
+  },
+  "cfmDownMEPQosShaperAdminState": {
+    "name": "cfmDownMEPQosShaperAdminState",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AdminState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object allows the management of the Shaper Administrative State. Only 'in-service' and 'management' states are allowed."
+  },
+  "cfmMepExcludedMepListTable": {
+    "name": "cfmMepExcludedMepListTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of configurable profile entries for CFM excluded mep list."
+  },
+  "cfmMepExcludedMepListEntry": {
+    "name": "cfmMepExcludedMepListEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IEEE8021-CFM-MIB",
+        "object": "dot1agCfmMdIndex",
+        "implied": 0
+      },
+      {
+        "module": "IEEE8021-CFM-MIB",
+        "object": "dot1agCfmMaIndex",
+        "implied": 0
+      },
+      {
+        "module": "IEEE8021-CFM-MIB",
+        "object": "dot1agCfmMepIdentifier",
+        "implied": 0
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepExcludedMepListIdentifier",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Excluded Remote Mep List for local Mep, not expected to receive OAM from these MEPs."
+  },
+  "cfmMepExcludedMepListIdentifier": {
+    "name": "cfmMepExcludedMepListIdentifier",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 8191
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A unique index associated with CfmMepExcludedMepListEntry."
+  },
+  "cfmMepExcludedMepListRowStatus": {
+    "name": "cfmMepExcludedMepListRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of cfmMepExcludedMepListRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with cfmMepExcludedMepListRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The cfmMepExcludedMepListRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "cfmMepLbrTable": {
+    "name": "cfmMepLbrTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of configurable profile entries for MepLbr."
+  },
+  "cfmMepLbrEntry": {
+    "name": "cfmMepLbrEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IEEE8021-CFM-MIB",
+        "object": "dot1agCfmMdIndex",
+        "implied": 0
+      },
+      {
+        "module": "IEEE8021-CFM-MIB",
+        "object": "dot1agCfmMaIndex",
+        "implied": 0
+      },
+      {
+        "module": "IEEE8021-CFM-MIB",
+        "object": "dot1agCfmMepIdentifier",
+        "implied": 0
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLbrMacAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "MEP LBR statistic table."
+  },
+  "cfmMepLbrMacAddress": {
+    "name": "cfmMepLbrMacAddress",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "MacAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Source Mac Address of LBR."
+  },
+  "cfmMepLbrMepId": {
+    "name": "cfmMepLbrMepId",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Remote MEP ID."
+  },
+  "cfmMepLbrInOrder": {
+    "name": "cfmMepLbrInOrder",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Total valid in-order LBR received."
+  },
+  "cfmMepLbrOutOfOder": {
+    "name": "cfmMepLbrOutOfOder",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PerfCounter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Total valid out of order LBR received."
+  },
+  "cfmMaCompTable": {
+    "name": "cfmMaCompTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.9",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A additional list of MA components."
+  },
+  "cfmMaCompEntry": {
+    "name": "cfmMaCompEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.9.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "cfmMaCompEntry",
+      "module": "F3-CFM-MIB",
+      "object": "dot1agCfmMaCompEntry"
+    },
+    "status": "current",
+    "description": "A list of additional maCompEntry."
+  },
+  "cfmMaCompIndex": {
+    "name": "cfmMaCompIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.9.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the maComp number value."
+  },
+  "cfmMaCompEntity": {
+    "name": "cfmMaCompEntity",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.1.9.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VariablePointer",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object represents the maComp entity, it is should be port or flow's oid."
+  },
+  "cfmExtSvcCompliances": {
+    "name": "cfmExtSvcCompliances",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.1",
+    "class": "objectidentity"
+  },
+  "cfmExtSvcGroups": {
+    "name": "cfmExtSvcGroups",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.2",
+    "class": "objectidentity"
+  },
+  "cfmExtCompliance": {
+    "name": "cfmExtCompliance",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cfmExtGroup",
+        "module": "F3-CFM-MIB"
+      },
+      {
+        "object": "cfmGenGroup",
+        "module": "F3-CFM-MIB"
+      },
+      {
+        "object": "cfmMepGroup",
+        "module": "F3-CFM-MIB"
+      },
+      {
+        "object": "cfmPortShaperGroup",
+        "module": "F3-CFM-MIB"
+      },
+      {
+        "object": "cfmServerMepGroup",
+        "module": "F3-CFM-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Describes the requirements for conformance to the CFM Extensions."
+  },
+  "cfmExtGroup": {
+    "name": "cfmExtGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmEthType"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMacAddress"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "slmMulticastMacAddress"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "slmOpcode"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "slrOpcode"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAdminState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisGenTriggerTypes"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisClientMdLevel"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisInterval"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisGenEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmTxCountAllPriosEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmRxCountAllPriosEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmDualEndedCountAllPriosEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmCountInProfileEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmTxPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepDmPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepRxCCMs"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepErrCCMs"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLLFTriggerTypes"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepDefects"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepTagEtherType"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepStatsAction"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLbmInterval"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperCIR"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperBufSize"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperAdminState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperTypeIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperCIR"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperBufSize"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperAdminState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAssociatedPort"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisClientMdLevel"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisInterval"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisGenEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepStorageType"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepRowStatus"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmDownMEPQosShaperIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmDownMEPQosShaperType"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmDownMEPQosShaperCIR"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmDownMEPQosShaperProfile"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmDownMEPQosShaperAdminState"
+      }
+    ],
+    "status": "deprecated",
+    "description": "******************THIS OBJECT GROUP IS NOW DEPRECATED ****************** A collection of objects used to identify CFM extension implementation compliance."
+  },
+  "cfmGenGroup": {
+    "name": "cfmGenGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmEthType"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMacAddress"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "slmMulticastMacAddress"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "slmOpcode"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "slrOpcode"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmSignalFailTriggers"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to identify CFM extension implementation compliance."
+  },
+  "cfmMepGroup": {
+    "name": "cfmMepGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAdminState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisGenTriggerTypes"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisClientMdLevel"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisInterval"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisGenEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAisPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmTxCountAllPriosEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmRxCountAllPriosEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmDualEndedCountAllPriosEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmCountInProfileEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLmTxPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepDmPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepRxCCMs"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepErrCCMs"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLLFTriggerTypes"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepDefects"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepTagEtherType"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepStatsAction"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepOperationalState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepSecondaryState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepSlmEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepExcludedMepListIdentifier"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepExcludedMepListRowStatus"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLbrMacAddress"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLbrMepId"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLbrInOrder"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepLbrOutOfOder"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMepAssociatedObject"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to identify additional CFM MEP functions."
+  },
+  "cfmPortShaperGroup": {
+    "name": "cfmPortShaperGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperCIR"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperBufSize"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmAccPortQosShaperAdminState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperTypeIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperCIR"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperBufSize"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmNetPortQosShaperAdminState"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to identify CFM Port Shaper functionality."
+  },
+  "cfmServerMepGroup": {
+    "name": "cfmServerMepGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAssociatedPort"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisClientMdLevel"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisInterval"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisGenEnabled"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAisPriority"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepStorageType"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepRowStatus"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepAdminState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepOperationalState"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmServerMepSecondaryState"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to identify CFM Server MEP functionality."
+  },
+  "cfmMaCompGroup": {
+    "name": "cfmMaCompGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.13.1.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMaCompIndex"
+      },
+      {
+        "module": "F3-CFM-MIB",
+        "object": "cfmMaCompEntity"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of additional objects used to show maComp."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/F3-CFM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:13:50 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "F3-CFM-MIB"
+  }
+}

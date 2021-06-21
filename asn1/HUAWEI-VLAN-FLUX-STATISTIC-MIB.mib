@@ -1,0 +1,233 @@
+-- ============================================================================
+-- Copyright (C) 2003 by  HUAWEI TECHNOLOGIES. All rights reserved.
+-- 
+-- Description:  
+-- Reference:  
+-- Version: V1.05
+-- History:
+-- ============================================================================
+
+	HUAWEI-VLAN-FLUX-STATISTIC-MIB DEFINITIONS ::= BEGIN
+ 
+		IMPORTS
+			Counter64		
+				FROM SNMPv2-SMI			
+			hwVlanMngObject, hwVlanIndex
+				FROM HUAWEI-VLAN-MIB;			
+--			MODULE-IDENTITY, OBJECT-IDENTITY			
+--				FROM SNMPv2-SMI	
+				
+--			
+-- hwVlanFlowAccountTable
+--
+		hwVlanFlowAccountTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwVlanFlowAccountEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"   "
+			::= { hwVlanMngObject 14 }
+			
+		hwVlanFlowAccountEntry OBJECT-TYPE
+		SYNTAX HwVlanFlowAccountEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"   "
+			INDEX { hwVlanIndex, hwInnerVlanID  }
+			::= { hwVlanFlowAccountTable 1 }
+			
+		HwVlanFlowAccountEntry ::=
+		SEQUENCE { 
+			hwInnerVlanID
+				INTEGER,
+			hwUpFlowAccountByte
+				Counter64,
+			hwDownFlowAccountByte
+				Counter64,
+			hwUpFlowAccountPacket
+				Counter64,
+			hwDownFlowAccountPacket
+				Counter64, 
+			hwUpStreamPacket
+				Counter64,  
+			hwDownStreamPacket
+				Counter64,
+			hwFlowAccountAdminStatus
+				INTEGER,
+			hwUpFlowAccountDiscardPacket
+				Counter64,
+			hwDownFlowAccountDiscardPacket
+				Counter64
+			 }
+
+		hwInnerVlanID OBJECT-TYPE
+			SYNTAX INTEGER (1..4095)
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is according to the label of a pvc when for vlan
+				with its attribute stacking, and it is represented by 
+				the number in the range 1 to 4095. If get the statistic
+				information for vlan marked by hwVlanIndex only, it
+				must be set to -1."
+			::= { hwVlanFlowAccountEntry 1 }
+			
+		hwUpFlowAccountByte OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of data flow from user to server, and 
+				sign how many octets have been transfered."
+			::= { hwVlanFlowAccountEntry 2 }
+			
+		hwDownFlowAccountByte OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of data flow from server to user, and 
+				sign how many octets have been received."
+			::= { hwVlanFlowAccountEntry 3 }
+			
+		hwUpFlowAccountPacket OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of data flow from user to server, and 
+				sign how many packets have been transfered, and they are
+				packets of ethernet."
+			::= { hwVlanFlowAccountEntry 4 }
+			
+		hwDownFlowAccountPacket OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of data flow from server to user, and 
+				sign how many packets have been received, and they are
+				packets of ethernet."
+			::= { hwVlanFlowAccountEntry 5 }       
+			
+		hwUpStreamPacket OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of data flow from user to server, and 
+				sign how many packets have been transfered, and they are
+				packets of ethernet."
+			::= { hwVlanFlowAccountEntry 6 }      
+			
+		hwDownStreamPacket OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of data flow from server to user, and 
+				sign how many packets have been received, and they are
+				packets of ethernet."
+			::= { hwVlanFlowAccountEntry 7 }
+			
+		hwFlowAccountAdminStatus OBJECT-TYPE
+			SYNTAX INTEGER
+				{
+				    reset(0),
+				    resetacl(1)
+				}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"the variable is used to decide which operation will be done
+				when set from SNMP. The supported operation now is reset, 
+				that is to clear the statistics of vlan to 0.
+				"
+			::= { hwVlanFlowAccountEntry 8 }
+
+		hwUpFlowAccountDiscardPacket OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of upstream data flow from user to server, and 
+				sign how many packets have been discarded, and they are
+				packets of ethernet."
+			::= { hwVlanFlowAccountEntry 9 }
+			
+		hwDownFlowAccountDiscardPacket OBJECT-TYPE
+			SYNTAX Counter64
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"It is statistic of downstream data flow from server to user, and 
+				sign how many packets have been discarded, and they are
+				packets of ethernet."
+			::= { hwVlanFlowAccountEntry 10 }
+
+--			
+-- hwVlanTrafficOccupiedTable
+--
+		hwVlanTrafficOccupiedTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwVlanTrafficOccupiedEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"The statistics of vlan, it is relate with hwVlanFlowAccountTable."
+			::= { hwVlanMngObject 65005 }
+			
+		hwVlanTrafficOccupiedEntry OBJECT-TYPE
+		SYNTAX HwVlanTrafficOccupiedEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"   "
+			INDEX { hwVlanIndex }
+			::= { hwVlanTrafficOccupiedTable 1 }
+			
+		HwVlanTrafficOccupiedEntry ::=
+		SEQUENCE { 
+			hwVlanUplinkTraffic
+				Unsigned32,
+			hwVlanDownTraffic 
+				Unsigned32,
+			hwVlanUplinkBandwidthOccupancyRate
+				Unsigned32,
+			hwVlanDownBandwidthOccupancyRate
+				Unsigned32
+			 }
+
+		hwVlanUplinkTraffic OBJECT-TYPE
+			SYNTAX Unsigned32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The uplink traffic of vlan(kbps)."
+			::= { hwVlanTrafficOccupiedEntry 1 }
+		
+		hwVlanDownTraffic OBJECT-TYPE
+			SYNTAX Unsigned32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The down traffic of vlan(kbps)."
+			::= { hwVlanTrafficOccupiedEntry 2 }
+			
+		hwVlanUplinkBandwidthOccupancyRate OBJECT-TYPE
+			SYNTAX Unsigned32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The occupancy rate of vlan uplink Bandwidth(percentage)."
+			::= { hwVlanTrafficOccupiedEntry 3 }
+		
+		hwVlanDownBandwidthOccupancyRate OBJECT-TYPE
+			SYNTAX Unsigned32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"The occupancy rate of vlan down Bandwidth(percentage)."
+			::= { hwVlanTrafficOccupiedEntry 4 }												
+	
+	END

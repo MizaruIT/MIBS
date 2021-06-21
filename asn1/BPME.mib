@@ -1,0 +1,251 @@
+--
+--MIB for Bird Technologies BPME
+--
+--Revision:	1.0 
+--Date:		December 1, 2004
+--Developed By: Tim O'Brien (TXRX Systems Inc)
+--		tobrien@txrx.com
+--
+--
+
+BPMEMIB DEFINITIONS ::= BEGIN
+
+
+IMPORTS
+	enterprises, IpAddress, Counter, TimeTicks
+		FROM RFC1155-SMI
+	OBJECT-TYPE
+		FROM RFC-1212
+	TRAP-TYPE
+		FROM RFC-1215
+	DisplayString
+		FROM RFC-1213;
+-----------------------------------------------------------------------------
+-- OID hierchy
+-----------------------------------------------------------------------------
+
+birdtech	    OBJECT IDENTIFIER ::= { enterprises 21581 }
+products	    OBJECT IDENTIFIER ::= { birdtech 1 }
+bpme		    OBJECT IDENTIFIER ::= { products 1 }
+measurement	    OBJECT IDENTIFIER ::= { bpme 1 }
+power		    OBJECT IDENTIFIER ::= { measurement 1 }
+calcMeas	    OBJECT IDENTIFIER ::= { measurement 2 }
+alarms		    OBJECT IDENTIFIER ::= { bpme 2 }
+powerAlarms	    OBJECT IDENTIFIER ::= { alarms 2 }
+calcAlarms	    OBJECT IDENTIFIER ::= { alarms 3 }
+settings	    OBJECT IDENTIFIER ::= { bpme 3 }
+system		    OBJECT IDENTIFIER ::= { bpme 4 }
+traps               OBJECT IDENTIFIER ::= { bpme 0 }
+firmware	    OBJECT IDENTIFIER ::= { system 1 }
+
+-- Bird MIB
+-- Parameters (Prefix ps)         
+
+fwdPwrmW OBJECT-TYPE
+	SYNTAX  	INTEGER(0..2000000000)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Forward Power in mW"
+::= { power 1 }
+
+fwdPwrdBm OBJECT-TYPE
+	SYNTAX  	INTEGER(0..100)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Forward Power in dBm"
+::= { power 2 }
+
+refPwrmW OBJECT-TYPE
+	SYNTAX  	INTEGER(0..2000000000)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Reflected Power in mW"
+::= { power 3 }
+
+refPwrdBm OBJECT-TYPE
+	SYNTAX  	INTEGER(0..100)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Reflected Power in dBm"
+::= { power 4 }
+
+VSWRx10 OBJECT-TYPE		
+	SYNTAX		INTEGER(0..100)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"VSWR value X10 (ie. vswr = ('VSWRx10' / 10):1)"
+::= { calcMeas 1 }
+
+retLoss	OBJECT-TYPE
+	SYNTAX		INTEGER(-40..0)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Return loss in dB"
+::= { calcMeas 2 }
+
+generalAlarm OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if any bpme alarms are present
+			 1 = alarm present
+			 2 = alarm not present"
+::= { alarms 1 }
+
+messageString OBJECT-TYPE
+	SYNTAX		DisplayString (SIZE (0..30))
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Message giving more detailed information on alarms."
+::= { alarms 4 } 
+
+highPwrAlarm OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if high forward power bpme alarm is present
+			 1 = alarm present
+			 0 = alarm not present"
+::= { powerAlarms 1 }
+
+lowPwrAlarm OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if low forward power bpme alarm is present
+			 1 = alarm present
+			 0 = alarm not present"
+::= { powerAlarms 2 }
+
+vswrAlarm OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if vswr bpme alarm is present
+			 1 = alarm present
+			 0 = alarm not present"
+::= { calcAlarms 1 }
+
+highPwrTrip OBJECT-TYPE
+	SYNTAX  	INTEGER(0..2000000000)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"High forward power trip point in mW"
+::= { settings 1 }
+
+highPwrAlarmEn OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if High power alarm is enabled
+			 1 = enabled  
+			 0 = not enabled"
+::= { settings 2 }
+
+lowPwrTrip OBJECT-TYPE
+	SYNTAX  	INTEGER(0..2000000000)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Low forward power trip point in mW"
+::= { settings 3 }
+
+lowPwrAlarmEn OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if Low power alarm is enabled
+			 1 = enabled  
+			 0 = not enabled"
+::= { settings 4 }
+
+vswrTripX10 OBJECT-TYPE
+	SYNTAX  	INTEGER(0..100)
+	ACCESS		read-only 
+	STATUS		mandatory
+	DESCRIPTION	"VSWR trip point X10 
+			 (ie. vswr = ('vswrTripx10' / 10):1)"
+::= { settings 5 }
+
+vswrAlarmOnZero OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if unit will report a VSWR alarm on zero (or very low) 
+			 power. 
+			 1 = High VSWR will cause an alarm at low power
+			 0 = High VSWR will not cause an alarm at low power"
+::= { settings 6 }
+
+alarmsLatch OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if alarms on the unit latch until manually cleared.
+			 1 = Alarms latch until manually cleared
+			 0 = Alarms don't latch and will clear when alarm 
+				    condition goes away."
+::= { settings 7 }
+
+masterAlarmEn OBJECT-TYPE
+	SYNTAX		INTEGER(0..1)
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Tells if master alarm is enabled (if disabled none of the 
+			    alarms are emabled
+			 1 = Low power, High power, and VSWR alarms are active 
+				if individually enabled. 
+			 0 = No alarms are enabled."
+::= { settings 8 }
+
+bpmeFirmware OBJECT-TYPE
+	SYNTAX		DisplayString (SIZE (0..30))
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Firmware information for BPME"
+::= { firmware 1 }
+
+xportFirmware OBJECT-TYPE
+	SYNTAX		DisplayString (SIZE (0..30))
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"Firmware information for xport"
+::= { firmware 2 }
+
+
+generalAlarmTrap TRAP-TYPE
+        ENTERPRISE traps 
+        VARIABLES   { messageString, highPwrAlarm, lowPwrAlarm, 
+                    vswrAlarm, masterAlarmEn, alarmsLatch }
+        DESCRIPTION
+          "This trap signals that the general Alarm on the 
+          BPME has been triggered or has been cleared."
+::= 1
+
+highPwrAlarmTrap TRAP-TYPE
+        ENTERPRISE traps 
+        VARIABLES   { messageString, fwdPwrmW, highPwrTrip,
+                    highPwrAlarmEn, masterAlarmEn, alarmsLatch }
+        DESCRIPTION
+          "This trap signals that the high power alarm on the
+          BPME has been triggered or has been cleared."
+::= 2
+
+lowPwrAlarmTrap TRAP-TYPE
+        ENTERPRISE traps 
+        VARIABLES   { messageString, fwdPwrmW, lowPwrTrip,
+                    lowPwrAlarmEn, masterAlarmEn, alarmsLatch }
+        DESCRIPTION
+          "This trap signals that the low power alarm on the
+          BPME has been triggered or has been cleared."
+::= 3
+
+vswrPwrAlarmTrap TRAP-TYPE
+        ENTERPRISE traps 
+        VARIABLES   { messageString, VSWRx10, vswrTripX10, 
+                    vswrAlarmOnZero, masterAlarmEn, alarmsLatch } 
+        DESCRIPTION
+          "This trap signals that the vswr power alarm on the
+          BPME has been triggered or has been cleared."
+::= 4
+
+END

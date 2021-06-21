@@ -1,0 +1,529 @@
+{
+  "imports": {
+    "class": "imports",
+    "ARUBAWIRED-NETWORKING-OID": [
+      "wndFeatures"
+    ],
+    "BRIDGE-MIB": [
+      "dot1dBasePortEntry"
+    ],
+    "IF-MIB": [
+      "InterfaceIndex",
+      "ifIndex"
+    ],
+    "Q-BRIDGE-MIB": [
+      "VlanId",
+      "VlanIndex",
+      "dot1qVlanStaticEntry"
+    ],
+    "SMON-MIB": [
+      "portCopyEntry"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "Counter64",
+      "Bits",
+      "Gauge32",
+      "MibIdentifier",
+      "Unsigned32",
+      "Integer32",
+      "OBJECT-TYPE",
+      "iso",
+      "TimeTicks"
+    ],
+    "SNMPv2-TC": [
+      "TimeStamp",
+      "DisplayString",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "arubaWiredLoopProtectMIB": {
+    "name": "arubaWiredLoopProtectMIB",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2017-11-02 00:00",
+        "description": "Initial revision."
+      }
+    ],
+    "lastupdated": "201711020000Z",
+    "organization": "HPE/Aruba Networking Division",
+    "contactinfo": "Hewlett-Packard Company 8000 Foothills Blvd. Roseville, CA 95747",
+    "description": "This MIB module contains HP proprietary extensions to the standard Loop Protect MIBs."
+  },
+  "ConfigStatus": {
+    "name": "ConfigStatus",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active": 1,
+          "notInService": 2,
+          "notReady": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Used to indicate the configuration status for a group of objects. 'active' means that the values of the related objects are currently in use by the device. 'notInService' indicates that the objects have been reconfigured in such a way that the values cannot take effect until after the next reboot of the device. 'notReady' indicates that the objects are not consistent with each other."
+  },
+  "VidList": {
+    "name": "VidList",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 512,
+            "max": 512
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "Each octet within this value specifies a set of eight VlanIIndex (VID), with the first octet specifying VIDs 1 through 8, the second octet specifying VIDs 9 through 16, etc. Within each octet, the most significant bit represents the lowest numbered VID, and the least significant bit represents the highest numbered VID. Thus, each VID is represented by a single bit within the value of this object. If that bit has a value of 1 then that VID is included in the set of VIDs; the VID is not included if its bit has a value of 0. This list represents the entire range of VlanIndex values defined in the scope of IEEE 802.1Q."
+  },
+  "arubaWiredLoopProtectObjects": {
+    "name": "arubaWiredLoopProtectObjects",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1",
+    "class": "objectidentity"
+  },
+  "LoopProtectReceiverAction": {
+    "name": "LoopProtectReceiverAction",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disableTx": 1,
+          "noDisable": 2,
+          "disableTxRx": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": " This TC describes the actions a port that receives a Loop Protection Protocol packet can take. The disableTx(1) enumeration indicates that the sender of the Loop Protect packet will be disabled. The noDisable(2) enumeration indicates that no port is to be disabled. The disableTxRx(3) enumeration indicates that the senders and receivers of the Loop Protect packets will be disabled."
+  },
+  "arubaWiredLoopProtect": {
+    "name": "arubaWiredLoopProtect",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5",
+    "class": "objectidentity"
+  },
+  "arubaWiredLoopProtectNotifications": {
+    "name": "arubaWiredLoopProtectNotifications",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.0",
+    "class": "objectidentity"
+  },
+  "arubaWiredLoopProtectBase": {
+    "name": "arubaWiredLoopProtectBase",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.1",
+    "class": "objectidentity"
+  },
+  "arubaWiredLoopProtectPort": {
+    "name": "arubaWiredLoopProtectPort",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2",
+    "class": "objectidentity"
+  },
+  "arubaWiredLoopProtectInterval": {
+    "name": "arubaWiredLoopProtectInterval",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 10
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The interval in seconds at which Loop Protection packets are transmitted. The default value is 5 seconds."
+  },
+  "arubaWiredLoopProtectTrapLoopDetectEnable": {
+    "name": "arubaWiredLoopProtectTrapLoopDetectEnable",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates whether notifications should be sent when a loop is detected on a port. By default this object will have a value of false(2)."
+  },
+  "arubaWiredLoopProtectEnableTimer": {
+    "name": "arubaWiredLoopProtectEnableTimer",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The time in seconds to wait before re-enabling a port disabled by Loop Protection. When a port is disabled by Loop Protection, a re-enable timer for the port is initialized. If the re-enable timer value is specified as zero seconds the port remains disabled, else the port is re-enabled after the specified time."
+  },
+  "arubaWiredLoopProtectMode": {
+    "name": "arubaWiredLoopProtectMode",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "port": 1,
+          "vlan": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "port",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object is used to configure the operational mode of Loop Protection feature. The Loop Protection feature can be configured to operate in port mode or VLAN mode."
+  },
+  "arubaWiredLoopProtectVIDList": {
+    "name": "arubaWiredLoopProtectVIDList",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VidList",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A list of VLANs on which Loop Protection is enabled."
+  },
+  "arubaWiredLoopProtectPortInterfaceIndex": {
+    "name": "arubaWiredLoopProtectPortInterfaceIndex",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The index value that uniquely identifies the interface to which this entry is applicable. The interface identified by a particular value of this index is the same interface as identified by the same value of the IF-MIB's ifIndex."
+  },
+  "arubaWiredLoopProtectPortEnable": {
+    "name": "arubaWiredLoopProtectPortEnable",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates whether the Loop Protection is enabled on a port. The default value is FALSE"
+  },
+  "arubaWiredLoopProtectPortLoopDetected": {
+    "name": "arubaWiredLoopProtectPortLoopDetected",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object will be set to TRUE when a loop is detected on the port. The value of this object will be reset to FALSE when the port's arubaWiredLoopProtectPortEnable is set to FALSE."
+  },
+  "arubaWiredLoopProtectPortLastLoopTime": {
+    "name": "arubaWiredLoopProtectPortLastLoopTime",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when a loop was last detected on this port. A value of 0 means that the timestamp has not been set."
+  },
+  "arubaWiredLoopProtectPortLoopCount": {
+    "name": "arubaWiredLoopProtectPortLoopCount",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object provides the number of loops detected on a Loop Protection enabled port. The value of this object is set to zero when Loop Protection is disabled on a port."
+  },
+  "arubaWiredLoopProtectPortReceiverAction": {
+    "name": "arubaWiredLoopProtectPortReceiverAction",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LoopProtectReceiverAction",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls the action taken when a Loop Protection packet is received on this port. When set to 'disableTx' the port that transmitted the packet is disabled. When set to 'noDisable' the transmitting port is not disabled. When set to 'disableTxRx' the ports transmitting and receiving the packets are disabled."
+  },
+  "arubaWiredLoopProtectLoopDetectedVlan": {
+    "name": "arubaWiredLoopProtectLoopDetectedVlan",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4096
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Refers to this object for the port on which loop is detected."
+  },
+  "arubaWiredLoopProtectPortVlanList": {
+    "name": "arubaWiredLoopProtectPortVlanList",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "VidList",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A list of VLANs for this interface in which Loop Protection is enabled."
+  },
+  "arubaWiredLoopProtectPortTable": {
+    "name": "arubaWiredLoopProtectPortTable",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Per-interface configuration for Loop Protection."
+  },
+  "arubaWiredLoopProtectPortEntry": {
+    "name": "arubaWiredLoopProtectPortEntry",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortInterfaceIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Loop Protection configuration information for a single port."
+  },
+  "arubaWiredLoopProtectLoopDetectedNotification": {
+    "name": "arubaWiredLoopProtectLoopDetectedNotification",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortLoopCount"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortReceiverAction"
+      }
+    ],
+    "status": "current",
+    "description": "A arubaWiredLoopProtectLoopDetectedNotification signifies that a loop is detected by the Loop Protection Protocol. Generation of this notification is controlled by arubaWiredLoopProtectTrapLoopDetectEnable. To prevent excessive notifications, this trap allows only one notifications every 30 seconds. Notifications that are missed due to this limitation are dropped and are not sent later."
+  },
+  "arubaWiredLoopProtectVlanLoopDetectedNotification": {
+    "name": "arubaWiredLoopProtectVlanLoopDetectedNotification",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortLoopCount"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortReceiverAction"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectLoopDetectedVlan"
+      }
+    ],
+    "status": "current",
+    "description": "A arubaWiredLoopProtectVlanLoopDetectedNotification signifies that a loop is detected by the Loop Protection feature while operating in VLAN mode. Generation of this notification is controlled by arubaWiredLoopProtectTrapLoopDetectEnable. To prevent excessive notifications, this trap allows only one notifications every 30 seconds. Notifications that are missed due to this limitation are dropped and are not sent later."
+  },
+  "arubaWiredLoopProtectConformance": {
+    "name": "arubaWiredLoopProtectConformance",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.3",
+    "class": "objectidentity"
+  },
+  "arubaWiredLoopProtectGroups": {
+    "name": "arubaWiredLoopProtectGroups",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.3.1",
+    "class": "objectidentity"
+  },
+  "arubaWiredLoopProtectCompliances": {
+    "name": "arubaWiredLoopProtectCompliances",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.3.2",
+    "class": "objectidentity"
+  },
+  "arubaWiredLoopProtectBaseGroup": {
+    "name": "arubaWiredLoopProtectBaseGroup",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.3.1.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectInterval"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectEnableTimer"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectTrapLoopDetectEnable"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortEnable"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortLoopDetected"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortLastLoopTime"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortLoopCount"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectPortReceiverAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing basic instrumentation and control of the HP Loop protection entity."
+  },
+  "arubaWiredLoopProtectVLANGroup": {
+    "name": "arubaWiredLoopProtectVLANGroup",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.3.1.10",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectMode"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectVIDList"
+      },
+      {
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB",
+        "object": "arubaWiredLoopProtectLoopDetectedVlan"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing support for Loop Protect per VLAN feature."
+  },
+  "arubaWiredLoopProtectCompliance": {
+    "name": "arubaWiredLoopProtectCompliance",
+    "oid": "1.3.6.1.4.1.47196.4.1.1.3.1.1.5.3.2.5",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "arubaWiredLoopProtectBaseGroup",
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB"
+      },
+      {
+        "object": "arubaWiredLoopProtectNotifications",
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB"
+      },
+      {
+        "object": "arubaWiredLoopProtectBaseGroup",
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB"
+      },
+      {
+        "object": "arubaWiredLoopProtectNotifications",
+        "module": "ARUBAWIRED-LOOPPROTECT-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for HP Switches with support for arubaWired loop protection objects."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ARUBAWIRED-LOOPPROTECT-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 19:55:15 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ARUBAWIRED-LOOPPROTECT-MIB"
+  }
+}

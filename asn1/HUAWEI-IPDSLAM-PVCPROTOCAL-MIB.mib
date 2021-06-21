@@ -1,0 +1,175 @@
+HUAWEI-IPDSLAM-PVCPROTOCAL-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	OBJECT-TYPE, MODULE-IDENTITY, NOTIFICATION-TYPE, IpAddress		
+		FROM SNMPv2-SMI	       
+		MacAddress                               
+		FROM SNMPv2-TC
+		hwIpdslamConnectIndex
+		FROM HUAWEI-ETHERLIKE-EXT-MIB
+		huaweiUtility			
+		FROM HUAWEI-MIB;      
+		 
+				
+hwIpDslamPvcProtocol MODULE-IDENTITY
+	LAST-UPDATED "200408300900Z"
+	ORGANIZATION "Fix-Net Dept, Huawei Technologies Co.,Ltd."
+	CONTACT-INFO 
+		"Floor 5 ,Block 4, R&D Building,
+		Huawei Longgang Production Base,
+		Shenzhen,   P.R.C.
+		http://www.huawei.com
+		Zip:518057
+		"
+	DESCRIPTION 
+		"huawei ipdslam PVC protocol table."
+    ::= { huaweiUtility 45  }
+    
+		
+		
+	-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	-- 定义PVC的封装协议类型表
+	-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++	
+	  hwIpDslamPvcProtocolTable OBJECT-TYPE
+	      SYNTAX      SEQUENCE OF HwIpDslamPvcProtocolEntry
+	      MAX-ACCESS  not-accessible
+	      STATUS      current
+	      DESCRIPTION
+	          "
+	          This table that PVCs be supported to configure protocal type.
+	          "
+	      ::= { hwIpDslamPvcProtocol 1 }
+
+	  hwIpDslamPvcProtocolEntry OBJECT-TYPE
+	      SYNTAX      HwIpDslamPvcProtocolEntry
+	      MAX-ACCESS  not-accessible
+	      STATUS      current
+	      DESCRIPTION
+	          "
+	          Defines a single PVC that be supported to configure protocal type.	          
+			  The hwIpdslamConnectIndex is the index of this table. At first, 
+         the value of hwIpdslamConnectIndex equals to the atmVcCrossConnectIndex.
+         Since the speciality of Single PVC Multi-service, the value of 
+         hwIpdslamConnectIndex becomes big. Actually the value of this table index
+         is atmVcCrossConnectIndex. "   
+              
+	      INDEX { hwIpdslamConnectIndex }
+	      ::= { hwIpDslamPvcProtocolTable 1 }
+
+	  HwIpDslamPvcProtocolEntry ::= SEQUENCE {
+			      hwIpDslamPvcProtocolType        INTEGER,
+			      hwIpDslamPvcProtocolSrcMac      MacAddress,
+			      hwIpDslamPvcProtocolDstMac      MacAddress,			      			    
+			      hwIpDslamPvcProtocolSrcIP       IpAddress,
+			      hwIpDslamPvcProtocolDstIP       IpAddress,
+			      hwIpDslamPvcProtocolSrcMode     INTEGER,			      
+			      hwIpDslamPvcProtocolPPPoASessionId Integer32,
+			      hwIpDslamPvcProtocolActualType  INTEGER
+			      			}
+	                                      
+	hwIpDslamPvcProtocolType OBJECT-TYPE
+	      SYNTAX  INTEGER {
+	      		      auto(1),
+		              llcBridge(2),
+		              llcPPP(3),
+		              llcIP(4),
+	                      vcmuxBridge(5),	                      
+	                      vcmuxPPP(6),	                      
+	                      vcmuxIP(7)
+	                  }
+	      MAX-ACCESS  read-create
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         The encapsulation type of PVC,the default is llc_bridge.
+                 "
+	      DEFVAL { llcBridge }
+	      ::= { hwIpDslamPvcProtocolEntry 1 }
+	      
+	hwIpDslamPvcProtocolSrcMac OBJECT-TYPE
+	      SYNTAX      MacAddress
+	      MAX-ACCESS  read-only
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         The source MAC address of PVC.
+                 "
+	      ::= { hwIpDslamPvcProtocolEntry 2 }
+	      
+	hwIpDslamPvcProtocolDstMac OBJECT-TYPE
+	      SYNTAX      MacAddress
+	      MAX-ACCESS  read-only
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         The destination MAC address of the PVC.
+                 "
+	      ::= { hwIpDslamPvcProtocolEntry 3 }      
+	      
+	      
+	      
+	hwIpDslamPvcProtocolSrcIP OBJECT-TYPE
+	      SYNTAX      IpAddress
+	      MAX-ACCESS  read-write
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         The protocal IP address of PVC.
+                 "
+	      ::= { hwIpDslamPvcProtocolEntry 4 }	
+		
+	      
+	hwIpDslamPvcProtocolDstIP OBJECT-TYPE
+	      SYNTAX      IpAddress
+	      MAX-ACCESS  read-write
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         The destination gateway IP address of static IP mode PVC.
+                 "
+	      ::= { hwIpDslamPvcProtocolEntry 5 }
+	      
+	hwIpDslamPvcProtocolSrcMode OBJECT-TYPE
+	      SYNTAX      INTEGER{
+                                 dynamicIP(1),
+		                   staticIP(2)
+		                 }
+	      MAX-ACCESS  read-only
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         The mode of fetching the protocal IP address of PVC.
+              	 "	      
+	      ::= { hwIpDslamPvcProtocolEntry 6 }		      
+	
+	
+      	hwIpDslamPvcProtocolPPPoASessionId OBJECT-TYPE
+	      SYNTAX      Integer32(0..65535)
+	      MAX-ACCESS  read-only
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         sessionid of the pvc.
+          	 "    	  
+	      ::= { hwIpDslamPvcProtocolEntry 7 }
+
+
+	hwIpDslamPvcProtocolActualType OBJECT-TYPE
+	      SYNTAX  INTEGER {
+	      		      bridge(1),
+		              llcPPP(2),
+		              llcIP(3),
+		              vcPPP(4),
+	                      llcBridge(5),	                      
+	                      vcmuxBridge(6),	                      
+	                      vcmuxIP(7)
+	                  }
+	      MAX-ACCESS  read-only
+	      STATUS      current
+	      DESCRIPTION
+	         "
+	         The actual encapsulation type of PVC.
+                 "
+	      ::= { hwIpDslamPvcProtocolEntry 8 }	      
+	      
+END

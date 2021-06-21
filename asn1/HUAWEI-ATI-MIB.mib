@@ -1,0 +1,453 @@
+-- =================================================================
+-- Copyright (C) 2003 by  HUAWEI TECHNOLOGIES. All rights reserved.
+--
+-- Description: Demonstrates how to maintain and config ATI ports
+-- Reference:   None
+-- Version:     V1.0    
+-- History:
+-- wangxinran, 2003-05-28, ATI MIB first define
+-- =================================================================
+
+HUAWEI-ATI-MIB DEFINITIONS ::= BEGIN
+ 
+        IMPORTS
+            huaweiUtility            
+                FROM HUAWEI-MIB            
+            ifIndex            
+                FROM IF-MIB            
+            OBJECT-TYPE, MODULE-IDENTITY            
+                FROM SNMPv2-SMI;
+    
+    
+        hwATI MODULE-IDENTITY 
+            LAST-UPDATED "200305280900Z"
+	     ORGANIZATION "Fix-Net Dept, Huawei Technologies Co.,Ltd."
+	     CONTACT-INFO 
+		"Floor 5, Block 4, R&D Building,
+		Huawei Longgang Production Base,
+		Shenzhen,  P.R.C.
+		http://www.huawei.com
+		Zip:518057
+		"
+            DESCRIPTION 
+                "The HUAWEI-ATI-MIB demonstrates how to maintain and config ATI ports"
+            ::= { huaweiUtility 27 }
+        
+        hwATIPortObjects      OBJECT IDENTIFIER  ::= { hwATI   1 }
+        hwATIPortTraps        OBJECT IDENTIFIER  ::= { hwATI   2 }
+
+        hwATIPortAlarmOids    OBJECT IDENTIFIER ::= { hwATIPortTraps 0 }
+        hwATIPortAlarmTraps   OBJECT IDENTIFIER ::= { hwATIPortTraps 1 }
+    
+    
+        hwATIPortConfigTable OBJECT-TYPE
+            SYNTAX SEQUENCE OF HwATIPortConfigEntry
+            MAX-ACCESS not-accessible
+            STATUS current
+            DESCRIPTION
+                " ATI port configuration table, the table supports ATI port attribue configuration , modification and query. "
+            ::= { hwATIPortObjects 1 }
+        
+        hwATIPortConfigEntry OBJECT-TYPE
+            SYNTAX HwATIPortConfigEntry
+            MAX-ACCESS not-accessible
+            STATUS current
+            DESCRIPTION
+                " ATI port configuration table, the table supports ATI port attribue configuration , modification and query. "
+            INDEX { ifIndex }
+            ::= { hwATIPortConfigTable 1 }
+        
+        HwATIPortConfigEntry ::=
+            SEQUENCE { 
+                hwATICfgWorkMode
+                    INTEGER,
+                hwATICfgUserLine
+                    INTEGER,
+                hwATICfgRecvGain
+                    INTEGER,
+                hwATICfgTransGain
+                    INTEGER,
+                hwATICfgUserName
+                    OCTET STRING
+             }
+
+        hwATICfgWorkMode OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+             ati1e1m(1),    -- 1E1M
+             ati2e2m(2)     -- 2E2M
+                }
+            MAX-ACCESS read-write
+            STATUS current
+            DESCRIPTION
+                " Work Mode  "
+            DEFVAL { 1 }
+            ::= { hwATIPortConfigEntry 1 }
+        
+        hwATICfgUserLine OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+            ati2w(1),   --  2Wire
+            ati4w(2)    --  4Wire
+                }
+            MAX-ACCESS read-write
+            STATUS current
+            DESCRIPTION
+                " User line work mode "
+            DEFVAL { 2 }
+            ::= { hwATIPortConfigEntry 2 }
+        
+        hwATICfgRecvGain OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+		rg1 (1)  ,  -- -20.0DB(1)
+		rg2 (2)  ,  -- -19.5DB(2)
+		rg3 (3)  ,  -- -19.0DB(3)
+		rg4 (4)  ,  -- -18.5DB(4)
+		rg5 (5)  ,  -- -18.0DB(5)
+		rg6 (6)  ,  -- -17.5DB(6)
+		rg7 (7)  ,  -- -17.0DB(7)
+		rg8 (8)  ,  -- -16.5DB(8)
+		rg9 (9)  ,  -- -16.0DB(9)
+		rg10(10) ,  -- -15.5DB(10)
+		rg11(11) ,  -- -15.0DB(11)
+		rg12(12) ,  -- -14.5DB(12)
+		rg13(13) ,  -- -14.0DB(13)
+		rg14(14) ,  -- -13.5DB(14)
+		rg15(15) ,  -- -13.0DB(15)
+		rg16(16) ,  -- -12.5DB(16)
+		rg17(17) ,  -- -12.0DB(17)
+		rg18(18) ,  -- -11.5DB(18)
+		rg19(19) ,  -- -11.0DB(19)
+		rg20(20) ,  -- -10.5DB(20)
+		rg21(21) ,  -- -10.0DB(21)
+		rg22(22) ,  -- - 9.5DB(22)
+		rg23(23) ,  -- - 9.0DB(23)
+		rg24(24) ,  -- - 8.5DB(24)
+		rg25(25) ,  -- - 8.0DB(25)
+		rg26(26) ,  -- - 7.5DB(26)
+		rg27(27) ,  -- - 7.0DB(27)
+		rg28(28) ,  -- - 6.5DB(28)
+		rg29(29) ,  -- - 6.0DB(29)
+		rg30(30) ,  -- - 5.5DB(30)
+		rg31(31) ,  -- - 5.0DB(31)
+		rg32(32) ,  -- - 4.5DB(32)
+		rg33(33) ,  -- - 4.0DB(33)
+		rg34(34) ,  -- - 3.5DB(34)
+		rg35(35) ,  -- - 3.0DB(35)
+		rg36(36) ,  -- - 2.5DB(36)
+		rg37(37) ,  -- - 2.0DB(37)
+		rg38(38) ,  -- - 1.5DB(38)
+		rg39(39) ,  -- - 1.0DB(39)
+		rg40(40) ,  -- - 0.5DB(40)
+		rg41(41) ,  --     0DB(41)
+		rg42(42) ,  -- + 0.5DB(42)
+		rg43(43) ,  -- + 1.0DB(43)
+		rg44(44)    -- + 1.5DB(44) 
+                }
+            MAX-ACCESS read-write
+            STATUS current
+            DESCRIPTION
+                " Recieve Gain "
+            DEFVAL { 42 }
+            ::= { hwATIPortConfigEntry 3 }
+        
+        hwATICfgTransGain OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+ 		tg1 (1)  ,  -- - 7.0DB(1)
+		tg2 (2)  ,  -- - 6.5DB(2)
+		tg3 (3)  ,  -- - 6.0DB(3)
+		tg4 (4)  ,  -- - 5.5DB(4)
+		tg5 (5)  ,  -- - 5.0DB(5)
+		tg6 (6)  ,  -- - 4.5DB(6)
+		tg7 (7)  ,  -- - 4.0DB(7)
+		tg8 (8)  ,  -- - 3.5DB(8)
+		tg9 (9)  ,  -- - 3.0DB(9)
+		tg10(10) ,  -- - 2.5DB(10)
+		tg11(11) ,  -- - 2.0DB(11)
+		tg12(12) ,  -- - 1.5DB(12)
+		tg13(13) ,  -- - 1.0DB(13)
+		tg14(14) ,  -- - 0.5DB(14)
+		tg15(15) ,  --     0DB(15)
+		tg16(16) ,  -- + 0.5DB(16)
+		tg17(17) ,  -- + 1.0DB(17)
+		tg18(18) ,  -- + 1.5DB(18)
+		tg19(19) ,  -- + 2.0DB(19)
+		tg20(20) ,  -- + 2.5DB(20)
+		tg21(21) ,  -- + 3.0DB(21)
+		tg22(22) ,  -- + 3.5DB(22)
+		tg23(23) ,  -- + 4.0DB(23)
+		tg24(24) ,  -- + 4.5DB(24)
+		tg25(25) ,  -- + 5.0DB(25)
+		tg26(26) ,  -- + 5.5DB(26)
+		tg27(27) ,  -- + 6.0DB(27)
+		tg28(28) ,  -- + 6.5DB(28)
+		tg29(29) ,  -- + 7.0DB(29)
+		tg30(30) ,  -- + 7.5DB(30)
+		tg31(31) ,  -- + 8.0DB(31)
+		tg32(32) ,  -- + 8.5DB(32)
+		tg33(33) ,  -- + 9.0DB(33)
+		tg34(34) ,  -- + 9.5DB(34)
+		tg35(35) ,  -- +10.0DB(35)
+		tg36(36) ,  -- +10.5DB(36)
+		tg37(37) ,  -- +11.0DB(37)
+		tg38(38) ,  -- +11.5DB(38)
+		tg39(39) ,  -- +12.0DB(39)
+		tg40(40) ,  -- +12.5DB(40)
+		tg41(41) ,  -- +13.0DB(41)
+		tg42(42) ,  -- +13.5DB(42)
+		tg43(43)    -- +14.0DB(43) 
+                }
+            MAX-ACCESS read-write
+            STATUS current
+            DESCRIPTION
+                " Transmit Gain "
+            DEFVAL { 13 }
+            ::= { hwATIPortConfigEntry 4 }
+        
+        hwATICfgUserName OBJECT-TYPE
+            SYNTAX OCTET STRING (SIZE (0..10))
+            MAX-ACCESS read-write
+            STATUS current
+            DESCRIPTION
+                " Port identification "
+            ::= { hwATIPortConfigEntry 5 }
+        
+        hwATIPortMaintainTable OBJECT-TYPE
+            SYNTAX SEQUENCE OF HwATIPortMaintainEntry
+            MAX-ACCESS not-accessible
+            STATUS current
+            DESCRIPTION
+                " ATI port maintain table, the table supports ATI port maintenance functions.
+                For example, port physical and service state query, port reset operation, port loopback operation, etc. "
+            ::= { hwATIPortObjects 2 }
+        
+        hwATIPortMaintainEntry OBJECT-TYPE
+            SYNTAX HwATIPortMaintainEntry
+            MAX-ACCESS not-accessible
+            STATUS current
+            DESCRIPTION
+                " ATI port maintain table, the table supports ATI port maintenance functions.
+                For example, port physical and service state query, port reset operation, port loopback operation, etc. "
+            INDEX { ifIndex }
+            ::= { hwATIPortMaintainTable 1 }
+        
+        HwATIPortMaintainEntry ::=
+            SEQUENCE { 
+                hwATIWorkMode
+                    INTEGER,
+                hwATIUserLine
+                    INTEGER,
+                hwATIRecvGain
+                    INTEGER,
+                hwATITransGain
+                    INTEGER,
+                hwATIUserName
+                    OCTET STRING,
+                hwATIOperStatus
+                    INTEGER,
+                hwATIServiceType
+                    INTEGER,
+                hwATIServiceState
+                    INTEGER,
+                hwATIAdminStatus
+                    INTEGER
+             }
+
+        hwATIWorkMode OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+              ati1e1m(1),   --  1E1M
+              ati2e2m(2)    --  2E2M
+                }
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " Work Mode  "
+            ::= { hwATIPortMaintainEntry 1 }
+        
+        hwATIUserLine OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+               ati2w(1),  -- 2Wire
+               ati4w(2)   -- 4Wire
+                }
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " User line work mode "
+            ::= { hwATIPortMaintainEntry 2 }
+        
+        hwATIRecvGain OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+		rg1 (1)  ,  -- -20.0DB(1)
+		rg2 (2)  ,  -- -19.5DB(2)
+		rg3 (3)  ,  -- -19.0DB(3)
+		rg4 (4)  ,  -- -18.5DB(4)
+		rg5 (5)  ,  -- -18.0DB(5)
+		rg6 (6)  ,  -- -17.5DB(6)
+		rg7 (7)  ,  -- -17.0DB(7)
+		rg8 (8)  ,  -- -16.5DB(8)
+		rg9 (9)  ,  -- -16.0DB(9)
+		rg10(10) ,  -- -15.5DB(10)
+		rg11(11) ,  -- -15.0DB(11)
+		rg12(12) ,  -- -14.5DB(12)
+		rg13(13) ,  -- -14.0DB(13)
+		rg14(14) ,  -- -13.5DB(14)
+		rg15(15) ,  -- -13.0DB(15)
+		rg16(16) ,  -- -12.5DB(16)
+		rg17(17) ,  -- -12.0DB(17)
+		rg18(18) ,  -- -11.5DB(18)
+		rg19(19) ,  -- -11.0DB(19)
+		rg20(20) ,  -- -10.5DB(20)
+		rg21(21) ,  -- -10.0DB(21)
+		rg22(22) ,  -- - 9.5DB(22)
+		rg23(23) ,  -- - 9.0DB(23)
+		rg24(24) ,  -- - 8.5DB(24)
+		rg25(25) ,  -- - 8.0DB(25)
+		rg26(26) ,  -- - 7.5DB(26)
+		rg27(27) ,  -- - 7.0DB(27)
+		rg28(28) ,  -- - 6.5DB(28)
+		rg29(29) ,  -- - 6.0DB(29)
+		rg30(30) ,  -- - 5.5DB(30)
+		rg31(31) ,  -- - 5.0DB(31)
+		rg32(32) ,  -- - 4.5DB(32)
+		rg33(33) ,  -- - 4.0DB(33)
+		rg34(34) ,  -- - 3.5DB(34)
+		rg35(35) ,  -- - 3.0DB(35)
+		rg36(36) ,  -- - 2.5DB(36)
+		rg37(37) ,  -- - 2.0DB(37)
+		rg38(38) ,  -- - 1.5DB(38)
+		rg39(39) ,  -- - 1.0DB(39)
+		rg40(40) ,  -- - 0.5DB(40)
+		rg41(41) ,  --     0DB(41)
+		rg42(42) ,  -- + 0.5DB(42)
+		rg43(43) ,  -- + 1.0DB(43)
+		rg44(44)    -- + 1.5DB(44) 
+                }
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " Recieve Gain "
+            ::= { hwATIPortMaintainEntry 3 }
+
+        hwATITransGain OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+		tg1 (1)  ,  -- - 7.0DB(1)
+		tg2 (2)  ,  -- - 6.5DB(2)
+		tg3 (3)  ,  -- - 6.0DB(3)
+		tg4 (4)  ,  -- - 5.5DB(4)
+		tg5 (5)  ,  -- - 5.0DB(5)
+		tg6 (6)  ,  -- - 4.5DB(6)
+		tg7 (7)  ,  -- - 4.0DB(7)
+		tg8 (8)  ,  -- - 3.5DB(8)
+		tg9 (9)  ,  -- - 3.0DB(9)
+		tg10(10) ,  -- - 2.5DB(10)
+		tg11(11) ,  -- - 2.0DB(11)
+		tg12(12) ,  -- - 1.5DB(12)
+		tg13(13) ,  -- - 1.0DB(13)
+		tg14(14) ,  -- - 0.5DB(14)
+		tg15(15) ,  --     0DB(15)
+		tg16(16) ,  -- + 0.5DB(16)
+		tg17(17) ,  -- + 1.0DB(17)
+		tg18(18) ,  -- + 1.5DB(18)
+		tg19(19) ,  -- + 2.0DB(19)
+		tg20(20) ,  -- + 2.5DB(20)
+		tg21(21) ,  -- + 3.0DB(21)
+		tg22(22) ,  -- + 3.5DB(22)
+		tg23(23) ,  -- + 4.0DB(23)
+		tg24(24) ,  -- + 4.5DB(24)
+		tg25(25) ,  -- + 5.0DB(25)
+		tg26(26) ,  -- + 5.5DB(26)
+		tg27(27) ,  -- + 6.0DB(27)
+		tg28(28) ,  -- + 6.5DB(28)
+		tg29(29) ,  -- + 7.0DB(29)
+		tg30(30) ,  -- + 7.5DB(30)
+		tg31(31) ,  -- + 8.0DB(31)
+		tg32(32) ,  -- + 8.5DB(32)
+		tg33(33) ,  -- + 9.0DB(33)
+		tg34(34) ,  -- + 9.5DB(34)
+		tg35(35) ,  -- +10.0DB(35)
+		tg36(36) ,  -- +10.5DB(36)
+		tg37(37) ,  -- +11.0DB(37)
+		tg38(38) ,  -- +11.5DB(38)
+		tg39(39) ,  -- +12.0DB(39)
+		tg40(40) ,  -- +12.5DB(40)
+		tg41(41) ,  -- +13.0DB(41)
+		tg42(42) ,  -- +13.5DB(42)
+		tg43(43)    -- +14.0DB(43) 
+                }
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " Transmit Gain "
+            ::= { hwATIPortMaintainEntry 4 }
+        
+        hwATIUserName OBJECT-TYPE
+            SYNTAX OCTET STRING (SIZE (0..10))
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " Port identification "
+            ::= { hwATIPortMaintainEntry 5 }
+        
+        hwATIOperStatus OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+            idle(1),      -- idle
+            busy(2),      -- busy
+            fault(3),     -- fault
+            localLoop(4), -- local loopback
+            remoteLoop(5) -- remote loopback
+                }
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " Port phycical state "
+            ::= { hwATIPortMaintainEntry 6 }
+        
+        hwATIServiceType OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+            null(1),       -- null
+            leaseLine(2),  -- lease line service
+            internalSpc(3) -- internal SPC service
+                }
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " Port service type "
+            ::= { hwATIPortMaintainEntry 7 }
+        
+        hwATIServiceState OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+           normal(1),   -- service is normal
+           abnormal(2)  -- service is abnormal 
+                }
+            MAX-ACCESS read-only
+            STATUS current
+            DESCRIPTION
+                " Port service state "
+            ::= { hwATIPortMaintainEntry 8 }
+        
+        hwATIAdminStatus OBJECT-TYPE
+            SYNTAX INTEGER
+                {
+            reset(1),      -- reset operation
+            localLoop(2),  -- port local loopback operation
+            remoteLoop(3), -- port remote loopback operation
+            cancelLoop(4)  -- cancel port loopback operation
+                }
+            MAX-ACCESS read-write
+            STATUS current
+            DESCRIPTION
+                " ATI Port Administration Status"
+            ::= { hwATIPortMaintainEntry 9 }
+        
+        
+    
+    END

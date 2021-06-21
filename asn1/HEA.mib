@@ -1,0 +1,2228 @@
+INVIDI-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    enterprises, Counter32, MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE
+        FROM SNMPv2-SMI
+    DisplayString, DateAndTime
+        FROM SNMPv2-TC;
+
+invidiMIB MODULE-IDENTITY
+    LAST-UPDATED "200801150000Z"
+    ORGANIZATION "Invidi Technologies Corporation"
+    CONTACT-INFO
+                "Invidi Technologies
+
+                750 College Road East
+                Princeton, NJ 08540
+                USA
+
+                609.759.3580"
+    DESCRIPTION
+            "MIB that defines the Invidi enterprise"
+    REVISION
+            "200801150000Z"
+    DESCRIPTION
+            "Initial"
+    ::= { enterprises 30307 }
+
+products OBJECT IDENTIFIER ::= { invidiMIB 1 }
+advatar OBJECT IDENTIFIER ::= { products 1 }
+notificationPrefix OBJECT IDENTIFIER ::= { advatar 0 }
+status OBJECT IDENTIFIER ::= { advatar 1 }
+bdmsInterface OBJECT IDENTIFIER ::= { advatar 2 }
+inBandDataMonitor OBJECT IDENTIFIER ::= { advatar 3 }
+plantInterface OBJECT IDENTIFIER ::= { advatar 4 }
+bandwidthMonitor OBJECT IDENTIFIER ::= { advatar 5 }
+setTopStatistics OBJECT IDENTIFIER ::= { advatar 6 }
+
+-- Status --
+
+StatusType ::= INTEGER
+{
+    normal   (0),
+    error    (1),
+    warning  (2)
+}
+
+bdmsInterfaceStatus OBJECT-TYPE
+    SYNTAX  StatusType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The overall status of the BDMS Interface."
+    ::= { status 1 }
+
+inBandDataMonitorStatus OBJECT-TYPE
+    SYNTAX  StatusType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The overall status of the Viewlist Server."
+    ::= { status 2 }
+
+plantInterfaceStatus OBJECT-TYPE
+    SYNTAX  StatusType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The overall status of the Splicer and Ad Inserter."
+    ::= { status 3 }
+
+bandwidthMonitorStatus OBJECT-TYPE
+    SYNTAX  StatusType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The overall status of Bandwidth used."
+    ::= { status 4 }
+
+setTopMonitorStatus OBJECT-TYPE
+    SYNTAX  StatusType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The overall status of Set Top Communications."
+    ::= { status 5 }
+
+-- Business Controller Interface --
+
+statisticsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF StatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for statistics."
+    ::= { bdmsInterface 1}
+
+statisticsEntry OBJECT-TYPE
+    SYNTAX     StatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry the counters for statistics."
+    INDEX { statisticsIndex }
+    ::= { statisticsTable 1 }
+
+InterfaceType ::= INTEGER
+{
+    breakWindows  (1),
+    adrs   (2),
+    assets  (3),
+    guideData (4),
+    dstbData (5),
+    verificationLogs (6),
+    scheduleLogs (7),
+    viewlistReportLogs (8),
+    impressions (9),
+    stbResponderList (10),
+    unknownSTBList (11),
+    advatarMonitorUsersList (12)
+}
+
+StatisticsEntry     ::= SEQUENCE {
+    statisticsIndex     InterfaceType,
+    successes           Counter32,
+    failures            Counter32,
+    total               Counter32,
+    recordCount         Counter32,
+    lastRequestTime     DisplayString,
+    lastSuccessTime     DisplayString,
+    lastFailureTime     DisplayString,
+    lastError           DisplayString
+}
+
+statisticsIndex     OBJECT-TYPE
+    SYNTAX  InterfaceType
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+        "Interface type index to statistics table"
+    ::= { statisticsEntry 1 }
+
+successes OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Counter for success"
+    ::= { statisticsEntry 2 }
+
+failures OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Counter for failures."
+    ::= { statisticsEntry 3 }
+
+total OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Counter for total."
+    ::= { statisticsEntry 4 }
+
+recordCount OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Counter for record count."
+    ::= { statisticsEntry 5 }
+
+lastRequestTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time stamp for the last request."
+    ::= { statisticsEntry 6 }
+
+lastSuccessTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time stamp for last success."
+    ::= { statisticsEntry 7 }
+
+lastFailureTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Timestamp for last failure."
+    ::= { statisticsEntry 8 }
+
+lastError OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Details of the lastError"
+    ::= { statisticsEntry 9 }
+
+-- In-band Data Monitor --
+
+viewlistTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF ViewlistStatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the viewlist statistics table."
+    ::= { inBandDataMonitor 1 }
+
+viewlistStatisticsEntry OBJECT-TYPE
+    SYNTAX     ViewlistStatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for viewlist statistics details."
+    INDEX { IMPLIED vlNetwork }
+    ::= { viewlistTable 1 }
+
+ViewlistStatisticsEntry ::= SEQUENCE {
+    vlNetwork         DisplayString,
+    vlZone            DisplayString,
+    vlSourceId        Counter32,
+    vlID              Counter32,
+    vlWindowID        Counter32,
+    vlLength          Counter32,
+    vlNumEntries      Counter32,
+    vlStartTime       DisplayString,
+    vlEndTime         DisplayString,
+    vlBreakPos        Counter32,
+    vlCueTime         DisplayString,
+    vlCueReceived     DisplayString,
+    vlAirTime         DisplayString,
+    vlExpectedEndTime DisplayString,
+    vlStatus          DisplayString
+}
+
+vlNetwork           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor network"
+    ::= { viewlistStatisticsEntry 1 }
+
+vlZone          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor zone"
+    ::= { viewlistStatisticsEntry 2 }
+
+vlSourceId OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor source ID"
+    ::= { viewlistStatisticsEntry 3 }
+
+vlID OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor ID"
+    ::= { viewlistStatisticsEntry 4 }
+
+vlWindowID OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor window ID"
+    ::= { viewlistStatisticsEntry 5 }
+
+vlLength OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor length"
+    ::= { viewlistStatisticsEntry 6 }
+
+vlNumEntries OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of descriptor row entries"
+    ::= { viewlistStatisticsEntry 7 }
+
+vlStartTime         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor start time"
+    ::= { viewlistStatisticsEntry 8 }
+
+vlEndTime           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor end time"
+    ::= { viewlistStatisticsEntry 9 }
+
+vlBreakPos OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor break position"
+    ::= { viewlistStatisticsEntry 10 }
+
+vlCueTime           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor cue time"
+    ::= { viewlistStatisticsEntry 11 }
+
+vlCueReceived           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor cue recieved"
+    ::= { viewlistStatisticsEntry 12 }
+
+vlAirTime           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor air time"
+    ::= { viewlistStatisticsEntry 13 }
+
+vlExpectedEndTime           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor expected end time"
+    ::= { viewlistStatisticsEntry 14 }
+
+vlStatus            OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor status"
+    ::= { viewlistStatisticsEntry 15 }
+
+cueStatisticsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CueStatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the cue tone statistics table."
+    ::= { inBandDataMonitor 2 }
+
+cueStatisticsEntry OBJECT-TYPE
+    SYNTAX     CueStatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for cue tone statistics details."
+    INDEX { IMPLIED qtReceived }
+    ::= { cueStatisticsTable 1 }
+
+CueStatisticsEntry  ::= SEQUENCE {
+    qtReceived      DisplayString,
+    qtCueTime       DisplayString,
+    qtTimeToInsert  DisplayString,
+    qtHost          DisplayString,
+    qtNetwork       DisplayString,
+    qtZone          DisplayString,
+    qtSourceId      Counter32,
+    qtID            Counter32,
+    qtStartTime     DisplayString,
+    qtEndTime       DisplayString,
+    qtBreakPos      Counter32,
+    qtStatus        DisplayString
+}
+
+qtReceived          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time cue tone was received"
+    ::= { cueStatisticsEntry 1 }
+
+qtCueTime           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time cue tone was sent"
+    ::= { cueStatisticsEntry 2 }
+
+qtTimeToInsert      OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time to insert"
+    ::= { cueStatisticsEntry 3 }
+
+qtHost              OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Host"
+    ::= { cueStatisticsEntry 4 }
+
+qtNetwork           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor network"
+    ::= { cueStatisticsEntry 5 }
+
+qtZone              OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor zone"
+    ::= { cueStatisticsEntry 6 }
+
+qtSourceId          OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor source ID"
+    ::= { cueStatisticsEntry 7 }
+
+qtID                OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor ID"
+    ::= { cueStatisticsEntry 8 }
+
+qtStartTime         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor start time"
+    ::= { cueStatisticsEntry 9 }
+
+qtEndTime           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor end time"
+    ::= { cueStatisticsEntry 10 }
+
+qtBreakPos          OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor break position"
+    ::= { cueStatisticsEntry 11 }
+
+qtStatus            OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor status"
+    ::= { cueStatisticsEntry 12 }
+
+unViewlistTable     OBJECT-TYPE
+    SYNTAX      SEQUENCE OF UNViewlistStatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the unplayed viewlist statistics table."
+    ::= { inBandDataMonitor 3 }
+
+unViewlistStatisticsEntry OBJECT-TYPE
+    SYNTAX     UNViewlistStatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for unplayed viewlist statistics details."
+    INDEX { IMPLIED unvlNetwork }
+    ::= { unViewlistTable 1 }
+
+UNViewlistStatisticsEntry   ::= SEQUENCE {
+    unvlNetwork         DisplayString,
+    unvlZone            DisplayString,
+    unvlSourceId        Counter32,
+    unvlID              Counter32,
+    unvlWindowID        Counter32,
+    unvlLength          Counter32,
+    unvlNumEntries      Counter32,
+    unvlStartTime       DisplayString,
+    unvlEndTime         DisplayString,
+    unvlBreakPos        Counter32,
+    unvlCueTime         DisplayString,
+    unvlCueReceived     DisplayString,
+    unvlAirTime         DisplayString,
+    unvlExpectedEndTime DisplayString,
+    unvlStatus          DisplayString
+}
+
+unvlNetwork         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor network"
+    ::= { unViewlistStatisticsEntry 1 }
+
+unvlZone            OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor zone"
+    ::= { unViewlistStatisticsEntry 2 }
+
+unvlSourceId        OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor source ID"
+    ::= { unViewlistStatisticsEntry 3 }
+
+unvlID              OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor ID"
+    ::= { unViewlistStatisticsEntry 4 }
+
+unvlWindowID        OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor window ID"
+    ::= { unViewlistStatisticsEntry 5 }
+
+unvlLength          OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor length"
+    ::= { unViewlistStatisticsEntry 6 }
+
+unvlNumEntries      OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of descriptor row entries"
+    ::= { unViewlistStatisticsEntry 7 }
+
+unvlStartTime       OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor start time"
+    ::= { unViewlistStatisticsEntry 8 }
+
+unvlEndTime         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor end time"
+    ::= { unViewlistStatisticsEntry 9 }
+
+unvlBreakPos        OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor break position"
+    ::= { unViewlistStatisticsEntry 10 }
+
+unvlCueTime         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor cue time"
+    ::= { unViewlistStatisticsEntry 11 }
+
+unvlCueReceived     OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor cue recieved"
+    ::= { unViewlistStatisticsEntry 12 }
+
+unvlAirTime         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor air time"
+    ::= { unViewlistStatisticsEntry 13 }
+
+unvlExpectedEndTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor expected end time"
+    ::= { unViewlistStatisticsEntry 14 }
+
+unvlStatus          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Descriptor status"
+    ::= { unViewlistStatisticsEntry 15 }
+
+discardedTable      OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DiscardedEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the discarded break window table."
+    ::= { inBandDataMonitor 4 }
+
+discardedEntry      OBJECT-TYPE
+    SYNTAX     DiscardedEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for discarded break window details."
+    INDEX { IMPLIED disNetwork }
+    ::= { discardedTable 1 }
+
+DiscardedEntry  ::= SEQUENCE {
+    disNetwork          DisplayString,
+    disZone             DisplayString,
+    disSourceId         Counter32,
+    disID               Counter32,
+    disWindowID         Counter32,
+    disLength           Counter32,
+    disNumEntries       Counter32,
+    disStartTime        DisplayString,
+    disEndTime          DisplayString,
+    disBreakPos         Counter32,
+    disCueTime          DisplayString,
+    disCueReceived      DisplayString,
+    disAirTime          DisplayString,
+    disExpectedEndTime  DisplayString,
+    disStatus           DisplayString
+}
+
+disNetwork          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Window Network"
+    ::= { discardedEntry 1 }
+
+disZone             OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Window Zone"
+    ::= { discardedEntry 2 }
+
+disSourceId         OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Window Source ID"
+    ::= { discardedEntry 3 }
+
+disID               OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break ID"
+    ::= { discardedEntry 4 }
+
+disWindowID         OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Window ID"
+    ::= { discardedEntry 5 }
+
+disLength           OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break Duration"
+    ::= { discardedEntry 6 }
+
+disNumEntries       OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of break row entries"
+    ::= { discardedEntry 7 }
+
+disStartTime        OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Window Start Time"
+    ::= { discardedEntry 8 }
+
+disEndTime          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Window End Time"
+    ::= { discardedEntry 9 }
+
+disBreakPos         OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break Position"
+    ::= { discardedEntry 10 }
+
+disCueTime          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break Cue Time"
+    ::= { discardedEntry 11 }
+
+disCueReceived      OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break Cue Recieved"
+    ::= { discardedEntry 12 }
+
+disAirTime          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break Air Time"
+    ::= { discardedEntry 13 }
+
+disExpectedEndTime  OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break Expected End Time"
+    ::= { discardedEntry 14 }
+
+disStatus           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Break Status"
+    ::= { discardedEntry 15 }
+
+AssetErrorEntry ::= SEQUENCE {
+    aeTime          DisplayString,
+    aeDescription       DisplayString
+}
+
+assetErrorTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF AssetErrorEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the asset error table."
+    ::= { inBandDataMonitor 5 }
+
+assetErrorEntry OBJECT-TYPE
+    SYNTAX     AssetErrorEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for asset error details."
+    INDEX { IMPLIED aeTime }
+    ::= { assetErrorTable 1 }
+
+AssetErrorEntry ::= SEQUENCE {
+    aeTime          DisplayString,
+    aeDescription       DisplayString
+}
+
+aeTime          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time asset error occurred"
+    ::= { assetErrorEntry 1 }
+
+aeDescription           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Description of asset error"
+    ::= { assetErrorEntry 2 }
+
+-- Plant Interface --
+
+adInserterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF AdInserterStatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the ad inserter statistics table."
+    ::= { plantInterface 1}
+
+adInserterStatisticsEntry OBJECT-TYPE
+    SYNTAX     AdInserterStatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for ad inserter statistics details."
+    INDEX { IMPLIED sourceId }
+    ::= { adInserterTable 1 }
+
+InserterStatType ::= INTEGER
+{
+    healthcheck  (1),
+    schedule   (2),
+    cueSent  (3),
+    snmpTrap (4),
+    registration (5)
+}
+
+AdInserterStatisticsEntry   ::= SEQUENCE {
+    adinsIndex         InserterStatType,
+    adinsName          DisplayString,
+    adinsStatus        DisplayString,
+    adinsSuccesses     Counter32,
+    adinsSuccessTime   DisplayString,
+    adinsFailures      Counter32,
+    adinsFailTime      DisplayString,
+    adinsError         DisplayString
+}
+
+adinsIndex      OBJECT-TYPE
+    SYNTAX  InserterStatType
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+        "Statistics type index to ad inserter table"
+    ::= { adInserterStatisticsEntry 1 }
+
+adinsName          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Ad Inserter name"
+    ::= { adInserterStatisticsEntry 2 }
+
+adinsStatus         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Ad inserter's current status"
+    ::= { adInserterStatisticsEntry 3 }
+
+adinsSuccesses OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of successful insertions"
+    ::= { adInserterStatisticsEntry 4 }
+
+adinsSuccessTime            OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time of last successful insertion"
+    ::= { adInserterStatisticsEntry 5 }
+
+adinsFailures OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of failed insertions"
+    ::= { adInserterStatisticsEntry 6 }
+
+adinsFailTime           OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Time of last unsuccessful insertion"
+    ::= { adInserterStatisticsEntry 7 }
+
+adinsError          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Reason for last failed insertion"
+    ::= { adInserterStatisticsEntry 8 }
+
+scte35Table OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Scte35ReceiverEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the SCTE35 receiver connection table."
+    ::= { plantInterface 2}
+
+scte35ReceiverEntry OBJECT-TYPE
+    SYNTAX     Scte35ReceiverEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for cue tone receiver connection details."
+    INDEX { IMPLIED scte35Name }
+    ::= { scte35Table 1 }
+
+Scte35ReceiverEntry ::= SEQUENCE {
+    scte35Name         DisplayString,
+    scte35Status       DisplayString,
+    scte35SuccessTime  DisplayString,
+    scte35FailTime     DisplayString,
+    scte35Error        DisplayString
+}
+
+scte35Name          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "SCTE35 receiver name"
+    ::= { scte35ReceiverEntry 1 }
+
+scte35Status        OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "SCTE35 receiver status"
+    ::= { scte35ReceiverEntry 2 }
+
+scte35SuccessTime   OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last successful connection to SCTE35 receiver"
+    ::= { scte35ReceiverEntry 3 }
+
+scte35FailTime      OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last failed connection to SCTE35 receiver"
+    ::= { scte35ReceiverEntry 4 }
+
+scte35Error         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Reason for last failed connection"
+    ::= { scte35ReceiverEntry 5 }
+
+cueToneTable    OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CueToneReceiverEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for the cue tone receiver connection table."
+    ::= { plantInterface 3}
+
+cueToneReceiverEntry OBJECT-TYPE
+    SYNTAX     CueToneReceiverEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for cue tone receiver connection details."
+    INDEX { IMPLIED sourceId }
+    ::= { cueToneTable 1 }
+
+CueToneReceiverEntry    ::= SEQUENCE {
+    sourceId            Counter32,
+    zone                DisplayString,
+    network             DisplayString,
+    receiverType        DisplayString,
+    receiverStatus      DisplayString,
+    cueFailTime         DisplayString,
+    cueReceiveTime      DisplayString,
+    primaryBreakTime    DisplayString,
+    primaryCueTime      DisplayString,
+    secondaryBreakTime  DisplayString,
+    secondaryCueTime    DisplayString
+}
+
+sourceId OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Network source id"
+    ::= { cueToneReceiverEntry 1 }
+
+zone            OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Network zone"
+    ::= { cueToneReceiverEntry 2 }
+
+network         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Network name"
+    ::= { cueToneReceiverEntry 3 }
+
+receiverType OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Type of cue tone receiver"
+    ::= { cueToneReceiverEntry 4 }
+
+receiverStatus OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Cue tone receiver state"
+    ::= { cueToneReceiverEntry 5 }
+
+cueFailTime         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last cue failure"
+    ::= { cueToneReceiverEntry 6 }
+
+cueReceiveTime          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last cue received"
+    ::= { cueToneReceiverEntry 7 }
+
+primaryBreakTime            OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "When last break desciptor sent from primary splicer"
+    ::= { cueToneReceiverEntry 8 }
+
+primaryCueTime          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "When last cue sent from primary splicer"
+    ::= { cueToneReceiverEntry 9 }
+
+secondaryBreakTime          OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "When last break desciptor sent from secondary splicer"
+    ::= { cueToneReceiverEntry 10 }
+
+secondaryCueTime            OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "When last cue sent from secondary splicer"
+    ::= { cueToneReceiverEntry 11 }
+
+-- Bandwidth Monitor --
+
+bandwidthMonitorTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF BandwidthMonitorEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for bandwidth monitor statistics."
+    ::= {bandwidthMonitor  1 }
+
+bandwidthMonitorEntry OBJECT-TYPE
+    SYNTAX     BandwidthMonitorEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for bandwidth monitor details."
+    INDEX { bandwidthMonitorIndex   }
+    ::= { bandwidthMonitorTable 1 }
+
+BandwidthMonitorIndexType ::= INTEGER
+{
+    inbandDescriptors  (1),
+    inbandCueTones   (2),
+    inbandVoteNow    (3),
+    inbandCumulative  (4),
+    inboundVotes (5),
+    inboundImpressions (6),
+    inboundMissedImpressions (7),
+    inboundExposedData (8),
+    inboundDataRequest (9),
+    inboundDataRequestRetries (10),
+    inboundCumulative (11),
+    outboundInteractiveData (12),
+    outboundInteractiveDataError (13),
+    outboundInteractiveAcks (14),
+    outboundInteractiveNacks (15),
+    outboundInteractiveCumulative (16),
+    outboundUplinkSpoolerAnnouncement (17),
+    outboundUplinkSpoolerEvent (18),
+    outboundUplinkSpoolerFilePackage (19),
+    outboundUplinkSpoolerCumulative (20),
+    outboundIfsData (21),
+    outboundIfsDataCumulative (22)
+}
+
+BandwidthMonitorEntry ::= SEQUENCE {
+    bandwidthMonitorIndex   BandwidthMonitorIndexType,
+    messageType     DisplayString,
+    bytesTransfered  Counter32,
+    messages        Counter32,
+    startTime       DisplayString,
+    averageRate     DisplayString,
+    lastMessageTimeAndSize      DisplayString
+}
+
+bandwidthMonitorIndex       OBJECT-TYPE
+    SYNTAX  BandwidthMonitorIndexType
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+        "Index to bandwidth monitor table"
+    ::= { bandwidthMonitorEntry 1 }
+
+messageType         OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "message type monitored"
+    ::= { bandwidthMonitorEntry 2 }
+
+bytesTransfered OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Count for bytes transfered."
+    ::= { bandwidthMonitorEntry 3 }
+
+messages OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Counter for messages."
+    ::= { bandwidthMonitorEntry 4 }
+
+startTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "start time."
+    ::= { bandwidthMonitorEntry 5 }
+
+averageRate OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "average rate"
+    ::= { bandwidthMonitorEntry 6 }
+
+lastMessageTimeAndSize OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last message time and size."
+    ::= {bandwidthMonitorEntry  7 }
+
+stbReturnTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF StbReturnEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for stb return statistics."
+    ::= { bandwidthMonitor 2 }
+
+stbReturnEntry OBJECT-TYPE
+    SYNTAX     StbReturnEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+           "Each entry for stb return details."
+    INDEX { IMPLIED numberOfConnectRetries }
+    ::= { stbReturnTable 1 }
+
+StbReturnEntry ::= SEQUENCE {
+        numberOfConnectRetries  Counter32,
+        numberOfResends         Counter32
+}
+
+numberOfConnectRetries OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of connect retries for STB return statistics."
+    ::= { stbReturnEntry 1 }
+
+numberOfResends OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of resends  for STB return statistics."
+    ::= { stbReturnEntry 2 }
+
+----------------------------start mib for tx win--------------------------
+
+transmissionWindowTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF TransmissionWindowEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "transmission window display"
+    ::= { bandwidthMonitor 3 }
+
+transmissionWindowEntry OBJECT-TYPE
+    SYNTAX     TransmissionWindowEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+           "Each entry for transmission window details."
+    INDEX { IMPLIED windowStart}
+    ::= { transmissionWindowTable 1 }
+
+TransmissionWindowEntry::= SEQUENCE {
+        windowStart     DisplayString,
+        packageType     DisplayString,
+        segment         Counter32,
+        size            Counter32,
+        packCreation        DisplayString,
+        spoolingStart       DisplayString,
+        spoolingEnd     DisplayString,
+        status          DisplayString
+}
+
+windowStart OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "segment number of each type of package"
+    ::= { transmissionWindowEntry 1 }
+
+packageType OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "package type"
+    ::= { transmissionWindowEntry 2 }
+
+
+segment OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "segment number of each type of package"
+    ::= { transmissionWindowEntry 3 }
+
+size OBJECT-TYPE
+    SYNTAX Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "size of each segment"
+    ::= { transmissionWindowEntry 4 }
+
+packCreation OBJECT-TYPE
+    SYNTAX DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "creation time of the segment"
+    ::= { transmissionWindowEntry 5 }
+
+spoolingStart OBJECT-TYPE
+    SYNTAX DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "time package segment should start spooling"
+    ::= { transmissionWindowEntry 6 }
+
+spoolingEnd OBJECT-TYPE
+    SYNTAX DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "time package segment should stop spooling"
+    ::= { transmissionWindowEntry 7 }
+
+status OBJECT-TYPE
+    SYNTAX DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "status of package processing"
+    ::= { transmissionWindowEntry 8 }
+----------------------------end mib for tx win--------------------------
+----------------------------start mib spooler status table--------------------------
+
+spoolerStatusTable OBJECT-TYPE     
+	SYNTAX 		SEQUENCE OF SpoolerStatusEntry
+	MAX-ACCESS 	not-accessible
+	STATUS		current
+    DESCRIPTION	
+    	"spooler status display."
+  	::= {bandwidthMonitor  4 }
+    
+spoolerStatusEntry OBJECT-TYPE
+	SYNTAX    SpoolerStatusEntry 
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for spooler status."
+	INDEX { spoolerStatusIndex }
+    ::= { spoolerStatusTable 1 }
+
+SpoolerStatusIndexType ::= INTEGER
+{
+   spoolerStatus1 	(1),
+   spoolerStatus2	(2),
+   spoolerStatus3	(3),
+   spoolerStatus4	(4),
+   spoolerStatus5	(5),
+   spoolerStatus6	(6)
+}
+    	
+SpoolerStatusEntry::= SEQUENCE {
+	spoolerStatusIndex 	SpoolerStatusIndexType ,  
+	spoolerStatusName	SpoolerStatusIndexType ,  
+	spoolerStatus		DisplayString,
+	successCount		Counter32,
+	lastSuccessTime		DisplayString,
+	failureCount		Counter32,
+	lastFailureTime		DisplayString,
+	lastError		DisplayString
+}
+
+spoolerStatusIndex	OBJECT-TYPE     
+    SYNTAX  SpoolerStatusIndexType 
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION
+        "Index to spooler status table"
+    ::= { spoolerStatusEntry 1 }      
+
+spooerStatusName	OBJECT-TYPE     
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "spooler status "
+    ::= { spoolerStatusEntry 2 }      
+
+spooerStatus	OBJECT-TYPE     
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "spooler status "
+    ::= { spoolerStatusEntry 3 }      
+    	
+successCount	OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "number of success."
+    ::= { spoolerStatusEntry 4 }     
+ 
+lastSuccessTime	OBJECT-TYPE
+    SYNTAX  DisplayString 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "last Success Time."
+    ::= { spoolerStatusEntry 5 }   
+    
+failureCount	OBJECT-TYPE
+    SYNTAX Counter32 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "failure Count."
+    ::= { spoolerStatusEntry 6 }   
+    
+lastFailureTime	OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "last Failure Time"
+    ::= { spoolerStatusEntry 7 }   
+    
+lastError OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "last Error."
+    ::= {spoolerStatusEntry 8 }   
+----------------------------end mib spooler status table--------------------------
+
+-- Set Top Statistics --
+
+setTopStatisticsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF SetTopStatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for set top statistics."
+    ::= { setTopStatistics 1 }
+
+setTopStatisticsEntry OBJECT-TYPE
+    SYNTAX     SetTopStatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for set top monitor details."
+    INDEX { IMPLIED boxID }
+    ::= { setTopStatisticsTable 1 }
+
+SetTopStatisticsEntry ::= SEQUENCE {
+    boxID           DisplayString,
+    messagesCount       Counter32,
+    exposedDateTime DisplayString,
+    dateRequestAndTime DisplayString,
+    lastAdPlayed    DisplayString,
+    returnStats     DisplayString,
+    lastMessage     DisplayString
+}
+
+boxID OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "settop box id in MAC address format"
+    ::= { setTopStatisticsEntry 1 }
+
+messagesCount OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Messages Count"
+    ::= { setTopStatisticsEntry 2 }
+
+exposedDateTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Exposed Date and Time"
+    ::= { setTopStatisticsEntry 3 }
+
+dateRequestAndTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Date request and time"
+    ::= { setTopStatisticsEntry 4 }
+
+lastAdPlayed OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last ad played time"
+    ::= { setTopStatisticsEntry 5 }
+
+returnStats OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Return stats time"
+    ::= { setTopStatisticsEntry 6 }
+
+lastMessage OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last Message time"
+    ::= { setTopStatisticsEntry 7 }
+
+unknownSetTopsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF UnknownSetTopsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Unknown set tops table entries"
+    ::= { setTopStatistics 2 }
+
+unknownSetTopsEntry OBJECT-TYPE
+    SYNTAX     UnknownSetTopsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for unknown set tops Entry."
+    INDEX { IMPLIED boxIDUnknown }
+    ::= { unknownSetTopsTable 1 }
+
+UnknownSetTopsEntry ::= SEQUENCE {
+    boxIDUnknown            DisplayString,
+    requestTime             DisplayString
+}
+
+boxIDUnknown OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "settop box id in MAC address format"
+    ::= { unknownSetTopsEntry 1 }
+
+requestTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Request time"
+    ::= { unknownSetTopsEntry 2 }
+
+clickStatisticsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF ClickStatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for click stream file statistics."
+    ::= { setTopStatistics 3 }
+
+clickStatisticsEntry OBJECT-TYPE
+    SYNTAX     ClickStatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for click stream file monitor details."
+    INDEX { IMPLIED statisticsIndex }
+    ::= { clickStatisticsTable 1 }
+
+ClickStatisticsEntry        ::= SEQUENCE {
+    clickStatus             DisplayString,
+    clickSuccesses          Counter32,
+    clickLastSuccessTime    DisplayString,
+    clickFailures           Counter32,
+    clickLastFailureTime    DisplayString,
+    clickLastError          DisplayString
+}
+
+clickStatus OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Status"
+    ::= { clickStatisticsEntry 1 }
+
+clickSuccesses OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of successful click file transactions"
+    ::= { clickStatisticsEntry 2 }
+
+clickLastSuccessTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last successful click file transactions"
+    ::= { clickStatisticsEntry 3 }
+
+clickFailures OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of failed click file transactions"
+    ::= { clickStatisticsEntry 4 }
+
+clickLastFailureTime OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last failed click file transactions"
+    ::= { clickStatisticsEntry 5 }
+
+clickLastError OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last click file error"
+    ::= { clickStatisticsEntry 6 }
+
+vmStatisticsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF VMstatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for viewer measurement statistics."
+    ::= { setTopStatistics 4 }
+
+vmStatisticsEntry OBJECT-TYPE
+    SYNTAX     VMstatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for viewer measurement monitor details."
+    INDEX { IMPLIED vmIP }
+    ::= { vmStatisticsTable 1 }
+
+VMstatisticsEntry ::= SEQUENCE {
+    vmIP            DisplayString,
+    vmRetrieval     Counter32,
+    vmSuccess       Counter32,
+    vmLastSuccess   DisplayString,
+    vmFailure       Counter32,
+    vmLastFailure   DisplayString,
+    vmLastError     DisplayString
+}
+
+vmIP OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Address of viewer measurement server"
+    ::= { vmStatisticsEntry 1 }
+
+vmRetrieval OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Number of adn retrievals from vm"
+    ::= { vmStatisticsEntry 2 }
+
+vmSuccess OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Success retrieval count"
+    ::= { vmStatisticsEntry 3 }
+
+vmLastSuccess OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last successful retrieval Date and Time"
+    ::= { vmStatisticsEntry 4 }
+
+vmFailure OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Failed retrieval count"
+    ::= { vmStatisticsEntry 5 }
+
+vmLastFailure OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last failed retrieval Date and Time"
+    ::= { vmStatisticsEntry 6 }
+
+vmLastError OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Last retrieval error"
+    ::= { vmStatisticsEntry 7 }
+
+adnStatisticsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF ADNstatisticsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The list of entries for ad notification statistics."
+    ::= { setTopStatistics 5 }
+
+adnStatisticsEntry OBJECT-TYPE
+    SYNTAX     ADNstatisticsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "Each entry for ad notification details."
+    INDEX { IMPLIED adnBoxID }
+    ::= { adnStatisticsTable 1 }
+
+ADNstatisticsEntry ::= SEQUENCE {
+    adnBoxID        DisplayString,
+    adnTotal        Counter32,
+    adnLastPlayed   DisplayString
+}
+
+adnBoxID OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Set top box"
+    ::= { adnStatisticsEntry 1 }
+
+adnTotal OBJECT-TYPE
+    SYNTAX  Counter32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "Total notifications"
+    ::= { adnStatisticsEntry 2 }
+
+adnLastPlayed OBJECT-TYPE
+    SYNTAX  DisplayString
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "When last ad played"
+    ::= { adnStatisticsEntry 3 }
+
+
+--
+-- Notification Objects
+--
+
+mibNotifications OBJECT IDENTIFIER ::= { notificationPrefix 0 }
+notificationObjects OBJECT IDENTIFIER ::= { notificationPrefix 1 }
+
+ipAddress OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "Hea IP address."
+    ::= { notificationObjects 1 }
+
+hostName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "Hea host name."
+    ::= { notificationObjects 2 }
+
+errorString OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  accessible-for-notify
+    STATUS      current
+    DESCRIPTION
+        "error string used in notification."
+    ::= { notificationObjects 3 }
+
+-- Notifications --
+
+advatarSystemFailure      NOTIFICATION-TYPE
+                          OBJECTS { hostName,
+                                    ipAddress,
+                                    errorString
+                                   }
+                          STATUS current
+                          DESCRIPTION
+                              "One of the advatar headend process stopped unexpectedly and restart failed"
+                          ::= { mibNotifications 1 }
+
+
+transferOfClickStreamFileFailed     NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "The Advatar Headend Adapter generates this error when it is unable to successfully compress and transfer the click stream files to the specified directory."
+                                    ::= { mibNotifications 2 }
+
+
+bdmsInterfaceError              NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "The Advatar Headend Adapter generates this error while connecting to BDMS"
+                                    ::= { mibNotifications 3 }
+
+
+adInserterErrors                NOTIFICATION-TYPE
+                                OBJECTS {       hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "Ad Inserter errors"
+                                    ::= { mibNotifications 4 }
+
+cueProcessingErrors                 NOTIFICATION-TYPE
+                                OBJECTS {       hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "Cue Processing errors"
+                                    ::= { mibNotifications 5 }
+
+
+viewListErrors                      NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "Viewlist errors"
+                                    ::= { mibNotifications 6 }
+
+advatarError                        NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "advatar status errors and resource errors"
+                                    ::= { mibNotifications 7 }
+
+assetError                      NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "asset error"
+                                    ::= { mibNotifications 8 }
+
+breakWindowDiscarded                NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "breakWindow discarded"
+                                    ::= { mibNotifications 9 }
+
+advatarSystemAlert                  NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "advatar system alert"
+                                    ::= { mibNotifications 10 }
+
+breakInterfaceError-breakWindows        NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-breakWindows"
+                                    ::= { mibNotifications 11 }
+
+bdmsIntefaceError-assets                NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-assets"
+                                    ::= { mibNotifications 12 }
+
+
+
+bdmsIntefaceError-adrs              NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-adrs"
+                                    ::= { mibNotifications 13 }
+
+
+bdmsIntefaceError-verificationLogs          NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-verficationLogs"
+                                    ::= { mibNotifications 14 }
+
+
+bdmsIntefaceError-scheduleLogs              NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-scheduleLogs"
+                                    ::= { mibNotifications 15 }
+
+
+bdmsIntefaceError-viewListReportLogs    NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-viewlistReportLogs"
+                                    ::= { mibNotifications 16 }
+
+
+bdmsIntefaceError-guideData                 NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-guideData"
+                                    ::= { mibNotifications 17 }
+
+bdmsIntefaceError-impressions               NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface
+                                        errors-errorType-impressions"
+                                    ::= { mibNotifications 18 }
+
+bdmsIntefaceError-dstbData          NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface
+                                        errors-errorType-dstbData"
+                                    ::= { mibNotifications 19 }
+
+bdmsIntefaceError-stdResponderList  NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface
+                                        errors-errorType-stdResponderList"
+                                    ::= { mibNotifications 20 }
+
+bdmsIntefaceError-unknownSTBList    NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface
+                                        errors-errorType-unknwonSTBList"
+                                    ::= { mibNotifications 21 }
+
+bdmsIntefaceError-advatarUsersList  NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "BDMS interface errors-errorType-advatarUsersList"
+                                    ::= { mibNotifications 22 }
+
+
+adInserterError-health  NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "AdInserterError-health "
+                                    ::= { mibNotifications 23 }
+
+adInserterError-schedulesWritten    NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "AdInserterError-schedulesWritten"
+                                    ::= { mibNotifications 24 }
+
+cueReceiverConnectionError   NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "CueReceiverConnectionError"
+                                    ::= { mibNotifications 25 }
+
+adInserterError-cueTonesSent    NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "AdInserterError-cueTonesSent"
+                                    ::= { mibNotifications 26 }
+
+adInserterError-snmpStatistics  NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "AdInserterError-snmpStatistics"
+                                    ::= { mibNotifications 27 }
+
+
+outOfBandError-spoolerConnection    NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "Out of Band Error - Spooler Destination Connection Error"
+                                    ::= { mibNotifications 28 }
+
+
+outOfBandWarning-spoolerWarning NOTIFICATION-TYPE
+                                    OBJECTS {   hostName,
+                                                ipAddress,
+                                                errorString
+                                            }
+                                    STATUS current
+                                    DESCRIPTION
+                                        "Out of Band Warning - Package Over Float"
+                                    ::= { mibNotifications 29 }
+outOfBandError-spoolerConfig NOTIFICATION-TYPE
+                                                OBJECTS {       hostName,
+                                                        ipAddress,
+                                                                                                errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "Out of Band Error - Announcement Configuration Error"
+                                                ::= { mibNotifications 30 }
+adnProcessingError NOTIFICATION-TYPE
+                                                OBJECTS {       hostName,
+                                                        ipAddress,
+                                                                                                errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "ADN Processing Error"
+                                                ::= { mibNotifications 31 }
+outOfBandError-spoolerPackCompose NOTIFICATION-TYPE
+                                                OBJECTS {       hostName,
+                                                        ipAddress,
+                                                                                                errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "Out of Band Error - File Package Composition Error"
+                                                ::= { mibNotifications 32 }
+outOfBandError-spoolerTxWinConfig NOTIFICATION-TYPE
+                                                OBJECTS {       hostName,
+                                                        ipAddress,
+                                                                                                errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "Out of Band Error - Transmission Window Configuration Error"
+                                                ::= { mibNotifications 33 }
+noBreaksReceivedFromBDMS NOTIFICATION-TYPE
+                                                OBJECTS { hostName,
+                                                          ipAddress,
+                                                          errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "Advatar Warning - No breaks were received from the BDMS"
+                                                ::= { mibNotifications 34 }
+advatarStarted NOTIFICATION-TYPE
+                                                OBJECTS { hostName,
+                                                          ipAddress,
+                                                          errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "Advatar was started"
+                                                ::= { mibNotifications 35 }
+advatarStopped NOTIFICATION-TYPE
+                                                OBJECTS { hostName,
+                                                          ipAddress,
+                                                          errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "Advatar was stopped"
+                                                ::= { mibNotifications 36 }
+noCueReceivedForWindow NOTIFICATION-TYPE
+                                                OBJECTS { hostName,
+                                                          ipAddress,
+                                                          errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "Advatar Warning - No cuetone was received for a window"
+                                                ::= { mibNotifications 37 }
+prostreamCommunicationError NOTIFICATION-TYPE
+                                                OBJECTS { hostName,
+                                                          ipAddress,
+                                                          errorString
+                                                        }
+                                                STATUS current
+                                                DESCRIPTION
+                                                "There was a communication error with the ProStream"
+                                                ::= { mibNotifications 38 }
+END

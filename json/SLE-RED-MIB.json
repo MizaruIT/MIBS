@@ -1,0 +1,585 @@
+{
+  "imports": {
+    "class": "imports",
+    "DASAN-SMI": [
+      "sleMgmt"
+    ],
+    "SLE-TC-MIB": [
+      "SleControlStatusType",
+      "SleControlRequestResultType"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Integer32",
+      "Bits",
+      "Counter32",
+      "iso",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "Counter64",
+      "MODULE-IDENTITY",
+      "TimeTicks",
+      "MibIdentifier",
+      "Unsigned32",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "sleRed": {
+    "name": "sleRed",
+    "oid": "1.3.6.1.4.1.6296.101.22",
+    "class": "moduleidentity",
+    "lastupdated": "200710192200Z",
+    "organization": "DASAN Networks.",
+    "contactinfo": "Contact-info.",
+    "description": "This MIB contains information to support active/standby control redundancy."
+  },
+  "SleRedBoardIdType": {
+    "name": "SleRedBoardIdType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "sfuA": 1,
+          "sfuB": 2
+        }
+      }
+    }
+  },
+  "SleRedModeType": {
+    "name": "SleRedModeType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "redundant": 1,
+          "standalone": 2
+        }
+      }
+    }
+  },
+  "SleRedFaultActionType": {
+    "name": "SleRedFaultActionType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "switchover": 1,
+          "log": 2,
+          "disable": 3
+        }
+      }
+    }
+  },
+  "SleRedReloadOSType": {
+    "name": "SleRedReloadOSType",
+    "class": "type",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "os1": 1,
+          "os2": 2,
+          "default": 3
+        }
+      }
+    }
+  },
+  "sleRedBase": {
+    "name": "sleRedBase",
+    "oid": "1.3.6.1.4.1.6296.101.22.1",
+    "class": "objectidentity"
+  },
+  "sleRedInfo": {
+    "name": "sleRedInfo",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1",
+    "class": "objectidentity"
+  },
+  "sleRedActiveBoard": {
+    "name": "sleRedActiveBoard",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleRedBoardIdType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indication of the actual service board identifier. Regardless of redundancy mode, it has actual service board id. "
+  },
+  "sleRedMode": {
+    "name": "sleRedMode",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleRedModeType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If two SFUs are installed in the system, it works as redundant mode. Otherwise, it works as standalone mode. "
+  },
+  "sleRedFaultCrashAction": {
+    "name": "sleRedFaultCrashAction",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleRedFaultActionType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If any software module is crashed, the given action is taken. For 'switchover' action, if the board is active and a standby board is available, 'switchover' is carried out. If a standby board is not available, just warning message is left. If it is a standby board, 'reset' is carried out. "
+  },
+  "sleRedFaultTimeoutAction": {
+    "name": "sleRedFaultTimeoutAction",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleRedFaultActionType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If any software module doesn't respond for healthcheck messages for the certain time, the given action is taken. For 'switchover' action, if the board is active and a standby board is available, 'switchover' is carried out. If a standby board is not available, just warning message is left. If it is a standby board, 'reset' is carried out. "
+  },
+  "sleRedFaultTimeout": {
+    "name": "sleRedFaultTimeout",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 5,
+            "max": 720000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Healthcheck timeout. If a software module doesn't respond for the given time, it is regarded as a timed-out module. (Unit: second, default is '5') "
+  },
+  "sleRedActivePrevState": {
+    "name": "sleRedActivePrevState",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "activeInit": 0,
+          "singleActiveReady": 1,
+          "versionReport": 2,
+          "softwareXfer": 3,
+          "softwareXferDone": 4,
+          "configXfer": 5,
+          "configXferDone": 6,
+          "stateXfer": 7,
+          "activeReady": 8,
+          "disconnectStandby": 9,
+          "standbyWait": 10,
+          "versionCheck": 11,
+          "updateMac": 12,
+          "softwareSync": 13,
+          "softwareSyncDone": 14,
+          "configSync": 15,
+          "configSyncDone": 16,
+          "startupSync": 17,
+          "standbyReady": 18,
+          "standbyReset": 19
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Previous state of active board."
+  },
+  "sleRedActiveCurrState": {
+    "name": "sleRedActiveCurrState",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "activeInit": 0,
+          "singleActiveReady": 1,
+          "versionReport": 2,
+          "softwareXfer": 3,
+          "softwareXferDone": 4,
+          "configXfer": 5,
+          "configXferDone": 6,
+          "stateXfer": 7,
+          "activeReady": 8,
+          "disconnectStandby": 9,
+          "standbyWait": 10,
+          "versionCheck": 11,
+          "updateMac": 12,
+          "softwareSync": 13,
+          "softwareSyncDone": 14,
+          "configSync": 15,
+          "configSyncDone": 16,
+          "startupSync": 17,
+          "standbyReady": 18,
+          "standbyReset": 19
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Current state of active board."
+  },
+  "sleRedControl": {
+    "name": "sleRedControl",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2",
+    "class": "objectidentity"
+  },
+  "sleRedControlRequest": {
+    "name": "sleRedControlRequest",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "reloadStandby": 1,
+          "switchover": 2,
+          "setFaultMonitor": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "System commands related to control redundancy function. "
+  },
+  "sleRedControlStatus": {
+    "name": "sleRedControlStatus",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlStatusType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The status of a user command. "
+  },
+  "sleRedControlTimer": {
+    "name": "sleRedControlTimer",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum wait time for the manager for a long running user command. "
+  },
+  "sleRedControlTimeStamp": {
+    "name": "sleRedControlTimeStamp",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp of the last command (end of command)."
+  },
+  "sleRedControlReqResult": {
+    "name": "sleRedControlReqResult",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleControlRequestResultType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The result of the last user command."
+  },
+  "sleRedControlReloadOS": {
+    "name": "sleRedControlReloadOS",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleRedReloadOSType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "A mate board is reloaded with the given os. If 'default' is given, the board is reloaded with 'default' OS. "
+  },
+  "sleRedControlFaultCrashAction": {
+    "name": "sleRedControlFaultCrashAction",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleRedFaultActionType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If any software module is crashed, the given action is taken. For 'switchover' action, if the board is active and a standby board is available, 'switchover' is carried out. If a standby board is not available, just warning message is left. If it is a standby board, 'reset' is carried out. "
+  },
+  "sleRedControlFaultTimeoutAction": {
+    "name": "sleRedControlFaultTimeoutAction",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SleRedFaultActionType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If any software module doesn't respond for healthcheck messages for the certain time, the given action is taken. For 'switchover' action, if the board is active and a standby board is available, 'switchover' is carried out. If a standby board is not available, just warning message is left. If it is a standby board, 'reset' is carried out. "
+  },
+  "sleRedControlFaultTimeout": {
+    "name": "sleRedControlFaultTimeout",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.2.9",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 5,
+            "max": 720000
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Healthcheck timeout. If a software module doesn't respond for the given time, it is regarded as a timed-out module. (Unit: second, default is '5') "
+  },
+  "sleRedNotification": {
+    "name": "sleRedNotification",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.3",
+    "class": "objectidentity"
+  },
+  "sleRedMateReloadRequested": {
+    "name": "sleRedMateReloadRequested",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.3.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlRequest"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlTimeStamp"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlReqResult"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedActiveBoard"
+      }
+    ],
+    "status": "current",
+    "description": "A new active SFU indication"
+  },
+  "sleRedSwitchoverRequested": {
+    "name": "sleRedSwitchoverRequested",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlRequest"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlTimeStamp"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlReqResult"
+      }
+    ],
+    "status": "current",
+    "description": "The system redundancy mode has been changed. A standby board is pluged out or in."
+  },
+  "sleRedFaultMonitorChanged": {
+    "name": "sleRedFaultMonitorChanged",
+    "oid": "1.3.6.1.4.1.6296.101.22.1.3.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlRequest"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlTimeStamp"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlReqResult"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlFaultCrashAction"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlFaultTimeoutAction"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlFaultTimeout"
+      }
+    ],
+    "status": "current",
+    "description": "Fault monitor configuration has been changed."
+  },
+  "sleRedGroup": {
+    "name": "sleRedGroup",
+    "oid": "1.3.6.1.4.1.6296.101.22.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedActiveBoard"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedMode"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedFaultCrashAction"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedFaultTimeoutAction"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedFaultTimeout"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlStatus"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlTimer"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlTimeStamp"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlReqResult"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlReloadOS"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlFaultCrashAction"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlFaultTimeoutAction"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedActivePrevState"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedActiveCurrState"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlFaultTimeout"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedControlRequest"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "sleRedNotificationGroup": {
+    "name": "sleRedNotificationGroup",
+    "oid": "1.3.6.1.4.1.6296.101.22.3",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedMateReloadRequested"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedSwitchoverRequested"
+      },
+      {
+        "module": "SLE-RED-MIB",
+        "object": "sleRedFaultMonitorChanged"
+      }
+    ],
+    "status": "current",
+    "description": "Description."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/SLE-RED-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:23:30 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "SLE-RED-MIB"
+  }
+}

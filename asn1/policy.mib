@@ -1,0 +1,71 @@
+	POLICY-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS
+		MODULE-IDENTITY,OBJECT-TYPE,NOTIFICATION-TYPE,Integer32
+			FROM SNMPv2-SMI
+		TEXTUAL-CONVENTION,TimeStamp,DisplayString
+			FROM SNMPv2-TC
+		MODULE-COMPLIANCE,OBJECT-GROUP
+			FROM SNMPv2-CONF
+		blueCoatMgmt
+			 FROM BLUECOAT-MIB;
+
+	devicePolicyMIB MODULE-IDENTITY
+		LAST-UPDATED "0208280300Z"
+		ORGANIZATION "BlueCoat, Inc."
+		CONTACT-INFO
+		"support@bluecoat.com"
+		DESCRIPTION
+			"The Policy-MIB is used to monitor
+			policy violations."
+		::= { blueCoatMgmt 6 }
+
+devicePolicyMIBObjects
+		OBJECT IDENTIFIER ::= { devicePolicyMIB 1 }
+
+devicePolicyMIBNotifications
+		OBJECT IDENTIFIER ::= { devicePolicyMIB 2 }
+
+--
+-- Textual conventions
+--
+     PolicyMessageString ::= TEXTUAL-CONVENTION
+       DISPLAY-HINT "255a"
+       STATUS      current
+       DESCRIPTION
+           "The message that the user would enter while setting the 
+            policy."
+       SYNTAX      OCTET STRING (SIZE (0..MAX))
+
+--
+-- MIB variables
+--
+
+devicePolicyValues
+	OBJECT IDENTIFIER ::= { devicePolicyMIBObjects 1 }
+
+devicePolicyMessage OBJECT-TYPE
+	SYNTAX		PolicyMessageString
+	MAX-ACCESS	not-accessible
+	STATUS		current
+	DESCRIPTION
+			"The custom message the user entered for this Policy"
+
+	::= { devicePolicyValues 1 }
+
+--
+-- notifications
+--
+
+devicePolicyTrap NOTIFICATION-TYPE
+	OBJECTS { devicePolicyMessage }
+	STATUS current
+	DESCRIPTION
+		"A notification is generated when the policy triggers it"
+
+	::= { devicePolicyMIBNotifications 1 }
+
+
+END
+
+

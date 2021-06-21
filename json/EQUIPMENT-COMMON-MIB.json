@@ -1,0 +1,748 @@
+{
+  "imports": {
+    "class": "imports",
+    "DWI-HARMONY-PRIVATE-MIB": [
+      "equipmentCommon"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "Counter32",
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "Gauge32",
+      "MODULE-IDENTITY",
+      "Bits",
+      "NOTIFICATION-TYPE",
+      "Unsigned32",
+      "iso",
+      "MibIdentifier",
+      "Counter64",
+      "TimeTicks"
+    ],
+    "SNMPv2-TC": [
+      "DateAndTime",
+      "TEXTUAL-CONVENTION",
+      "TimeStamp",
+      "DisplayString"
+    ]
+  },
+  "equipmentCommonMib": {
+    "name": "equipmentCommonMib",
+    "oid": "1.3.6.1.4.1.7262.20.100",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2009-01-21 00:00",
+        "description": "Initial Revision"
+      },
+      {
+        "revision": "2015-01-05 16:15",
+        "description": "Corrected EquipmentAlarmActiveTable index order."
+      }
+    ],
+    "lastupdated": "200901210000Z",
+    "organization": "DragonWave Inc.",
+    "description": "This MIB Module defines a notification log mechanism and a current alarm list."
+  },
+  "EnableType": {
+    "name": "EnableType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "disabled": 0,
+          "enabled": 1
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enabled/Disabled"
+  },
+  "equipmentCommonObjects": {
+    "name": "equipmentCommonObjects",
+    "oid": "1.3.6.1.4.1.7262.20.1",
+    "class": "objectidentity"
+  },
+  "equipmentConfigLog": {
+    "name": "equipmentConfigLog",
+    "oid": "1.3.6.1.4.1.7262.20.1.1",
+    "class": "objectidentity"
+  },
+  "equipmentLog": {
+    "name": "equipmentLog",
+    "oid": "1.3.6.1.4.1.7262.20.1.2",
+    "class": "objectidentity"
+  },
+  "equipmentAlarmList": {
+    "name": "equipmentAlarmList",
+    "oid": "1.3.6.1.4.1.7262.20.1.3",
+    "class": "objectidentity"
+  },
+  "equipmentSnmpTrap": {
+    "name": "equipmentSnmpTrap",
+    "oid": "1.3.6.1.4.1.7262.20.1.4",
+    "class": "objectidentity"
+  },
+  "equipmentPseudoEventsObjects": {
+    "name": "equipmentPseudoEventsObjects",
+    "oid": "1.3.6.1.4.1.7262.20.2",
+    "class": "objectidentity"
+  },
+  "equipmentMirrorObjects": {
+    "name": "equipmentMirrorObjects",
+    "oid": "1.3.6.1.4.1.7262.20.3",
+    "class": "objectidentity"
+  },
+  "equipmentEventLogEntryLimit": {
+    "name": "equipmentEventLogEntryLimit",
+    "oid": "1.3.6.1.4.1.7262.20.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 4096,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum number of notification entries that may be held in EventLogTable."
+  },
+  "equipmentEventLogLastEntry": {
+    "name": "equipmentEventLogLastEntry",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of equipmentEventLogIndex at the time of the last creation of an entry in the equipmentEventLogTable."
+  },
+  "equipmentEventLogTable": {
+    "name": "equipmentEventLogTable",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of Notification log entries."
+  },
+  "equipmentEventLogEntry": {
+    "name": "equipmentEventLogEntry",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentEventLogIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A Notification log entry. Entries appear in this table when Notifications occur. They are removed to make way for new entries due to lack of resources or the values of equipmentEventLogEntryLimit.If adding an entry would exceed equipmentEventLogEntryLimit the oldest entry in that log SHOULD be removed to make room for the new one."
+  },
+  "equipmentEventLogIndex": {
+    "name": "equipmentEventLogIndex",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A monotonically increasing integer for the sole purpose of indexing entries within the log. When it reaches the maximum value,the agent wraps the value back to 1. This number should correspond to the number of notifications sent by the agent."
+  },
+  "equipmentEventLogTime": {
+    "name": "equipmentEventLogTime",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when the entry was placed in the log."
+  },
+  "equipmentEventLogDateAndTime": {
+    "name": "equipmentEventLogDateAndTime",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The local date and time when the entry was logged, useful when browsing the MIB."
+  },
+  "equipmentEventLogNotificationID": {
+    "name": "equipmentEventLogNotificationID",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The NOTIFICATION-TYPE object identifier of the Notification that occurred."
+  },
+  "equipmentEventLogVariables": {
+    "name": "equipmentEventLogVariables",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of variables in equipmentEventLogVariableTable for this logged notification."
+  },
+  "equipmentEventLogVariableTable": {
+    "name": "equipmentEventLogVariableTable",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of variables to go with Notification log entries."
+  },
+  "equipmentEventLogVariableEntry": {
+    "name": "equipmentEventLogVariableEntry",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentEventLogIndex",
+        "implied": 0
+      },
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentEventLogVariableIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A Notification log entry variable. Entries appear in this table when there are variables in the varbind list of a Notification in equipmentEventLogTable."
+  },
+  "equipmentEventLogVariableIndex": {
+    "name": "equipmentEventLogVariableIndex",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A monotonically increasing integer, starting at 1 for a given equipmentEventLogIndex, for indexing variables within the logged Event Notification."
+  },
+  "equipmentEventLogVariableID": {
+    "name": "equipmentEventLogVariableID",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The variable's object identifier."
+  },
+  "equipmentEventLogVariableValueType": {
+    "name": "equipmentEventLogVariableValueType",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "counter32": 1,
+          "unsigned32": 2,
+          "timeTicks": 3,
+          "integer32": 4,
+          "ipAddress": 5,
+          "octetString": 6,
+          "objectId": 7,
+          "counter64": 8
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of the value. One and only one of the value objects that follow must be instantiated, based on this type."
+  },
+  "equipmentEventLogVariableCounter32Val": {
+    "name": "equipmentEventLogVariableCounter32Val",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'counter32'."
+  },
+  "equipmentEventLogVariableUnsigned32Val": {
+    "name": "equipmentEventLogVariableUnsigned32Val",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'unsigned32'."
+  },
+  "equipmentEventLogVariableTimeTicksVal": {
+    "name": "equipmentEventLogVariableTimeTicksVal",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'timeTicks'."
+  },
+  "equipmentEventLogVariableInteger32Val": {
+    "name": "equipmentEventLogVariableInteger32Val",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'integer32'."
+  },
+  "equipmentEventLogVariableOctetStringVal": {
+    "name": "equipmentEventLogVariableOctetStringVal",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'octetString'."
+  },
+  "equipmentEventLogVariableIpAddressVal": {
+    "name": "equipmentEventLogVariableIpAddressVal",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'ipAddress'. Although this seems to be unfriendly for IPv6, we have to recognize that there are a number of older MIBs that do contain an IPv4 format address, known as IpAddress. IPv6 addresses are represented using TAddress or InetAddress, and so the underlying datatype is OCTET STRING, and their value would be stored in the equipmentEventLogVariableOctetStringVal column."
+  },
+  "equipmentEventLogVariableOidVal": {
+    "name": "equipmentEventLogVariableOidVal",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'objectId'."
+  },
+  "equipmentEventLogVariableCounter64Val": {
+    "name": "equipmentEventLogVariableCounter64Val",
+    "oid": "1.3.6.1.4.1.7262.20.1.2.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value when equipmentEventLogVariableValueType is 'counter64'."
+  },
+  "equipmentAlarmActiveLastChanged": {
+    "name": "equipmentAlarmActiveLastChanged",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime at the time of the last creation or deletion of an entry in the equipmentAlarmActiveTable. Useful in case of polling (no traps mechanism used). If the number of entries has been unchanged since the last re-initialization, then this object contains a zero value."
+  },
+  "equipmentAlarmActiveRowCounter": {
+    "name": "equipmentAlarmActiveRowCounter",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of active alarms row in the table."
+  },
+  "equipmentAlarmActiveTable": {
+    "name": "equipmentAlarmActiveTable",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table of Active Alarms entries."
+  },
+  "equipmentAlarmActiveEntry": {
+    "name": "equipmentAlarmActiveEntry",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentAlarmActiveIndex",
+        "implied": 0
+      },
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentAlarmActiveTime",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Entries appear in this table when alarms are raised. They are removed when the alarm is cleared."
+  },
+  "equipmentAlarmActiveIndex": {
+    "name": "equipmentAlarmActiveIndex",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A strictly monotonically increasing integer which acts as the index of entries within the named alarm list. It wraps back to 1 after it reaches its maximum value."
+  },
+  "equipmentAlarmActiveTime": {
+    "name": "equipmentAlarmActiveTime",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The value of sysUpTime when the entry was placed in the list. This object facilitates retrieving all instances of alarms that have been raised or have changed state since a given point in time."
+  },
+  "equipmentAlarmActiveDateAndTime": {
+    "name": "equipmentAlarmActiveDateAndTime",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DateAndTime",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The local date and time when the error occurred. This object facilitates retrieving all instances of alarms that have been raised or have changed state since a given point in time. Implementations MUST include the offset from UTC, if available. Implementation in environments in which the UTC offset is not available is NOT RECOMMENDED."
+  },
+  "equipmentAlarmActiveName": {
+    "name": "equipmentAlarmActiveName",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the active alarm name."
+  },
+  "equipmentAlarmActiveID": {
+    "name": "equipmentAlarmActiveID",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the active alarm ID which is the index to the alarm configuration table defined in product specific MIB."
+  },
+  "equipmentAlarmActiveInstance": {
+    "name": "equipmentAlarmActiveInstance",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "equipmentAlarmActiveTrapOID": {
+    "name": "equipmentAlarmActiveTrapOID",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The MIB object identifier of the alarm (contained in an Alarm Notification type object) that is occurring."
+  },
+  "equipmentAlarmActiveSeverity": {
+    "name": "equipmentAlarmActiveSeverity",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "warning": 1,
+          "minor": 2,
+          "major": 3,
+          "critical": 4
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the active alarm severity."
+  },
+  "equipmentAlarmActiveConditionId": {
+    "name": "equipmentAlarmActiveConditionId",
+    "oid": "1.3.6.1.4.1.7262.20.1.3.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "equipmentOutTrapsCounter": {
+    "name": "equipmentOutTrapsCounter",
+    "oid": "1.3.6.1.4.1.7262.20.1.4.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The counter of the output traps. It increases by one every time a new trap is sent to all the managers configured in the relevant table. In this way its value is the number of notification events occurred since the last agent reset and every manager that reads this value can understand whether some event has been lost or not. (Note that in general this counter differs from the RFC1213 snmpOutTraps, that counts the number of Trap PDUs sent). When the logging mechanism is enabled, it corresponds to the index in the eventlog table"
+  },
+  "equipmentLastOutTrapTimeStamp": {
+    "name": "equipmentLastOutTrapTimeStamp",
+    "oid": "1.3.6.1.4.1.7262.20.1.4.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when the last trap was sent."
+  },
+  "equipmentTrapInfo": {
+    "name": "equipmentTrapInfo",
+    "oid": "1.3.6.1.4.1.7262.20.1.4.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A string representing additional info that can be used as the varbind in trap. "
+  },
+  "equipmentConfChangeOid": {
+    "name": "equipmentConfChangeOid",
+    "oid": "1.3.6.1.4.1.7262.20.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The OID of the last node changed. It is sent to the managers in order to notify a configuration change."
+  },
+  "equipmentConfChangeMode": {
+    "name": "equipmentConfChangeMode",
+    "oid": "1.3.6.1.4.1.7262.20.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EnableType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "enabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Enable/Disable of sending ConfChange Trap. STORAGE: permanent."
+  },
+  "equipmentConfChangeNotification": {
+    "name": "equipmentConfChangeNotification",
+    "oid": "1.3.6.1.4.1.7262.20.2.3",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentConfChangeOid"
+      },
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentOutTrapsCounter"
+      }
+    ],
+    "status": "current",
+    "description": "Notification of configuration change."
+  },
+  "equipmentMirrorFlag": {
+    "name": "equipmentMirrorFlag",
+    "oid": "1.3.6.1.4.1.7262.20.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Fixed to 1=mirror trap"
+  },
+  "equipmentMirrorColdStart": {
+    "name": "equipmentMirrorColdStart",
+    "oid": "1.3.6.1.4.1.7262.20.3.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentMirrorFlag"
+      },
+      {
+        "module": "EQUIPMENT-COMMON-MIB",
+        "object": "equipmentOutTrapsCounter"
+      }
+    ],
+    "status": "current",
+    "description": "A coldStart trap signifies that the SNMP entity, supporting a notification originator application, is reinitializing itself and that its configuration may have been altered."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/EQUIPMENT-COMMON-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:26:23 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "EQUIPMENT-COMMON-MIB"
+  }
+}

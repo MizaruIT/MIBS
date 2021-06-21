@@ -1,0 +1,1095 @@
+{
+  "imports": {
+    "class": "imports",
+    "DLINK-ID-REC-MIB": [
+      "dlinkIndustrialCommon"
+    ],
+    "IF-MIB": [
+      "ifIndex",
+      "InterfaceIndex"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "Bits",
+      "MODULE-IDENTITY",
+      "Gauge32",
+      "TimeTicks",
+      "Unsigned32",
+      "MibIdentifier",
+      "Integer32",
+      "OBJECT-IDENTITY",
+      "Counter64",
+      "iso"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "RowStatus",
+      "TruthValue"
+    ]
+  },
+  "dlinkSwDdmMIB": {
+    "name": "dlinkSwDdmMIB",
+    "oid": "1.3.6.1.4.1.171.14.72",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2013-02-04 00:00",
+        "description": "The structure of DDM for the proprietary enterprise."
+      },
+      {
+        "revision": "2013-09-05 00:00",
+        "description": "Modified the object dDdmAlarmTrap and dDdmWarningTrap to support to send traps when transceiver monitoring recovers from an abnormal warning/alarm situation to normal status."
+      }
+    ],
+    "lastupdated": "201302040000Z",
+    "organization": "D-Link Corp.",
+    "contactinfo": " D-Link Corporation Postal: No. 289, Sinhu 3rd Rd., Neihu District, Taipei City 114, Taiwan, R.O.C Tel: +886-2-66000123 E-mail: tsd@dlink.com.tw ",
+    "description": "This MIB module defines objects for DDM."
+  },
+  "DlinkThresholdState": {
+    "name": "DlinkThresholdState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "normal": 0,
+          "higherAlarm": 1,
+          "higherWarning": 2,
+          "lowerWarning": 3,
+          "lowerAlarm": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "Represents the state of a current monitoring value. Valid values are: normal(0): the current value is within normal range. higherAlarm(1): the current value is higher than the high alarm threshold. higherWarning(2): the current value is higher than the high warning threshold. lowerWarning(3): the current value is lower than the low warning threshold. lowerAlarm(4): the current value is lower than the low alarm threshold. "
+  },
+  "dDdmMIBNotifications": {
+    "name": "dDdmMIBNotifications",
+    "oid": "1.3.6.1.4.1.171.14.72.0",
+    "class": "objectidentity"
+  },
+  "dDdmMIBObjects": {
+    "name": "dDdmMIBObjects",
+    "oid": "1.3.6.1.4.1.171.14.72.1",
+    "class": "objectidentity"
+  },
+  "dDdmMIBConformance": {
+    "name": "dDdmMIBConformance",
+    "oid": "1.3.6.1.4.1.171.14.72.2",
+    "class": "objectidentity"
+  },
+  "dDdmCtrl": {
+    "name": "dDdmCtrl",
+    "oid": "1.3.6.1.4.1.171.14.72.1.1",
+    "class": "objectidentity"
+  },
+  "dDdmNotifyEnable": {
+    "name": "dDdmNotifyEnable",
+    "oid": "1.3.6.1.4.1.171.14.72.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "alarm": 0,
+        "warning": 1
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates whether a specified notification is enabled or not. If a bit corresponding to a notification is set to 1, then the specified notification can be generated. alarm(0) - sending an alarm level notification. warning(1) - sending an warning level notification. "
+  },
+  "dDdmIfCtrl": {
+    "name": "dDdmIfCtrl",
+    "oid": "1.3.6.1.4.1.171.14.72.1.2",
+    "class": "objectidentity"
+  },
+  "dDdmIfCfgTable": {
+    "name": "dDdmIfCfgTable",
+    "oid": "1.3.6.1.4.1.171.14.72.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains a list of interface-specific DDM configuration."
+  },
+  "dDdmIfCfgEntry": {
+    "name": "dDdmIfCfgEntry",
+    "oid": "1.3.6.1.4.1.171.14.72.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry manages DDM state and action on an interface."
+  },
+  "dDdmIfCfgEnabled": {
+    "name": "dDdmIfCfgEnabled",
+    "oid": "1.3.6.1.4.1.171.14.72.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the status of optical transceiver-monitoring function for a SFP port. When a SFP with transceiver-monitoring capability is plugged in a port but the transceiver-monitoring function of the port is disabled, system will not detect the SFP's abnormal status but user still can check the current status via dDdmIfInfoTable."
+  },
+  "dDdmShutdownLevel": {
+    "name": "dDdmShutdownLevel",
+    "oid": "1.3.6.1.4.1.171.14.72.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "alarm": 2,
+          "warning": 3
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This object indicates the abnormal level which causes a port enter into errDisabled state. A value of 'none' indicates the shutdown action is disabled. "
+  },
+  "dDdmThresholdMgmt": {
+    "name": "dDdmThresholdMgmt",
+    "oid": "1.3.6.1.4.1.171.14.72.1.3",
+    "class": "objectidentity"
+  },
+  "dDdmThresholdCfgTable": {
+    "name": "dDdmThresholdCfgTable",
+    "oid": "1.3.6.1.4.1.171.14.72.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains a list of interface-specific threshold configuration for DDM."
+  },
+  "dDdmThresholdCfgEntry": {
+    "name": "dDdmThresholdCfgEntry",
+    "oid": "1.3.6.1.4.1.171.14.72.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmThresholdComponent",
+        "implied": 0
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDmThresholdAbnormalLevel",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table conists of one threshold configuration on an interface. An entry is created/removed when a configuration is added/deleted. "
+  },
+  "dDdmThresholdComponent": {
+    "name": "dDdmThresholdComponent",
+    "oid": "1.3.6.1.4.1.171.14.72.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "temperature": 1,
+          "voltage": 2,
+          "biasCurrent": 3,
+          "txPowerMw": 4,
+          "txPowerDbm": 5,
+          "rxPowerMw": 6,
+          "rxPowerDbm": 7
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the monitoring type. Note: Either txPowerMw(4) or txPowerDbm(5) can be configured on an interface. Either rxPowerMw(6) or rxPowerDbm(7) can be configured on an interface. In the above two cases, the existed entry will be deleted when the other new entry is created. "
+  },
+  "dDmThresholdAbnormalLevel": {
+    "name": "dDmThresholdAbnormalLevel",
+    "oid": "1.3.6.1.4.1.171.14.72.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "highAlarm": 1,
+          "highWarning": 2,
+          "lowWarning": 3,
+          "lowAlarm": 4
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This object indicates the threshold type."
+  },
+  "dDdmThresholdCfgValue": {
+    "name": "dDdmThresholdCfgValue",
+    "oid": "1.3.6.1.4.1.171.14.72.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the configured threshold. The value is interpreted within the context of dDdmThresholdComponent and dDmThresholdAbnormalLevel in the same row. The unit and valid range are as follows: Threshold Type Unit Valid Range ============= ===================== ================= Temperature milli-degrees Celsius -128,000 ~ 127,996 voltage centi-Volt 0 ~ 655 biasCurrent milli-amperes 0 ~ 131 txPowerMw tenths of a microwatt 0 ~ 65,535 txPowerDbm ten-thousandths of DBM -400,000 ~ 81,647 rxPowerMw tenths of a microwatt 0 ~ 65,535 rxPowerDbm ten-thousandths of DBM -400,000 ~ 81,647 "
+  },
+  "dDdmThresholdCfgRowStatus": {
+    "name": "dDdmThresholdCfgRowStatus",
+    "oid": "1.3.6.1.4.1.171.14.72.1.3.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this conceptual row."
+  },
+  "dDdmInfo": {
+    "name": "dDdmInfo",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4",
+    "class": "objectidentity"
+  },
+  "dDdmIfInfoTable": {
+    "name": "dDdmIfInfoTable",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains a list of information about current operating parameters of interfaces. Only the applicable interfaces (i.e.SFP module with DDM capability is plugged-in. ) will appear in this table. Note: 1. The threshold may be administratively configured or factory preset value defined by vendors. dDdmThresholdCfgTable provides the administrative threshold configuration. 2. It doesn't necessarily means the DDM is enabled on the interface when an entry appears in this table. dDdmIfCfgTable provides such information."
+  },
+  "dDdmIfInfoEntry": {
+    "name": "dDdmIfInfoEntry",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry appears in this table contains current operating parameters for transceiver monitoring of a port."
+  },
+  "dDdmIfInfoCurrentTemperature": {
+    "name": "dDdmIfInfoCurrentTemperature",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-degrees Celsius",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current temperature in unit of 'milli-degrees Celsius' on the interface."
+  },
+  "dDdmIfInfoTemperatureState": {
+    "name": "dDdmIfInfoTemperatureState",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkThresholdState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the state of current temperature."
+  },
+  "dDdmIfInfoHighAlarmTemperature": {
+    "name": "dDdmIfInfoHighAlarmTemperature",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-degrees Celsius",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high alarm threshold, when the operating temperature rises above this value, it indicates an alarm status. The value is in unit of 'milli-degrees Celsius'."
+  },
+  "dDdmIfInfoHighWarnTemperature": {
+    "name": "dDdmIfInfoHighWarnTemperature",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-degrees Celsius",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high warning threshold, when the operating temperature rises above this value, it indicates a warning status. The value is in unit of 'milli-degrees Celsius'."
+  },
+  "dDdmIfInfoLowWarnTemperature": {
+    "name": "dDdmIfInfoLowWarnTemperature",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-degrees Celsius",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low warning threshold, when the operating temperature falls below this value, it indicates a warning status. The value is in unit of 'milli-degrees Celsius'."
+  },
+  "dDdmIfInfoLowAlarmTemperature": {
+    "name": "dDdmIfInfoLowAlarmTemperature",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-degrees Celsius",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low alarm threshold, when the operating temperature falls below this value, it indicates an alarm status. The value is in unit of 'milli-degrees Celsius'."
+  },
+  "dDdmIfInfoCurrentVoltage": {
+    "name": "dDdmIfInfoCurrentVoltage",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "centi-Volt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current voltage in unit of 'centi-Volt' on the interface."
+  },
+  "dDdmIfInfoVoltageState": {
+    "name": "dDdmIfInfoVoltageState",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkThresholdState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the state of current voltage."
+  },
+  "dDdmIfInfoHighAlarmVoltage": {
+    "name": "dDdmIfInfoHighAlarmVoltage",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "centi-Volt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high alarm threshold, when the operating voltage rises above this value, it indicates an alarm status. The value is in unit of 'centi-Volt'."
+  },
+  "dDdmIfInfoHighWarnVoltage": {
+    "name": "dDdmIfInfoHighWarnVoltage",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "centi-Volt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high warning threshold, when the operating voltage rises above this value, it indicates a warning status. The value is in unit of 'centi-Volt'."
+  },
+  "dDdmIfInfoLowWarnVoltage": {
+    "name": "dDdmIfInfoLowWarnVoltage",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "centi-Volt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low warning threshold, when the operating voltage falls below this value, it indicates a warning status. The value is in unit of 'centi-Volt'."
+  },
+  "dDdmIfInfoLowAlarmVoltage": {
+    "name": "dDdmIfInfoLowAlarmVoltage",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "centi-Volt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low alarm threshold, when the operating voltage falls below this value, it indicates an alarm status. The value is in unit of 'centi-Volt'."
+  },
+  "dDdmIfInfoCurrentBiasCurrent": {
+    "name": "dDdmIfInfoCurrentBiasCurrent",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-amperes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current bias current in unit of 'milli-amperes' on the interface."
+  },
+  "dDdmIfInfoBiasCurrentState": {
+    "name": "dDdmIfInfoBiasCurrentState",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkThresholdState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the state of current BiasCurrent."
+  },
+  "dDdmIfInfoHighAlarmBiasCurrent": {
+    "name": "dDdmIfInfoHighAlarmBiasCurrent",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-amperes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high alarm threshold, when the operating bias current rises above this value, it indicates an alarm status. The value is in unit of 'milli-amperes'."
+  },
+  "dDdmIfInfoHighWarnBiasCurrent": {
+    "name": "dDdmIfInfoHighWarnBiasCurrent",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-amperes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high warning threshold, when the operating bias current rises above this value, it indicates a warning status. The value is in unit of 'milli-amperes'."
+  },
+  "dDdmIfInfoLowWarnBiasCurrent": {
+    "name": "dDdmIfInfoLowWarnBiasCurrent",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-amperes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low warning threshold, when the operating bias current falls below this value, it indicates a warning status. The value is in unit of 'milli-amperes'."
+  },
+  "dDdmIfInfoLowAlarmBiasCurrent": {
+    "name": "dDdmIfInfoLowAlarmBiasCurrent",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "milli-amperes",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low alarm threshold, when the operating bias current falls below this value, it indicates an alarm status. The value is in unit of 'milli-amperes'."
+  },
+  "dDdmIfInfoCurrentTxPower": {
+    "name": "dDdmIfInfoCurrentTxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current output power in unit of 'tenths of a microwatt' on the interface."
+  },
+  "dDdmIfInfoTxPowerState": {
+    "name": "dDdmIfInfoTxPowerState",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkThresholdState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the state of current output power."
+  },
+  "dDdmIfInfoHighAlarmTxPower": {
+    "name": "dDdmIfInfoHighAlarmTxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high alarm threshold, when the operating output power rises above this value, it indicates an alarm status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmIfInfoHighWarnTxPower": {
+    "name": "dDdmIfInfoHighWarnTxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high warning threshold, when the operating output power rises above this value, it indicates a warning status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmIfInfoLowWarnTxPower": {
+    "name": "dDdmIfInfoLowWarnTxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low warning threshold, when the operating output power falls below this value, it indicates a warning status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmIfInfoLowAlarmTxPower": {
+    "name": "dDdmIfInfoLowAlarmTxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low alarm threshold, when the operating output power falls below this value, it indicates an alarm status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmIfInfoCurrentRxPower": {
+    "name": "dDdmIfInfoCurrentRxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the current input power in unit of 'tenths of a microwatt' on the interface."
+  },
+  "dDdmIfInfoRxPowerState": {
+    "name": "dDdmIfInfoRxPowerState",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DlinkThresholdState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the state of current input power."
+  },
+  "dDdmIfInfoHighAlarmRxPower": {
+    "name": "dDdmIfInfoHighAlarmRxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high alarm threshold, when the operating input power rises above this value, it indicates an alarm status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmIfInfoHighWarnRxPower": {
+    "name": "dDdmIfInfoHighWarnRxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the high warning threshold, when the operating input power rises above this value, it indicates a warning status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmIfInfoLowWarnRxPower": {
+    "name": "dDdmIfInfoLowWarnRxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low warning threshold, when the operating input power falls below this value, it indicates a warning status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmIfInfoLowAlarmRxPower": {
+    "name": "dDdmIfInfoLowAlarmRxPower",
+    "oid": "1.3.6.1.4.1.171.14.72.1.4.1.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "units": "tenths of a microwatt",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object indicates the low alarm threshold, when the operating input power falls below this value, it indicates an alarm status. The value is in unit of 'tenths of a microwatt'."
+  },
+  "dDdmNotifyInfo": {
+    "name": "dDdmNotifyInfo",
+    "oid": "1.3.6.1.4.1.171.14.72.1.5",
+    "class": "objectidentity"
+  },
+  "dDdmNotifyInfoIfIndex": {
+    "name": "dDdmNotifyInfoIfIndex",
+    "oid": "1.3.6.1.4.1.171.14.72.1.5.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object is used by dDdmAlarmTrap and dDdmWarningTrap to indicate the ifIndex on which the monitoring value rises above or falls below the corresponding threshold."
+  },
+  "dDdmNotifyInfoComponent": {
+    "name": "dDdmNotifyInfoComponent",
+    "oid": "1.3.6.1.4.1.171.14.72.1.5.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "temperature": 1,
+          "voltage": 2,
+          "biasCurrent": 3,
+          "txPowerMw": 4,
+          "rxPowerMw": 5
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object is used by dDdmAlarmTrap and dDdmWarningTrap to indicate the abnormal component."
+  },
+  "dDdmNotifyInfoAbnormalLevel": {
+    "name": "dDdmNotifyInfoAbnormalLevel",
+    "oid": "1.3.6.1.4.1.171.14.72.1.5.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "high": 1,
+          "low": 2
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object is used by dDdmAlarmTrap and dDdmWarningTrap to indicate the abnormal level."
+  },
+  "dDdmNotifyInfoThresholdExceedOrRecover": {
+    "name": "dDdmNotifyInfoThresholdExceedOrRecover",
+    "oid": "1.3.6.1.4.1.171.14.72.1.5.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "exceed": 1,
+          "recover": 2
+        }
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "This object is used by dDdmAlarmTrap and dDdmWarningTrap to indicate the GBIC is exceeding its threshold or recover to normal status."
+  },
+  "dDdmAlarmTrap": {
+    "name": "dDdmAlarmTrap",
+    "oid": "1.3.6.1.4.1.171.14.72.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoIfIndex"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoComponent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoAbnormalLevel"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoThresholdExceedOrRecover"
+      }
+    ],
+    "status": "current",
+    "description": "The trap is sent when dDdmNotifyEnable is 'true' and an abnormal alarm situation occurs or recovers from an abnormal alarm situation to normal status."
+  },
+  "dDdmWarningTrap": {
+    "name": "dDdmWarningTrap",
+    "oid": "1.3.6.1.4.1.171.14.72.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoIfIndex"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoComponent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoAbnormalLevel"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoThresholdExceedOrRecover"
+      }
+    ],
+    "status": "current",
+    "description": "The trap is sent when dDdmNotifyEnable is 'true' and an abnormal warning situation occurs or recovers from an abnormal warning situation to normal status."
+  },
+  "dDdmCompliances": {
+    "name": "dDdmCompliances",
+    "oid": "1.3.6.1.4.1.171.14.72.2.1",
+    "class": "objectidentity"
+  },
+  "dDdmCompliance": {
+    "name": "dDdmCompliance",
+    "oid": "1.3.6.1.4.1.171.14.72.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "dDdmInfoGroup",
+        "module": "DLINKSW-DDM-MIB"
+      },
+      {
+        "object": "dDdmCfgGroup",
+        "module": "DLINKSW-DDM-MIB"
+      },
+      {
+        "object": "dDdmNotifyGroup",
+        "module": "DLINKSW-DDM-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the DLINKSW-DDM-MIB."
+  },
+  "dDdmGroups": {
+    "name": "dDdmGroups",
+    "oid": "1.3.6.1.4.1.171.14.72.2.2",
+    "class": "objectidentity"
+  },
+  "dDdmInfoGroup": {
+    "name": "dDdmInfoGroup",
+    "oid": "1.3.6.1.4.1.171.14.72.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoCurrentTemperature"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoTemperatureState"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighAlarmTemperature"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighWarnTemperature"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowWarnTemperature"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowAlarmTemperature"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoCurrentVoltage"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoVoltageState"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighAlarmVoltage"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighWarnVoltage"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowWarnVoltage"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowAlarmVoltage"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoCurrentBiasCurrent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoBiasCurrentState"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighAlarmBiasCurrent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighWarnBiasCurrent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowWarnBiasCurrent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowAlarmBiasCurrent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoCurrentTxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoTxPowerState"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighAlarmTxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighWarnTxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowWarnTxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowAlarmTxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoCurrentRxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoRxPowerState"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighAlarmRxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoHighWarnRxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowWarnRxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfInfoLowAlarmRxPower"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoIfIndex"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoComponent"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoAbnormalLevel"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyInfoThresholdExceedOrRecover"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides DDM operating information."
+  },
+  "dDdmCfgGroup": {
+    "name": "dDdmCfgGroup",
+    "oid": "1.3.6.1.4.1.171.14.72.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmNotifyEnable"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmIfCfgEnabled"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmShutdownLevel"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmThresholdCfgValue"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmThresholdCfgRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects provides DDM configuration."
+  },
+  "dDdmNotifyGroup": {
+    "name": "dDdmNotifyGroup",
+    "oid": "1.3.6.1.4.1.171.14.72.2.2.3",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmAlarmTrap"
+      },
+      {
+        "module": "DLINKSW-DDM-MIB",
+        "object": "dDdmWarningTrap"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of notifications used for DDM."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/DLINKSW-DDM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:12:03 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "DLINKSW-DDM-MIB"
+  }
+}

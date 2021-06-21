@@ -1,0 +1,1229 @@
+ISHELF-PSTN-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY
+        FROM SNMPv2-SMI
+
+    RowStatus
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfPstn,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfAdminState,
+    IShelfCircuit,
+    IShelfCircuitType,
+    IShelfPermCCCircuitType,
+    IShelfIdlcInterfaceState,
+    IShelfIdlcActivePath,
+    IShelfIdlcPathStatus,
+    IShelfIdlcSwitchManufacturer,
+    IShelfLabel,
+    IShelfLocation,
+    IShelfLocationType,
+    IShelfOperState,
+    IShelfOntLogicalId,
+    IShelfOntSubscriberLineCardIndex,
+    IShelfOntPotsCircuitAndDropString,
+    IShelfOntPotsCircuitAndDropTests,
+    IShelfCallStatus,
+    IShelfServiceType
+        FROM ISHELF-TC
+    ;
+
+iShelfPstnMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION
+        "The MIB module for managing the PSTN Services on the
+         IShelf System."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 6 }
+
+-- %CLICMDPREFIX pstn:idlc
+iShelfLineAssoc OBJECT IDENTIFIER ::= { iShelfPstn 1 }
+
+-- %CLICMDPREFIX pstn:permcc
+iShelfPermCC OBJECT IDENTIFIER ::= { iShelfPstn 2 }
+
+-- %CLICMDPREFIX pstn:test
+iShelfPstnTest OBJECT IDENTIFIER ::= { iShelfPstn 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfIdlcGroupTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %DEEPCPUGET XlateDeepGet 10000 ROW 
+-- %CLICMDPREFIX pstn:idlc
+-- %CLICMDABBR idlctable
+-- %CLISHOWGROUP idlctable
+iShelfIdlcGroupTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfIdlcGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "This table is the definition for the GR303 IDLC Groups."
+    ::= { iShelfLineAssoc 1 }
+
+iShelfIdlcGroupEntry OBJECT-TYPE
+    SYNTAX      IShelfIdlcGroupEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row is a separate IDLC Group."
+    INDEX       { iShelfIdlcGroupInterfaceId }
+    ::= { iShelfIdlcGroupTable 1 }
+
+IShelfIdlcGroupEntry ::=
+    SEQUENCE {
+        iShelfIdlcGroupInterfaceId
+            INTEGER,
+        iShelfIdlcGroupLabel
+            IShelfLabel,
+        iShelfIdlcGroupSwitchManufacturer
+            IShelfIdlcSwitchManufacturer,
+        iShelfIdlcGroupSecondaryDs1
+            INTEGER,
+        iShelfIdlcGroupInterfaceState
+            IShelfIdlcInterfaceState,
+        iShelfIdlcGroupActiveTmc
+            IShelfIdlcActivePath,
+        iShelfIdlcGroupPrimaryTmcState
+            IShelfIdlcPathStatus,
+        iShelfIdlcGroupSecondaryTmcState
+            IShelfIdlcPathStatus,
+        iShelfIdlcGroupActiveEoc
+            IShelfIdlcActivePath,
+        iShelfIdlcGroupPrimaryEocState
+            IShelfIdlcPathStatus,
+        iShelfIdlcGroupSecondaryEocState
+            IShelfIdlcPathStatus,
+        iShelfIdlcGroupRowStatus
+            RowStatus
+    }
+-- %CLISHOWGROUP idlctable.1
+-- %CLISHOWGROUP idlctable.2
+-- %CLISHOWGROUP idlctable.3
+-- %CLICOLLABEL Id
+-- %CLIWIDTH 4
+iShelfIdlcGroupInterfaceId OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The GR303 IDLC Group identifier."
+    ::= { iShelfIdlcGroupEntry 1 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP idlctable.1
+-- %SETINACTIVE
+iShelfIdlcGroupLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "A user description for the IDLC group.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfIdlcGroupEntry 2 }
+
+-- %CLICOLLABEL Switch
+-- %CLISHOWGROUP idlctable.1
+-- %SETINACTIVE
+iShelfIdlcGroupSwitchManufacturer OBJECT-TYPE
+    SYNTAX      IShelfIdlcSwitchManufacturer
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "An identifier for the type of switch associated with this group.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfIdlcGroupEntry 3 }
+
+-- %CLICOLLABEL SecDs1
+-- %CLISHOWGROUP idlctable.1
+-- %SETINACTIVE
+-- %CLIWIDTH 6
+iShelfIdlcGroupSecondaryDs1 OBJECT-TYPE
+    SYNTAX      INTEGER (0..28)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This identifies which DS1 in the IDLC Facility table is designated as the
+         secondary DS1 (contains the secondary TMC/EOC). Note that the primary DS1
+         is always DS1 #1 in the IDLC Facility table.
+         A value of zero means NONE. You cannot use a value of 1. Valid DS1 values
+         are 2..28.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { 0 }
+    ::= { iShelfIdlcGroupEntry 4 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL IfState
+-- %CLISHOWGROUP idlctable.2
+iShelfIdlcGroupInterfaceState OBJECT-TYPE
+    SYNTAX      IShelfIdlcInterfaceState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current state of the interface for the IDLC group."
+    ::= { iShelfIdlcGroupEntry 5 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL ActTmc
+-- %CLISHOWGROUP idlctable.2
+iShelfIdlcGroupActiveTmc OBJECT-TYPE
+    SYNTAX      IShelfIdlcActivePath
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current link that is the active TMC."
+    ::= { iShelfIdlcGroupEntry 6 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL PriTmc
+-- %CLISHOWGROUP idlctable.3
+iShelfIdlcGroupPrimaryTmcState OBJECT-TYPE
+    SYNTAX      IShelfIdlcPathStatus
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current state of the primary TMC channel for the IDLC group."
+    ::= { iShelfIdlcGroupEntry 7 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL SecTmc
+-- %CLISHOWGROUP idlctable.3
+iShelfIdlcGroupSecondaryTmcState OBJECT-TYPE
+    SYNTAX      IShelfIdlcPathStatus
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current state of the secondary TMC channel for the IDLC group."
+    ::= { iShelfIdlcGroupEntry 8 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL ActEoc
+-- %CLISHOWGROUP idlctable.2
+iShelfIdlcGroupActiveEoc OBJECT-TYPE
+    SYNTAX      IShelfIdlcActivePath
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current link that is the active EOC."
+    ::= { iShelfIdlcGroupEntry 9 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL PriEoc
+-- %CLISHOWGROUP idlctable.3
+iShelfIdlcGroupPrimaryEocState OBJECT-TYPE
+    SYNTAX      IShelfIdlcPathStatus
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current state of the primary EOC channel for the IDLC group."
+    ::= { iShelfIdlcGroupEntry 10 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL SecEoc
+-- %CLISHOWGROUP idlctable.3
+iShelfIdlcGroupSecondaryEocState OBJECT-TYPE
+    SYNTAX      IShelfIdlcPathStatus
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current state of the secondary TMC channel for the IDLC group."
+    ::= { iShelfIdlcGroupEntry 11 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP idlctable.1
+iShelfIdlcGroupRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfIdlcGroupEntry 12 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfIdlcFacilityTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %CLICMDPREFIX pstn:idlc
+-- %CLICMDABBR factable
+-- %CLISHOWGROUP factable
+iShelfIdlcFacilityTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfIdlcFacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfLineAssoc 2 }
+
+iShelfIdlcFacilityEntry OBJECT-TYPE
+    SYNTAX      IShelfIdlcFacilityEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfIdlcFacilityInterfaceId, iShelfIdlcFacilityDs1 }
+    ::= { iShelfIdlcFacilityTable 1 }
+
+IShelfIdlcFacilityEntry ::=
+    SEQUENCE {
+        iShelfIdlcFacilityInterfaceId
+            INTEGER,
+        iShelfIdlcFacilityDs1
+            INTEGER,
+        iShelfIdlcFacilityLocation
+            IShelfLocation,
+        iShelfIdlcFacilityCircuit
+            IShelfCircuit,
+        iShelfIdlcFacilityRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP factable.1
+-- %CLICOLLABEL Interface
+iShelfIdlcFacilityInterfaceId OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfIdlcFacilityEntry 1 }
+
+-- %CLISHOWGROUP factable.1
+-- %CLICOLLABEL Ds1
+iShelfIdlcFacilityDs1 OBJECT-TYPE
+    SYNTAX      INTEGER (1..28)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfIdlcFacilityEntry 2 }
+
+-- %CLISHOWGROUP factable.1
+-- %CLICOLLABEL Location
+-- %SETINACTIVE
+iShelfIdlcFacilityLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfIdlcFacilityEntry 3 }
+
+-- %CLISHOWGROUP factable.1
+-- %CLICOLLABEL Circuit
+-- %SETINACTIVE
+iShelfIdlcFacilityCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfIdlcFacilityEntry 4 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfIdlcFacilityRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfIdlcFacilityEntry 5 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfLineAssocServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %CLICMDPREFIX pstn:idlc
+-- %CLICMDABBR servtable
+-- %CLISHOWGROUP servtable
+iShelfLineAssocServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfLineAssocServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION " "
+    ::= { iShelfLineAssoc 3 }
+
+iShelfLineAssocServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfLineAssocServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION " "
+    INDEX       { iShelfLineAssocServiceNetworkLocationType,
+                  iShelfLineAssocServiceNetworkLocation,
+                  iShelfLineAssocServiceNetworkCircuit }
+    ::= { iShelfLineAssocServiceTable 1 }                     
+
+IShelfLineAssocServiceEntry ::=
+    SEQUENCE {
+        iShelfLineAssocServiceNetworkLocationType
+            IShelfLocationType,
+        iShelfLineAssocServiceNetworkLocation
+            IShelfLocation,
+        iShelfLineAssocServiceNetworkCircuit
+            IShelfCircuit,                    
+        iShelfLineAssocServiceNetworkCircuitType
+            IShelfCircuitType,       
+        iShelfLineAssocServiceLineLocationType
+            IShelfLocationType,
+        iShelfLineAssocServiceLineLocation
+            IShelfLocation,
+        iShelfLineAssocServiceLineCircuit
+            IShelfCircuit,
+        iShelfLineAssocServiceLineCircuitType
+            IShelfCircuitType,       
+        iShelfLineAssocServiceAdminState
+            IShelfAdminState,
+        iShelfLineAssocServiceOperState
+            IShelfOperState,
+        iShelfLineAssocServiceLabel
+            IShelfLabel,
+        iShelfLineAssocServiceCallStatus
+            IShelfCallStatus,
+        iShelfLineAssocServiceRowStatus
+            RowStatus
+    }
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL NetLocType
+-- %SETINACTIVE
+iShelfLineAssocServiceNetworkLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of location addressing
+         used to describe the LA network interface.  "
+    ::= { iShelfLineAssocServiceEntry 1 }
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL NetLoc
+-- %SETINACTIVE
+iShelfLineAssocServiceNetworkLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the Node/Shelf/Slot hosting the network side of the 
+         UDLC line association or the IDLC interface group for an IDLC line association."
+    ::= { iShelfLineAssocServiceEntry 2 }
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL NetCircuit
+-- %SETINACTIVE
+iShelfLineAssocServiceNetworkCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the POTS or DS0 Circuit number for UDLC interface or 
+         CRV for IDLC interface. "
+    ::= { iShelfLineAssocServiceEntry 3 }    
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL NetCktType
+-- %SETINACTIVE
+iShelfLineAssocServiceNetworkCircuitType OBJECT-TYPE
+    SYNTAX      IShelfCircuitType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the network circuit type for UDLC line associations
+         or IDLC Interface Group.        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfLineAssocServiceEntry 4 }    
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL LineLocType
+-- %SETINACTIVE
+iShelfLineAssocServiceLineLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of location addressing
+         used to describe the line presence supporting the subscriber.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfLineAssocServiceEntry 5 }
+
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL LineLoc
+-- %SETINACTIVE
+iShelfLineAssocServiceLineLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Based on the location type this object specifies the
+         ONT Logical ID or the Node/Shelf/Slot hosting the subscriber line.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfLineAssocServiceEntry 6 }
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL LineCircuit
+-- %SETINACTIVE
+iShelfLineAssocServiceLineCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Based on the location type this object specifies the
+         ONT SubscriberLineCardIndex/POTSPort/0 -or-
+         ONT SubscriberLineCardIndex/T1Port/Ds0 -or-
+         POTS Circuit number.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfLineAssocServiceEntry 7 }
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL LnCktType
+-- %SETINACTIVE
+iShelfLineAssocServiceLineCircuitType OBJECT-TYPE
+    SYNTAX      IShelfCircuitType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the line circuit type for UDLC line associations.         
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfLineAssocServiceEntry 8 }    
+    
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL Admin
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfLineAssocServiceAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Used to lock or unlock service on the line.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { unlock }
+    ::= { iShelfLineAssocServiceEntry 9 }
+
+-- %CLISHOWGROUP servtable.1
+-- %CLICOLLABEL Oper
+iShelfLineAssocServiceOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Used to indicate the current operational status of the service."
+    ::= { iShelfLineAssocServiceEntry 10 }    
+    
+-- %CLISHOWGROUP servtable.2
+-- %CLICOLLABEL Label
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfLineAssocServiceLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the subscriber associated with the line/CRV.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfLineAssocServiceEntry 11 }    
+
+-- %CLISHOWGROUP servtable.2
+-- %CLICOLLABEL Call
+iShelfLineAssocServiceCallStatus OBJECT-TYPE
+    SYNTAX      IShelfCallStatus
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates if there is an active call or the line is idle."
+    ::= { iShelfLineAssocServiceEntry 12 }   
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLISHOWGROUP servtable.2
+-- %CLIWIDTH 12
+iShelfLineAssocServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfLineAssocServiceEntry 13 }
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfLineAssocByLineLocationTable -   IDLC/UDLC LA Reverse lookup
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %CLICMDPREFIX pstn:LA
+-- %CLICMDABBR porttoservice
+-- %CLISHOWGROUP porttoservice
+iShelfLineAssocByLineLocationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfLineAssocByLineLocationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION " "
+    ::= { iShelfLineAssoc 4 }
+
+iShelfLineAssocByLineLocationEntry OBJECT-TYPE
+    SYNTAX      IShelfLineAssocByLineLocationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION " "
+    INDEX       { iShelfLineAssocByLineLocationLocationType,
+                  iShelfLineAssocByLineLocationLocation,
+                  iShelfLineAssocByLineLocationCircuit }
+    ::= { iShelfLineAssocByLineLocationTable 1 }
+
+IShelfLineAssocByLineLocationEntry ::=
+    SEQUENCE {
+        iShelfLineAssocByLineLocationLocationType
+            IShelfLocationType,
+        iShelfLineAssocByLineLocationLocation
+            IShelfLocation,
+        iShelfLineAssocByLineLocationCircuit
+            IShelfCircuit,
+        iShelfLineAssocByLineLocationNetworkLocationType
+            IShelfLocationType,
+        iShelfLineAssocByLineLocationNetworkLocation
+            IShelfLocation,
+        iShelfLineAssocByLineLocationNetworkCircuit
+            IShelfCircuit                    
+    }
+
+-- %CLISHOWGROUP porttoservice.1
+-- %CLICOLLABEL LocType
+-- %SETINACTIVE
+iShelfLineAssocByLineLocationLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of location addressing
+         used to describe the line presence supporting the subscriber line."
+    ::= { iShelfLineAssocByLineLocationEntry 1 }
+
+-- %CLISHOWGROUP porttoservice.1
+-- %CLICOLLABEL Location
+-- %SETINACTIVE
+iShelfLineAssocByLineLocationLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Based on the location type this object specifies the
+         ONT Logical ID or the Node/Shelf/Slot hosting the subscriber line."
+    ::= { iShelfLineAssocByLineLocationEntry 2 }
+    
+-- %CLISHOWGROUP porttoservice.1
+-- %CLICOLLABEL Circuit
+-- %SETINACTIVE
+iShelfLineAssocByLineLocationCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Based on the location type this object specifies the
+         ONT SubscriberLineCardIndex/POTSPort/0 -or-
+         ONT SubscriberLineCardIndex/T1Port/Ds0 -or-
+         POTS Circuit number."
+    ::= { iShelfLineAssocByLineLocationEntry 3 }
+    
+
+-- %CLISHOWGROUP porttoservice.1
+-- %CLICOLLABEL NetLocType
+-- %SETINACTIVE
+iShelfLineAssocByLineLocationNetworkLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of location addressing
+         used to describe the LA network interface."
+    ::= { iShelfLineAssocByLineLocationEntry 4 }
+    
+-- %CLISHOWGROUP porttoservice.1
+-- %CLICOLLABEL NetLoc
+-- %SETINACTIVE
+iShelfLineAssocByLineLocationNetworkLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the Node/Shelf/Slot hosting the network side of the 
+         UDLC line association or the IDLC interface group for an IDLC line association."
+    ::= { iShelfLineAssocByLineLocationEntry 5 }
+    
+-- %CLISHOWGROUP porttoservice.1
+-- %CLICOLLABEL NetCircuit
+-- %SETINACTIVE
+iShelfLineAssocByLineLocationNetworkCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the POTS or DS0 Circuit number for UDLC interface 
+         or CRV for IDLC interface."
+    ::= { iShelfLineAssocByLineLocationEntry 6 }    
+    
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfPermCrossConnectServiceTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %DEEPCPUGET XlateDeepGet 10000 ROW 
+-- %CLICMDPREFIX pstn:permcc
+-- %CLICMDABBR servtable
+-- %CLISHOWGROUP servtable
+iShelfPermCCServiceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfPermCCServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPermCC 1 }
+
+iShelfPermCCServiceEntry OBJECT-TYPE
+    SYNTAX      IShelfPermCCServiceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfPermCCServiceNetworkLocationType,
+                  iShelfPermCCServiceNetworkLocation,
+                  iShelfPermCCServiceNetworkCircuit }
+    ::= { iShelfPermCCServiceTable 1 }
+
+IShelfPermCCServiceEntry ::=
+    SEQUENCE {
+        iShelfPermCCServiceNetworkLocationType
+            IShelfLocationType,
+        iShelfPermCCServiceNetworkLocation
+            IShelfLocation,
+        iShelfPermCCServiceNetworkCircuit
+            IShelfCircuit,
+        iShelfPermCCServiceNetworkCircuitType
+            IShelfPermCCCircuitType,
+        iShelfPermCCServiceSubscriberLocationType
+            IShelfLocationType,
+        iShelfPermCCServiceSubscriberLocation
+            IShelfLocation,
+        iShelfPermCCServiceSubscriberCircuit
+            IShelfCircuit,
+        iShelfPermCCServiceSubscriberCircuitType
+            IShelfPermCCCircuitType,
+        iShelfPermCCServiceAdminState
+            IShelfAdminState,
+        iShelfPermCCServiceOperState
+            IShelfOperState,
+        iShelfPermCCServiceLabel
+            IShelfLabel,
+        iShelfPermCCServiceServiceType
+            IShelfServiceType,
+        iShelfPermCCServiceNumDS0s
+            INTEGER,
+        iShelfPermCCServiceRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL NetLocType
+-- %CLISHOWGROUP servtable.1
+iShelfPermCCServiceNetworkLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies whether the network side location
+         of the perm cross-connect is logical or physical."
+    ::= { iShelfPermCCServiceEntry 1 }
+
+-- %CLICOLLABEL NetLoc
+-- %CLISHOWGROUP servtable.1
+-- %CLISHOWGROUP servtable.2
+-- %CLISHOWGROUP servtable.3
+iShelfPermCCServiceNetworkLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the network-side location of the
+         perm cross connect.  For physical location types this is the
+         Node/Shelf/Slot.  For logical location types it is the ONT logical
+         id."
+    ::= { iShelfPermCCServiceEntry 2 }
+
+-- %CLICOLLABEL NetCirc
+-- %CLISHOWGROUP servtable.1
+iShelfPermCCServiceNetworkCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the network-side location of the
+         perm cross connect circuit."
+    ::= { iShelfPermCCServiceEntry 3 }
+    
+-- %CLICOLLABEL NetCircTyp
+-- %CLISHOWGROUP servtable.1
+-- %SETINACTIVE
+iShelfPermCCServiceNetworkCircuitType OBJECT-TYPE
+    SYNTAX      IShelfPermCCCircuitType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the network circuit type for the permanent crossconnect.
+         Valid values are pots(0), ds0(1), ds1(2), to(3), dds(4) and isdn(5).        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfPermCCServiceEntry 4 }
+
+-- %CLICOLLABEL SubLocType
+-- %CLISHOWGROUP servtable.1
+-- %SETINACTIVE
+iShelfPermCCServiceSubscriberLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The type of location for the subscriber side circuit
+         address.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfPermCCServiceEntry 5 }
+
+-- %CLICOLLABEL SubLoc
+-- %CLISHOWGROUP servtable.1
+-- %SETINACTIVE
+iShelfPermCCServiceSubscriberLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The host location for the subscriber side of
+         the cross connect.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfPermCCServiceEntry 6 }
+
+-- %CLICOLLABEL SubCirc
+-- %CLISHOWGROUP servtable.1
+-- %SETINACTIVE
+iShelfPermCCServiceSubscriberCircuit OBJECT-TYPE
+    SYNTAX      IShelfCircuit
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Based on the location type this object specifies the
+         ONT SubscriberLineCardIndex/POTSPort/0 -or-
+         ONT SubscriberLineCardIndex/T1Port/Ds0 -or-
+         POTS Circuit number
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfPermCCServiceEntry 7 }
+    
+-- %CLICOLLABEL SubCircTyp
+-- %CLISHOWGROUP servtable.1
+-- %SETINACTIVE
+iShelfPermCCServiceSubscriberCircuitType OBJECT-TYPE
+    SYNTAX      IShelfPermCCCircuitType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the sunscriber circuit type for the permanent crossconnect.
+         Valid values are pots(0), ds0(1), to(3), dds(4) and isdn(5).        
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfPermCCServiceEntry 8 }
+
+-- %CLISHOWGROUP servtable.2
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfPermCCServiceAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Locks or unlocks the Permanent cross-connect service
+         for the line.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL { unlock }
+    ::= { iShelfPermCCServiceEntry 9 }
+
+-- %DEEPCPUOBJ
+-- %CLISHOWGROUP servtable.2
+iShelfPermCCServiceOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates the operational state of the Permanent
+         cross-connect service for the line."
+    ::= { iShelfPermCCServiceEntry 10 }
+
+-- %CLISHOWGROUP servtable.3
+-- %SETINACTIVE
+-- %CLIOPTION
+iShelfPermCCServiceLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The user description of the cross-connect
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfPermCCServiceEntry 11 }
+
+-- %CLISHOWGROUP servtable.2
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICOLLABEL Service
+iShelfPermCCServiceServiceType OBJECT-TYPE
+    SYNTAX      IShelfServiceType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The type of service this cross-connect is being used for.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { voice }
+    ::= { iShelfPermCCServiceEntry 12 }
+
+-- %CLISHOWGROUP servtable.2
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICOLLABEL NumDS0s
+iShelfPermCCServiceNumDS0s OBJECT-TYPE
+    SYNTAX      INTEGER (1..24)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of DS0s associated with this cross-connect.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 1 }
+    ::= { iShelfPermCCServiceEntry 13 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP servtable.3
+iShelfPermCCServiceRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfPermCCServiceEntry 14 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntPotsCircuitAndDropTestTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDABBR onttest
+-- %CLICOLLABEL onttest
+iShelfOntPotsCircuitAndDropTestTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntPotsCircuitAndDropTestEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPstnTest 1 }
+
+iShelfOntPotsCircuitAndDropTestEntry OBJECT-TYPE
+    SYNTAX      IShelfOntPotsCircuitAndDropTestEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntPotsCircuitAndDropTestIndex }
+    ::= { iShelfOntPotsCircuitAndDropTestTable 1 }
+
+IShelfOntPotsCircuitAndDropTestEntry ::=
+    SEQUENCE {
+        iShelfOntPotsCircuitAndDropTestIndex
+            INTEGER,
+        iShelfOntPotsCircuitAndDropTestLogicalId
+            IShelfOntLogicalId,
+        iShelfOntPotsCircuitAndDropTestSLCIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntPotsCircuitAndDropTestPort
+            INTEGER,
+        iShelfOntPotsCircuitAndDropTestTests
+            IShelfOntPotsCircuitAndDropTests,
+        iShelfOntPotsCircuitAndDropTestStatus
+            INTEGER,
+        iShelfOntPotsCircuitAndDropTestRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL idx
+-- %CLIWIDTH 3
+iShelfOntPotsCircuitAndDropTestIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..4) -- TBD determine the number of outstanding
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropTestEntry 1 }
+
+-- %CLICOLLABEL LogicalId
+-- %CLIWIDTH 10
+iShelfOntPotsCircuitAndDropTestLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropTestEntry 2 }
+
+-- %CLICOLLABEL SLC
+-- %CLIWIDTH 6
+iShelfOntPotsCircuitAndDropTestSLCIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropTestEntry 3 }
+
+-- %CLICOLLABEL port
+-- %CLIWIDTH 4
+iShelfOntPotsCircuitAndDropTestPort OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropTestEntry 4 }
+
+-- %CLIOPTION
+-- %CLICOLLABEL tests
+-- %CLIWIDTH 10
+iShelfOntPotsCircuitAndDropTestTests OBJECT-TYPE
+    SYNTAX      IShelfOntPotsCircuitAndDropTests
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This is a bitmap indicating the tests to perform by
+         default perform all possible tests."
+    DEFVAL      { 4294967295 }
+    ::= { iShelfOntPotsCircuitAndDropTestEntry 5 }
+
+-- %CLIOPTION
+-- %CLICOLLABEL status
+-- %CLIWIDTH 10
+iShelfOntPotsCircuitAndDropTestStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    inProgress(1),
+                    complete(2),
+                    timeout(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropTestEntry 6 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLIIGNORE
+iShelfOntPotsCircuitAndDropTestRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntPotsCircuitAndDropTestEntry 7 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntPotsCircuitAndDropResultTable - 
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDABBR ontresult
+-- %CLICOLLABEL ontresult
+iShelfOntPotsCircuitAndDropResultTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntPotsCircuitAndDropResultEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfPstnTest 2 }
+
+iShelfOntPotsCircuitAndDropResultEntry OBJECT-TYPE
+    SYNTAX      IShelfOntPotsCircuitAndDropResultEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntPotsCircuitAndDropResultIndex,
+                  iShelfOntPotsCircuitAndDropResultTest }
+    ::= { iShelfOntPotsCircuitAndDropResultTable 1 }
+
+IShelfOntPotsCircuitAndDropResultEntry ::=
+    SEQUENCE {
+        iShelfOntPotsCircuitAndDropResultIndex
+            INTEGER,
+        iShelfOntPotsCircuitAndDropResultTest
+            INTEGER,
+        iShelfOntPotsCircuitAndDropResultResult
+            INTEGER,
+        iShelfOntPotsCircuitAndDropResultLevel
+            INTEGER,
+        iShelfOntPotsCircuitAndDropResultActual
+            IShelfOntPotsCircuitAndDropString,
+        iShelfOntPotsCircuitAndDropResultMinVal
+            IShelfOntPotsCircuitAndDropString,
+        iShelfOntPotsCircuitAndDropResultMaxVal
+            IShelfOntPotsCircuitAndDropString
+    }
+
+-- %CLICOLLABEL idx
+-- %CLIWIDTH 3
+iShelfOntPotsCircuitAndDropResultIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropResultEntry 1 }
+
+-- %CLICOLLABEL test
+-- %CLIWIDTH 15
+iShelfOntPotsCircuitAndDropResultTest OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    vddRead(1),   -- return Vdd voltage at CODEC
+                    vTipRing(2),  -- TIP to RING voltage
+                    vRinging(3),  -- voltage during ring
+                    dialTone(4),  -- high level test to see if can draw dial tone
+                    ringTrip(5),  -- high level test to see if can stop ringing by
+                                  -- going off hook
+                    vacFEMF(6),
+                    vdcFEMF(7),
+                    tipGndResFault(8),   -- see if short btwn tip and ground
+                    ringGndResFault(9),  -- see if short btwn ring and ground
+                    tipRingResFault(10), -- see if short btwn tip and ring
+                    offHook(11),         -- see if off hook
+                    renLoad(12),         -- calc REN load on drop
+                    loopCurrent(13),
+                    vBatr(14),           -- battery feed for ring
+                    vBath(15),           -- battery feed for active high
+                    vBatl(16)            -- battery feed for active low
+            }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropResultEntry 2 }
+
+-- %CLICOLLABEL result
+-- %CLIWIDTH 7
+iShelfOntPotsCircuitAndDropResultResult OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    pass(1),
+                    noHw(2),     -- not run because HW does not support this test
+                    notRun(3),   -- not run (not implemented or skipped due to
+                                 -- other failure)
+                    fail(4)      -- ran but failed
+            }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropResultEntry 3 }
+
+-- %CLICOLLABEL level
+-- %CLIWIDTH 9
+iShelfOntPotsCircuitAndDropResultLevel OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    normal(1),
+                    warning(2),
+                    caution(3),
+                    hazardous(4)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropResultEntry 4 }
+
+-- %CLICOLLABEL actual
+-- %CLIWIDTH 10
+iShelfOntPotsCircuitAndDropResultActual OBJECT-TYPE
+    SYNTAX      IShelfOntPotsCircuitAndDropString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropResultEntry 5 }
+
+-- %CLICOLLABEL minValue
+-- %CLIWIDTH 10
+iShelfOntPotsCircuitAndDropResultMinVal OBJECT-TYPE
+    SYNTAX      IShelfOntPotsCircuitAndDropString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropResultEntry 6 }
+
+-- %CLICOLLABEL maxValue
+-- %CLIWIDTH 10
+iShelfOntPotsCircuitAndDropResultMaxVal OBJECT-TYPE
+    SYNTAX      IShelfOntPotsCircuitAndDropString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntPotsCircuitAndDropResultEntry 7 }
+    
+
+END

@@ -1,0 +1,780 @@
+{
+  "imports": {
+    "class": "imports",
+    "NTP-MIB": [
+      "NTPTimeStamp",
+      "NTPLeapIndicator"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "iso",
+      "Bits",
+      "MibIdentifier",
+      "Unsigned32",
+      "TimeTicks",
+      "OBJECT-TYPE",
+      "Counter64",
+      "Integer32",
+      "NOTIFICATION-TYPE",
+      "IpAddress",
+      "OBJECT-IDENTITY",
+      "Gauge32",
+      "Counter32",
+      "enterprises",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TruthValue",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "ntpProxyMIB": {
+    "name": "ntpProxyMIB",
+    "oid": "1.3.6.1.4.1.1277.4",
+    "class": "moduleidentity",
+    "lastupdated": "199707251540Z",
+    "organization": "University of Delaware",
+    "contactinfo": "Adarsh Sethi Department of Computer & Information Sciences University of Delaware Newark, DE 19716 Tel: +1 302 831 1945 E-mail: sethi@cis.udel.edu David Mills Department of Electrical Engineering University of Delaware Newark, DE 19716 Tel: +1 302 831 ???? E-mail: mills@ee.udel.edu",
+    "description": "This MIB module defines a MIB which provides mechanisms to monitor and control many NTP servers via a Proxy Agent."
+  },
+  "udel": {
+    "name": "udel",
+    "oid": "1.3.6.1.4.1.1277",
+    "class": "objectidentity"
+  },
+  "ntpProxyControl": {
+    "name": "ntpProxyControl",
+    "oid": "1.3.6.1.4.1.1277.4.1",
+    "class": "objectidentity"
+  },
+  "NTPRowStatus": {
+    "name": "NTPRowStatus",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "active": 1,
+          "notInService": 2,
+          "create": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The NTPRowStatus textual convention is modeled after the RowStatus textual convention of RFC 1903, but is simpler because it only allows one create operation (the create- and-go of RowStatus) and does not allow row deletion. If the state of the status column is `notInService' and the management station tries to set it to `create', the corresponding row is created and the operation is successful. If the set to `create' is attempted when the status column is in state `active', the operation fails and inconsistentValue is returned. A management station is not permitted to delete the conceptual row; deletion is carried out by the agent in an autonomous manner."
+  },
+  "ntpProxyControlTable": {
+    "name": "ntpProxyControlTable",
+    "oid": "1.3.6.1.4.1.1277.4.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "ntpProxyControlEntry": {
+    "name": "ntpProxyControlEntry",
+    "oid": "1.3.6.1.4.1.1277.4.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NTP-PROXY-MIB",
+        "object": "ntpProxyServerIPAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "ntpProxyServerIPAddr": {
+    "name": "ntpProxyServerIPAddr",
+    "oid": "1.3.6.1.4.1.1277.4.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "ntpProxyControlStatus": {
+    "name": "ntpProxyControlStatus",
+    "oid": "1.3.6.1.4.1.1277.4.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPRowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current"
+  },
+  "ntpProxyServerSystemTable": {
+    "name": "ntpProxyServerSystemTable",
+    "oid": "1.3.6.1.4.1.1277.4.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "ntpProxyServerSystemEntry": {
+    "name": "ntpProxyServerSystemEntry",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NTP-PROXY-MIB",
+        "object": "ntpProxyServerIPAddr",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "ntpProxyServerSysLeap": {
+    "name": "ntpProxyServerSysLeap",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPLeapIndicator",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysStratum": {
+    "name": "ntpProxyServerSysStratum",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysPrecision": {
+    "name": "ntpProxyServerSysPrecision",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysRootDelay": {
+    "name": "ntpProxyServerSysRootDelay",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysRootDispersion": {
+    "name": "ntpProxyServerSysRootDispersion",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysRefId": {
+    "name": "ntpProxyServerSysRefId",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysRefTime": {
+    "name": "ntpProxyServerSysRefTime",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPTimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysPoll": {
+    "name": "ntpProxyServerSysPoll",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysPeer": {
+    "name": "ntpProxyServerSysPeer",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysPhase": {
+    "name": "ntpProxyServerSysPhase",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysFreq": {
+    "name": "ntpProxyServerSysFreq",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysError": {
+    "name": "ntpProxyServerSysError",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysClock": {
+    "name": "ntpProxyServerSysClock",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPTimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysSystem": {
+    "name": "ntpProxyServerSysSystem",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyServerSysProcessor": {
+    "name": "ntpProxyServerSysProcessor",
+    "oid": "1.3.6.1.4.1.1277.4.1.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersVarTable": {
+    "name": "ntpProxyPeersVarTable",
+    "oid": "1.3.6.1.4.1.1277.4.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "ntpProxyPeersVarEntry": {
+    "name": "ntpProxyPeersVarEntry",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NTP-PROXY-MIB",
+        "object": "ntpProxyServerIPAddr",
+        "implied": 0
+      },
+      {
+        "module": "NTP-PROXY-MIB",
+        "object": "ntpProxyPeersAssocId",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "ntpProxyPeersAssocId": {
+    "name": "ntpProxyPeersAssocId",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "ntpProxyPeersConfigured": {
+    "name": "ntpProxyPeersConfigured",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersPeerAddress": {
+    "name": "ntpProxyPeersPeerAddress",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersPeerPort": {
+    "name": "ntpProxyPeersPeerPort",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersHostAddress": {
+    "name": "ntpProxyPeersHostAddress",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersHostPort": {
+    "name": "ntpProxyPeersHostPort",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersLeap": {
+    "name": "ntpProxyPeersLeap",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPLeapIndicator",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersMode": {
+    "name": "ntpProxyPeersMode",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unspecified": 0,
+          "symmetricActive": 1,
+          "symmetricPassive": 2,
+          "client": 3,
+          "server": 4,
+          "broadcast": 5,
+          "reservedControl": 6,
+          "reservedPrivate": 7
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersStratum": {
+    "name": "ntpProxyPeersStratum",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 255
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersPeerPoll": {
+    "name": "ntpProxyPeersPeerPoll",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersHostPoll": {
+    "name": "ntpProxyPeersHostPoll",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersPrecision": {
+    "name": "ntpProxyPeersPrecision",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersRootDelay": {
+    "name": "ntpProxyPeersRootDelay",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersRootDispersion": {
+    "name": "ntpProxyPeersRootDispersion",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersRefId": {
+    "name": "ntpProxyPeersRefId",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersRefTime": {
+    "name": "ntpProxyPeersRefTime",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPTimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersOrgTime": {
+    "name": "ntpProxyPeersOrgTime",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPTimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersReceiveTime": {
+    "name": "ntpProxyPeersReceiveTime",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPTimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersTransmitTime": {
+    "name": "ntpProxyPeersTransmitTime",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPTimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersUpdateTime": {
+    "name": "ntpProxyPeersUpdateTime",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "NTPTimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersReach": {
+    "name": "ntpProxyPeersReach",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersTimer": {
+    "name": "ntpProxyPeersTimer",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersOffset": {
+    "name": "ntpProxyPeersOffset",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersDelay": {
+    "name": "ntpProxyPeersDelay",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersDispersion": {
+    "name": "ntpProxyPeersDispersion",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyPeersFilterValidEntries": {
+    "name": "ntpProxyPeersFilterValidEntries",
+    "oid": "1.3.6.1.4.1.1277.4.1.3.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of valid entries for a peer in the Proxy Filter Register Table. This number can be zero."
+  },
+  "ntpProxyFilterRegisterTable": {
+    "name": "ntpProxyFilterRegisterTable",
+    "oid": "1.3.6.1.4.1.1277.4.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "ntpProxyFilterRegisterEntry": {
+    "name": "ntpProxyFilterRegisterEntry",
+    "oid": "1.3.6.1.4.1.1277.4.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "NTP-PROXY-MIB",
+        "object": "ntpProxyServerIPAddr",
+        "implied": 0
+      },
+      {
+        "module": "NTP-PROXY-MIB",
+        "object": "ntpProxyPeersAssocId",
+        "implied": 0
+      },
+      {
+        "module": "NTP-PROXY-MIB",
+        "object": "ntpProxyFilterIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current"
+  },
+  "ntpProxyFilterIndex": {
+    "name": "ntpProxyFilterIndex",
+    "oid": "1.3.6.1.4.1.1277.4.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current"
+  },
+  "ntpProxyFilterPeersOffset": {
+    "name": "ntpProxyFilterPeersOffset",
+    "oid": "1.3.6.1.4.1.1277.4.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyFilterPeersDelay": {
+    "name": "ntpProxyFilterPeersDelay",
+    "oid": "1.3.6.1.4.1.1277.4.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "ntpProxyFilterPeersDispersion": {
+    "name": "ntpProxyFilterPeersDispersion",
+    "oid": "1.3.6.1.4.1.1277.4.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/NTP-PROXY-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:46:36 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "NTP-PROXY-MIB"
+  }
+}

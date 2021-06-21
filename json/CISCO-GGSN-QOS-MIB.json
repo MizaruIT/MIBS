@@ -1,0 +1,535 @@
+{
+  "imports": {
+    "class": "imports",
+    "CISCO-SMI": [
+      "ciscoMgmt"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "MibIdentifier",
+      "Unsigned32",
+      "OBJECT-TYPE",
+      "Counter64",
+      "IpAddress",
+      "TimeTicks",
+      "OBJECT-IDENTITY",
+      "Bits",
+      "Integer32",
+      "MODULE-IDENTITY",
+      "iso",
+      "Gauge32",
+      "NOTIFICATION-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "cggsnQosMIB": {
+    "name": "cggsnQosMIB",
+    "oid": "1.3.6.1.4.1.9.9.241",
+    "class": "objectidentity"
+  },
+  "cggsnQosMIBObjects": {
+    "name": "cggsnQosMIBObjects",
+    "oid": "1.3.6.1.4.1.9.9.241.1",
+    "class": "objectidentity"
+  },
+  "cggsnQosGeneralConfig": {
+    "name": "cggsnQosGeneralConfig",
+    "oid": "1.3.6.1.4.1.9.9.241.1.1",
+    "class": "objectidentity"
+  },
+  "cggsnQosCanonicalQos": {
+    "name": "cggsnQosCanonicalQos",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2",
+    "class": "objectidentity"
+  },
+  "cggsnQosUmtsQos": {
+    "name": "cggsnQosUmtsQos",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3",
+    "class": "objectidentity"
+  },
+  "cggsnQosMIBConformances": {
+    "name": "cggsnQosMIBConformances",
+    "oid": "1.3.6.1.4.1.9.9.241.2",
+    "class": "objectidentity"
+  },
+  "cggsnQosMIBCompliances": {
+    "name": "cggsnQosMIBCompliances",
+    "oid": "1.3.6.1.4.1.9.9.241.2.1",
+    "class": "objectidentity"
+  },
+  "cggsnQosMIBGroups": {
+    "name": "cggsnQosMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.241.2.2",
+    "class": "objectidentity"
+  },
+  "cggsnQosMappingMethod": {
+    "name": "cggsnQosMappingMethod",
+    "oid": "1.3.6.1.4.1.9.9.241.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "canonical": 2,
+          "delay": 3,
+          "umts": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the type of QoS method (canonical or delay or none (best-effort) or umts) mapped to GPRS QoS."
+  },
+  "cggsnQosClassIpTosMapTable": {
+    "name": "cggsnQosClassIpTosMapTable",
+    "oid": "1.3.6.1.4.1.9.9.241.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This table represents the mapping for different Qos classes to TOS precedence classes in the IP header. If cggsnQosMappingMethod is set to delay(3), the length of the table is 4 with the following default mapping: delay1 = 3 (flash), delay2 = 2 (immediate), delay3 = 1 (priority), delay_besteffort = 0 (routine). If cggsnQosMappingMethod is set to canonical(2), the length of the table is 3 with the following default mapping: premium = 2 (immediate), normal = 1 (priority), best_effort = 0 (routine). If cggsnQosMappingMethod is set to umts(4) or none(1), the table will be empty."
+  },
+  "cggsnQosClassIpTosMapEntry": {
+    "name": "cggsnQosClassIpTosMapEntry",
+    "oid": "1.3.6.1.4.1.9.9.241.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-GGSN-QOS-MIB",
+        "object": "cggsnQosClass",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "Entry which denotes mapping of different Qos classes to TOS precedence class and also the number of PDP contexts associated with each Qos Class."
+  },
+  "cggsnQosClass": {
+    "name": "cggsnQosClass",
+    "oid": "1.3.6.1.4.1.9.9.241.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This object specifies different Qos Classes of either 'canonical' or 'delay' Qos based on the value set to cggsnQosMappingMethod. The following is how the value needs to be interpreted. If cggsnQosMappingMethod is set to delay(3), 1 - delay1, 2 - delay2, 3 - delay3, 4 - delay_best_effort. If cggsnQosMappingMethod is set to canonical(2), 1 - premium, 2 - normal, 3 - best_effort."
+  },
+  "cggsnQosMappedIpTos": {
+    "name": "cggsnQosMappedIpTos",
+    "oid": "1.3.6.1.4.1.9.9.241.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 5
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the IP TOS precedence to which cggsnQosClass is mapped. Higher TOS precedence value indicates a higher service priority. The values '6 (internetwork_control)' and '7 (network_control)' of TOS are not used in mapping."
+  },
+  "cggsnQosCurrentPdps": {
+    "name": "cggsnQosCurrentPdps",
+    "oid": "1.3.6.1.4.1.9.9.241.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object specifies the current number of PDP contexts that have cggsnQosClass."
+  },
+  "cggsnQosTotalBandwidthResrc": {
+    "name": "cggsnQosTotalBandwidthResrc",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "The total amount of bandwidth resource on the GGSN, this total depends on various factors like system throughput, memory size, maximum number of PDP contexts supported. A portion of the total resources will be allocated to a user at the PDP context activation time based on the Qos class the user is assigned to. This object can only be retrieved if cggsnQosMappingMethod is set to canonical(2)."
+  },
+  "cggsnQosCurrentUsedBandwidth": {
+    "name": "cggsnQosCurrentUsedBandwidth",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The current amount of bandwidth resource used on the GGSN. This object can only be retrieved if cggsnQosMappingMethod is set to canonical(2)."
+  },
+  "cggsnQosPremiumMtDeviationFactor": {
+    "name": "cggsnQosPremiumMtDeviationFactor",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 1000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 100,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the mean throughput deviation factor that the GGSN uses to calculate the allowable data throughput for Premium Qos. This object can only be retrieved if cggsnQosMappingMethod is set to canonical(2)."
+  },
+  "cggsnQosBestEffrtBandWidthFactor": {
+    "name": "cggsnQosBestEffrtBandWidthFactor",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4000000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object specifies the bandwidth factor to be applied to canonical best-effort QoS class. This object can only be retrieved if cggsnQosMappingMethod is set to canonical(2)."
+  },
+  "cggsnQosPremiumMeanThroughput": {
+    "name": "cggsnQosPremiumMeanThroughput",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The sum of the mean throughput of premium class QOS users on the GSN. This object can only be retrieved if cggsnQosMappingMethod is set to canonical(2)."
+  },
+  "cggsnQosNormalMeanThroughput": {
+    "name": "cggsnQosNormalMeanThroughput",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The sum of the mean throughput of normal class QOS users on the GSN. This object can only be retrieved if cggsnQosMappingMethod is set to canonical(2)."
+  },
+  "cggsnQosBestEffortMeanThroughput": {
+    "name": "cggsnQosBestEffortMeanThroughput",
+    "oid": "1.3.6.1.4.1.9.9.241.1.2.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "The sum of the mean throughput of best-effort class QOS users on the GSN. This object can only be retrieved if cggsnQosMappingMethod is set to canonical(2)."
+  },
+  "cggsnQosTrafficClassPhbTable": {
+    "name": "cggsnQosTrafficClassPhbTable",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This table represents the mapping between a given traffic class and the corresponding DS PHB group. The table has one entry for each possible traffic class type. The table will be empty if the cggsnQosMappingMethod is not set to 'umts'."
+  },
+  "cggsnQosTrafficClassPhbEntry": {
+    "name": "cggsnQosTrafficClassPhbEntry",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-GGSN-QOS-MIB",
+        "object": "cggsnQosUmtsTrafficClass",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "Entry which denotes mapping between a given traffic class and the corresponding DS PHB group and the number of PDP contexts associated with each traffic class."
+  },
+  "cggsnQosUmtsTrafficClass": {
+    "name": "cggsnQosUmtsTrafficClass",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "signalling": 1,
+          "conversational": 2,
+          "streaming": 3,
+          "interactive": 4,
+          "background": 5
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This object denotes the UMTS QoS traffic class. UMTS QoS uses this parameter to make assumptions about the traffic source, and determine the maximum bitrate, and guaranteed bitrate for the traffic class when performing admission control. The signalling traffic class only applies to the UMTS signalling messages. "
+  },
+  "cggsnQosUmtsDiffServPhbgroup": {
+    "name": "cggsnQosUmtsDiffServPhbgroup",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "signallingClass": 1,
+          "efClass": 2,
+          "afClass1": 3,
+          "afClass2": 4,
+          "afClass3": 5,
+          "afClass4": 6,
+          "bestEffort": 7
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "bestEffort",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object denotes the PHB which is mapped to the traffic class given by cggsnQosUmtsTrafficClass. DS architecture is based on number of functional elements, one of which is PHB. PHBs specify queuing, queue management and scheduling characteristics that allow a means of allocating buffer and bandwidth resources at each node among the competing traffic streams. The various DS PHBs include: signalling - signallingClass(1) The signalling class PHB is only used for the UMTS signalling messages. This DS PHB does not apply to any other IP data packets. expedited forwarding - efClass(2) The expedited forwarding PHB is used for providing a low loss, low latency, low jitter, assured bandwidth, end-to-end service through the DS domains. Such a service appears to the endpoints like a point-to-point connection, or a virtual leased line. assured forwarding - afClass(3-6) The assured forwarding PHB provides a means for a provider DS domain to offer different levels of delivery assurances for packets received from a customer DS domain. Four assured forwarding classes: afClass1, afClass2, afClass3 and afClass4 are defined, where each AF class is in each DS node allocated a certain amouont of forwarding resoources(buffer space and bandwidth). IP packets are assigned into one or more of these classes, according to the subscribed service. Within each class the packets are marked by a mobile subscriber, or by the provider DS domain, with one of the three possible drop precedence values. In case of congestion, the drop precedence of a packet determines the relative importance of a packet within the class. Packets in one class are forwarded independently of the packets in another class. best effort - bestEffort(7) This is the default PHB. The packets of this aggregate are forwarded on an output link whenever the link is not required to satisfy any other PHB. "
+  },
+  "cggsnQosUmtsPdps": {
+    "name": "cggsnQosUmtsPdps",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "mandatory",
+    "description": "This object specifies the current number of PDP contexts associated with each traffic class identified by cggsnQosUmtsTrafficClass."
+  },
+  "cggsnQosPhbToDscpMapTable": {
+    "name": "cggsnQosPhbToDscpMapTable",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This table represents the DiffServ Code Point (DSCP) mappings for different types of DiffServ PHB groups. The table has one entry for each possible DS PHB."
+  },
+  "cggsnQosPhbToDscpMapEntry": {
+    "name": "cggsnQosPhbToDscpMapEntry",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CISCO-GGSN-QOS-MIB",
+        "object": "cggsnQosDiffServPhb",
+        "implied": 0
+      }
+    ],
+    "status": "mandatory",
+    "description": "Entry which denotes mapping of different DS PHBs to the DSCP."
+  },
+  "cggsnQosDiffServPhb": {
+    "name": "cggsnQosDiffServPhb",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "signallingClass": 1,
+          "efClass": 2,
+          "afClass1Low": 3,
+          "afClass1Medium": 4,
+          "afClass1High": 5,
+          "afClass2Low": 6,
+          "afClass2Medium": 7,
+          "afClass2High": 8,
+          "afClass3Low": 9,
+          "afClass3Medium": 10,
+          "afClass3High": 11,
+          "afClass4Low": 12,
+          "afClass4Medium": 13,
+          "afClass4High": 14,
+          "bestEffort": 15
+        }
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "mandatory",
+    "description": "This object denotes the various possible values of PHB. It can take up one of the foll: values - signallingClass(1) - Signalling class efClass(2) - expedited forwarding class afClass1Low(3) - assured forwarding class 1 low drop precedence afClass1Medium(4) - assured forwarding class 1 medium drop precedence afClass1High(5) - assured forwarding class 1 high drop precedence afClass2Low(6) - assured forwarding class 2 low drop precedence afClass2Medium(7) - assured forwarding class 2 medium drop precedence afClass2High(8) - assured forwarding class 2 high drop precedence afClass3Low(9) - assured forwarding class 3 low drop precedence afClass3Medium(10) - assured forwarding class 3 medium drop precedence afClass3High(11) - assured forwarding class 3 high drop precedence afClass4Low(12) - assured forwarding class 4 low drop precedence afClass4Medium(13) - assured forwarding class 4 medium drop precedence afClass4High(14) - assured forwarding class 4 high drop precedence bestEffort(15) - best effort class"
+  },
+  "cggsnQosDscp": {
+    "name": "cggsnQosDscp",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object denotes the DSCP for the corresponding PHB defined by cggsnQosDiffServPhb. The values recommended for the various values of cggsnQosDiffServPhb are: signallingClass - '101000' efClass - '101110' afClass1Low - '001010' afClass1Medium - '001100' afClass1High - '001110' afClass2Low - '010010' afClass2Medium - '010100' afClass2High - '010110' afClass3Low - '011010' afClass3Medium - '011100' afClass3High - '011110' afClass4Low - '100010' afClass4Medium - '100100' afClass4High - '100110' bestEffort - '000000'"
+  },
+  "cggsnQosUmtsDscpUnmodified": {
+    "name": "cggsnQosUmtsDscpUnmodified",
+    "oid": "1.3.6.1.4.1.9.9.241.1.3.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2,
+          "all": 3,
+          "none": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "mandatory",
+    "description": "This object defines if the DSCP in the subscriber datagram will be forwarded in the uplink/downlink path with or without modification. The various values that this object can take up are: up(1) - DSCP will not be modified in the uplink path alone down(2) - DSCP will not be modified in downlink path alone all(3) - DSCP will not be modified in both uplink/downlink path none(4) - DSCP will be modified both in uplink and in downlink path"
+  },
+  "cggsnQosGeneralConfigGroup": {
+    "name": "cggsnQosGeneralConfigGroup",
+    "oid": "1.3.6.1.4.1.9.9.241.2.2.1",
+    "class": "objectidentity"
+  },
+  "cggsnQosCanonicalQosGroup": {
+    "name": "cggsnQosCanonicalQosGroup",
+    "oid": "1.3.6.1.4.1.9.9.241.2.2.2",
+    "class": "objectidentity"
+  },
+  "cggsnQosUmtsQosGroup": {
+    "name": "cggsnQosUmtsQosGroup",
+    "oid": "1.3.6.1.4.1.9.9.241.2.2.3",
+    "class": "objectidentity"
+  },
+  "cggsnQosMIBCompliance": {
+    "name": "cggsnQosMIBCompliance",
+    "oid": "1.3.6.1.4.1.9.9.241.2.1.1",
+    "class": "objectidentity"
+  },
+  "cggsnQosMIBComplianceRev1": {
+    "name": "cggsnQosMIBComplianceRev1",
+    "oid": "1.3.6.1.4.1.9.9.241.2.1.2",
+    "class": "objectidentity"
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CISCO-GGSN-QOS-MIB-V1SMI.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:19:45 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CISCO-GGSN-QOS-MIB"
+  }
+}

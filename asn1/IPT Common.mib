@@ -1,0 +1,1846 @@
+IPT DEFINITIONS ::= BEGIN
+
+-- Title:       Nortel Networks InterWan iPT Enterprise MIB
+-- Date:        January 7, 1999
+--
+-- Revision:
+--              v1   :  Genesis
+--              v2   :  Removed IPTSysPort entry
+--                      Added PortVlanViolations
+--                      iPTCliMaxTelnetSessions changed to read-only,
+--                              defval = 4
+--                      iPTCliMaxRloginSessions changed to read-only,
+--                      defval = 4
+--              v3   :  Changed iPTPortState to iPTPortOperState
+--              v4   :  Renumbered iPTSysTrapRecvRowStatus from 5 to 4
+--              v5   :  Added a ten-hundredBT iPTPortType
+--		v6   :  Moved iPTBucket and iPTNode from Express MIB
+--			to here.
+--			Updated CONTACT-INFO   
+--			Included OID defines to tie in Sonet and interWAN
+--		v7   :  Added iPTBucketDiscards
+--                      Removed "none" from iPTPortAdminSpeed
+--                      Removed iPTCliMaxRloginSessions
+--                      Cleaned up portOperState values
+--                      Removed DEFVAL clause from portOperSpeed
+--                      Changed DEFVAL of AutoNegotiation to OFF
+--                      Changed iPTPortVLANViolations to
+--                      iPTPortUnknownTDDiscards
+--                      Added iPTSysRemoteFileSynched attribute
+--              v8   :  Added iPTPortName
+--                      Added Description clause to iPTSysTrapRecvVersion
+--                      Added iPTPortUnknownTDDiscards to iPTPortEntry
+--                      sequence
+--              v9   :  changed minimum size of iPTCliRWAPassword and
+--                      iPTCliRWPassword from zero to one
+--              v10  :  Added FDBAging time mib variable to DakySystemGroup.
+--              v11  :  Added WAN stats
+--                      Removed problematic defines
+--              v12  :  Changed the FDB aging time boundaries to 0..600
+--              v13  :  Changed the Token Bucket rate boundaries to 1..1000
+--                      and rewrote the FDB aging time description
+--              v14  :  Fixed the OIDs 
+--              v15  :  Added a new item (none(1) ) to iPTPortAdminSpeed.
+--              v16  :  Corrected iPTPortAdminSpeed none to value 4.
+--              v17  :  Fixed typo in iPTPortAdminSpeed
+--              v18  :  SR 10329594 and 10308979
+--              ....
+--              v24  :  WTM- Wan Traffic Management features, 
+--                      Wan Load Sharing, ipt_19009153,
+--                      Wan Static Routing, ipt2_19009261
+--              v25  :  WTM- Wan Traffic Management route index fix
+--              v26  :  IPLT OAM provisioning objects: 19010074 DT
+--              v32  :  OEL2 OAM provisioning changes: 19010074 DT
+--              v33  :  Change text for WTM preferred route
+--              v34  :  Added iPTTrapConfig Objects
+--              v35  :  Addition of the Test Group under iptMgmt.
+--                      The table consists of a testloopback table
+--                      and its entries
+--              v36  :  Addition of the NodeAvail, NodeUnavail traps,
+--                      and associated iPTTrapConfig Objects
+--              v37  :  Add iPTPortSourceLearning object 
+--              v38  :  Remove the iPTTestLoopbackComponent entry
+--                      from the iPTTestLoopbackTable
+--              v39  :  Add the testing state to the valid port
+--                      states
+--              v40  :  Adding the provDataSaveFailedTrap
+--              v41  :  Add testing state to iPTPortOperState
+--              v42  :  Add subnetting checks enable/disable: 10471638 DT
+--              v43  :  Add enable/disable functionality for 
+--                      provDataSaveFailedTrap
+--              v44  :  Add new variables to provDataSaveFailedTrap 
+--                      to differentiate failure scenarios
+--              v45  :  Fixing WorldCom compile issue - Adding
+--                      iPTLanEgressPackets to the list of items in Entry.
+--              v46  :  Some compilers like the Optivity require the nortel,
+--                      sonetTransport and interWAN objects to be explicitly
+--                      imported rather than being labelled against their
+--                      OIDs.
+--              v47  :  Defining OID as shown in RFC 1155. Changing the OID 
+--                      definition by naming only the root.
+--              v48  :  Added a new subgroup (iPTRingFairness) under group
+--                      iPTWanTrafficMgmt, to handle Ring Fairness.
+--              v49  :  Add iPTRingFairnessMode to iPTRingFairness group.
+--              v50  :  Correcting range parameter of FDB aging time.
+--		v51  :	Change WTM Fairness parms, remove Capped Mode &
+--                      FairShareRate.
+--		v52  :	The new OPE features: OPE guard and Provisioning
+--                      info status - data lost and save required.
+--                      Added: 
+--                      iPTSysProvDataStatus (35) to iPTSystem,
+--                      4 new traps: provDataSaveRequiredTrap,
+--                      provDataLostTrap, ringSizeExceededTrap,
+--                      ringSizeExceededClearTrap, and to iPTTrapConfig
+--                      entries to enable/disable all above traps 
+--                      iPTTrapConfig 6 to iPTTrapConfi 9. 
+--
+
+IMPORTS
+	MODULE-IDENTITY				FROM SNMPv2-SMI
+	IpAddress, TimeTicks                    FROM RFC1155-SMI
+	OBJECT-TYPE 				FROM RFC-1212
+	RowStatus, MacAddress, TruthValue       FROM SNMPv2-TC
+	Gauge32, Counter32                 	FROM SNMPv2-SMI
+	TRAP-TYPE				FROM RFC-1215
+        interWAN                              FROM SONETTRANSPORT-MIB-ARCS-MIB;
+
+iPT     MODULE-IDENTITY
+        LAST-UPDATED 	"0111190000Z"
+        ORGANIZATION 	"Nortel Networks"
+        CONTACT-INFO 	"Global Optical Customer Service
+			 Tel:	1-800 (ASK-TRAN) or
+				1-800 (ASK-ETAS)"
+        DESCRIPTION 	"Enterprise MIB for the InterWAN iPT
+                         product family."
+          ::= { interWAN 1 }
+
+--
+-- Local defines to avoid having to pull in other RFCs.
+--
+DisplayString   ::= OCTET STRING
+
+--
+-- Additions to resolve some SNMP V2 dependencies so we don't
+-- have to pull in a lot of mib modules.
+--
+internet  	OBJECT IDENTIFIER ::= { iso org(3) dod(6) 1 }
+snmpV2 		OBJECT IDENTIFIER ::= { internet 6 }
+snmpModules 	OBJECT IDENTIFIER ::= { snmpV2 3 }
+snmpMIB 	OBJECT IDENTIFIER ::= { snmpModules 1 }
+snmpMIBObjects 	OBJECT IDENTIFIER ::= { snmpMIB 1 }
+snmpTraps 	OBJECT IDENTIFIER ::= { snmpMIBObjects 5 }
+
+-- Local definitions here.
+iPTMgmt         OBJECT IDENTIFIER ::= { iPT 1 }
+iPTExpress      OBJECT IDENTIFIER ::= { iPT 2 } 
+iPT48           OBJECT IDENTIFIER ::= { iPT 3 } 
+iPTHCT		OBJECT IDENTIFIER ::= { iPT 4 }
+
+iPTSystem       OBJECT IDENTIFIER ::= { iPTMgmt 1 }
+iPTCli          OBJECT IDENTIFIER ::= { iPTMgmt 2 }
+iPTPort         OBJECT IDENTIFIER ::= { iPTMgmt 3 }
+iPTNode         OBJECT IDENTIFIER ::= { iPTMgmt 4 }
+iPTBucket       OBJECT IDENTIFIER ::= { iPTMgmt 5 }
+iPTWanTrafficMgmt OBJECT IDENTIFIER ::= { iPTMgmt 6}
+iPTTrapConfig   OBJECT IDENTIFIER ::= { iPTMgmt 7 }
+iPTTest         OBJECT IDENTIFIER ::= { iPTMgmt 8 }
+
+-- /* WTM */
+
+iPTLoadSharing               OBJECT IDENTIFIER ::= { iPTWanTrafficMgmt 1}
+
+iPTGeneralLoadSharing        OBJECT IDENTIFIER ::= { iPTLoadSharing 1}
+
+iPTGeneralLoadSharingTable OBJECT-TYPE
+         SYNTAX          SEQUENCE OF IPTGeneralLoadSharingEntry
+         ACCESS          not-accessible
+         STATUS          mandatory
+  	DESCRIPTION     "Table containing port enable/disable"
+         ::= { iPTGeneralLoadSharing 1}
+ 
+iPTGeneralLoadSharingEntry OBJECT-TYPE
+         SYNTAX          IPTGeneralLoadSharingEntry
+         ACCESS          not-accessible
+         STATUS          mandatory
+ 	 DESCRIPTION     "An entry representing the static route"
+         INDEX           { iPTGeneralLoadSharingPortIndex }
+         ::= { iPTGeneralLoadSharingTable 1}
+ 
+IPTGeneralLoadSharingEntry ::= 
+              SEQUENCE {
+                iPTGeneralLoadSharingPortIndex          INTEGER,
+ 		iPTGeneralLoadSharingEnable             TruthValue
+}
+
+iPTGeneralLoadSharingPortIndex OBJECT-TYPE
+	   SYNTAX 	INTEGER
+ 	   ACCESS    	read-write
+           STATUS       mandatory
+ 	   DESCRIPTION 	"Used to add/delete entries to the table"
+           ::= { iPTGeneralLoadSharingEntry 1}
+
+iPTGeneralLoadSharingEnable   OBJECT-TYPE
+        SYNTAX          TruthValue
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION "The administrative state of the Wan Traffic Management
+ 	             Load Sharing General Load Sharing Feature"
+        DEFVAL	      { false }
+        ::= { iPTGeneralLoadSharingEntry 2 }
+
+
+
+iPTStaticRouting            OBJECT IDENTIFIER ::= { iPTWanTrafficMgmt 2}
+
+
+iPTDestinationStaticRouting OBJECT IDENTIFIER ::= { iPTStaticRouting 1}
+
+iPTDestinationStaticRoutingEnabled   OBJECT-TYPE
+         SYNTAX          TruthValue
+         ACCESS  read-write
+         STATUS  mandatory
+         DESCRIPTION "The administrative state of Static Destination Routing"
+ 	 DEFVAL	      { false }
+         ::= { iPTDestinationStaticRouting 1 }
+
+iPTDestinationStaticRoutingTable OBJECT-TYPE
+         SYNTAX          SEQUENCE OF IPTDestinationStaticRouteEntry
+         ACCESS          not-accessible
+         STATUS          mandatory
+  	DESCRIPTION     "Table containing information about configured
+                         static routes"
+         ::= { iPTDestinationStaticRouting 2}
+ 
+iPTDestinationStaticRouteEntry OBJECT-TYPE
+         SYNTAX          IPTDestinationStaticRouteEntry
+         ACCESS          not-accessible
+         STATUS          mandatory
+  	DESCRIPTION     "An entry representing the static route"
+         INDEX           { iPTDestinationNode }
+         ::= { iPTDestinationStaticRoutingTable 1}
+ 
+IPTDestinationStaticRouteEntry ::= 
+                SEQUENCE {
+ 		iPTDestinationNode	                IpAddress,
+ 		iPTDestinationPrefRoute 		INTEGER,
+ 		iPTDestinationPrefRouteStatus 		INTEGER,
+ 		iPTStaticRouteEntryStatus		INTEGER,
+ 		iPTStaticRouteRowStatus		        RowStatus
+}
+
+  
+iPTDestinationNode OBJECT-TYPE
+ 	   SYNTAX   IpAddress         
+ 	   ACCESS    read-write
+           STATUS          mandatory
+ 	   DESCRIPTION     "Specifies the destination node, significant to
+                            the local ring. It is the CPU IP address of the
+                            destination node."
+           ::= {iPTDestinationStaticRouteEntry 1}
+
+iPTDestinationPrefRoute OBJECT-TYPE
+ 	   SYNTAX          INTEGER {
+ 		wan2(1),
+ 		wan1(2)
+ 		}
+            ACCESS           read-write
+            STATUS          mandatory
+            DESCRIPTION     "Specifies the preferred route for the given
+                             destination node."
+            ::= {iPTDestinationStaticRouteEntry 2}
+ 
+ iPTDestinationPrefRouteStatus OBJECT-TYPE
+ 	   SYNTAX 	INTEGER{
+ 		active (1),
+ 		inactive (2)
+ 		}
+ 	   ACCESS    	read-only
+           STATUS       mandatory
+ 	   DESCRIPTION 	"Specifies if the preferred route is reachable
+                         (active) or not (inactive) at the current time."
+           ::= {iPTDestinationStaticRouteEntry 3}
+ 
+ 
+iPTStaticRouteEntryStatus OBJECT-TYPE
+ 	   SYNTAX 	INTEGER{
+ 		active (1),
+ 		inactive (2)
+ 		 }
+ 	   ACCESS    	read-only
+           STATUS       mandatory
+ 	   DESCRIPTION 	"Specifies if the static route entry is active or
+                         not. 
+
+ Active: Given IP address as destination node is found on the ring.
+ Inactive: Given IP address as destination node is not found on the ring,
+           therefore this entry is ignored."
+ ::= {iPTDestinationStaticRouteEntry 4}
+ 
+ iPTStaticRouteRowStatus OBJECT-TYPE
+ 	   SYNTAX 	RowStatus
+ 	   ACCESS    	read-write
+           STATUS       mandatory
+ 	   DESCRIPTION 	"Used to add/delete entries to the table"
+ ::= {iPTDestinationStaticRouteEntry 5}
+
+iPTRingFairness		OBJECT IDENTIFIER ::= { iPTWanTrafficMgmt 3 }
+
+iPTRingFairnessTable OBJECT-TYPE
+        SYNTAX      SEQUENCE OF IPTRingFairnessEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "Table containing ring fairness information per WAN port"
+        ::= { iPTRingFairness 1 }
+
+iPTRingFairnessEntry OBJECT-TYPE
+        SYNTAX      IPTRingFairnessEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION     "List of information maintained by every WAN port
+                        regarding ring fairness data for that port."
+        INDEX       { iPTRingFairnessIndex }
+        ::= { iPTRingFairnessTable 1 }
+
+IPTRingFairnessEntry ::=
+    SEQUENCE {
+	iPTRingFairnessIndex		INTEGER,
+	iPTRingFairnessReservedRate	INTEGER,
+	iPTRingFairnessBwReserved	Counter32,
+	iPTRingFairnessBwNotReserved	Counter32,
+	iPTRingFairnessMode		INTEGER
+    }
+
+iPTRingFairnessIndex	OBJECT-TYPE
+        SYNTAX      INTEGER (33..34)
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION     "The port number for which this entry contains ring
+                        fairness information. Equal to the WAN SNMP index
+                        that this port corresponds to."
+        ::= { iPTRingFairnessEntry 1 }
+
+
+iPTRingFairnessReservedRate OBJECT-TYPE
+	SYNTAX 	      INTEGER (0..600)
+	ACCESS 	      read-write
+        STATUS 	      mandatory
+	DESCRIPTION   "The WAN bandwidth in (Mbit/s) which downstream
+                      nodes attempt to reserve for this port."
+	DEFVAL	      { 0 }
+	::= { iPTRingFairnessEntry 2 }
+
+iPTRingFairnessBwReserved OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The amount of WAN bandwidth (in kilobytes) that
+                        has been successfully reserved by ring fairness on
+                        this port for downstream passthrough nodes (Note
+                        that this is a running Kbyte count, not a rate)."
+        ::= { iPTRingFairnessEntry 3 }
+
+iPTRingFairnessBwNotReserved OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The amount of bandwidth (in kilobytes) that could
+                        NOT successfully be reserved by ring fairness on
+                        this port for downstream passthrough nodes. A large
+                        number here indicates that the current reserved rate 
+                        (iPTRingFairnessReservedRate) is set too high for
+                        your ring size and traffic patterns. Consult the ring
+                        fairness engineering formulas in order to set the
+                        reserved rate properly."
+        ::= { iPTRingFairnessEntry 4 }
+
+iPTRingFairnessMode OBJECT-TYPE
+	SYNTAX		INTEGER {
+				off(1),
+				reserved(2)
+			}
+	ACCESS		read-write
+	STATUS		mandatory
+	DESCRIPTION	"The mode which governs how ring fairness will
+                        operate on this port.
+
+                        In off mode, ring fairness will not ibe active, 
+                        there is a very small reserved bandwidth for the
+                        node so that it will not be totally starved, there
+                        is no max rate enforced in this mode.
+
+                        In reserved mode, ring fairness will permit a port
+                        to exceed its fair-share rate of bandwidth, but at
+                        the same time will forcibly try to reserve enough
+                        bandwidth for each downstream passthrough node to
+                        still have access to THEIR port's provisioned
+                        reserved-rate." 
+        DEFVAL		{ off }
+	::= { iPTRingFairnessEntry 5 }
+
+-- /* WTM */
+
+-- System elements pertaining to all instances of iPT technology.
+
+iPTSysIpAddr    OBJECT-TYPE
+        SYNTAX        IpAddress
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This entity's IP address."
+        ::= { iPTSystem 1 }
+
+iPTSysNetMask OBJECT-TYPE
+        SYNTAX        IpAddress
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This entity's subnet mask."
+        ::= { iPTSystem 2 }
+
+iPTSysBroadcast OBJECT-TYPE
+        SYNTAX        IpAddress
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This entity's broadcast address."
+        ::= { iPTSystem 3 }
+
+iPTSysAddress   OBJECT-TYPE
+        SYNTAX          MacAddress
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "This address serves two purposes.  One, it's used
+                        as the Ethernet MAC address to communicate to the
+                        entity's IP stack over an inband channel.  Two, it's
+                        re-used in the iPT overhead as the identity of
+                        this iPT node on the ring."
+        ::= { iPTSystem 4 }
+
+iPTSysDefaultGateway    OBJECT-TYPE
+        SYNTAX          IpAddress
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "This entity's default gateway."
+        ::= { iPTSystem 5 }
+
+-- Community Strings
+
+iPTSysCommReadWriteAll OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (0..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "When an SNMP message is received by this entity, the
+                      community string in the message is compared with this
+                      string first.  If it matches, read-write access is
+                      granted to all items in the MIB.  If it doesn't
+                      match, the iPTSysCommReadWrite string is compared next."
+        ::= { iPTSystem 6 }
+
+iPTSysCommReadWrite OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (0..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "When an SNMP message is received by this entity, the
+                      community string in the message is compared with this
+                      string second.  If it matches, read-write access is
+                      granted to all items in the MIB except community
+                      strings.  (Community strings appear empty when read
+                      and return a no such name error when an attempt is
+                      made to write them.)  If it doesn't match, the 
+                      iPTSysCommReadOnly string is compared next."
+        ::= { iPTSystem 7 }
+
+iPTSysCommReadOnly OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (0..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "When an SNMP message is received by this entity, the
+                      community string in the message is compared with this
+                      string third.  If it matches, read-only access is
+                      granted to all items in the MIB except community
+                      strings.  (Community strings appear empty when read.)
+                      If it doesn't match, no access is granted, no
+                      response is sent back to the SNMP requester, and
+                      SNMP traps are sent to the SNMP trap receiver(s) if
+                      configured."
+        ::= { iPTSystem 8 }
+-- Other
+
+iPTSysVersion OBJECT-TYPE
+	SYNTAX 		DisplayString
+	ACCESS 		read-only
+	STATUS 		mandatory
+	DESCRIPTION	"Software version running on device"
+	::= { iPTSystem 9 }
+
+iPTSysAction OBJECT-TYPE
+        SYNTAX       INTEGER {
+                         none(1),               -- none of the following
+                         softReset(2),          -- reset w/o power on tests
+                         saveToNVRAM(3),        -- save current config to NVRAM
+                         resetCounters(4)       -- reset all statistic counters
+ 	              }
+        ACCESS        read-write
+        STATUS        mandatory
+	DESCRIPTION   "Initiate a system action. i.e. softReset(2), 
+                       saveToNVRAM(3), resetCounters(4)"
+	DEFVAL 	      { none }
+        ::= { iPTSystem 10 }
+
+iPTSysResult OBJECT-TYPE
+	SYNTAX       INTEGER {
+		         none(1),		-- none of the following
+		         inProgress(2),		-- in progress
+		         success(3),		-- success
+		         fail(4)		-- failure
+	              }
+        ACCESS        read-only
+        STATUS        mandatory
+	DESCRIPTION   "Result from the last system action."
+	DEFVAL 	      { none }
+        ::= { iPTSystem 11 }
+
+iPTSysLastChange OBJECT-TYPE
+        SYNTAX        TimeTicks
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "Last management initiated configuration
+		      change since sysUpTime."
+        ::= { iPTSystem 12 }
+
+iPTSysLastStatisticsReset OBJECT-TYPE
+        SYNTAX            TimeTicks
+        ACCESS            read-only
+        STATUS            mandatory
+        DESCRIPTION       "Last management initiated statistics reset
+		          since sysUpTime."
+        ::= { iPTSystem 13 }
+
+-- Ne Slot Awareness Info.
+
+iPTSysNEName		  OBJECT-TYPE
+        SYNTAX            DisplayString (SIZE (0..21))
+        ACCESS            read-only
+        STATUS            mandatory
+        DESCRIPTION       "The SONET Network Element Name to which this entity
+			  belongs."
+        ::= { iPTSystem 25 }
+
+iPTSysSlot		  OBJECT-TYPE
+        SYNTAX            INTEGER
+        ACCESS            read-only
+        STATUS            mandatory
+        DESCRIPTION       "The slot number in which this entity resides"
+        ::= { iPTSystem 26 }
+
+iPTSysProdType		  OBJECT-TYPE
+        SYNTAX 		  DisplayString (SIZE(0..10))
+        ACCESS            read-only
+        STATUS            mandatory
+        DESCRIPTION       "The Platform type(i.e.Express, OC-48), and the 
+			  Shelf type(MX, HX, GX) for Express and the OC-48
+			  types."
+        ::= { iPTSystem 27 }
+
+-- Backup and restore-related info.
+
+iPTSysNVRamSize       OBJECT-TYPE
+	SYNTAX        Gauge32
+	ACCESS        read-only
+	STATUS        mandatory
+	DESCRIPTION   "Total Non-volatile RAM in bytes"
+	::= { iPTSystem 14 }
+
+iPTSysNVRamUsed       OBJECT-TYPE
+	SYNTAX        Gauge32
+	ACCESS        read-only
+	STATUS        mandatory
+	DESCRIPTION   "Non-volatile RAM in use in bytes"
+	::= { iPTSystem 15 }
+
+iPTSysLastSaveToNVRam    OBJECT-TYPE
+        SYNTAX           TimeTicks
+        ACCESS           read-only
+        STATUS           mandatory
+        DESCRIPTION      "SysUpTime of the last time when NVRAM was
+                         written to."
+        ::= { iPTSystem 16 }
+
+iPTSysRemoteFileSynched OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                complete (1),
+                                inProgress (2),
+                                failure (3),
+                                notSupported (4)
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Synchronization status of the local and
+                        remote provisioning file store."
+        ::= {iPTSystem 17}
+
+iPTSysSNMPEnabled       OBJECT-TYPE
+        SYNTAX          TruthValue
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "Indicates whether SNMP is enabled or disabled."
+        ::= {iPTSystem 18}
+
+iPTSysTelnetServerEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether Telnet Server is 
+                            enabled or disabled."
+        ::= {iPTSystem 19}
+
+-- Trap Receiver Table
+
+iPTSysTrapRecvTable   OBJECT-TYPE
+        SYNTAX        SEQUENCE OF IPTSysTrapRecvEntry
+        ACCESS        not-accessible
+        STATUS        mandatory
+        DESCRIPTION   "The trap receiver table (0 to 25 entries).  This
+                      table lists the addresses of Network Management
+                      Stations that should receive trap messages from
+                      this entity when an exception condition occurs."
+        ::= { iPTSystem 20 }
+
+iPTSysTrapRecvEntry   OBJECT-TYPE
+        SYNTAX        IPTSysTrapRecvEntry
+        ACCESS        not-accessible
+        STATUS        mandatory
+        DESCRIPTION   "A trap receiver table entry."
+        INDEX         { iPTSysTrapRecvAddress }
+        ::= { iPTSysTrapRecvTable 1 }
+
+IPTSysTrapRecvEntry ::=
+        SEQUENCE {
+                iPTSysTrapRecvAddress IpAddress,
+                iPTSysTrapRecvVersion INTEGER,
+                iPTSysTrapRecvCommunity DisplayString,
+                iPTSysTrapRecvRowStatus RowStatus
+        }
+
+iPTSysTrapRecvAddress OBJECT-TYPE
+        SYNTAX        IpAddress
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "IP address for trap receiver."
+        ::= { iPTSysTrapRecvEntry 1 }
+
+iPTSysTrapRecvVersion OBJECT-TYPE
+        SYNTAX        INTEGER {
+		         v1(1),
+		         v2c(2)
+	              }
+        ACCESS        read-write
+        STATUS	      mandatory
+        DESCRIPTION   "The SNMP version of the trap receiver. It 
+                      affects how the trap message is formatted."
+	DEFVAL 	      { v1 }
+	::= { iPTSysTrapRecvEntry 2 }
+
+iPTSysTrapRecvCommunity OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (0..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Community string used for trap messages to this
+                       trap receiver."
+        ::= { iPTSysTrapRecvEntry 3 }
+
+iPTSysTrapRecvRowStatus OBJECT-TYPE
+        SYNTAX        RowStatus
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Used to create/delete entries"
+        ::= { iPTSysTrapRecvEntry 4 }
+
+-- Command Line User Interface related information
+
+iPTCliRWAUserName OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (1..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "User name for the read-write-all CLI account."
+        ::= { iPTCli 1 }
+
+iPTCliRWAPassword OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (1..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Password for the read-write-all CLI account."
+        ::= { iPTCli 2 }
+
+iPTCliRWUserName OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (1..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "User name for the read-write CLI account."
+        ::= { iPTCli 3 }
+
+iPTCliRWPassword OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (1..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Password for the read-write CLI account."
+        ::= { iPTCli 4 }
+
+iPTCliROUserName OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (1..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "User name for the read-only CLI account."
+        ::= { iPTCli 5 }
+
+iPTCliROPassword OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (0..20))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Password for the read-only CLI account."
+        ::= { iPTCli 6 }
+
+iPTCliMaxTelnetSessions OBJECT-TYPE
+        SYNTAX        INTEGER (0..8)
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "Used to indicate the maximum number of telnet
+		      sessions the system will support."
+	DEFVAL	      { 4 }
+	::= { iPTCli 7 }
+
+iPTCliTimeout OBJECT-TYPE
+        SYNTAX        INTEGER (30..65535)
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Used to indicate the amount of idle time, in
+     		      seconds to wait before timing out telnet and
+		      rlogin sessions."
+	DEFVAL        { 900 }
+        ::= { iPTCli 8 }
+
+iPTCliNumAccessViolations OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "Used to indicate the number of CLI access
+		      violations detected by the system."
+        ::= { iPTCli 9 }
+
+--
+-- iPT-wide port information. 
+--
+iPTPortNumber        OBJECT-TYPE
+        SYNTAX          INTEGER
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The total number of ports on this node.  This includes
+                        the LAN ports, the WAN ports and the processor port"
+        ::= { iPTPort 1 }
+
+iPTPortTable        OBJECT-TYPE
+        SYNTAX          SEQUENCE OF IPTPortEntry
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "Table containing information on every port on the node"
+        ::= { iPTPort 2 }
+
+iPTPortEntry        OBJECT-TYPE
+        SYNTAX          IPTPortEntry
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "An iPT port table entry"
+        INDEX           { iPTPortIndex }
+        ::= { iPTPortTable 1 }
+
+IPTPortEntry ::=
+        SEQUENCE {
+                iPTPortIndex                    INTEGER,
+                iPTPortType                     INTEGER,
+                iPTPortEnable                   INTEGER,
+                iPTPortOperState                INTEGER,
+                iPTPortAutoNegotiate            TruthValue,
+                iPTPortAdminDuplex              INTEGER,
+                iPTPortOperDuplex               INTEGER,
+                iPTPortAdminSpeed               INTEGER,
+                iPTPortOperSpeed                INTEGER,
+		iPTPortAutoNegotiationSupported TruthValue,
+                iPTPortDefaultPriority          INTEGER (0..7),
+                iPTPortUnknownTDDiscards        Counter32,
+                iPTPortPauseFrameEnabled        TruthValue,
+		iPTPortName                     DisplayString,
+		iPTWanInBIP8Errors              Counter32,
+		iPTWanInTTLInvalid              Counter32,
+                iPTWanOutCRCerrors              Counter32,
+		iPTWanInRADDiscards             Counter32,
+                iPTWanPassThroughFrames         Counter32,
+                iPTWanUnknownTypeOrPort         Counter32,
+		iPTWanTDIFailedPackets          Counter32,
+		iPTWanDiscardsForOtherReasons   Counter32,
+                iPTLanEgressPackets             Counter32,
+		iPTLanUnderSizeFrame            Counter32,
+		iPTLanOverrunFrame              Counter32,
+		iPTPortSourceLearning           TruthValue 
+        }
+
+iPTPortIndex        OBJECT-TYPE
+        SYNTAX          INTEGER
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "A unique index used to identify a particular
+                        port in the system. This index is equal to the
+                        ifIndex in MIB2"
+        ::= { iPTPortEntry 1 }
+
+iPTPortType        OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                tenBT (1),
+                                hundredBT (2),
+                                ten-hundredBT (3),
+                                gigabit (4),
+                                host (5),
+                                wan (6)
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The specific type of port"
+        ::= { iPTPortEntry 2 }
+
+iPTPortEnable   OBJECT-TYPE
+        SYNTAX  INTEGER {
+                        enabled(1),
+                        disabled(2),
+                        testing(3)
+                }
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION "The administrative state of this port"
+        ::= { iPTPortEntry 3 }
+
+iPTPortOperState        OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                start (1),
+                                init (2), 
+                                down (3), 
+                                forwarding (4),
+                                learning (5),
+                                rxDown (6),
+                                txDown (7),
+                                testing (8) 
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The state of the port.  This attribute
+                        refines the MIB-II value to provide more
+                        detail for LAN ports.  WAN ports do not
+                        support the learning state. rxDown and txDown 
+                        are only appliable to WAN ports.
+
+                        start: First state after card reset prior
+                               to microcode download.
+                        init:  Microcode downloaded and running, 
+                               waiting for full provisioning to
+                               proceed.
+                        down:  All provisioning received, waiting
+                               for link pulse.
+                        forwarding: Port is fully operational.
+                        learning: Port is learning local MAC addresses;
+                                no packets are forwarded to or 
+                                received from WAN.
+                        rxDown: Port is not receiving any signal.
+                        txDown: Port is not transmitting any signal.
+                        testing: Port is processing tests packets on
+                                 that port as well as packets destined
+                                 for other ports.
+                        "
+        ::= { iPTPortEntry 4 }
+
+iPTPortAutoNegotiate OBJECT-TYPE
+	SYNTAX 	      TruthValue
+	ACCESS 	      read-write
+        STATUS 	      mandatory
+	DESCRIPTION   "Indicate whether this port enabled for auto
+                      negotiations or not."
+	DEFVAL	      { false }
+	::= { iPTPortEntry 5 }
+
+iPTPortAdminDuplex OBJECT-TYPE
+        SYNTAX 		INTEGER {
+                		half(1),	-- half duplex
+                		full(2)		-- full duplex
+        		}
+	ACCESS 		read-write
+        STATUS 		mandatory
+	DESCRIPTION     "Indicates the port duplex type "	
+	DEFVAL		{ full }
+	::= { iPTPortEntry 6 }
+
+iPTPortOperDuplex OBJECT-TYPE
+        SYNTAX 		INTEGER {
+                		half(1),	-- half duplex
+                		full(2)		-- full duplex
+        		}
+	ACCESS 		read-only
+        STATUS 		mandatory
+	DESCRIPTION 	"Indicate this port's current duplex value."
+	::= { iPTPortEntry 7 }
+
+iPTPortAdminSpeed OBJECT-TYPE
+        SYNTAX 		INTEGER {
+                		mbps10(1),	-- 10Mb/s
+                		mbps100(2),	-- 100Mb/s
+                                mbps1000(3),	-- 1000Mb/s
+                                none(4) -- for CPU and WAN ports
+        		}
+	ACCESS 		read-write
+        STATUS 		mandatory
+	DESCRIPTION 	"Indicate this port's speed."
+	::= { iPTPortEntry 8 }
+
+iPTPortOperSpeed OBJECT-TYPE
+        SYNTAX 		INTEGER
+	ACCESS 	      	read-only
+        STATUS 	      	mandatory
+	DESCRIPTION   	"Indicate this port's current speed value."
+	::= { iPTPortEntry 9 }
+
+iPTPortAutoNegotiationSupported OBJECT-TYPE
+        SYNTAX        	TruthValue
+        ACCESS        	read-only
+        STATUS        	mandatory
+        DESCRIPTION   	"Indicate whether this port can support
+		      	auto-negotiation."
+        ::= { iPTPortEntry 10 }
+
+iPTPortDefaultPriority        OBJECT-TYPE
+        SYNTAX          INTEGER (0..7)
+        ACCESS          read-write
+        STATUS          mandatory
+        DESCRIPTION     "The 802.1P priority to be assigned to incident
+                        frames having no such priority of their own."
+        ::= { iPTPortEntry 11 }
+
+iPTPortUnknownTDDiscards   OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of times frames have been filtered by
+                        this port because their encoded VLAN wasn't in the
+                        set of VLANs this port was configured to accept.
+                        This attribute only applies to mapped ports."
+        ::= { iPTPortEntry 12 }
+
+iPTPortPauseFrameEnabled OBJECT-TYPE
+        SYNTAX        TruthValue
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Indicate whether this port is enabled for pause
+                      frame control (as per IEEE 802.3x) or not."
+        DEFVAL        { true }
+        ::= { iPTPortEntry 13 }
+
+iPTPortName OBJECT-TYPE
+        SYNTAX        DisplayString (SIZE (0..63))
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "User configurable value identifiying the physical
+                      port."
+        ::= { iPTPortEntry 14 }
+
+iPTPortSourceLearning OBJECT-TYPE
+	SYNTAX 	      TruthValue
+	ACCESS 	      read-write
+        STATUS 	      mandatory
+	DESCRIPTION   "Indicate whether this port is enabled for source
+                      learning or not."
+	DEFVAL	      { false }
+	::= { iPTPortEntry 26 }
+
+--
+--  Node Database.
+--
+iPTNodeNumber OBJECT-TYPE
+        SYNTAX          INTEGER
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of entries currently in the node
+                        table regardless of their state"
+        ::= { iPTNode 1 }
+
+iPTNodeTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF IPTNodeEntry
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The node address table lists the current iPT
+                        routing table for this entity."
+        ::= { iPTNode 2 }
+
+iPTNodeEntry OBJECT-TYPE
+        SYNTAX          IPTNodeEntry
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "A iPT Node database entry"
+        INDEX           { iPTNodeAddress }
+        ::= { iPTNodeTable 1 }
+
+IPTNodeEntry ::=
+        SEQUENCE {
+                iPTNodeAddress               MacAddress,
+		iPTNodeIPAddress	     IpAddress,
+		iPTNodeIPAddrAvail	     TruthValue,
+                iPTNodeHops-WAN2             INTEGER,
+		iPTNodeRemotePort-WAN2	     INTEGER, 
+                iPTNodeHops-WAN1             INTEGER,
+		iPTNodeRemotePort-WAN1	     INTEGER,
+                iPTNodePrimaryRoute          INTEGER,
+                iPTNodeSecondaryRoute        INTEGER,
+                iPTNodeNumberPorts           INTEGER,
+                iPTNodeSysName               DisplayString
+        }
+
+iPTNodeAddress        OBJECT-TYPE
+        SYNTAX          MacAddress
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The iPT Node address referred to by this entry"
+        ::= { iPTNodeEntry 1 }
+
+iPTNodeIPAddress        OBJECT-TYPE
+        SYNTAX          IpAddress
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The iPT Node IP address referred to by this entry"
+        ::= { iPTNodeEntry 6 }
+
+iPTNodeIPAddrAvail	OBJECT-TYPE
+        SYNTAX      	TruthValue
+        ACCESS      	read-only
+        STATUS      	mandatory
+        DESCRIPTION 	"Indicate whether the iPTNodeIPAddress was truly
+			received from the far end or if it was unavailable."
+        ::= { iPTNodeEntry 7 }
+
+iPTNodeHops-WAN2 OBJECT-TYPE
+        SYNTAX          INTEGER
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of hops beween this node and the
+                        local node around the iPT ring through WAN port
+                        2"
+        ::= { iPTNodeEntry 2 }
+
+iPTNodeRemotePort-WAN2		OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                wan2(1),
+                                wan1(2),
+                                none(3)
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION    "The Port number to which this node is directly or 
+			indirectly connected to when it goes via its WAN2 
+			Port (2/2)."
+        ::= { iPTNodeEntry 8 }
+
+iPTNodeHops-WAN1        OBJECT-TYPE
+        SYNTAX          INTEGER
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of hops beween this node and the
+                        local node around the iPT ring through WAN port
+                        1"
+        ::= { iPTNodeEntry 3 }
+
+iPTNodeRemotePort-WAN1		OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                wan2(1),
+                                wan1(2),
+                                none(3)
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION    "The Port number to which this node is directly or 
+			indirectly connected to when it goes via its WAN1 
+			Port (2/1)."
+        ::= { iPTNodeEntry 9 }
+
+iPTNodePrimaryRoute OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                wan2(1),
+                                wan1(2),
+                                none(3)
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The preferred ring direction to route a iPT packet
+                        towards this destination.  If the optimal route
+                        becomes unavailable, the direction will be set to
+                        none."
+        ::= { iPTNodeEntry 4 }
+
+iPTNodeSecondaryRoute OBJECT-TYPE
+        SYNTAX          INTEGER {
+                                wan2(1),
+                                wan1(2),
+                                none(3)
+                        }
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The backup ring direction to route a iPT packet
+                        towards this destination.  If the primary route
+                        becomes unavailable, this direction will be
+                        immediately chosen to route packets.  If no
+                        secondary route exists, this will be set to none."
+        ::= { iPTNodeEntry 5 }
+
+iPTNodeNumberPorts OBJECT-TYPE
+	SYNTAX		INTEGER 
+	ACCESS		read-only
+	STATUS		mandatory
+	DESCRIPTION	"The number of ports on this node"
+	::= { iPTNodeEntry 10 }
+	
+iPTNodeSysName           OBJECT-TYPE
+         SYNTAX        DisplayString (SIZE (0..40))
+         ACCESS        read-only
+         STATUS        mandatory
+         DESCRIPTION   "The first 40 characters of the SysName associated
+                        with iPTNodeIPAddress."
+         ::= { iPTNodeEntry 11 }
+
+iPTNodeInAnybody-WAN2      OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The total number of Anybody WAN port 2 messages
+                        received from all nodes"
+        ::= { iPTNode 3 }
+
+iPTNodeInAnybody-WAN1      OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The total number of Anybody WAN port 1 messages
+                        received from all nodes"
+        ::= { iPTNode 4 }
+
+iPTNodeOutAnybody-WAN2     OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The total number of Anybody WAN port 2 messages
+                        generated by this node"
+        ::= { iPTNode 5 }
+
+iPTNodeOutAnybody-WAN1     OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The total number of Anybody WAN port 1 messages
+                        generated by this node"
+        ::= { iPTNode 6 }
+
+iPTNodeAnybodyCollisions        OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of Anybody collisions detected
+                        by this node"
+        ::= { iPTNode 7 }
+
+iPTNodeInLinkDown    OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of LINK DOWN messages this node has
+                        received"
+        ::= { iPTNode 8 }
+
+iPTNodeOutLinkDown    OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of LINK DOWN messages this node has
+                        generated"
+        ::= { iPTNode 9 }
+
+iPTNodeDiscCompleted    OBJECT-TYPE
+        SYNTAX          Counter32
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The number of Node Discovery processes completed"
+        ::= { iPTNode 10 }
+
+
+--
+-- Token bucket information
+--
+iPTBucketTable OBJECT-TYPE
+        SYNTAX      SEQUENCE OF IPTBucketEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "Table containing token bucket information per port"
+        ::= { iPTBucket 1 }
+
+iPTBucketEntry OBJECT-TYPE
+        SYNTAX      IPTBucketEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION     "List of information maintained by every port
+                        regarding token buckets for that port"
+        INDEX       { iPTBucketIndex }
+        ::= { iPTBucketTable 1 }
+
+IPTBucketEntry ::=
+    SEQUENCE {
+        iPTBucketIndex       INTEGER,
+        iPTBucketSize        INTEGER,
+	iPTBucketRate        INTEGER,
+        iPTBucketCurrent     INTEGER,
+        iPTBucketEnabled     TruthValue,
+        iPTBucketDiscards    Counter32,
+	iPTPauseFramesTransmitted Counter32
+    }
+
+iPTBucketIndex        OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION     "The port number for which this entry contains token
+                        bucket information.  Equal to the interface index
+                        that this port corresponds to"
+        ::= { iPTBucketEntry 1 }
+
+iPTBucketSize OBJECT-TYPE
+        SYNTAX      INTEGER (1..1000)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION "The maximum allowable burst duration expressed in
+                     milliseconds.  The token bucket mechanism always
+                     permits traffic bursts at line rate.  This parameter
+                     allows the duration of this burst to be controlled."
+        ::= { iPTBucketEntry 2 }
+
+iPTBucketRate OBJECT-TYPE
+        SYNTAX      INTEGER (1..1000)
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION "Steady state data rate of this port expressible in
+                    Megabits per second."
+        ::= { iPTBucketEntry 3 }
+
+iPTBucketCurrent OBJECT-TYPE
+        SYNTAX      INTEGER
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION "Current number of tokens in the bucket, expressed in
+                    Megabytes"
+        ::= { iPTBucketEntry 4 }
+
+iPTBucketEnabled OBJECT-TYPE
+        SYNTAX      TruthValue
+        ACCESS      read-write
+        STATUS      mandatory
+        DESCRIPTION "Indicate whether this token bucket is enabled or not."
+        DEFVAL       { true }
+        ::= { iPTBucketEntry 5 }
+
+iPTBucketDiscards OBJECT-TYPE
+        SYNTAX      Counter32
+        ACCESS      read-only
+        STATUS      mandatory
+        DESCRIPTION "Number of packets discarded due to a lack of tokens.
+                    If this counter is increasing, the device connected
+                    to this port is sending data in excess of the provisioned
+                    rate."
+        ::= { iPTBucketEntry 6 }
+
+-- Filtering Database Aging Time
+
+iPTSysFDBAgingTime  OBJECT-TYPE
+        SYNTAX        INTEGER (0 | 30..600)
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "Filtering database aging time expressed in
+                      seconds. This entry indicates the amount of time it
+                      takes for the entries in the iPT filtering database to
+                      age out. A value of 0 (zero) disables aging."
+        DEFVAL       { 300 } 
+	::= {iPTSystem 21}
+
+-- Arp Provisioning values
+
+iPTSysARPMaxRetries OBJECT-TYPE
+        SYNTAX        INTEGER (0..255)
+        ACCESS        read-write
+        STATUS        mandatory
+        DESCRIPTION   "The maximum number of ARP retries.  This value
+                      determines the number of times an ARP message will
+                      be sent when the destination fails to respond."
+        DEFVAL        { 3 }
+        ::= { iPTSystem 30 }
+
+
+-- IGMP Provisioning values
+
+iPTSysIGMPRobustnessValue OBJECT-TYPE
+	SYNTAX	      INTEGER (2..255)
+	ACCESS        read-write
+	STATUS	      mandatory
+	DESCRIPTION   "The IGMP robustness value defines how many
+                      Membership reports are sent when a new multicast
+                      address is added."
+	DEFVAL	      { 2 }
+	::= { iPTSystem 31 }
+
+iPTSysIGMPUnsolicitedReportInt OBJECT-TYPE
+	SYNTAX	      INTEGER (1..255)
+	ACCESS	      read-write
+	STATUS        mandatory
+	DESCRIPTION   "The Unsolicited Report Interval is the time 
+                      between repetitions (robustness variable) of 
+                      a host's initial report of its multicast group
+                      addresses. The interval is measured in tenths
+                      of a second."
+        DEFVAL	      { 100 }
+	::= { iPTSystem 32 }
+
+iPTSysMode OBJECT-TYPE
+	SYNTAX	      INTEGER {
+                                 none(1),
+                                 tls-l2(2),
+                                 reserved(3),
+                                 oel2(4)
+                              }
+	ACCESS	      read-write
+	STATUS	      mandatory
+	DESCRIPTION   "The mode of the CPU port.  This determines
+                       whether the CPU is running the TLS/L2 
+                       protocol or the OE/L2 protocol."
+        ::= { iPTSystem 33 }
+
+iPTSysSubnettingEnabled OBJECT-TYPE
+        SYNTAX         INTEGER {
+                                 enabled(1),
+                                 disabled(2)
+                               }
+        ACCESS         read-write
+        STATUS         mandatory
+        DESCRIPTION    "Provisioning rules regarding UNI port subnetting
+                        are to be enabled or disabled."
+        ::= { iPTSystem 34 }
+
+iPTSysProvDataStatus OBJECT-TYPE
+        SYNTAX         INTEGER {
+                                 default(1),
+                                 saved(2),
+                                 saveReq(3),
+                                 dataLost(4)
+                               }
+        ACCESS         read-only
+        STATUS         mandatory
+        DESCRIPTION    "Provisioning data status:
+                        default(1) - the default provisioning data,
+                        saved (2) - the current provisioning data 
+                           is saved in the NVRam,
+                        saveReq (3) - there is/are the 
+                           provisioning change(s) not saved in the NVRam,
+                        dataLost (4) - the provisioning data was lost 
+                           due to the restart."
+        DEFVAL         { saved }
+        ::= { iPTSystem 35 }
+ 
+-- WAN Statistics
+
+iPTWanInBIP8Errors OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of Frames received
+                       with BIP-8 error at the WAN egress (out of the Ring)." 
+        ::= { iPTPortEntry 15 }
+
+iPTWanInTTLInvalid OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of Frames received
+                       with an invalid Time To Live value at the WAN egress
+                       (out of the Ring)."
+        ::= { iPTPortEntry 16 }
+
+iPTWanOutCRCerrors OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of Frames transmitted
+                       with CRC error at the WAN ingress (into the Ring)."
+        ::= { iPTPortEntry 17 }
+
+iPTWanInRADDiscards OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter is only applicable to Express platform
+                       and it provides the number of Frames that got discarded
+                       with in the RAD (at the RAM to be precise) at the
+                       egress side (out of the Ring) due to an error (ex:
+                       memory overflow)."
+        ::= { iPTPortEntry 18 }
+
+iPTWanPassThroughFrames OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of passthrough frames
+                       that have passed through this WAN port."
+        ::= { iPTPortEntry 19 }
+
+
+iPTWanUnknownTypeOrPort OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of frames that got
+                       discarded at this WAN port due to an invalid packet
+                       type or an invalid port number."
+        ::= { iPTPortEntry 20 }
+
+iPTWanTDIFailedPackets OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of frames that got
+                       discarded due to an invalid TDI. If a WAN port
+                       receives a frame with a TDI on which the receiving
+                       WAN port is not a member of (WAN ports have all the
+                       TDIs (TDIs of the CPU and all four LAN ports) get
+                       automatically provisioned in them.) then the frame
+                       is discarded and this counter is incremented." 
+                       
+        ::= { iPTPortEntry 21 }
+
+iPTWanDiscardsForOtherReasons OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of frames that got
+                       discarded at the WAN for a reason other than the
+                       errors described above. An example is when a WAN port
+                       is in the BLOCKING state. While in the blocking state,
+                       any packets received from the LAN side will be
+                       discarded by the WAN." 
+                       
+        ::= { iPTPortEntry 22 }
+
+iPTLanEgressPackets OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter is only applicable to OC-48 platform
+                       and it provides the number of Frames that got discarded
+                       on egress (out from the ring) going to the LAN (ex:
+                       memory overflow)."
+        ::= { iPTPortEntry 23 }
+
+iPTLanUnderSizeFrame OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of discarded Frames 
+                       on Lan ingress that are smaller than the minimum
+                       permitted frame size."
+        ::= { iPTPortEntry 24 }
+
+iPTLanOverrunFrame OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of discarded Frames 
+                       on Lan ingress that are overrun."
+        ::= { iPTPortEntry 25 }
+
+
+-- Pause Frames Transmitted
+
+iPTPauseFramesTransmitted OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of pause frames 
+                       transmitted."
+        ::= { iPTBucketEntry 7 }
+
+-- Switching Discards Table
+
+iPTSwitchingUnknownPktDiscards OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of packets discarded in
+                       switching fabric due to Unknown Packet."
+        ::= { iPTSystem 22 }
+
+iPTSwitchingCorruptedPktDiscards OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of packets discarded in
+                       switching fabric due to Corrupted Packet. (i.e.bad CRC,
+                       underrun)"
+        ::= { iPTSystem 23 }
+
+iPTSwitchingQueueFullDiscards OBJECT-TYPE
+        SYNTAX        Counter32
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "This counter provides the number of frames discarded in
+                       switching fabric due to lack of resources. (i.e queue
+                       full)"
+        ::= { iPTSystem 24 }
+
+-- iPT Hardware information
+
+iPTSysCardType OBJECT-TYPE
+        SYNTAX        INTEGER {
+                              unknown (0),
+                              gx100fxEpif501w1 (1),
+                              gx100fxEpif2001w1 (2),
+                              expIpt100Epif501w1 (3),
+                              expIpt100Epif500d1 (4),
+                              expIpt100Epif200Od2 (5),
+                              gxGigeXpif1w1 (6),
+                              oc48GigeXpif1w1 (7),
+                              oc48GigeXpifOd1 (8)
+                      }
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "Indicates specific characteristics of the hardware
+                        in the format
+                        <platform>_<cardtype>_<epiftype>_<boardrel>.
+
+                        platform:       CX      = Cricket
+                                        MX      = Medium Density
+                                        HX      = High Density
+                                        GX      = Giga bit
+                                        EXP     = CX/MX/HX/GX
+                                        OC48    = OC48 Classic
+                        cardtype:       iPT100  = 10/100 BT board
+                                        100FX   = 100 FX card
+                                        GIGE    = Gigabit iPT
+                        epiftype:       EPIF50  = MMC Epif 50 Asic
+                                        EPIF200 = MMC Epif 200 Asic
+                                        XPIF    = MMC Xpif board.
+                        boardrel:       1W1
+                                        OD1
+                                        OD2"
+        DEFVAL       { 0 }
+        ::= {iPTSystem 28}
+
+iPTSysCardPEC OBJECT-TYPE
+        SYNTAX        DisplayString 
+        ACCESS        read-only
+        STATUS        mandatory
+        DESCRIPTION   "PEC code of the iPT hardware card"
+        ::= {iPTSystem 29}
+
+-- iPTTrapConfig
+
+iPTTrapConfigRingTopoChgEnabled  OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Ring Topology 
+                            Change trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 1}
+
+iPTTrapConfigDataProvChgEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Provisioning
+                            Data Change trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 2}
+
+iPTTrapNodeAvailableEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Node Available
+                            trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 3}
+
+iPTTrapNodeUnavailableEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Node Unavailable
+                            trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 4}
+
+iPTTrapNvsSaveFailEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Nvs Save Fail
+                            trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 5}
+
+iPTTrapProvDataSaveRequiredEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Provisioning Data
+                            Save Required trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 6}
+
+iPTTrapProvDataLostEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Provisioning Data
+                            Lost trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 7}
+
+iPTTrapRingSizeExceededEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Ring Size Exceeded trap
+                            is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 8}
+
+iPTTrapRingSizeExceededClearEnabled   OBJECT-TYPE
+        SYNTAX              TruthValue
+        ACCESS              read-write
+        STATUS              mandatory
+        DESCRIPTION         "Indicates whether the Ring Size Exceeded Clear
+                            trap is enabled or disabled."
+        DEFVAL              { false }
+        ::= {iPTTrapConfig 9}
+
+-- END: iPTTrapConfig
+
+
+provDataChgTrap	TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+	    	iPTSysNEName,
+		iPTSysSlot,
+		iPTSysAddress
+	        }
+	DESCRIPTION
+		 "This trap will be sent whenever a successful NVS save 
+		  is complete. It will provide notification to the 
+		  Network Management tools that some data has been changed 
+		  so that they may refresh their data if desired. The 
+		  extra data provided in the parameters will help Network 
+		  Management determine who the trap belongs to in case a 
+		  change to the CPU IP address was including in the save."
+	::= 40
+
+ringTopoChangeTrap   TRAP-TYPE
+                     ENTERPRISE iPTMgmt
+                     DESCRIPTION
+                        "Ring Topology Change Trap.  This trap is sent
+                         whenever there is a MAC address being added to
+                         or removed from an OPE ring"
+                     ::=50
+                     
+nodeAvailableTrap  TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+                iPTSysAddress,
+                iPTNodeHops-WAN1,
+                iPTNodeHops-WAN2
+	        }
+	DESCRIPTION
+		 "This trap is sent whenever a node on the IPT ring
+                  becomes available from at least one WAN port of a local
+                  node. The data provided in the trap indicates the MAC 
+                  address of the newly available node, the number of 
+                  hops from WAN port 1, and the number of hops from 
+                  WAN port 2. If either number of hops is equal to 0,
+                  then the node is not available from that WAN port."
+	::= 90
+
+nodeUnAvailableTrap  TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+                iPTSysAddress,
+                iPTNodeNumberPorts
+	        }
+	DESCRIPTION
+		 "This trap will be sent whenever a node on the IPT ring
+                  is no longer available. The data provided in the trap 
+                  indicates the MAC address of the node which is no longer
+                  available, and the number of LAN ports on that node."
+	::= 100
+
+provDataSaveFailedTrap	TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+	    	iPTSysNEName,
+		iPTSysSlot,
+		iPTSysAddress,
+		iPTSysResult,
+		iPTSysRemoteFileSynched
+	        }
+	DESCRIPTION
+		 "This trap will be sent whenever a NVS save operation 
+		  fails. It will provide notification to the Network 
+                  Management tools that provisioning changes that may 
+                  have been made since the last save or restart have not 
+                  been successfully saved. Unless a successful save is 
+                  performed any provisioning changes made will be lost 
+                  over a restart.
+                  iPTSysResult provides whether save was successful/fail on 
+                  the local card, iPTSystemRemoteFileSynched provides
+                  whether backup to SP failed."
+	::= 110
+--
+--
+
+iPTTestLoopbackTable OBJECT-TYPE
+		SYNTAX		SEQUENCE OF IPTTestLoopbackEntry
+		ACCESS          not-accessible
+		STATUS		mandatory
+		DESCRIPTION	"This table holds the type of test to be 
+                                 initiated as well as the Index of the port 
+                                 on which the test is run"
+		::= {iPTTest 1}
+		
+iPTTestLoopbackEntry OBJECT-TYPE
+		SYNTAX		IPTTestLoopbackEntry
+		ACCESS		not-accessible
+		STATUS          mandatory
+		DESCRIPTION	"Variables used to define the test"
+		INDEX           {iPTTestLoopbackPortIndex}
+		::= {iPTTestLoopbackTable 1}
+
+IPTTestLoopbackEntry ::=
+		SEQUENCE  {
+			     iPTTestLoopbackPortIndex  INTEGER,
+			     iPTTestLoopbackAction     INTEGER,
+                             iPTTestLoopbackPassCount  INTEGER,
+                             iPTTestLoopbackFailCount  INTEGER,
+                             iPTTestLoopbackTestResult INTEGER
+                           }
+ 	
+iPTTestLoopbackPortIndex   OBJECT-TYPE
+		SYNTAX		INTEGER
+		ACCESS		read-only
+		STATUS          mandatory
+		DESCRIPTION	"The index value uniquely identifies the
+                                 interface (port) to which this entry is
+                                 applicable.It is the same as PortIndex
+                                 from the SysPortGrp"
+		::= {iPTTestLoopbackEntry 1} 
+		
+iPTTestLoopbackAction   OBJECT-TYPE
+		SYNTAX	       INTEGER {
+					 none (1),
+				         activate (2)
+				       } 
+		ACCESS		read-write
+		STATUS          mandatory
+		DESCRIPTION	"This object specifies which type of test is 
+		                 being performed"
+		::= {iPTTestLoopbackEntry 2}
+
+iPTTestLoopbackPassCount OBJECT-TYPE
+		SYNTAX		INTEGER
+		ACCESS		read-only
+		STATUS          mandatory
+		DESCRIPTION     "The number of iterations of the test case
+                                 that completed successfully"
+		::={iPTTestLoopbackEntry 3}
+		
+iPTTestLoopbackFailCount OBJECT-TYPE
+		SYNTAX		INTEGER
+		ACCESS		read-only
+		STATUS          mandatory
+		DESCRIPTION     "The number of iterations of the test case
+                                 that completed unsuccessfully "
+		::={iPTTestLoopbackEntry 4}
+		
+iPTTestLoopbackTestResult OBJECT-TYPE
+		SYNTAX	        INTEGER {
+				          none(1),
+				          success(2),
+					  inProgress(3),
+					  notSupported(4),
+					  unAbleToRun(5),
+					  aborted(6),
+					  failed(7)
+				        }
+		ACCESS		read-only
+		STATUS          mandatory
+		DESCRIPTION     "The Result of the test "
+		::={iPTTestLoopbackEntry 5}
+
+provDataSaveRequiredTrap	TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+	    	iPTSysNEName,
+		iPTSysSlot,
+		iPTSysAddress
+	        }
+	DESCRIPTION
+		 "This trap will be sent after any provisioning change. It will
+                  provide notification to the Network Management tools that 
+                  some data has been changed and not saved to NVRam, so that 
+                  they may save it or alert the user about the change. The extra 
+                  data provided in the parameters will help Network Management 
+                  tool to determine who the trap belongs to."
+	::= 180
+
+provDataLostTrap	TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+	    	iPTSysNEName,
+		iPTSysSlot,
+		iPTSysAddress
+	        }
+	DESCRIPTION
+                "This trap will be sent after there was a provisioning change,
+                 which was not saved and either cold or warm restart occured. 
+                 In this case the unsaved provisioning data was lost. It will 
+                 provide notification to the Network Management tools that some 
+                 data was lost.The extra data provided in the parameters will 
+                 help Network Management tool to determine who the trap belongs to."
+	::= 190
+
+ringSizeExceededTrap	TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+		iPTSysSlot,
+		iPTSysAddress
+	        }
+	DESCRIPTION
+                "This trap is sent whenever there is the MAC address being 
+                 added to the OPE ring and the maximum number of OPE nodes
+                 on the ring exceeded the supported number. If the number
+                 of OPE nodes was already over the limit no new trap is sent"
+	::= 200
+
+ringSizeExceededClearTrap	TRAP-TYPE
+	ENTERPRISE iPTMgmt
+	VARIABLES {
+		iPTSysSlot,
+		iPTSysAddress
+	        }
+	DESCRIPTION
+                "This trap is sent whenever there is the MAC address being 
+                 removed from an OPE ring and the maximum number of OPE nodes
+                 on the ring was greater then the supported number the number
+                 of OPE nodes on the ring decreased from exceeded
+                 to supported number."
+	::= 210
+			
+END

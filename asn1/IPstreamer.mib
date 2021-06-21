@@ -1,0 +1,943 @@
+-- Ericsson Television Limited Standard MIB disclaimer
+-- ###################################################
+-- SNMP MIBs for Ericsson Television Limited products are developed 
+-- primarily for use by Ericsson Television Limited control solutions.
+-- Where MIBs are provided to a third party or other non-Ericsson 
+-- Television Limited person, for the purposes of their development 
+-- of a non-Ericsson Television Limited control or monitoring solution, 
+-- they are provided free of charge, and without obligation on the
+-- part of Ericsson Television Limited to offer priority support, or
+-- changes to suit the third party.    
+
+Ip-Streamer-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+   OBJECT-TYPE
+      FROM RFC-1212
+   DisplayString
+      FROM RFC1213-MIB
+   modules
+      FROM ETV-Base-MIB
+   PIDNumber, SlotNumber, RowStatus, Uint32, Uint16, Uint8
+      FROM ETV-Types-TC;
+
+
+-- MIB module holding IP streamer (TT7116) specific parameters.
+
+ETV-IpStreamerModule OBJECT IDENTIFIER ::= { modules 27 }
+
+ipStreamerPCRcorrection    OBJECT-TYPE
+   SYNTAX       INTEGER {disable(1),
+                         enable(2)}
+   ACCESS       read-write
+   STATUS       mandatory
+   DESCRIPTION
+         "Set to '1' to disable PCR correction,  and '2' enable it"
+   ::= { ETV-IpStreamerModule 1 }
+
+ipStreamerTSmode    OBJECT-TYPE
+   SYNTAX       INTEGER {cbr(1),
+                         vbr(2)}
+   ACCESS       read-write
+   STATUS       mandatory
+   DESCRIPTION
+         "Sets the TS mode to either Constant Bit Rate(1) or Variable Bit Rate(2)"
+   ::= { ETV-IpStreamerModule 2 }
+
+ipStreamerSplittingMode    OBJECT-TYPE
+   SYNTAX       INTEGER {normal(1),
+                         transparent(2)}
+   ACCESS       read-write
+   STATUS       mandatory
+   DESCRIPTION
+         "Enabling transparent mode will route intact incoming transport streams to the backplane (no MPTS to SPTS
+          splitting is possible in transparent mode)."
+   ::= { ETV-IpStreamerModule 10 }
+
+bptsTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists the Back Plane Streams created"
+   ::= { ETV-IpStreamerModule 3 }
+
+bptsEntry OBJECT-TYPE
+   SYNTAX      BptsEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsTable."
+   INDEX       { bptsID  }
+   ::= { bptsTable 1 }
+
+BptsEntry ::= SEQUENCE {
+   bptsID         INTEGER,
+   bptsName       DisplayString,
+   bptsCBRRate    Uint32,
+   bptsFilename   DisplayString,
+   bptsRowStatus  RowStatus
+}
+
+bptsID OBJECT-TYPE
+   SYNTAX      INTEGER(1..128)
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The ID of the virtual stream we are creating"
+   ::= { bptsEntry 1 }
+
+bptsName OBJECT-TYPE
+   SYNTAX      DisplayString ( SIZE (0..255) )
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "A text string identifying the stream"
+   ::= { bptsEntry 2 }
+
+bptsCBRRate OBJECT-TYPE
+   SYNTAX      Uint32
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "Constant Bit Rate (CBR), in case TS mode is CBR"
+   ::= { bptsEntry 3 }
+
+bptsFilename OBJECT-TYPE
+   SYNTAX      DisplayString
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "Name of the file to be downloaded (file containing table info) "
+   ::= { bptsEntry 4 }
+
+bptsRowStatus OBJECT-TYPE
+   SYNTAX          RowStatus
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in
+          the table."
+   ::= { bptsEntry 999 }
+
+bptsServiceTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsServiceEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists the services enabled with the streamIDs their sent on"
+   ::= { ETV-IpStreamerModule 4 }
+
+bptsServiceEntry OBJECT-TYPE
+   SYNTAX      BptsServiceEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsServiceTable."
+   INDEX       { bptsServiceSlotNumber, bptsServicePortNumber, bptsServiceID  }
+   ::= { bptsServiceTable 1 }
+
+BptsServiceEntry ::= SEQUENCE {
+  bptsServiceSlotNumber    SlotNumber,
+  bptsServicePortNumber    INTEGER,
+  bptsServiceID            Uint16,
+  bptsServiceBPTSID        INTEGER,
+  bptsServiceComponentMode INTEGER,
+  bptsServiceScrambled     INTEGER,
+  bptsServiceDescrEnabled  INTEGER,
+  bptsServiceRowStatus     RowStatus
+}
+
+bptsServiceSlotNumber OBJECT-TYPE
+   SYNTAX          SlotNumber
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The slot number of the TS the service in question belongs to"
+   ::= { bptsServiceEntry 1 }
+
+bptsServicePortNumber OBJECT-TYPE
+   SYNTAX          INTEGER
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The port number of the TS the service in question belongs to"
+   ::= { bptsServiceEntry 2 }
+
+bptsServiceID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the service in question"
+   ::= { bptsServiceEntry 3 }
+
+bptsServiceBPTSID OBJECT-TYPE
+   SYNTAX          INTEGER(1..128)
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the BPTS stream the service will be included in"
+   ::= { bptsServiceEntry 4 }
+
+bptsServiceComponentMode OBJECT-TYPE
+   SYNTAX                INTEGER{
+                           followInput(1),
+                           manual(2) }
+   ACCESS                read-write
+   STATUS                mandatory
+   DESCRIPTION
+         "Decides whether service component filtering will be done or not. FollowInput lets all components through;
+          manual means that that components to let through must be specified (using bptsServiceComponentTable)."
+   ::= { bptsServiceEntry 5 }
+
+bptsServiceScrambled OBJECT-TYPE
+   SYNTAX      INTEGER{ off(1),
+                        on(2),
+                        unavailable(3) }
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "Tells whether service is scrambled or not"
+   ::= { bptsServiceEntry 6 }
+
+bptsServiceDescrEnabled OBJECT-TYPE
+   SYNTAX      INTEGER{disabled(1),
+                       enabled(2)}
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "Service possible to descramble or not"
+   ::= { bptsServiceEntry 7 }
+
+
+bptsServiceRowStatus OBJECT-TYPE
+   SYNTAX          RowStatus
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in
+          the table."
+   ::= { bptsServiceEntry 999 }
+
+
+bptsPidTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsPidEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists the Pids enabled with the streamIDs their sent on"
+   ::= { ETV-IpStreamerModule 5 }
+
+bptsPidEntry OBJECT-TYPE
+   SYNTAX      BptsPidEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsPidTable."
+   INDEX       { bptsPidSlotNumber, bptsPidPortNumber, bptsPID, bptsPidBPTSID }
+   ::= { bptsPidTable 1 }
+
+BptsPidEntry ::= SEQUENCE {
+  bptsPidSlotNumber    SlotNumber,
+  bptsPidPortNumber    INTEGER,
+  bptsPID              Uint16,
+  bptsPidBPTSID        INTEGER,
+  bptsPidRowStatus     RowStatus
+}
+
+bptsPidSlotNumber OBJECT-TYPE
+   SYNTAX          SlotNumber
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The slot number of the TS the PID in question belongs to"
+   ::= { bptsPidEntry 1 }
+
+bptsPidPortNumber OBJECT-TYPE
+   SYNTAX          INTEGER
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The port number of the TS the PID in question belongs to"
+   ::= { bptsPidEntry 2 }
+
+bptsPID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The original PID number "
+   ::= { bptsPidEntry 3 }
+
+bptsPidBPTSID OBJECT-TYPE
+   SYNTAX          INTEGER(1..128)
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the BPTS stream the PID in question is included in"
+   ::= { bptsPidEntry 4 }
+
+bptsPidRowStatus OBJECT-TYPE
+   SYNTAX          Uint32
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in
+          the table."
+   ::= { bptsPidEntry 999 }
+
+bptsRemappedPidTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsRemappedPidEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists re-mapped unsignalled PIDs"
+   ::= { ETV-IpStreamerModule 6 }
+
+bptsRemappedPidEntry OBJECT-TYPE
+   SYNTAX      BptsRemappedPidEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsRemappedPidTable."
+   INDEX       { bptsOriginalPidSlotNumber, bptsOriginalPidPortNumber, bptsOriginalPID }
+   ::= { bptsRemappedPidTable 1 }
+
+BptsRemappedPidEntry ::= SEQUENCE {
+  bptsOriginalPidSlotNumber    SlotNumber,
+  bptsOriginalPidPortNumber    INTEGER,
+  bptsOriginalPID              Uint16,
+  bptsRemappedPID              Uint16,
+  bptsPidRemappedRowStatus     RowStatus
+}
+
+bptsOriginalPidSlotNumber OBJECT-TYPE
+   SYNTAX          SlotNumber
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The slot number of the TS the PID in question belongs to"
+   ::= { bptsRemappedPidEntry 1 }
+
+bptsOriginalPidPortNumber OBJECT-TYPE
+   SYNTAX          INTEGER
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The port number of the TS the PID in question belongs to"
+   ::= { bptsRemappedPidEntry 2 }
+
+bptsOriginalPID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The original PID number"
+   ::= { bptsRemappedPidEntry 3 }
+
+bptsRemappedPID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "The re-mapped PID"
+   ::= { bptsRemappedPidEntry 4 }
+
+bptsPidRemappedRowStatus OBJECT-TYPE
+   SYNTAX          Uint32
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in
+          the table."
+   ::= { bptsRemappedPidEntry 999 }
+
+bptsPsisiInfoTable  OBJECT-TYPE
+   SYNTAX             SEQUENCE OF BptsPsisiInfoEntry
+   ACCESS             not-accessible
+   STATUS             mandatory
+   DESCRIPTION
+         "This table contains the PSI/SI info parameters for the specific stream"
+   ::= { ETV-IpStreamerModule 7 }
+
+bptsPsisiInfoEntry OBJECT-TYPE
+   SYNTAX          BptsPsisiInfoEntry
+   ACCESS          not-accessible
+   STATUS          mandatory
+   DESCRIPTION
+         "An entry in the psisiInfoTable."
+   INDEX       {  bptsStreamID, bptsPsisiInfoTableType }
+   ::= { bptsPsisiInfoTable 1 }
+
+BptsPsisiInfoEntry ::=     SEQUENCE {
+   bptsStreamID                 INTEGER,
+   bptsPsisiInfoTableType       INTEGER,
+   bptsPsisiMode                INTEGER,
+   bptsPsisiInfoRowStatus       RowStatus
+}
+
+bptsStreamID         OBJECT-TYPE
+   SYNTAX            INTEGER(1..128)
+   ACCESS            read-only
+   STATUS            mandatory
+   DESCRIPTION
+         "ID of the backplane stream (BPTS) the psisi table applies to"
+   ::= { bptsPsisiInfoEntry 1 }
+
+bptsPsisiInfoTableType    OBJECT-TYPE
+   SYNTAX             INTEGER {pat(1),
+                               cat(2),
+                               pmt(3),
+                               nitA(65),
+                               nitO(66),
+                               sdtA(67),
+                               sdtO(71),
+                               bat(75),
+                               eitpfa(79),
+                               eitpfo(80),
+                               eitsa(81),
+                               eitso(97),
+                               tdt(113),
+                               rst(114),
+                               tot(116)}
+   ACCESS             read-only
+   STATUS             mandatory
+   DESCRIPTION
+         "PSI/SI table type (table-id + 1)."
+
+   ::= { bptsPsisiInfoEntry 2 }
+
+bptsPsisiMode         OBJECT-TYPE
+   SYNTAX         INTEGER {stop(1),            --Stop table
+                           transparent(2),     --Transfer given table un-modified into outgoing TS
+                           regenerate(3),      --Regenerate table
+                           useDownloaded(4),   --Insert downloaded table into outgoing TS
+                           default(5)}         --Use the default value set on the box top level
+   ACCESS           read-write
+   STATUS           mandatory
+   DESCRIPTION
+         "Specifies the PSI/SI mode."
+
+   ::= { bptsPsisiInfoEntry 3 }
+
+bptsPsisiInfoRowStatus   OBJECT-TYPE
+   SYNTAX            RowStatus
+   ACCESS            read-write
+   STATUS            mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in the table."
+   ::= { bptsPsisiInfoEntry 999 }
+
+
+bptsStatusTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsStatusEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists the status of the existing Back Plane Streams"
+   ::= { ETV-IpStreamerModule 8 }
+
+bptsStatusEntry OBJECT-TYPE
+   SYNTAX      BptsStatusEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsStatusTable."
+   INDEX       { bptsStatusID  }
+   ::= { bptsStatusTable 1 }
+
+BptsStatusEntry ::= SEQUENCE {
+   bptsStatusID  INTEGER,
+   bptsTotalRate Uint32
+}
+
+bptsStatusID OBJECT-TYPE
+   SYNTAX      INTEGER(1..128)
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The ID of the virtual stream we want to get the status for"
+   ::= { bptsStatusEntry 1 }
+
+bptsTotalRate OBJECT-TYPE
+   SYNTAX      Uint32
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The total bitrate of the Back Plane Stream in bps"
+   ::= { bptsStatusEntry 2 }
+
+bptsServiceComponentTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsServiceComponentEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists service components to let through in case that the component mode for the specified service
+           is set to manual"
+   ::= { ETV-IpStreamerModule 9 }
+
+bptsServiceComponentEntry OBJECT-TYPE
+   SYNTAX      BptsServiceComponentEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsServiceComponentTable."
+   INDEX       { bptsSCSlotNumber, bptsSCPortNumber, bptsSCServiceID, bptsSCPID  }
+   ::= { bptsServiceComponentTable 1 }
+
+BptsServiceComponentEntry ::= SEQUENCE {
+  bptsSCSlotNumber    SlotNumber,
+  bptsSCPortNumber    INTEGER,
+  bptsSCServiceID     Uint16,
+  bptsSCPID           Uint16,
+  bptsSCRemappedPID   Uint16,
+  bptsSCRowStatus     RowStatus
+}
+
+bptsSCSlotNumber OBJECT-TYPE
+   SYNTAX          SlotNumber
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The slot number of the TS the service in question belongs to"
+   ::= { bptsServiceComponentEntry 1 }
+
+bptsSCPortNumber OBJECT-TYPE
+   SYNTAX          INTEGER
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The port number of the TS the service in question belongs to"
+   ::= { bptsServiceComponentEntry 2 }
+
+bptsSCServiceID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the service in question"
+   ::= { bptsServiceComponentEntry 3 }
+
+bptsSCPID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The Service component ( original PID) we want to be let though "
+   ::= { bptsServiceComponentEntry 4 }
+
+bptsSCRemappedPID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "The re-mapped PID"
+   ::= { bptsServiceComponentEntry 5 }
+
+bptsSCRowStatus OBJECT-TYPE
+   SYNTAX          Uint32
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in
+          the table."
+   ::= { bptsServiceComponentEntry 999 }
+
+bptsTsTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsTsEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         ""
+   ::= { ETV-IpStreamerModule 11 }
+
+bptsTsEntry OBJECT-TYPE
+   SYNTAX      BptsTsEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsTSTable."
+   INDEX       { bptsTsSlotNumber, bptsTsPortNumber  }
+   ::= { bptsTsTable 1 }
+
+BptsTsEntry ::= SEQUENCE {
+  bptsTsSlotNumber    SlotNumber,
+  bptsTsPortNumber    INTEGER,
+  bptsTsBPTSID        INTEGER,
+  bptsTsBPTSName      DisplayString,
+  bptsTsRowStatus     RowStatus
+}
+
+bptsTsSlotNumber OBJECT-TYPE
+   SYNTAX          SlotNumber
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The slot number of the board receiving the TS "
+   ::= { bptsTsEntry 1 }
+
+bptsTsPortNumber OBJECT-TYPE
+   SYNTAX          INTEGER
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The port number receiving the TS"
+   ::= { bptsTsEntry 2 }
+
+bptsTsBPTSID OBJECT-TYPE
+   SYNTAX          INTEGER(1..128)
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the BPTS stream the service will be included in"
+   ::= { bptsTsEntry 3 }
+
+bptsTsBPTSName OBJECT-TYPE
+   SYNTAX      DisplayString ( SIZE (0..255) )
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "A text string identifying the stream"
+   ::= { bptsTsEntry 4 }
+
+
+bptsTsRowStatus OBJECT-TYPE
+   SYNTAX          RowStatus
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in
+          the table."
+   ::= { bptsTsEntry 999 }
+
+
+------------------------------------------------------------
+-- O U T G O I N G   S E R V I C E
+--
+-- ETV-IpStreamerModule 12
+------------------------------------------------------------
+
+
+bptsOutgoingServiceTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsOutgoingServiceEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists the services enabled with the streamIDs their sent on"
+   ::= { ETV-IpStreamerModule 12 }
+
+bptsOutgoingServiceEntry OBJECT-TYPE
+   SYNTAX      BptsOutgoingServiceEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsServiceTable."
+   INDEX
+   {
+   		bptsOutgoingServiceInputSlot,
+   		bptsOutgoingServiceInputPort,
+   		bptsOutgoingServiceIncomingID
+   }
+   ::= { bptsOutgoingServiceTable 1 }
+
+BptsOutgoingServiceEntry ::= SEQUENCE {
+  bptsOutgoingServiceInputSlot  SlotNumber,
+  bptsOutgoingServiceInputPort  INTEGER,
+  bptsOutgoingServiceIncomingID Uint16,
+  bptsOutgoingServiceID        	Uint16,
+  bptsOutgoingServicePMTPID 	PIDNumber,
+}
+
+bptsOutgoingServiceInputSlot OBJECT-TYPE
+   SYNTAX          SlotNumber
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The slot number of the TS the service in question belongs to"
+   ::= { bptsOutgoingServiceEntry 1 }
+
+bptsOutgoingServiceInputPort OBJECT-TYPE
+   SYNTAX          INTEGER
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The port number of the TS the service in question belongs to"
+   ::= { bptsOutgoingServiceEntry 2 }
+
+bptsOutgoingServiceIncomingID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the service in question"
+   ::= { bptsOutgoingServiceEntry 3 }
+
+bptsOutgoingServiceID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         ""
+   ::= { bptsOutgoingServiceEntry 4 }
+
+bptsOutgoingServicePMTPID OBJECT-TYPE
+   SYNTAX                PIDNumber
+   ACCESS                read-write
+   STATUS                mandatory
+   DESCRIPTION
+   		""
+     ::= { bptsOutgoingServiceEntry 5 }
+
+
+------------------------------------------------------------
+-- O U T G O I N G   T R A N S P O R T --
+--
+-- ETV-IpStreamerModule 13
+------------------------------------------------------------
+
+
+bptsOutgoingTransportTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsOutgoingTransportEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists the Back Plane Streams created"
+   ::= { ETV-IpStreamerModule 13 }
+
+bptsOutgoingTransportEntry OBJECT-TYPE
+   SYNTAX      BptsOutgoingTransportEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsTable."
+   INDEX       { bptsOutgoingTransportBPTSID  }
+   ::= { bptsOutgoingTransportTable 1 }
+
+BptsOutgoingTransportEntry ::= SEQUENCE
+{
+   bptsOutgoingTransportBPTSID    INTEGER,
+   bptsOutgoingTransportID         Uint16,
+   bptsOriginalNetworkID         Uint16,
+}
+
+bptsOutgoingTransportBPTSID OBJECT-TYPE
+   SYNTAX      INTEGER(1..128)
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The ID of the virtual stream we are creating"
+   ::= { bptsOutgoingTransportEntry 1 }
+
+bptsOutgoingTransportID OBJECT-TYPE
+   SYNTAX      Uint16
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         ""
+   ::= { bptsOutgoingTransportEntry 2 }
+
+bptsOriginalNetworkID OBJECT-TYPE
+   SYNTAX      Uint16
+   ACCESS      read-write
+   STATUS      mandatory
+   DESCRIPTION
+         "value for outgoing Original Network ID"
+   ::= { bptsOutgoingTransportEntry 3 }
+
+
+bptsDefaultOriginalNetworkID    OBJECT-TYPE
+   SYNTAX       INTEGER
+   ACCESS       read-write
+   STATUS       mandatory
+   DESCRIPTION
+         "Default value for outgoing Original Network ID"
+   ::= { ETV-IpStreamerModule 14 }
+
+
+-- Table holding the list of CA systems for Service.
+
+bptsCASystemTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsCASystemEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists the CA System information for the Service."
+   ::= { ETV-IpStreamerModule 15 }
+
+bptsCASystemEntry OBJECT-TYPE
+   SYNTAX      BptsCASystemEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsCASystemTable."
+   INDEX       { bptsCAServiceSlotNumber, bptsCAServicePortNumber, bptsCAServiceID, bptsCASystem }
+   ::= { bptsCASystemTable 1 }
+
+BptsCASystemEntry ::= SEQUENCE {
+   bptsCAServiceSlotNumber          SlotNumber,
+   bptsCAServicePortNumber          INTEGER,
+   bptsCAServiceID                  Uint16,
+   bptsCASystem                     Uint16
+ }
+
+bptsCAServiceSlotNumber OBJECT-TYPE
+   SYNTAX      SlotNumber
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The slot number of the board analysing the PSI/SI."
+   ::= { bptsCASystemEntry 1 }
+
+bptsCAServicePortNumber OBJECT-TYPE
+   SYNTAX      INTEGER
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The port number of the BPTS we are interested in."
+   ::= { bptsCASystemEntry 2 }
+
+bptsCAServiceID OBJECT-TYPE
+   SYNTAX      Uint16
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The service ID"
+   ::= { bptsCASystemEntry 3 }
+
+bptsCASystem OBJECT-TYPE
+   SYNTAX      Uint16
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "The CA system used by the Service.
+            NO_CA                               0x0000
+            MEDIAGUARD_CA                       0x0100
+            CCETT_CA_SYSTEM_ID                  0x0200
+            DEUCHE_TELECOM_CA_SYSTEM_ID         0x0300
+            EURODEC_CA_SYSTEM_ID                0x0400
+            VIACCESS_CA                         0x0500
+            IRDETO_CA                           0x0600
+            JERROLD_GI_CA_SYSTEM_ID             0x0700
+            MATRA_COM_CA_SYSTEM_ID              0x0800
+            VIDEOGARD_CA                        0x0900
+            NOKIA_CA_SYSTEM_ID                  0x0A00
+            CONAX_CA                            0x0B00
+            NTL_CA_SYSTEM_ID                    0x0C00
+            CRYPTOWORKS_CA                      0x0D00
+            SUPER_VU_CA_SYSTEM_ID               0x0E00
+            SONY_CA_SYSTEM_ID                   0x0F00
+            TANDBERG_TELEVISION_CA_SYSTEM_ID    0x1000
+            THOMSON_CA_SYSTEM_ID                0x1100
+            TV_COM_CA_SYSTEM_ID                 0x1200
+            HPT_CA_SYSTEM_ID                    0x1300
+            HRT_CA_SYSTEM_ID                    0x1400
+            IBM_CA_SYSTEM_ID                    0x1500
+            NERA_CA_SYSTEM_ID                   0x1600
+            BETATECHNIK_CA_SYSTEM_ID            0x1700
+            NAGRA_CA                            0x1800
+            TITAN_INFO_SYSTEMS_CA_SYSTEM_ID     0x1900
+            TELFONICA_SERV_AUIDIOVIS_SYSTEM_ID  0x2000
+            STENTOR_CA_SYSTEM_ID                0x2100
+            TADIRAN_CA_SYSTEM_ID                0x2200
+            BARCO_CA_SYSTEM_ID                  0x2300"
+   ::= { bptsCASystemEntry 4 }
+
+
+
+
+bptsAdditionalServiceComponentTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF BptsAdditionalServiceComponentEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table lists additional service components for the specified out service"
+   ::= { ETV-IpStreamerModule 16 }
+
+bptsAdditionalServiceComponentEntry OBJECT-TYPE
+   SYNTAX      BptsAdditionalServiceComponentEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the bptsAdditionalServiceComponentTable."
+   INDEX       { bptsASCSlotNumber, bptsASCPortNumber, bptsASCServiceID, bptsASCPID, bptsASCServiceOutID  }
+   ::= { bptsAdditionalServiceComponentTable 1 }
+
+BptsAdditionalServiceComponentEntry ::= SEQUENCE {
+  bptsASCSlotNumber    SlotNumber,
+  bptsASCPortNumber    INTEGER,
+  bptsASCServiceID     Uint16,
+  bptsASCPID           Uint16,
+  bptsASCServiceOutID  Uint16,
+  bptsASCRemappedPID   Uint16,
+  bptsASCBPTSID        INTEGER,
+  bptsASCRowStatus     RowStatus
+}
+
+bptsASCSlotNumber OBJECT-TYPE
+   SYNTAX          SlotNumber
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The slot number of the TS the service in question belongs to"
+   ::= { bptsAdditionalServiceComponentEntry 1 }
+
+bptsASCPortNumber OBJECT-TYPE
+   SYNTAX          INTEGER
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The port number of the TS the service in question belongs to"
+   ::= { bptsAdditionalServiceComponentEntry 2 }
+
+bptsASCServiceID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the service in question"
+   ::= { bptsAdditionalServiceComponentEntry 3 }
+
+bptsASCPID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The Service component ( original PID) we want to be let though "
+   ::= { bptsAdditionalServiceComponentEntry 4 }
+
+bptsASCServiceOutID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION
+         "The service out ID we want to add this component to"
+   ::= { bptsAdditionalServiceComponentEntry 5 }
+
+bptsASCRemappedPID OBJECT-TYPE
+   SYNTAX          Uint16
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "The re-mapped PID"
+   ::= { bptsAdditionalServiceComponentEntry 6 }
+
+bptsASCBPTSID OBJECT-TYPE
+   SYNTAX          INTEGER(1..190)
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "The ID of the BPTS stream the service component will be included in"
+   ::= { bptsAdditionalServiceComponentEntry 7 }
+
+bptsASCRowStatus OBJECT-TYPE
+   SYNTAX          Uint32
+   ACCESS          read-write
+   STATUS          mandatory
+   DESCRIPTION
+         "Status column used for creating, modifying, and deleting rows in
+          the table."
+   ::= { bptsAdditionalServiceComponentEntry 999 }
+
+
+END

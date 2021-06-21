@@ -1,0 +1,514 @@
+{
+  "imports": {
+    "class": "imports",
+    "IF-MIB": [
+      "InterfaceIndexOrZero"
+    ],
+    "PW-DRAFT05-MIB": [
+      "pwVcIndex"
+    ],
+    "PW-TC-DRAFT05-MIB": [
+      "pwStdMIB",
+      "PwVcVlanCfg",
+      "PwVcIndexType"
+    ],
+    "RMON2-MIB": [
+      "ZeroBasedCounter32"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "Integer32",
+      "Unsigned32",
+      "IpAddress",
+      "Counter64",
+      "Counter32",
+      "Bits",
+      "iso",
+      "TimeTicks",
+      "NOTIFICATION-TYPE",
+      "OBJECT-TYPE",
+      "MODULE-IDENTITY",
+      "Gauge32",
+      "OBJECT-IDENTITY",
+      "MibIdentifier"
+    ],
+    "SNMPv2-TC": [
+      "RowStatus",
+      "DisplayString",
+      "StorageType",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "pwVcEnetMIB": {
+    "name": "pwVcEnetMIB",
+    "oid": "1.3.6.1.2.1.10.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2004-06-10 12:00",
+        "description": " Changes from as draft-pwe3-enet-mib-04: - Move the VLAN field from an index to an object, and add an arbitrary index instead. - Typo Fixes. - Adapt modes to draft-ietf-pwe3-ethernet-encap-06.txt - Adding detailed compliance requirements. "
+      },
+      {
+        "revision": "2004-02-04 12:00",
+        "description": " Changes from as draft-pwe3-enet-mib-03: 1) Remove pwVcEnetFragSize and pwVcEnetCwStatus since they are controlled by the PW MIB module and they are duplicated here. 2) Change counter64 to ZeroBasedCounter32 in error statistics, and fix them to be read-only. "
+      },
+      {
+        "revision": "2003-12-16 12:00",
+        "description": " Changes from as draft-pwe3-enet-mib-02. 1) Module identity under the PW MIB tree. Ethernet Pseudo Wire (PW) February 2004 Management Information Base "
+      },
+      {
+        "revision": "2003-07-29 12:00",
+        "description": " Changes from as draft-pwe3-enet-mib-01. 1) Added Control Word status and fragmentation status. 2) Aligning description of objects and rules based on draft-ietf-pwe3-ethernet-encap-06.txt. "
+      },
+      {
+        "revision": "2002-09-22 12:00",
+        "description": " Submitted as draft-pwe3-enet-mib-00. Changes from previous version: 1) Alignment with draft-pwe3-ethernet-encap-00.txt: removing 'rangeVLAN' mode and the associated objects. 2) Relaxing requirement on value of pwVcEnetPortVlan in port mode. "
+      },
+      {
+        "revision": "2002-08-20 12:00",
+        "description": "Changes from previous version: 1) Add pwVcEnetVcIfIndex - Option for VC as ifIndex. 2) Change counters to 64 bits. 3) Add mode for adding/removing VLAN fields between PW and CE bound interface. 4) Referencing draft-martini instead of draft-so. 5) Editorial changes for some description clauses. 6) MPLS PRI mapping table to be independent (not augmented). 7) Adapt descriptions and rules of use to dratf-ietf-pwe3-Ethernet-encap-00. "
+      },
+      {
+        "revision": "2002-02-03 12:00",
+        "description": "initial revision as -00 draft"
+      }
+    ],
+    "lastupdated": "200406101200Z",
+    "organization": "IETF PWE3 Working group",
+    "contactinfo": "David Zelig Postal: Corrigent Systems 126, Yigal Alon St. Ethernet Pseudo Wire (PW) February 2004 Management Information Base Tel-Aviv, ISRAEL Tel: +972-3-6945273 E-mail: davidz@corrigent.com Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Tel: +1-978-497-3051 Email: tnadeau@cisco.com ",
+    "description": "This MIB module describes a model for managing Ethernet point-to-point pseudo wire services over a Packet Switched Network (PSN). Copyright (C) The Internet Society (date). This version of this MIB module is part of RFC yyyy; see the RFC itself for full legal notices. -- RFC Ed.: replace yyyy with actual RFC number & remove this note "
+  },
+  "pwVcEnetObjects": {
+    "name": "pwVcEnetObjects",
+    "oid": "1.3.6.1.2.1.10.1.1.1",
+    "class": "objectidentity"
+  },
+  "pwVcEnetConformance": {
+    "name": "pwVcEnetConformance",
+    "oid": "1.3.6.1.2.1.10.1.1.2",
+    "class": "objectidentity"
+  },
+  "pwVcEnetTable": {
+    "name": "pwVcEnetTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains the index to the Ethernet tables associated with this ETH PW, the VLAN configuration and VLAN mode."
+  },
+  "pwVcEnetEntry": {
+    "name": "pwVcEnetEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-DRAFT05-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetPwInstance",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This table is indexed by the same index that was created for the associated entry in the PW generic table in the PW MIB module. The PwVcIndex and the pwVcEnetPwInstance are used as indexes to allow multiple VLANs to exist on the same PW. An entry is created in this table by the agent for every entry in the pwVcTable with a pwVcType of 'ethernetTagged' or 'ethernet'. Additional rows may be created by the operator or the agent if multiple entries are required for the same PW. The value of pwVcEnetPwInstance can be arbitrary selected to make the row unique, however implementations that know the VLAN field value when the row is created MAY use the value of the VLAN itself for better readability and backward compatibility with older versions of this MIB module. This table provides Ethernet port mapping and VLAN configuration for each Ethernet PW."
+  },
+  "pwVcEnetPwInstance": {
+    "name": "pwVcEnetPwInstance",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "If multiple rows are mapped to the same PW, this index is used to uniquely identify the individual row. If the value of the VLAN field is known at the time of of row creation, the value of pwVcEnetPwVlan MAY be used for better readability and backward compatibility with older versions of this MIB module. Otherwise the value of '1' SHOULD be set to the first row for each pwVcIndex for better readability and in order that the management application would know in advance how to access the first row when it was created by the agent. "
+  },
+  "pwVcEnetPwVlan": {
+    "name": "pwVcEnetPwVlan",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcVlanCfg",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This Object defines the (service delimiting) VLAN field value on the PW. The value of 4097 MUST be used if the object is not applicable, for example when mapping all packets from an Ethernet port to this PW (raw mode). The value of 4096 MUST be set to indicate untagged frames (from the PW point of view), i.e. when pwVcEnetVlanMode equals 'noChange' and pwVcEnetPortVlan equals 4096."
+  },
+  "pwVcEnetVlanMode": {
+    "name": "pwVcEnetVlanMode",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 0,
+          "portBased": 1,
+          "noChange": 2,
+          "changeVlan": 3,
+          "addVlan": 4,
+          "removeVlan": 5
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "noChange",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the mode of VLAN handling between the port associated to the PW and the PW encapsulation. - 'other' indicate operation that is not defined by this MIB module. - 'portBased' indicates that the forwarder will forward packets between the port and the PW independent of their structure (i.e. there is no service delimiting VLAN tags from the PE standpoint). - 'noChange' indicates that the PW contains the original user VLAN, as specified in pwVcEnetPortVlan, i.e. the VLAN on the PE-CE link is the service delimiting tag and is kept as is on the PW. This is allowed only for pwVcType equal 'ethernetTagged'. - 'changeVlan' indicates that the VLAN field on the PW may be different than the VLAN field on the user's port. the VLAN on the PE-CE link is the service delimiting tag but has a different value on the PW. - 'removeVlan' indicates that the encapsulation on the PW does not include the service delimiting VLAN field. Note that PRI bits transparency is lost in this case. - 'addVlan' indicate that a VLAN field will be added on the PSN bound direction. pwVcEnetPwVlan indicates the value that will be added. - Implementation of 'portsbased', 'removeVlan', 'addVlan' 'other' and 'changeVlan' is OPTIONAL. "
+  },
+  "pwVcEnetPortVlan": {
+    "name": "pwVcEnetPortVlan",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcVlanCfg",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 4097,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object defines the VLAN value on the physical port (or VPLS virtual port) or a mapping of the whole port traffic to the same PW. The value of '4097' NUST be used if the whole port traffic is mapped to the same PW. Note that a pwVcType of 'ethernetTagged' can still be used if service delimiting tag is added on the PW (pwVcEnetVlanMode equals 'addVlan'). It MUST be equal to pwVcEnetPwVlan if pwVcEnetVlanMode equals'noChange'. The value 4096 indicates that packet without a VLAN field (i.e. untagged frames) on the port are associated to this PW. This allows the same behaviors as assigning 'Default VLAN' to un-tagged frames. "
+  },
+  "pwVcEnetPortIfIndex": {
+    "name": "pwVcEnetPortIfIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to specify the ifIndex of the Ethernet port associated with this PW for point-to-point Ethernet service, or the ifIndex of the virtual interface of the VPLS instance associated with the PW if the service is VPLS. Two rows in this table can point to the same ifIndex only if: 1) It is required to support multiple COS on a MPLS PSN for the same service (i.e.: a combination of ports and VLANs) by the use of multiple PW, each with a different COS. 2) There is no overlap of VLAN values specified in pwVcEnetPortVlan that are associated with this port. A value of zero indicates that association to an ifIndex is not yet known."
+  },
+  "pwVcEnetVcIfIndex": {
+    "name": "pwVcEnetVcIfIndex",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InterfaceIndexOrZero",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "If the PW is modeled as an ifIndex in the ifTable, this object indicates the value of the ifIndex representing the Ethernet PW on the PSN side in the Etherlike-MIB. Note that this value may be different from the value of pwVcIfIndex that represent the ifIndex of the PW for ifType 'pw'."
+  },
+  "pwVcEnetRowStatus": {
+    "name": "pwVcEnetRowStatus",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Enable creating, deleting and modifying this row."
+  },
+  "pwVcEnetStorageType": {
+    "name": "pwVcEnetStorageType",
+    "oid": "1.3.6.1.2.1.10.1.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the storage type of this row."
+  },
+  "pwVcEnetMplsPriMappingTable": {
+    "name": "pwVcEnetMplsPriMappingTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table may be used for MPLS PSNs if there is a need to hold multiple PW, each with different COS, for the same user service (port + PW VLAN). Such a need may arise if the MPLS network is capable of L-LSP or E-LSP without multiple COS capabilities. Each row is indexed by the pwVcIndex and indicate the PRI bits on the packet received from the user port (or VPLS virtual port) that are classified to this PW. Note that the EXP bit value of the PW is configured in the PW MPLS MIB module."
+  },
+  "pwVcEnetMplsPriMappingTableEntry": {
+    "name": "pwVcEnetMplsPriMappingTableEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-DRAFT05-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry is created by the operator or by the agent based on local policy if special classification based on the PRI bits is required for this PW."
+  },
+  "pwVcEnetMplsPriMapping": {
+    "name": "pwVcEnetMplsPriMapping",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "pri000": 0,
+        "pri001": 1,
+        "pri010": 2,
+        "pri011": 3,
+        "pri100": 4,
+        "pri101": 5,
+        "pri110": 6,
+        "pri111": 7,
+        "untagged": 8
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "See appendix A of 'Encapsulation Methods for Transport of Ethernet Frames Over IP/MPLS Networks' (work-in-progress) for mapping rules of the PRI bits to PSN COS.",
+    "status": "current",
+    "description": "This object defines the groups of user PRI mapped into this PW. Each bit set indicates that this user priority is assigned to this PW. The value 'untagged' is used to indicate that untagged frames are also associated to this PW. This object allows the use of different PSN COS based on user marking of PRI bits in MPLS PSN with L-LSP or E-LSP without multiple COS support. In all other cases, the default value MUST be used. It is REQUIRED that there is no overlap on this object between rows serving the same service (port+ PW VLAN). In case of missing BIT configuration between rows to the same service, incoming packets with PRI marking not configured should be handled by the PW with the lowest COS. "
+  },
+  "pwVcEnetMplsPriMappingRowStatus": {
+    "name": "pwVcEnetMplsPriMappingRowStatus",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Enable creating, deleting and modifying this row. pwVcEnetMplsPriMapping may be changed when this object is in the active(1) state, assuming the new value honors the rules as described in the description clause of pwVcEnetMplsPriMapping. Otherwise, the row status MUST be set to notActive(3) before a change can be made to pwVcEnetMplsPriMappingRowStatus."
+  },
+  "pwVcEnetMplsPriMappingStorageType": {
+    "name": "pwVcEnetMplsPriMappingStorageType",
+    "oid": "1.3.6.1.2.1.10.1.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the storage type of this row."
+  },
+  "pwVcEnetStatsTable": {
+    "name": "pwVcEnetStatsTable",
+    "oid": "1.3.6.1.2.1.10.1.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table contains statistical counters specific for Ethernet PW."
+  },
+  "pwVcEnetStatsEntry": {
+    "name": "pwVcEnetStatsEntry",
+    "oid": "1.3.6.1.2.1.10.1.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-DRAFT05-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each entry represents the statistics gathered for the PW carrying the Ethernet packets since this PW was first created in the pwVcEnetTable."
+  },
+  "pwVcEnetStatsIllegalVlan": {
+    "name": "pwVcEnetStatsIllegalVlan",
+    "oid": "1.3.6.1.2.1.10.1.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ZeroBasedCounter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets received (from the PSN) on this PW with an illegal VLAN field, missing VLAN field that was expected, or A VLAN field when it was not expected. This counter is not applicable if the PW type is 'ethernet' (i.e. raw mode), and MUST return the value of zero in this case."
+  },
+  "pwVcEnetStatsIllegalLength": {
+    "name": "pwVcEnetStatsIllegalLength",
+    "oid": "1.3.6.1.2.1.10.1.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ZeroBasedCounter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets that were received with an illegal Ethernet packet length on this PW. An illegal length is defined as being greater than the value in the advertised MTU supported, or shorter than the allowed Ethernet packet size. The agent should start the value of this counter at the value of zero."
+  },
+  "pwVcEnetGroups": {
+    "name": "pwVcEnetGroups",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "pwVcEnetCompliances": {
+    "name": "pwVcEnetCompliances",
+    "oid": "1.3.6.1.2.1.10.1.1.2.2",
+    "class": "objectidentity"
+  },
+  "pwVcEnetModuleFullCompliance": {
+    "name": "pwVcEnetModuleFullCompliance",
+    "oid": "1.3.6.1.2.1.10.1.1.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "pwVcEnetGroup",
+        "module": "PW-ENET-DRAFT05-MIB"
+      },
+      {
+        "object": "pwVcStatsGroup",
+        "module": "PW-ENET-DRAFT05-MIB"
+      },
+      {
+        "object": "pwVcEnetMplsPriGroup",
+        "module": "PW-ENET-DRAFT05-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agents that provide full support for PW-ENET MIB Module. Such devices can then be monitored and also be configured using this MIB module."
+  },
+  "pwVcEnetModuleReadOnlyCompliance": {
+    "name": "pwVcEnetModuleReadOnlyCompliance",
+    "oid": "1.3.6.1.2.1.10.1.1.2.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "pwVcEnetGroup",
+        "module": "PW-ENET-DRAFT05-MIB"
+      },
+      {
+        "object": "pwVcStatsGroup",
+        "module": "PW-ENET-DRAFT05-MIB"
+      },
+      {
+        "object": "pwVcEnetMplsPriGroup",
+        "module": "PW-ENET-DRAFT05-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agents that provide read only support for PW-ENET MIB Module. Such devices can then be monitored but cannot be configured using this MIB module."
+  },
+  "pwVcEnetGroup": {
+    "name": "pwVcEnetGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetPwVlan"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetVlanMode"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetPortVlan"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetPortIfIndex"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetVcIfIndex"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetRowStatus"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects for basic Ethernet PW config."
+  },
+  "pwVcStatsGroup": {
+    "name": "pwVcStatsGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetStatsIllegalVlan"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetStatsIllegalLength"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects counting various PW level errors."
+  },
+  "pwVcEnetMplsPriGroup": {
+    "name": "pwVcEnetMplsPriGroup",
+    "oid": "1.3.6.1.2.1.10.1.1.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetMplsPriMapping"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetMplsPriMappingRowStatus"
+      },
+      {
+        "module": "PW-ENET-DRAFT05-MIB",
+        "object": "pwVcEnetMplsPriMappingStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects defining classification to different PW based on the user's PRI bits mapping. This group is optional, and should be implemented only for MPLS PSN where only L-LSP or single OA E-LSP exists, and different PSN COS is required based on the PRI mapping."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PW-ENET-DRAFT05-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:33:15 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PW-ENET-DRAFT05-MIB"
+  }
+}

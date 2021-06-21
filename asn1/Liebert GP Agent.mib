@@ -1,0 +1,247 @@
+
+LIEBERT-GP-AGENT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    sysUpTime
+        FROM RFC1213-MIB
+    OBJECT-TYPE, MODULE-IDENTITY, NOTIFICATION-TYPE, OBJECT-IDENTITY, Integer32
+        FROM SNMPv2-SMI
+    lgpAgentIdent,
+    lgpAgentDevice,
+    lgpAgentControl,
+    liebertAgentModuleReg, lgpAgentNotifications
+        FROM LIEBERT-GP-REGISTRATION-MIB
+    DisplayString
+        FROM SNMPv2-TC
+    ;
+
+-- =============================================================================
+-- Module Identification and Registration
+-- =============================================================================
+--
+liebertAgentModule MODULE-IDENTITY
+  LAST-UPDATED "200602220000Z"
+  ORGANIZATION "Liebert Corporation"
+  CONTACT-INFO
+      "Contact:   Technical Support
+
+      Postal:
+      Liebert Corporation
+      1050 Dearborn Drive
+      P.O. Box 29186
+      Columbus OH, 43229
+      US
+
+      Tel: +1 (800) 222-5877
+
+      E-mail: monitoring@liebert.com
+      Web:    www.liebert.com
+
+      Author:  Gregory M. Hoge"
+
+   DESCRIPTION
+      "The MIB module used to specify Liebert software or firmware
+      agent SNMP OIDs.
+
+      Copyright 2000-2004 Liebert Corporation. All rights reserved.
+      Reproduction of this document is authorized on the condition
+      that the forgoing copyright notice is included.
+
+      This Specification is supplied 'AS IS' and Liebert Corporation
+      makes no warranty, either express or implied, as to the use,
+      operation, condition, or performance of the Specification."
+
+    REVISION "200602220000Z"
+
+    DESCRIPTION
+    "Added support for Liebert DS Unit."
+   ::= { liebertAgentModuleReg 1 }
+
+-- =============================================================================
+--  lgpIdent - Liebert SNMP Agent Identification Group
+--  This group contains data specific to the agent or agent hardware.
+-- =============================================================================
+
+lgpAgentIdentManufacturer OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The agent manufacturer."
+    ::= { lgpAgentIdent 1 }
+
+lgpAgentIdentModel OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The agent model designation.  This identifer is typically a
+    model name or ID"
+    ::= { lgpAgentIdent 2 }
+
+lgpAgentIdentFirmwareVersion OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (64))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The firmware revision level of the agent."
+    ::= { lgpAgentIdent 3 }
+
+lgpAgentIdentSerialNumber OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (64))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The serial number of the agent.  This is a string of
+    alphanumeric characters that uniquely identifies the agent hardware.  This
+    number is assigned when the agent hardware is manufactured and does not
+    change throughout its lifecycle."
+    ::= { lgpAgentIdent 4 }
+
+-- =============================================================================
+-- lgpAgentNotifications - Liebert Agent Notifications Group
+-- =============================================================================
+
+lgpAgentEventNotifications OBJECT-IDENTITY
+    STATUS current
+    DESCRIPTION
+        "Agent specific notifications."
+    ::= { lgpAgentNotifications 0 }
+
+lgpAgentDeviceCommunicationLost NOTIFICATION-TYPE
+    OBJECTS     { sysUpTime }
+    STATUS      current
+    DESCRIPTION "The agent has lost communications with a managed device."
+    ::= { lgpAgentEventNotifications 1 }
+
+-- =============================================================================
+-- lgpAgentDevice - Liebert Agent Managed Device Group
+-- =============================================================================
+
+lgpAgentManagedDeviceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LgpAgentManagedDeviceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "This table contains one entry for each managed device."
+    ::= { lgpAgentDevice 2 }
+
+lgpAgentManagedDeviceEntry OBJECT-TYPE
+    SYNTAX      LgpAgentManagedDeviceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "This entry describes a row in the table
+                'lgpAgentManagedDeviceTable'.  The rows in this table cannot
+                be created by the NMS. The rows are automatically created by
+                the agent based upon the hardware configuration of the
+                Liebert managed device(s) being monitored with this agent."
+    INDEX       { lgpAgentDeviceIndex }
+    ::= { lgpAgentManagedDeviceTable 1 }
+
+LgpAgentManagedDeviceEntry ::= SEQUENCE {
+        lgpAgentDeviceIndex                 INTEGER,
+        lgpAgentDeviceId                    OBJECT IDENTIFIER,
+        lgpAgentDeviceManufacturer          DisplayString,
+        lgpAgentDeviceModel                 DisplayString,
+        lgpAgentDeviceFirmwareVersion       DisplayString,
+        lgpAgentDeviceUnitNumber            Integer32,
+        lgpAgentDeviceSerialNumber          DisplayString,
+        lgpAgentDeviceManufactureDate       DisplayString,
+        lgpAgentDeviceServiceContact        DisplayString,
+        lgpAgentDeviceServicePhoneNumber    DisplayString
+
+    }
+
+lgpAgentDeviceIndex OBJECT-TYPE
+    SYNTAX      INTEGER (0..65536)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The device identifier. This is used as an index to address
+                a particular row in the table 'lgpAgentManagedDeviceTable'."
+    ::= { lgpAgentManagedDeviceEntry 1 }
+
+lgpAgentDeviceId OBJECT-TYPE
+    SYNTAX      OBJECT IDENTIFIER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The managed device specific identifier defined by the
+                product registration."
+    ::= { lgpAgentManagedDeviceEntry 2 }
+
+lgpAgentDeviceManufacturer OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The managed device manufacturer."
+    ::= { lgpAgentManagedDeviceEntry 3 }
+
+lgpAgentDeviceModel OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The managed device model designation."
+    ::= { lgpAgentManagedDeviceEntry 4 }
+
+lgpAgentDeviceFirmwareVersion OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (64))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The firmware revision level of the managed device."
+    ::= { lgpAgentManagedDeviceEntry 5 }
+
+lgpAgentDeviceUnitNumber OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The managed device unit number.  Typically this is a
+    number assigned to a managed device that uniquely identifies it from
+    other similar devices within a 'system'."
+    ::= { lgpAgentManagedDeviceEntry 6 }
+
+lgpAgentDeviceSerialNumber OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (64))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The serial number of the managed device."
+    ::= { lgpAgentManagedDeviceEntry 7 }
+
+lgpAgentDeviceManufactureDate OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (64))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The manufacture date of the managed device."
+    ::= { lgpAgentManagedDeviceEntry 8 }
+
+lgpAgentDeviceServiceContact OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..64))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The service contact of the managed device."
+    ::= { lgpAgentManagedDeviceEntry 9 }
+
+lgpAgentDeviceServicePhoneNumber OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..64))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The phone number of the service contact of the managed device."
+    ::= { lgpAgentManagedDeviceEntry 10 }
+
+-- =============================================================================
+-- lgpAgentControl - Liebert Agent Control Group
+-- =============================================================================
+
+lgpAgentReboot OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Perform an immediate 'reboot' of the agent process.  When possible
+         the reboot will approximate a power on reset of the agent
+         communications hardware.  This type of reboot will be performed if
+         a hardware reset is supported by the hardware/software on the
+         communications card.  Otherwise a 'software' reboot will be executed.
+         In both cases a temporary loss of communications and other agent
+         functionality will result.
+
+         Any valid INTEGER value may be written to this object to initiate
+         the reboot operation.
+
+         If read the value '0' will always be returned."
+    ::= { lgpAgentControl 1 }
+
+END

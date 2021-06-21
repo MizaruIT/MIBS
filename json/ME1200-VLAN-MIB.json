@@ -1,0 +1,1323 @@
+{
+  "imports": {
+    "class": "imports",
+    "CISCOME1200-MIB": [
+      "me1200SwitchMgmt"
+    ],
+    "ME1200-TC": [
+      "ME1200Unsigned16",
+      "ME1200RowEditorState",
+      "ME1200DisplayString",
+      "ME1200InterfaceIndex",
+      "ME1200VlanListQuarter",
+      "ME1200PortListStackable",
+      "ME1200Vlan",
+      "ME1200EtherType"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "Counter32",
+      "OBJECT-TYPE",
+      "TimeTicks",
+      "Gauge32",
+      "Integer32",
+      "iso",
+      "Bits",
+      "IpAddress",
+      "MibIdentifier",
+      "Unsigned32",
+      "Counter64",
+      "OBJECT-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TruthValue"
+    ]
+  },
+  "me1200VlanMIB": {
+    "name": "me1200VlanMIB",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-01-16 00:00",
+        "description": "Added Shared VLAN Learning table"
+      },
+      {
+        "revision": "2014-03-11 00:00",
+        "description": "Definition of type InterfaceIndex changed from Unsigned32 to Integer32 as it is used as index in some tables"
+      },
+      {
+        "revision": "2014-02-12 00:00",
+        "description": "Fixed typo in description of VlanUser"
+      },
+      {
+        "revision": "2014-01-29 00:00",
+        "description": "Locate all objects under ciscoME1200MIB"
+      },
+      {
+        "revision": "2014-01-23 00:00",
+        "description": "Removed ztp from ME1200VlanUserType."
+      },
+      {
+        "revision": "2014-01-22 00:00",
+        "description": "Added ztp to ME1200VlanUserType."
+      },
+      {
+        "revision": "2013-12-20 00:00",
+        "description": "Initial version"
+      }
+    ],
+    "lastupdated": "201501160000Z",
+    "organization": "Cisco Systems, Inc",
+    "contactinfo": "Cisco Systems, Inc Customer Service Postal: 170 W Tasman Drive San Jose, CA 95134 USA Tel: +1 800 553-NETS E-mail: cs-me1200@cisco.com",
+    "description": "Private MIB for VLAN."
+  },
+  "ME1200VlanEgressTagging": {
+    "name": "ME1200VlanEgressTagging",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "untagThis": 0,
+          "tagThis": 1,
+          "tagAll": 2,
+          "untagAll": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates how egress tagging occurs."
+  },
+  "ME1200VlanIngressAcceptance": {
+    "name": "ME1200VlanIngressAcceptance",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "all": 0,
+          "tagged": 1,
+          "untagged": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates the type of frames that are not discarded on ingress w.r.t. VLAN tagging."
+  },
+  "ME1200VlanPortMode": {
+    "name": "ME1200VlanPortMode",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "access": 0,
+          "trunk": 1,
+          "hybrid": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Determines the underlying port mode. Access ports are only members of one VLAN, the AccessVlan. Trunk ports are by default members of all VLANs, which can be limited with TrunkVlans. Hybrid ports allow for changing all port VLAN parameters. As trunk ports, hybrid ports are by default members of all VLANs, which can be limited with HybridVlans."
+  },
+  "ME1200VlanPortType": {
+    "name": "ME1200VlanPortType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unaware": 0,
+          "c": 1,
+          "s": 2,
+          "sCustom": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates if a port is VLAN aware, and if so, to which EtherType it is sensitive."
+  },
+  "ME1200VlanUserType": {
+    "name": "ME1200VlanUserType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "combined": 0,
+          "admin": 1,
+          "dot1x": 3,
+          "mvrp": 4,
+          "gvrp": 5,
+          "mvr": 6,
+          "voiceVlan": 7,
+          "mstp": 8,
+          "erps": 9,
+          "mep": 10,
+          "evc": 11,
+          "vcl": 12,
+          "rmirror": 13
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates the VLAN user type. A value of 'combined' indicates the VLAN settings as programmed to hardware. A value of 'admin' indicates the VLAN settings as programmed by the administrative user, and any other value indicates a software module that changes VLAN settings 'behind the scenes'."
+  },
+  "me1200VlanMIBObjects": {
+    "name": "me1200VlanMIBObjects",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1",
+    "class": "objectidentity"
+  },
+  "me1200VlanCapabilities": {
+    "name": "me1200VlanCapabilities",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.1",
+    "class": "objectidentity"
+  },
+  "me1200VlanCapabilitiesVlanIdMin": {
+    "name": "me1200VlanCapabilitiesVlanIdMin",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The minimum VLAN ID that can be configured on the device."
+  },
+  "me1200VlanCapabilitiesVlanIdMax": {
+    "name": "me1200VlanCapabilitiesVlanIdMax",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum VLAN ID that can be configured on the device."
+  },
+  "me1200VlanCapabilitiesFidCnt": {
+    "name": "me1200VlanCapabilitiesFidCnt",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of Shared VLAN Learning (SVL) Filter IDs (FIDs) supported by this device. 0 if SVL is not supported."
+  },
+  "me1200VlanConfig": {
+    "name": "me1200VlanConfig",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2",
+    "class": "objectidentity"
+  },
+  "me1200VlanConfigGlobals": {
+    "name": "me1200VlanConfigGlobals",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1",
+    "class": "objectidentity"
+  },
+  "me1200VlanConfigGlobalsMain": {
+    "name": "me1200VlanConfigGlobalsMain",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.1",
+    "class": "objectidentity"
+  },
+  "me1200VlanConfigGlobalsMainCustomSPortEtherType": {
+    "name": "me1200VlanConfigGlobalsMainCustomSPortEtherType",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200EtherType",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1536,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "TPID (EtherType) for ports marked as Custom-S tag aware."
+  },
+  "me1200VlanConfigGlobalsMainAccessVlans0To1K": {
+    "name": "me1200VlanConfigGlobalsMainAccessVlans0To1K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating the enabled access VLANs."
+  },
+  "me1200VlanConfigGlobalsMainAccessVlans1KTo2K": {
+    "name": "me1200VlanConfigGlobalsMainAccessVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating the enabled access VLANs."
+  },
+  "me1200VlanConfigGlobalsMainAccessVlans2KTo3K": {
+    "name": "me1200VlanConfigGlobalsMainAccessVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating the enabled access VLANs."
+  },
+  "me1200VlanConfigGlobalsMainAccessVlans3KTo4K": {
+    "name": "me1200VlanConfigGlobalsMainAccessVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating the enabled access VLANs."
+  },
+  "me1200VlanConfigGlobalsNameTable": {
+    "name": "me1200VlanConfigGlobalsNameTable",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of VLAN names."
+  },
+  "me1200VlanConfigGlobalsNameEntry": {
+    "name": "me1200VlanConfigGlobalsNameEntry",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigGlobalsNameVlanId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains the name of a given VLAN."
+  },
+  "me1200VlanConfigGlobalsNameVlanId": {
+    "name": "me1200VlanConfigGlobalsNameVlanId",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "me1200VlanConfigGlobalsNameName": {
+    "name": "me1200VlanConfigGlobalsNameName",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "VLAN Name. Default for VLAN 1 is 'default'. Default for any other VLAN is 'VLANxxxx', where 'xxxx' is a decimal representation of the VLAN ID with leading zeroes."
+  },
+  "me1200VlanConfigInterfaces": {
+    "name": "me1200VlanConfigInterfaces",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2",
+    "class": "objectidentity"
+  },
+  "me1200VlanConfigInterfaceTable": {
+    "name": "me1200VlanConfigInterfaceTable",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of per-port configuration."
+  },
+  "me1200VlanConfigInterfaceEntry": {
+    "name": "me1200VlanConfigInterfaceEntry",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains the VLAN configuration for a port interface."
+  },
+  "me1200VlanConfigInterfaceIfIndex": {
+    "name": "me1200VlanConfigInterfaceIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Logical interface index."
+  },
+  "me1200VlanConfigInterfaceMode": {
+    "name": "me1200VlanConfigInterfaceMode",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanPortMode",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "VLAN mode of the port."
+  },
+  "me1200VlanConfigInterfaceAccessVlan": {
+    "name": "me1200VlanConfigInterfaceAccessVlan",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port VLAN ID the port will be assigned when Mode is Access."
+  },
+  "me1200VlanConfigInterfaceTrunkNativeVlan": {
+    "name": "me1200VlanConfigInterfaceTrunkNativeVlan",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port VLAN ID the port will be assigned when Mode is trunk."
+  },
+  "me1200VlanConfigInterfaceTrunkTagNativeVlan": {
+    "name": "me1200VlanConfigInterfaceTrunkTagNativeVlan",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether frames classified to TrunkNativeVlan get tagged on egress. Used when Mode is trunk."
+  },
+  "me1200VlanConfigInterfaceTrunkVlans0KTo1K": {
+    "name": "me1200VlanConfigInterfaceTrunkVlans0KTo1K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "me1200VlanConfigInterfaceTrunkVlans1KTo2K": {
+    "name": "me1200VlanConfigInterfaceTrunkVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "me1200VlanConfigInterfaceTrunkVlans2KTo3K": {
+    "name": "me1200VlanConfigInterfaceTrunkVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "me1200VlanConfigInterfaceTrunkVlans3KTo4K": {
+    "name": "me1200VlanConfigInterfaceTrunkVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "me1200VlanConfigInterfaceHybridNativeVlan": {
+    "name": "me1200VlanConfigInterfaceHybridNativeVlan",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port VLAN ID the port will be assigned when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridPortType": {
+    "name": "me1200VlanConfigInterfaceHybridPortType",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanPortType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls awareness and whether it reacts to C-tags, S-tags, Custom-S-tags. Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridIngressFiltering": {
+    "name": "me1200VlanConfigInterfaceHybridIngressFiltering",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether frames classified to a certain VLAN ID get discarded (true) or not (false) if the port is not member of the VLAN ID. Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridIngressAcceptance": {
+    "name": "me1200VlanConfigInterfaceHybridIngressAcceptance",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanIngressAcceptance",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether frames are accepted on ingress depending on VLAN tag in frame. Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridEgressTagging": {
+    "name": "me1200VlanConfigInterfaceHybridEgressTagging",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanEgressTagging",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls tagging of frames on egress. tagThis(1) is not allowed. Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridVlans0KTo1K": {
+    "name": "me1200VlanConfigInterfaceHybridVlans0KTo1K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridVlans1KTo2K": {
+    "name": "me1200VlanConfigInterfaceHybridVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridVlans2KTo3K": {
+    "name": "me1200VlanConfigInterfaceHybridVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceHybridVlans3KTo4K": {
+    "name": "me1200VlanConfigInterfaceHybridVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "me1200VlanConfigInterfaceForbiddenVlans0KTo1K": {
+    "name": "me1200VlanConfigInterfaceForbiddenVlans0KTo1K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "me1200VlanConfigInterfaceForbiddenVlans1KTo2K": {
+    "name": "me1200VlanConfigInterfaceForbiddenVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "me1200VlanConfigInterfaceForbiddenVlans2KTo3K": {
+    "name": "me1200VlanConfigInterfaceForbiddenVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "me1200VlanConfigInterfaceForbiddenVlans3KTo4K": {
+    "name": "me1200VlanConfigInterfaceForbiddenVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "me1200VlanConfigInterfacesSvlTable": {
+    "name": "me1200VlanConfigInterfacesSvlTable",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Shared VLAN Learning (SVL) allows for having one or more VLAN IDs map to the same Filter ID (FID). For a given set of VLANs, if an individual MAC address is learned in one VLAN, that learned information is used in forwarding decisions taken for that address relative to all other VLANs in the given set. fidCnt, which can be found in the capabilities section, indicates the number of FIDs available on this platform. The feature is not available if this number is 0."
+  },
+  "me1200VlanConfigInterfacesSvlEntry": {
+    "name": "me1200VlanConfigInterfacesSvlEntry",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfacesSvlVlanId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The table is indexed by VLAN ID"
+  },
+  "me1200VlanConfigInterfacesSvlVlanId": {
+    "name": "me1200VlanConfigInterfacesSvlVlanId",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "me1200VlanConfigInterfacesSvlFilterId": {
+    "name": "me1200VlanConfigInterfacesSvlFilterId",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Filter ID (FID) used in Shared VLAN Learning. Zero or more VLANs may map into the same FID."
+  },
+  "me1200VlanConfigInterfacesSvlAction": {
+    "name": "me1200VlanConfigInterfacesSvlAction",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.2.1.100",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200RowEditorState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Action"
+  },
+  "me1200VlanConfigInterfacesSvlTableRowEditor": {
+    "name": "me1200VlanConfigInterfacesSvlTableRowEditor",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.3",
+    "class": "objectidentity"
+  },
+  "me1200VlanConfigInterfacesSvlTableRowEditorVlanId": {
+    "name": "me1200VlanConfigInterfacesSvlTableRowEditorVlanId",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "me1200VlanConfigInterfacesSvlTableRowEditorFilterId": {
+    "name": "me1200VlanConfigInterfacesSvlTableRowEditorFilterId",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Filter ID (FID) used in Shared VLAN Learning. Zero or more VLANs may map into the same FID."
+  },
+  "me1200VlanConfigInterfacesSvlTableRowEditorAction": {
+    "name": "me1200VlanConfigInterfacesSvlTableRowEditorAction",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.2.2.3.100",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200RowEditorState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Action"
+  },
+  "me1200VlanStatus": {
+    "name": "me1200VlanStatus",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3",
+    "class": "objectidentity"
+  },
+  "me1200VlanStatusInterfaces": {
+    "name": "me1200VlanStatusInterfaces",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1",
+    "class": "objectidentity"
+  },
+  "me1200VlanStatusInterfaceTable": {
+    "name": "me1200VlanStatusInterfaceTable",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of per-interface (port) status."
+  },
+  "me1200VlanStatusInterfaceEntry": {
+    "name": "me1200VlanStatusInterfaceEntry",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfaceIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfaceVlanUser",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains the VLAN configuration for a port interface for a given VLAN user."
+  },
+  "me1200VlanStatusInterfaceIfIndex": {
+    "name": "me1200VlanStatusInterfaceIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Logical interface index."
+  },
+  "me1200VlanStatusInterfaceVlanUser": {
+    "name": "me1200VlanStatusInterfaceVlanUser",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanUserType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "VLAN user."
+  },
+  "me1200VlanStatusInterfacePvid": {
+    "name": "me1200VlanStatusInterfacePvid",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Port VLAN ID set by this user."
+  },
+  "me1200VlanStatusInterfaceUvid": {
+    "name": "me1200VlanStatusInterfaceUvid",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Untagged VLAN ID set by a user. This may only be populated by non-admin users."
+  },
+  "me1200VlanStatusInterfacePortType": {
+    "name": "me1200VlanStatusInterfacePortType",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanPortType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "VLAN Awareness and tag reaction set by this user."
+  },
+  "me1200VlanStatusInterfaceIngressFiltering": {
+    "name": "me1200VlanStatusInterfaceIngressFiltering",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ingress filtering enabled or disabled by this user."
+  },
+  "me1200VlanStatusInterfaceIngressAcceptance": {
+    "name": "me1200VlanStatusInterfaceIngressAcceptance",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanIngressAcceptance",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "VLAN tagging accepted upon ingress configured by this user."
+  },
+  "me1200VlanStatusInterfaceEgressTagging": {
+    "name": "me1200VlanStatusInterfaceEgressTagging",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanEgressTagging",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Egress tagging configured by this user."
+  },
+  "me1200VlanStatusMemberships": {
+    "name": "me1200VlanStatusMemberships",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.2",
+    "class": "objectidentity"
+  },
+  "me1200VlanStatusMembershipVlanTable": {
+    "name": "me1200VlanStatusMembershipVlanTable",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of per-VLAN, per-VLAN user port memberships."
+  },
+  "me1200VlanStatusMembershipVlanEntry": {
+    "name": "me1200VlanStatusMembershipVlanEntry",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusMembershipVlanVlanId",
+        "implied": 0
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusMembershipVlanVlanUser",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains a port list of VLAN memberships for a given VLAN and VLAN user.The table is sparsely populated, so if a VLAN user doesn't contribute, the row is non-existent."
+  },
+  "me1200VlanStatusMembershipVlanVlanId": {
+    "name": "me1200VlanStatusMembershipVlanVlanId",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200Vlan",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "me1200VlanStatusMembershipVlanVlanUser": {
+    "name": "me1200VlanStatusMembershipVlanVlanUser",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200VlanUserType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "VLAN user."
+  },
+  "me1200VlanStatusMembershipVlanPortList": {
+    "name": "me1200VlanStatusMembershipVlanPortList",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.1.3.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ME1200PortListStackable",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Port list."
+  },
+  "me1200VlanMIBConformance": {
+    "name": "me1200VlanMIBConformance",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3",
+    "class": "objectidentity"
+  },
+  "me1200VlanMIBCompliances": {
+    "name": "me1200VlanMIBCompliances",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.1",
+    "class": "objectidentity"
+  },
+  "me1200VlanMIBGroups": {
+    "name": "me1200VlanMIBGroups",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2",
+    "class": "objectidentity"
+  },
+  "me1200VlanCapabilitiesInfoGroup": {
+    "name": "me1200VlanCapabilitiesInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanCapabilitiesVlanIdMin"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanCapabilitiesVlanIdMax"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanCapabilitiesFidCnt"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanConfigGlobalsMainInfoGroup": {
+    "name": "me1200VlanConfigGlobalsMainInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigGlobalsMainCustomSPortEtherType"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigGlobalsMainAccessVlans0To1K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigGlobalsMainAccessVlans1KTo2K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigGlobalsMainAccessVlans2KTo3K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigGlobalsMainAccessVlans3KTo4K"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanConfigGlobalsNameTableInfoGroup": {
+    "name": "me1200VlanConfigGlobalsNameTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigGlobalsNameName"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanConfigInterfaceTableInfoGroup": {
+    "name": "me1200VlanConfigInterfaceTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceMode"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceAccessVlan"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceTrunkNativeVlan"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceTrunkTagNativeVlan"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceTrunkVlans0KTo1K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceTrunkVlans1KTo2K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceTrunkVlans2KTo3K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceTrunkVlans3KTo4K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridNativeVlan"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridPortType"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridIngressFiltering"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridIngressAcceptance"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridEgressTagging"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridVlans0KTo1K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridVlans1KTo2K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridVlans2KTo3K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceHybridVlans3KTo4K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceForbiddenVlans0KTo1K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceForbiddenVlans1KTo2K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceForbiddenVlans2KTo3K"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfaceForbiddenVlans3KTo4K"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanConfigInterfacesSvlTableInfoGroup": {
+    "name": "me1200VlanConfigInterfacesSvlTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfacesSvlFilterId"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfacesSvlAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanConfigInterfacesSvlTableRowEditorInfoGroup": {
+    "name": "me1200VlanConfigInterfacesSvlTableRowEditorInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfacesSvlTableRowEditorVlanId"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfacesSvlTableRowEditorFilterId"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanConfigInterfacesSvlTableRowEditorAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanStatusInterfaceTableInfoGroup": {
+    "name": "me1200VlanStatusInterfaceTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfacePvid"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfaceUvid"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfacePortType"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfaceIngressFiltering"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfaceIngressAcceptance"
+      },
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusInterfaceEgressTagging"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanStatusMembershipVlanTableInfoGroup": {
+    "name": "me1200VlanStatusMembershipVlanTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ME1200-VLAN-MIB",
+        "object": "me1200VlanStatusMembershipVlanPortList"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects suitable for bulk operations."
+  },
+  "me1200VlanMIBCompliance": {
+    "name": "me1200VlanMIBCompliance",
+    "oid": "1.3.6.1.4.1.9.9.815.1.13.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "me1200VlanCapabilitiesInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      },
+      {
+        "object": "me1200VlanConfigGlobalsMainInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      },
+      {
+        "object": "me1200VlanConfigGlobalsNameTableInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      },
+      {
+        "object": "me1200VlanConfigInterfaceTableInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      },
+      {
+        "object": "me1200VlanConfigInterfacesSvlTableInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      },
+      {
+        "object": "me1200VlanConfigInterfacesSvlTableRowEditorInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      },
+      {
+        "object": "me1200VlanStatusInterfaceTableInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      },
+      {
+        "object": "me1200VlanStatusMembershipVlanTableInfoGroup",
+        "module": "ME1200-VLAN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for the implementation."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ME1200-VLAN-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:12:33 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ME1200-VLAN-MIB"
+  }
+}

@@ -1,0 +1,840 @@
+{
+  "imports": {
+    "class": "imports",
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-PARTY-MIB": [
+      "StorageType"
+    ],
+    "SNMPv2-SMI": [
+      "TimeTicks",
+      "Bits",
+      "Unsigned32",
+      "NOTIFICATION-TYPE",
+      "MODULE-IDENTITY",
+      "iso",
+      "OBJECT-IDENTITY",
+      "Integer32",
+      "MibIdentifier",
+      "IpAddress",
+      "enterprises",
+      "OBJECT-TYPE",
+      "Counter32",
+      "Gauge32",
+      "Counter64"
+    ],
+    "SNMPv2-TC": [
+      "TestAndIncr",
+      "DisplayString",
+      "TimeInterval",
+      "TEXTUAL-CONVENTION",
+      "TimeStamp",
+      "RowStatus"
+    ]
+  },
+  "mlmMIB": {
+    "name": "mlmMIB",
+    "oid": "1.3.6.1.4.1.1575.1.4",
+    "class": "moduleidentity",
+    "lastupdated": "9412050000Z",
+    "organization": "SNMP Research, Inc.",
+    "contactinfo": " David B. Levi Postal: SNMP Research, Inc. 3001 Kimberlin Heights Road Knoxville, TN 37920-9716 Tel: (615)573-1434 Fax: (615)573-9197 E-mail: levi@snmp.com This is an experimental revised version written by Juergen Schoenwaelder schoenw@ibr.cs.tu-bs.de",
+    "description": "The MIB module for the SNMP Mid-Level-Manager MIB"
+  },
+  "mlmMIBObjects": {
+    "name": "mlmMIBObjects",
+    "oid": "1.3.6.1.4.1.1575.1.4.1",
+    "class": "objectidentity"
+  },
+  "mlmLock": {
+    "name": "mlmLock",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TestAndIncr",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable is used for creating new rows in the mlmScriptTable. When creating a new row, this variable must be set as well as the mlmScriptStatus. If the value it is set to does not equal its current value, the set completely fails. A manager should only perform set requests on rows in the mlmScriptTable which it has created using mlmLock. The value of mlmLock is equal to the first unused row in the mlmScriptTable."
+  },
+  "mlmNextScript": {
+    "name": "mlmNextScript",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TestAndIncr",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable is used for creating scripts in the mlmScriptTable. The current value of mlmNextScript should first be retrieved, and this value should then be included in the set request for creating the first row of a new script. If the value it is set to does not equal its current value, the set completely fails. A manager should only perform set requests on scripts in the mlmScriptTable which it has created using mlmNextScript. The value of mlmNextScript is equal to the first unused set of rows in the mlmScriptTable."
+  },
+  "mlmScriptTable": {
+    "name": "mlmScriptTable",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A mlmScriptTable entry."
+  },
+  "mlmScriptEntry": {
+    "name": "mlmScriptEntry",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmScriptIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A mlmScriptTable entry."
+  },
+  "mlmScriptIndex": {
+    "name": "mlmScriptIndex",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Unique identifier for a mlmScriptEntry."
+  },
+  "mlmScriptName": {
+    "name": "mlmScriptName",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable is used to reference a script stored in non-volatile memory, instead of entries in the mlmScriptTable. The mlmScriptName variable can also be used for downloading scripts from a management station to non-volatile storage on the agent, or for examining the contents of a script stored in non- volatile memory on the agent. If this variable is not empty the script referenced by mlmScriptName will be run when mlmExecutionStatus is set to the appropriate value."
+  },
+  "mlmScriptDescr": {
+    "name": "mlmScriptDescr",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable should contain a short description of the script."
+  },
+  "mlmScriptStorageType": {
+    "name": "mlmScriptStorageType",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "volatile",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This column indicates how the MLM should treat the current row in the mlmScriptTable. If the value is 'volatile', no record of the row is kept when the MLM is restarted (e.g. the machine is rebooted). If the value is 'nonVolatile', the row is stored in non-volatile memory and is restored when the MLM is restarted. If the value is 'permanent', the row is kept in ROM memory and restored when the MLM is restarted"
+  },
+  "mlmScriptStatus": {
+    "name": "mlmScriptStatus",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "To create new row, a manager sets this object to createAndWait. Until this object is set to active or notInService, its value is returned as notReady. If its value is notReady and is set to active, the script is loaded and compiled if necessary. To delete a row, the manager sets this object to destroy. When a row with a particular mlmScriptIndex has been destroyed, all rows with corresponding mlmExecutionScript values in the mlmExecutionTable and all rows with corresponding mlmSourceScript value in mlmSourceTable and all rows with corresponding mlmResultScript value in mlmResultTable are destroyed."
+  },
+  "mlmSourceTable": {
+    "name": "mlmSourceTable",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A mlmSourceTable entry."
+  },
+  "mlmSourceEntry": {
+    "name": "mlmSourceEntry",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmSourceScript",
+        "implied": 0
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmSourceLine",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A mlmSourceTable entry."
+  },
+  "mlmSourceScript": {
+    "name": "mlmSourceScript",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Index into the mlmSourceTable. This is the major index, and indicates which script the row belongs to. The mlmScriptIndex variable in the mlmScriptTable refers to this variable."
+  },
+  "mlmSourceLine": {
+    "name": "mlmSourceLine",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Index into the mlmSourceTable. This is the minor index, and indicates the line number of rows within the script indicated by mlmSourceScript. There cannot be any 'holes' within a particular script in the mlmSourceTable, so all rows with identical values for mlmSourceScript must have ascending values for mlmSourceLine, starting at 1."
+  },
+  "mlmSourceCode": {
+    "name": "mlmSourceCode",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable contains the actual code of the script."
+  },
+  "mlmNextExecution": {
+    "name": "mlmNextExecution",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TestAndIncr",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "This variable is used for creating rows in the mlmExecutionTable. The current value of mlmNextExecution should first be retrieved, and this value should then be included in the set request for creating the first row. If the value it is set to does not equal its current value, the set completely fails. A manager should only perform set requests on scripts in the mlmExecutionTable which it has created using mlmNextExecution. The value of mlmNextExecution is equal to the first unused set of rows in the mlmExecutionTable."
+  },
+  "mlmExecutionTable": {
+    "name": "mlmExecutionTable",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Contains list of runnable scripts, including indices into the mlmScriptTable, script arguments, and script execution period"
+  },
+  "mlmExecutionEntry": {
+    "name": "mlmExecutionEntry",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in the mlm execution table."
+  },
+  "mlmExecutionIndex": {
+    "name": "mlmExecutionIndex",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Unique identifier for a mlmExecutionEntry."
+  },
+  "mlmExecutionScript": {
+    "name": "mlmExecutionScript",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Pointer into the mlmScriptTable. If this is not provided when the row is created, it defaults to a non-existent script."
+  },
+  "mlmExecutionArguments": {
+    "name": "mlmExecutionArguments",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DisplayString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Space separated list of arguments to be passed to the script when it is executed."
+  },
+  "mlmExecutionInterval": {
+    "name": "mlmExecutionInterval",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeInterval",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The time interval between to successive script executions."
+  },
+  "mlmExecutionRepetitions": {
+    "name": "mlmExecutionRepetitions",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The total number of times the script should be executed."
+  },
+  "mlmExecutionPermanence": {
+    "name": "mlmExecutionPermanence",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "temporary": 1,
+          "startup": 2,
+          "permanent": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current"
+  },
+  "mlmExecutionStatus": {
+    "name": "mlmExecutionStatus",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.6.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "To create new row, a manager sets this object to createAndWait. Until this object is set to active or notInService, its value is returned as notReady. If its value is set to active, the script is executed. Execution will happen mlmExecutionRepetitions times with an interval of mlmExecutionInterval. When the script is finished executing, the agent sets this object to notInService. To halt execution of a script, the manager sets this object to notInService. To delete a row, the manager sets this object to destroy. If the manager sets mlmRowStatus to active or notInService when the values of mlmExecutionScript does not reference a script, the agent will return a BAD_VALUE_ERROR."
+  },
+  "mlmResultTable": {
+    "name": "mlmResultTable",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table containing results of script execution."
+  },
+  "mlmResultEntry": {
+    "name": "mlmResultEntry",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmResultExecution",
+        "implied": 0
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmResultIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Note that rows in this table are only visible after a script has been run. It is unfortunate that SNMP/SNMPv2 does not provide a better way to return a discriminated union. If errors occur while a script is running (for example, a division by 0 is attempted), the resulting messages will also be stored in this table. In this case, the list of variable bindings returned by the script is discarded."
+  },
+  "mlmResultExecution": {
+    "name": "mlmResultExecution",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Index into the mlmExecutionTable identifying the script that created this result."
+  },
+  "mlmResultIndex": {
+    "name": "mlmResultIndex",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Index into the list of VarBinds returned by a script. All rows with identical mlmExecutionIndex are results for the corresponding row in the mlmExecutionTable."
+  },
+  "mlmResultTimeStamp": {
+    "name": "mlmResultTimeStamp",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time stamp when this result was generated. All the mlmResultTimeStamp variables belonging to the varbind of one result should be identical."
+  },
+  "mlmResultType": {
+    "name": "mlmResultType",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "error": 1,
+          "nothing": 2,
+          "null": 3,
+          "integer32": 4,
+          "counter32": 5,
+          "gauge32": 6,
+          "timeticks": 7,
+          "ipaddress": 8,
+          "octetstring": 9,
+          "objectid": 10,
+          "bitstring": 12,
+          "counter64": 13
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Contains a code representing the type of the varbind returned by the script, or a 1 if an error occurred during execution. A value of nothing(2) means the script returned an empty varbind list. This variable also indicates which of the mlm...Value variables exists within the same row."
+  },
+  "mlmInteger32Value": {
+    "name": "mlmInteger32Value",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Signed 32-bit integer value"
+  },
+  "mlmCounter32Value": {
+    "name": "mlmCounter32Value",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "32-bit counter value"
+  },
+  "mlmGauge32Value": {
+    "name": "mlmGauge32Value",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "32-bit gauge value"
+  },
+  "mlmTimeTicksValue": {
+    "name": "mlmTimeTicksValue",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Time ticks value"
+  },
+  "mlmIpAddressValue": {
+    "name": "mlmIpAddressValue",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "IpAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "IP address value"
+  },
+  "mlmOctetStringValue": {
+    "name": "mlmOctetStringValue",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Octet string value"
+  },
+  "mlmObjectIDValue": {
+    "name": "mlmObjectIDValue",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "object id value"
+  },
+  "mlmCounter64Value": {
+    "name": "mlmCounter64Value",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "64-bit counter value"
+  },
+  "mlmResultStatus": {
+    "name": "mlmResultStatus",
+    "oid": "1.3.6.1.4.1.1575.1.4.1.7.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "ok": 1,
+          "error": 2,
+          "deleted": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Contains a description of any runtime errors which occurred during script execution."
+  },
+  "mlmMIBConformance": {
+    "name": "mlmMIBConformance",
+    "oid": "1.3.6.1.4.1.1575.1.4.2",
+    "class": "objectidentity"
+  },
+  "mlmMIBCompliances": {
+    "name": "mlmMIBCompliances",
+    "oid": "1.3.6.1.4.1.1575.1.4.2.1",
+    "class": "objectidentity"
+  },
+  "mlmMIBGroups": {
+    "name": "mlmMIBGroups",
+    "oid": "1.3.6.1.4.1.1575.1.4.2.2",
+    "class": "objectidentity"
+  },
+  "mlmCompliance": {
+    "name": "mlmCompliance",
+    "oid": "1.3.6.1.4.1.1575.1.4.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "mlmMIBGroup",
+        "module": "TUBS-MLM-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMPv2 entities which implement the SNMP MLM Script MIB."
+  },
+  "mlmMIBGroup": {
+    "name": "mlmMIBGroup",
+    "oid": "1.3.6.1.4.1.1575.1.4.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmLock"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmNextScript"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmScriptIndex"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmScriptName"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmScriptDescr"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmScriptStorageType"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmScriptStatus"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmSourceScript"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmSourceLine"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmSourceCode"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmNextExecution"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionIndex"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionScript"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionArguments"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionInterval"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionRepetitions"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionPermanence"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmExecutionStatus"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmResultExecution"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmResultIndex"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmResultTimeStamp"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmResultType"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmInteger32Value"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmCounter32Value"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmGauge32Value"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmTimeTicksValue"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmIpAddressValue"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmOctetStringValue"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmObjectIDValue"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmCounter64Value"
+      },
+      {
+        "module": "TUBS-MLM-MIB",
+        "object": "mlmResultStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing an interface for configuring and controlling an SNMP MLM."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/TUBS-MLM-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 17:55:05 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "TUBS-MLM-MIB"
+  }
+}

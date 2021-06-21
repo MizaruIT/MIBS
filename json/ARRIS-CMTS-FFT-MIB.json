@@ -1,0 +1,545 @@
+{
+  "imports": {
+    "class": "imports",
+    "ARRIS-MIB": [
+      "cmtsCommon"
+    ],
+    "IF-MIB": [
+      "ifIndex"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "enterprises",
+      "OBJECT-TYPE",
+      "NOTIFICATION-TYPE",
+      "OBJECT-IDENTITY",
+      "Counter64",
+      "Integer32",
+      "Unsigned32",
+      "Counter32",
+      "MibIdentifier",
+      "IpAddress",
+      "MODULE-IDENTITY",
+      "iso",
+      "Bits",
+      "TimeTicks",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TruthValue"
+    ]
+  },
+  "cmtsFftMIB": {
+    "name": "cmtsFftMIB",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2014-08-12 00:00",
+        "description": "Allow dcxFftSize to take value 4096"
+      },
+      {
+        "revision": "2006-01-23 00:00",
+        "description": "Added enumeration values."
+      }
+    ],
+    "lastupdated": "201408120000Z",
+    "organization": "Arris International",
+    "contactinfo": " Network Management Postal: Arris International. 4400 Cork Airport Business Park Cork Airport, Kinsale Road Cork, Ireland. Tel: +353 21 7305 800 Fax: +353 21 4321 972",
+    "description": "This MIB manages the FFT software on the Arris CMTS"
+  },
+  "dcxFftObjects": {
+    "name": "dcxFftObjects",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1",
+    "class": "objectidentity"
+  },
+  "dcxFftUpstreamChannelTable": {
+    "name": "dcxFftUpstreamChannelTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Arris CMTS FFT upstream channel configuration table. An entry in this table exists for each ifEntry with an ifType of docsCableUpstreamInterface (129) that supports FFT collection and reporting."
+  },
+  "dcxFftUpstreamChannelEntry": {
+    "name": "dcxFftUpstreamChannelEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Arris FFT upstream channel entry."
+  },
+  "dcxFftSize": {
+    "name": "dcxFftSize",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 256,
+            "max": 256
+          },
+          {
+            "min": 512,
+            "max": 512
+          },
+          {
+            "min": 1024,
+            "max": 1024
+          },
+          {
+            "min": 2048,
+            "max": 2048
+          },
+          {
+            "min": 4096,
+            "max": 4096
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 2048,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Number of samples to be collected for FFT. Valid values are 256, 512, 1024, 2048, 4096. The FFT payload size will be the number of samples multiplied by the number of bytes per sample as determined by dcxFftOutputFormat. The duration of the FFT sample will be the number of samples divided by the sample rate as determined by dcxFftSampleRate."
+  },
+  "dcxFftSampleRate": {
+    "name": "dcxFftSampleRate",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "adcRate": 1,
+          "halfAdcRate": 2,
+          "quarterAdcRate": 3,
+          "quadrupleSymbolRate": 4,
+          "reserved5": 5,
+          "reserved6": 6,
+          "reserved7": 7,
+          "reserved8": 8
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "halfAdcRate",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "FFT sample rate based on the input source to the FFT. The input to the FFT can be the ADC output, the ADC output followed by a down-mixer and half-band filter, the ADC output followed by a down-mixer and quarter-band filter, or the received channel's Nyquist filter output."
+  },
+  "dcxFftCentreFrequency": {
+    "name": "dcxFftCentreFrequency",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -81920000,
+            "max": 81920000
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 40960000,
+        "format": "decimal"
+      }
+    },
+    "units": "hertz",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "FFT centre frequency. This object is used only if dcxFftSampleRate is set to halfAdcRate or quarterAdcRate to set the down-mixer frequency."
+  },
+  "dcxFftWindowing": {
+    "name": "dcxFftWindowing",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "rectangular": 1,
+          "hanning": 2,
+          "hamming": 3,
+          "blackman": 4,
+          "blackmanHarris": 5
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "blackmanHarris",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set the frequency-domain windowing filter."
+  },
+  "dcxFftLogAveragingTimeConstant": {
+    "name": "dcxFftLogAveragingTimeConstant",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Time averaging constant exponent, M. Constant is 2^M. Setting this object to zero disables averaging."
+  },
+  "dcxFftOutputFormat": {
+    "name": "dcxFftOutputFormat",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "raw": 1,
+          "fftIQ": 2,
+          "fftPower": 3,
+          "fftAmplitude": 4
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "fftAmplitude",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "FFT processor output format. Format can be i. raw complex time-domain I/Q format ii. FFT data in I/Q format iii. FFT data in power format iv. FFT data in amplitude format. The sample sizes are 4 bytes (i. - iii.) and 2 bytes (iv.)"
+  },
+  "dcxFftOperatingMode": {
+    "name": "dcxFftOperatingMode",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "baseSpectrum": 1,
+          "burstSpectrum": 2,
+          "periodicSpectrum": 3
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "baseSpectrum",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Operating mode of FFT process. Determines whether the FFT measurement takes place while no CMs are transmitting (measuring noise floor), during a CM burst, or by periodically sampling the spectrum without regard to scheduling of the upstream."
+  },
+  "dcxFftIdleInterval": {
+    "name": "dcxFftIdleInterval",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 50000,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Interval in microseconds between consecutive FFT triggers when dcxFftOperatingMode is baseSpectrum or periodicSpectrum. This object is not used if dcxFftOperatingMode is set to burstSpectrum or if dcxFftTriggerCount is 1."
+  },
+  "dcxFftBurstSid": {
+    "name": "dcxFftBurstSid",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 16383
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "SID on which to trigger the FFT process. This object is used only if dcxFftOperatingMode is set to burstSpectrum."
+  },
+  "dcxFftBurstIUC": {
+    "name": "dcxFftBurstIUC",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 15
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "IUC type on which to trigger the FFT process. This object is used only if dcxFftOperatingMode is set to burstSpectrum or periodicSpectrum. A value of 0 means trigger on any IUC type."
+  },
+  "dcxFftLogicalChannel": {
+    "name": "dcxFftLogicalChannel",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": 3
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": -1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Logical channel on which to trigger the FFT process. This object is used only if dcxFftOperatingMode is set to periodicSpectrum. A value of -1 means trigger on any logical channel."
+  },
+  "dcxFftTriggerCount": {
+    "name": "dcxFftTriggerCount",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Number of times to trigger FFT when dcxFftEnable and dcxFftApplyConfig are set to true. Set this object to zero to trigger FFT continuously."
+  },
+  "dcxFftEnable": {
+    "name": "dcxFftEnable",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set to true to enable FFT on this channel. Set to false to disable. Setting will take effect when dcxFftApplyConfig is set to true"
+  },
+  "dcxFftApplyConfig": {
+    "name": "dcxFftApplyConfig",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Set to true to trigger an FFT process with configuration determined by the other objects in this group. An SNMP GET of this object will always return false"
+  },
+  "dcxFftInProgress": {
+    "name": "dcxFftInProgress",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object will return true if an FFT process is currently in progress (having been started by a SET to dcxFftApplyConfig) for this upstream channel. Returns false otherwise"
+  },
+  "dcxFftCurrentTriggers": {
+    "name": "dcxFftCurrentTriggers",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of FFT triggers since the last FFT process was started."
+  },
+  "DcxFftPayloadBuffer": {
+    "name": "DcxFftPayloadBuffer",
+    "class": "textualconvention",
+    "type": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 256
+          }
+        ]
+      }
+    },
+    "status": "current",
+    "description": "A buffer that contains upstream FFT payload data."
+  },
+  "dcxFftPayloadTable": {
+    "name": "dcxFftPayloadTable",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Arris CMTS FFT upstream channel payload table."
+  },
+  "dcxFftPayloadEntry": {
+    "name": "dcxFftPayloadEntry",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IF-MIB",
+        "object": "ifIndex",
+        "implied": 0
+      },
+      {
+        "module": "ARRIS-CMTS-FFT-MIB",
+        "object": "dcxFftPayloadIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Arris CMTS FFT upstream channel payload entry. Multiple entries in this table exist for each ifEntry with an ifType of docsCableUpstreamInterface (129) that supports the FFT collection and currently has FFT data to report."
+  },
+  "dcxFftPayloadIndex": {
+    "name": "dcxFftPayloadIndex",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An identifier for the 256-byte buffer available at the dcxFftPayloadData object."
+  },
+  "dcxFftPayloadData": {
+    "name": "dcxFftPayloadData",
+    "oid": "1.3.6.1.4.1.4115.1.4.5.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DcxFftPayloadBuffer",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The FFT payload data in the buffer identified by dcxFftPayloadIndex."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ARRIS-CMTS-FFT-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:36:34 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ARRIS-CMTS-FFT-MIB"
+  }
+}

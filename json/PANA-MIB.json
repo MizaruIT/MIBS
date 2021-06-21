@@ -1,0 +1,368 @@
+{
+  "imports": {
+    "class": "imports",
+    "IPSEC-SPD-MIB": [
+      "spdIPDestinationAddress",
+      "spdPacketDirection",
+      "spdIPDestinationType",
+      "spdMIB",
+      "spdIPSourceAddress",
+      "spdActionExecuted",
+      "spdIPInterfaceAddress",
+      "spdIPInterfaceType",
+      "spdIPSourceType"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "iso",
+      "Integer32",
+      "Gauge32",
+      "MibIdentifier",
+      "Bits",
+      "TimeTicks",
+      "Unsigned32",
+      "OBJECT-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "IpAddress",
+      "MODULE-IDENTITY",
+      "Counter32",
+      "Counter64",
+      "OBJECT-TYPE"
+    ],
+    "SNMPv2-TC": [
+      "PhysAddress",
+      "StorageType",
+      "TimeStamp",
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "RowStatus"
+    ]
+  },
+  "panaMIB": {
+    "name": "panaMIB",
+    "oid": "1.3.6.1.2.1.153.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2004-02-05 00:00",
+        "description": "Version 01, draft-yacine-pana-paa2ep-snmp-01.txt"
+      },
+      {
+        "revision": "2003-10-31 00:00",
+        "description": "Initial version, draft-yacine-pana-paa2ep-snmp-00.txt"
+      }
+    ],
+    "lastupdated": "200402050000Z",
+    "organization": "IETF PANA Working Group",
+    "contactinfo": "Yacine El Mghazli Alcatel 91460 Marcoussis, France Phone: +33 1 69 63 41 87 Email: yacine.el_mghazli@alcatel.fr",
+    "description": "The MIB module for defining additional PANA-specific objects to the IPSec SPD MIB. Copyright (C) The Internet Society (2003). This version of this MIB module is part of RFC XXXX, see the RFC itself for full legal notices."
+  },
+  "panaConfigObjects": {
+    "name": "panaConfigObjects",
+    "oid": "1.3.6.1.2.1.153.1.1",
+    "class": "objectidentity"
+  },
+  "panaNotificationObjects": {
+    "name": "panaNotificationObjects",
+    "oid": "1.3.6.1.2.1.153.1.2",
+    "class": "objectidentity"
+  },
+  "panaConformanceObjects": {
+    "name": "panaConformanceObjects",
+    "oid": "1.3.6.1.2.1.153.1.3",
+    "class": "objectidentity"
+  },
+  "pana802FilterTable": {
+    "name": "pana802FilterTable",
+    "oid": "1.3.6.1.2.1.153.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": " IEEE 802-based filter definitions. A class that contains attributes of IEEE 802 (e.g., 802.3) traffic that form filters that are used to perform traffic classification."
+  },
+  "pana802FilterEntry": {
+    "name": "pana802FilterEntry",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PANA-MIB",
+        "object": "pana802FilterName",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": " IEEE 802-based filter definitions. An entry specifies (potentially) several distinct matching components. Each component is tested against the data in a frame individually. An overall match occurs when all of the individual components match the data they are compared against in the frame being processed. A failure of any one test causes the overall match to fail. Wildcards may be specified for those fields that are not relevant."
+  },
+  "pana802FilterName": {
+    "name": "pana802FilterName",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The administrative name for this filter. "
+  },
+  "pana802FilterType": {
+    "name": "pana802FilterType",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "srcAddress": 0,
+        "dstAddress": 1,
+        "vlanId": 4,
+        "etherType": 5,
+        "userPriority": 6
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This defines the various tests that are used when evaluating a given filter. The results of each test are ANDed together to produce the result of the entire filter. When processing this filter, it is recommended for efficiency reasons that the filter halt processing the instant any of the specified tests fail. Once a row is 'active', this object's value may not be changed unless all the appropriate columns needed by the new value to be imposed on this object have been appropriately configured. . "
+  },
+  "pana802FilterDstAddr": {
+    "name": "pana802FilterDstAddr",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The 802 address against which the 802 DA of incoming traffic streams will be compared. Frames whose 802 DA matches the physical address specified by this object, taking into account address wildcarding as specified by the pana802FilterDstAddrMask object, are potentially subject to the processing guidelines that are associated with this entry through the related action class."
+  },
+  "pana802FilterSrcAddr": {
+    "name": "pana802FilterSrcAddr",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PhysAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The 802 MAC address against which the 802 MAC SA of incoming traffic streams will be compared. Frames whose 802 MAC SA matches the physical address specified by this object, taking into account address wildcarding as specified by the pana802FilterSrcAddrMask object, are potentially subject to the processing guidelines that are associated with this entry through the related action class."
+  },
+  "pana802FilterVlanId": {
+    "name": "pana802FilterVlanId",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 1,
+            "max": 4094
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The VLAN ID (VID) that uniquely identifies a VLAN within the device. This VLAN may be known or unknown (i.e., traffic associated with this VID has not yet been seen by the device) at the time this entry is instantiated. Setting the pana802FilterVlanId object to -1 indicates that VLAN data should not be considered during traffic classification."
+  },
+  "pana802FilterVlanTagRequired": {
+    "name": "pana802FilterVlanTagRequired",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "taggedOnly": 1,
+          "priorityTaggedPlus": 2,
+          "untaggedOnly": 3,
+          "ignoreTag": 4
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates whether the presence of an IEEE 802.1Q VLAN tag in data link layer frames must be considered when determining if a given frame matches this 802 filter entry. A value of 'taggedOnly(1)' means that only frames containing a VLAN tag with a non-Null VID (i.e., a VID in the range 1..4094) will be considered a match. A value of 'priorityTaggedPlus(2)' means that only frames containing a VLAN tag, regardless of the value of the VID, will be considered a match. A value of 'untaggedOnly(3)' indicates that only untagged frames will match this filter component. The presence of a VLAN tag is not taken into consideration in terms of a match if the value is 'ignoreTag(4)'."
+  },
+  "pana802FilterEtherType": {
+    "name": "pana802FilterEtherType",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": -1,
+            "max": -1
+          },
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object specifies the value that will be compared against the value contained in the EtherType field of an IEEE 802 frame. Example settings would include 'IP' (0x0800), 'ARP' (0x0806) and 'IPX' (0x8137). Setting the pana802FilterEtherTypeMin object to -1 indicates that EtherType data should not be considered during traffic classification. Note that the position of the EtherType field depends on the underlying frame format. For Ethernet-II encapsulation, the EtherType field follows the 802 MAC source address. For 802.2 LLC/SNAP encapsulation, the EtherType value follows the Organization Code field in the 802.2 SNAP header. The value that is tested with regard to this filter component therefore depends on the data link layer frame format being used. If this 802 filter component is active when there is no EtherType field in a frame (e.g., 802.2 LLC), a match is implied."
+  },
+  "pana802FilterUserPriority": {
+    "name": "pana802FilterUserPriority",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "matchPriority0": 0,
+        "matchPriority1": 1,
+        "matchPriority2": 2,
+        "matchPriority3": 3,
+        "matchPriority4": 4,
+        "matchPriority5": 5,
+        "matchPriority6": 6,
+        "matchPriority7": 7
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The set of values, representing the potential range of user priority values, against which the value contained in the user priority field of a tagged 802.1 frame is compared. A test for equality is performed when determining if a match exists between the data in a data link layer frame and the value of this 802 filter component. Multiple values may be set at one time such that potentially several different user priority values may match this 802 filter component. Setting all of the bits that are associated with this object causes all user priority values to match this attribute. This essentially makes any comparisons with regard to user priority values unnecessary. Untagged frames are treated as an implicit match."
+  },
+  "pana802FiltLastChanged": {
+    "name": "pana802FiltLastChanged",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when this row was last modified or created either through SNMP SETs or by some other external means."
+  },
+  "pana802FiltStorageType": {
+    "name": "pana802FiltStorageType",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "nonVolatile",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The storage type for this row. Rows in this table which were created through an external process may have a storage type of readOnly or permanent."
+  },
+  "pana802FiltRowStatus": {
+    "name": "pana802FiltRowStatus",
+    "oid": "1.3.6.1.2.1.153.1.1.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object indicates the conceptual status of this row. This object may not be set to active if the requirements of the pana802FilterType object are not met. In other words, if the associated value columns needed by a particular test have not been set, then attempting to change this row to an active state will result in an inconsistentValue error. See the pana802FilterType object description for further details."
+  },
+  "panaNotifications": {
+    "name": "panaNotifications",
+    "oid": "1.3.6.1.2.1.153.1.2.0",
+    "class": "objectidentity"
+  },
+  "panaNewPacNotification": {
+    "name": "panaNewPacNotification",
+    "oid": "1.3.6.1.2.1.153.1.2.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdActionExecuted"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPInterfaceType"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPInterfaceAddress"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPSourceType"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPSourceAddress"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPDestinationType"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdIPDestinationAddress"
+      },
+      {
+        "module": "IPSEC-SPD-MIB",
+        "object": "spdPacketDirection"
+      }
+    ],
+    "status": "current",
+    "description": "Notification that AP detected traffic coming from an unauthorized source. The objects sent must include the ipspActionExecuted which will indicate which action was executed within the scope of the rule. Additionally, the ipspIPSourceType, ipspIPSourceAddress, ipspIPDestinationType, and ipspIPDestinationAddress, objects must be included to indicate the packet source and destination of the packet that triggered the action. The ipspIPInterfaceType, ipspIPInterfaceAddress, and ipspPacketDirection objects are included to indicate which endpoint the packet was associated with."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PANA-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:14:07 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PANA-MIB"
+  }
+}

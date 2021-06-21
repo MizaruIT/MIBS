@@ -1,0 +1,4357 @@
+IBM-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    Integer32,
+    Unsigned32,
+    Counter32,
+    Counter64,
+    IpAddress,
+    enterprises
+          FROM SNMPv2-SMI
+
+    TEXTUAL-CONVENTION,
+    DisplayString
+          FROM SNMPv2-TC
+
+    OBJECT-GROUP,
+    NOTIFICATION-GROUP,
+    MODULE-COMPLIANCE
+          FROM SNMPv2-CONF
+
+    SnmpAdminString
+          FROM SNMP-FRAMEWORK-MIB;
+
+flashsystemProduct MODULE-IDENTITY
+    LAST-UPDATED "201501130000Z"
+    ORGANIZATION "IBM"
+    CONTACT-INFO
+                "Contact IBM Support"
+    DESCRIPTION  "Objects and notifications for monitoring an IBM FlashSystem"
+    REVISION     "201501130000Z"
+    DESCRIPTION  "Changes for the FlashSystem 900 and FlashSystem 840 SP2
+                   - Mark various flash card objects as obsolete
+                   - Change the ordering of interface ports and fans to match CLI"
+    REVISION     "201406040000Z"
+    DESCRIPTION  "Initial revision"
+    ::= { ibmFlashsystems 1 }
+
+ibm                     OBJECT IDENTIFIER ::= { enterprises 2 }
+ibmProd                 OBJECT IDENTIFIER ::= { ibm 6 }
+ibmFlashsystems         OBJECT IDENTIFIER ::= { ibmProd 255 }
+
+ibmflashTraps           OBJECT IDENTIFIER ::= { flashsystemProduct 0 }
+ibmflashObjects         OBJECT IDENTIFIER ::= { flashsystemProduct 1 }
+ibmflashConformance     OBJECT IDENTIFIER ::= { flashsystemProduct 2 }
+
+ibmflashSystem          OBJECT IDENTIFIER ::= { ibmflashObjects 1 }
+ibmflashInterfaces      OBJECT IDENTIFIER ::= { ibmflashObjects 2 }
+ibmflashFlashCards      OBJECT IDENTIFIER ::= { ibmflashObjects 3 }
+ibmflashBatteries       OBJECT IDENTIFIER ::= { ibmflashObjects 4 }
+ibmflashPSUs            OBJECT IDENTIFIER ::= { ibmflashObjects 5 }
+ibmflashFans            OBJECT IDENTIFIER ::= { ibmflashObjects 6 }
+ibmflashNotifications   OBJECT IDENTIFIER ::= { ibmflashObjects 7 }
+
+-- *****************************************************
+-- ibmflashSystem
+
+--
+-- TCs
+--
+FixedDiv10 ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d-1"
+    STATUS       current
+    DESCRIPTION  "Fixed point, one decimal"
+    SYNTAX       Integer32
+
+--
+-- traps
+--
+flashETrap NOTIFICATION-TYPE
+    OBJECTS {
+        flashMACH,
+        flashSERI,
+        flashERRI,
+        flashERRC,
+        flashSWVE,
+        flashFRUP,
+        flashCLUS,
+        flashNODE,
+        flashERRS,
+        flashTIME,
+        flashOBJT,
+        flashOBJI,
+        flashADD1,
+        flashADD2,
+        flashCOPY,
+        flashMPNO,
+        flashOBJN
+    }
+    STATUS current
+      DESCRIPTION
+          "flash error trap"
+
+      ::= { ibmflashTraps 1 }
+
+flashWTrap NOTIFICATION-TYPE
+    OBJECTS {
+        flashMACH,
+        flashSERI,
+        flashERRI,
+        flashERRC,
+        flashSWVE,
+        flashFRUP,
+        flashCLUS,
+        flashNODE,
+        flashERRS,
+        flashTIME,
+        flashOBJT,
+        flashOBJI,
+        flashADD1,
+        flashADD2,
+        flashCOPY,
+        flashMPNO,
+        flashOBJN
+    }
+    STATUS current
+      DESCRIPTION
+          "flash warning trap"
+
+      ::= { ibmflashTraps 2 }
+
+flashITrap NOTIFICATION-TYPE
+    OBJECTS {
+        flashMACH,
+        flashSERI,
+        flashERRI,
+        flashERRC,
+        flashSWVE,
+        flashFRUP,
+        flashCLUS,
+        flashNODE,
+        flashERRS,
+        flashTIME,
+        flashOBJT,
+        flashOBJI,
+        flashADD1,
+        flashADD2,
+        flashCOPY,
+        flashMPNO,
+        flashOBJN
+    }
+    STATUS current
+      DESCRIPTION
+          "flash information trap"
+
+      ::= { ibmflashTraps 3 }
+
+--
+-- scalars
+--
+systemType          OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "System Type"
+    ::= { ibmflashSystem 1 }
+
+systemVersion       OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Firmware Version"
+    ::= { ibmflashSystem 2 }
+
+systemActiveNode    OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Active Node"
+    ::= { ibmflashSystem 3 }
+
+systemNode1IP       OBJECT-TYPE
+    SYNTAX          IpAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 1 IP Address"
+    ::= { ibmflashSystem 4 }
+
+systemNode1Mask     OBJECT-TYPE
+    SYNTAX          IpAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 1 IP Mask"
+    ::= { ibmflashSystem 5 }
+
+systemNode1GW       OBJECT-TYPE
+    SYNTAX          IpAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 1 IP Gateway"
+    ::= { ibmflashSystem 6 }
+
+systemNode1IPMode   OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 1 IP Mode (static, dynamic)"
+    ::= { ibmflashSystem 7 }
+
+systemNode2IP       OBJECT-TYPE
+    SYNTAX          IpAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 2 IP Address"
+    ::= { ibmflashSystem 8 }
+
+systemNode2Mask     OBJECT-TYPE
+    SYNTAX          IpAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 2 IP Mask"
+    ::= { ibmflashSystem 9 }
+
+systemNode2GW       OBJECT-TYPE
+    SYNTAX          IpAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 2 IP Gateway"
+    ::= { ibmflashSystem 10 }
+
+systemNode2IPMode   OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node 2 IP Mode (static, dynamic)"
+    ::= { ibmflashSystem 11 }
+
+systemIOPS          OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Total IOPS"
+    ::= { ibmflashSystem 12 }
+
+systemReadIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Total Read IOPS"
+    ::= { ibmflashSystem 13 }
+
+systemWriteIOPS     OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Total Write IOPS"
+    ::= { ibmflashSystem 14 }
+
+systemBW            OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Total Bandwidth"
+    ::= { ibmflashSystem 15 }
+
+systemReadBW        OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Total Read Bandwidth"
+    ::= { ibmflashSystem 16 }
+
+systemWriteBW       OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Total Write Bandwidth"
+    ::= { ibmflashSystem 17 }
+
+--
+-- table of system event logs
+--
+eventTable    OBJECT-TYPE
+    SYNTAX          SEQUENCE OF EventEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Table of system event logs"
+    ::= { ibmflashSystem 50 }
+eventEntry    OBJECT-TYPE
+    SYNTAX          EventEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Event entry"
+    INDEX           { eventIndex }
+    ::= { eventTable 1 }
+EventEntry ::= SEQUENCE {
+        eventIndex         Integer32,
+        eventSequence      Integer32,
+        eventTimestamp     OCTET STRING,
+        eventObjectType    DisplayString,
+        eventObjectId      Integer32,
+        eventObjectName    DisplayString,
+        eventCopyId        Integer32,
+        eventStatus        DisplayString,
+        eventFixed         DisplayString,
+        eventEventId       Integer32,
+        eventErrorCode     Integer32,
+        eventDescription   DisplayString
+    }
+-- columns
+eventIndex    OBJECT-TYPE
+    SYNTAX          Integer32 (0..1024)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index"
+    ::= { eventEntry 1 }
+eventSequence    OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event sequence"
+    ::= { eventEntry 2 }
+eventTimestamp   OBJECT-TYPE
+    SYNTAX          OCTET STRING (SIZE (0..12))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event timestamp"
+    ::= { eventEntry 3 }
+eventObjectType  OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event object type"
+    ::= { eventEntry 4 }
+eventObjectId    OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event object id"
+    ::= { eventEntry 5 }
+eventObjectName  OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event object name"
+    ::= { eventEntry 6 }
+eventCopyId      OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event copy id"
+    ::= { eventEntry 7 }
+eventStatus      OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..16))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event status"
+    ::= { eventEntry 8 }
+eventFixed       OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..16))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event fixed"
+    ::= { eventEntry 9 }
+eventEventId     OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event event id"
+    ::= { eventEntry 10 }
+eventErrorCode   OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event error code"
+    ::= { eventEntry 11 }
+eventDescription OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "event description"
+    ::= { eventEntry 12 }
+
+--
+-- table of system drives
+--
+driveTable    OBJECT-TYPE
+    SYNTAX          SEQUENCE OF DriveEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Table of system drives"
+    ::= { ibmflashSystem 51 }
+driveEntry    OBJECT-TYPE
+    SYNTAX          DriveEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Drive entry"
+    INDEX           { driveIndex }
+    ::= { driveTable 1 }
+DriveEntry ::= SEQUENCE {
+        driveIndex         Integer32,
+        driveId            Integer32,
+        driveStatus        DisplayString,
+        driveUse           DisplayString,
+        driveCapacity      DisplayString,
+        driveSlotId        Integer32,
+        driveArrayId       Integer32,
+        driveEncryption    Integer32
+    }
+-- columns
+
+driveIndex          OBJECT-TYPE
+    SYNTAX          Integer32 (0..12)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index"
+    ::= { driveEntry 1 }
+driveId             OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Drive Id"
+    ::= { driveEntry 2 }
+driveStatus         OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Drive Status"
+    ::= { driveEntry 3 }
+driveUse            OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Drive Usage (member, spare, candidate, unused, failed)"
+    ::= { driveEntry 4 }
+driveCapacity       OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Drive Capacity"
+    ::= { driveEntry 5 }
+driveSlotId         OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Drive Slot Number"
+    ::= { driveEntry 6 }
+driveArrayId        OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Drive Array Number "
+    ::= { driveEntry 7 }
+driveEncryption     OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Drive Encrypted"
+    ::= { driveEntry 8 }
+
+--
+-- table of system arrays
+--
+arrayTable    OBJECT-TYPE
+    SYNTAX          SEQUENCE OF ArrayEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Table of system arrays"
+    ::= { ibmflashSystem 52 }
+arrayEntry    OBJECT-TYPE
+    SYNTAX          ArrayEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Array entry"
+    INDEX           { arrayIndex }
+    ::= { arrayTable 1 }
+ArrayEntry ::= SEQUENCE {
+        arrayIndex         Integer32,
+        arrayId            Integer32,
+        arrayStatus        DisplayString,
+        arrayCapacity      DisplayString,
+        arrayCapacityUsed  DisplayString,
+        arrayCapacityFree  DisplayString,
+        arrayRAIDLvl       DisplayString,
+        arrayEncryption    Integer32,
+        arrayVDiskCount    Integer32
+    }
+
+-- columns
+arrayIndex          OBJECT-TYPE
+    SYNTAX          Integer32 (0..12)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index"
+    ::= { arrayEntry 1 }
+arrayId             OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Array ID"
+    ::= { arrayEntry 2 }
+arrayStatus         OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Array Status (online, offline, excluded, degraded)"
+    ::= { arrayEntry 3 }
+arrayCapacity       OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Array Capacity"
+    ::= { arrayEntry 4 }
+arrayCapacityUsed   OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Used Array Capacity"
+    ::= { arrayEntry 5 }
+arrayCapacityFree   OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Free Array Capacity"
+    ::= { arrayEntry 6 }
+arrayRAIDLvl        OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Array RAID Level"
+    ::= { arrayEntry 7 }
+arrayEncryption     OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Array Encrypted"
+    ::= { arrayEntry 8 }
+arrayVDiskCount     OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Number of VDisks"
+    ::= { arrayEntry 9 }
+
+--
+-- table of system vdisks
+--
+vdiskTable    OBJECT-TYPE
+    SYNTAX          SEQUENCE OF VDiskEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Table of system vdisks"
+    ::= { ibmflashSystem 53 }
+vdiskEntry    OBJECT-TYPE
+    SYNTAX          VDiskEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "VDisk entry"
+    INDEX           { vdiskIndex }
+    ::= { vdiskTable 1 }
+VDiskEntry ::= SEQUENCE {
+        vdiskIndex         Integer32,
+        vdiskId            Integer32,
+        vdiskName          DisplayString,
+        vdiskStatus        DisplayString,
+        vdiskCapacity      DisplayString,
+        vdiskUID           DisplayString
+    }
+-- columns
+
+vdiskIndex          OBJECT-TYPE
+    SYNTAX          Integer32 (0..12)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index"
+    ::= { vdiskEntry 1 }
+vdiskId             OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "VDisk Id"
+    ::= { vdiskEntry 2 }
+vdiskName           OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "VDisk Name"
+    ::= { vdiskEntry 3 }
+vdiskStatus         OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "VDisk Status"
+    ::= { vdiskEntry 4 }
+vdiskCapacity       OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "VDisk Capacity"
+    ::= { vdiskEntry 5 }
+vdiskUID            OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "VDisk Unique Identifier"
+    ::= { vdiskEntry 6 }
+
+--
+-- table of system nodes
+--
+nodeTable    OBJECT-TYPE
+    SYNTAX          SEQUENCE OF NodeEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Table of system nodes"
+    ::= { ibmflashSystem 54 }
+nodeEntry    OBJECT-TYPE
+    SYNTAX          NodeEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Node entry"
+    INDEX           { nodeIndex }
+    ::= { nodeTable 1 }
+NodeEntry ::= SEQUENCE {
+        nodeIndex         Integer32,
+        nodePanelName     DisplayString,
+        nodeClusterId     DisplayString,
+        nodeClusterNm     DisplayString,
+        nodeId            Integer32,
+        nodeName          DisplayString,
+        nodeRelation      DisplayString,
+        nodeStatus        DisplayString,
+        nodeError         DisplayString
+    }
+-- columns
+
+nodeIndex          OBJECT-TYPE
+    SYNTAX          Integer32 (0..12)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index"
+    ::= { nodeEntry 1 }
+nodePanelName       OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node Panel Name"
+    ::= { nodeEntry 2 }
+nodeClusterId       OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node Cluster ID"
+    ::= { nodeEntry 3 }
+nodeClusterNm       OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node Cluster Name"
+    ::= { nodeEntry 4 }
+nodeId              OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node ID"
+    ::= { nodeEntry 5 }
+nodeName            OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node Name"
+    ::= { nodeEntry 6 }
+nodeRelation        OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node Relation (local, parner)"
+    ::= { nodeEntry 7 }
+nodeStatus          OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node Status"
+    ::= { nodeEntry 8 }
+nodeError           OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Node Error Data"
+    ::= { nodeEntry 9 }
+
+--
+-- sensor tables
+--
+
+-- envTables OBJECT IDENTIFIER ::= { ibmflashSystem 6 }
+
+-- fan
+fanTable        OBJECT-TYPE
+    SYNTAX        SEQUENCE OF FanTableEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   "Fan values and states table"
+    ::= { ibmflashFans 10 }
+fanTableEntry   OBJECT-TYPE
+    SYNTAX        FanTableEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   "Fan table entry"
+    INDEX         { fanTableIndex }
+    ::= { fanTable 1 }
+FanTableEntry ::=
+    SEQUENCE {
+        fanTableIndex   Integer32,
+        fanObject       DisplayString,
+        fanName         DisplayString,
+        fanPWM          Integer32,
+        fanTemp         Integer32,
+        fan0            Integer32,
+        fan1            Integer32,
+        fan2            Integer32,
+        fan3            Integer32
+    }
+
+-- columns
+fanTableIndex       OBJECT-TYPE
+    SYNTAX          Integer32 (0..16)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index N.B. Order changed in 900 and 840 SP2"
+    ::= { fanTableEntry 1 }
+fanObject           OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "containing object"
+    ::= { fanTableEntry 2 }
+fanName             OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "name"
+    ::= { fanTableEntry 3 }
+
+fanPWM              OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Fan PWM"
+    ::= { fanTableEntry 4 }
+
+fanTemp             OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Fan Temperature"
+    ::= { fanTableEntry 5 }
+
+fan0                OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Fan #0 %"
+    ::= { fanTableEntry 6 }
+
+fan1                OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Fan #1 %"
+    ::= { fanTableEntry 7 }
+
+fan2                OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Fan #2 %"
+    ::= { fanTableEntry 8 }
+
+fan3                OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Fan #3 %"
+    ::= { fanTableEntry 9 }
+
+-- psu
+psuTable            OBJECT-TYPE
+    SYNTAX          SEQUENCE OF PowerTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Power values and states table"
+    ::= { ibmflashPSUs 10 }
+
+psuTableEntry       OBJECT-TYPE
+    SYNTAX          PowerTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Power table entry"
+    INDEX           { psuTableIndex }
+    ::= { psuTable 1 }
+
+PowerTableEntry ::=
+    SEQUENCE {
+        psuTableIndex   Integer32,
+        psuObject       DisplayString,
+        psuCommErr      Integer32,
+        psuACGood       Integer32,
+        psuDCGood       Integer32,
+        psuFan          Integer32
+    }
+-- columns
+psuTableIndex     OBJECT-TYPE
+    SYNTAX        Integer32 (0..16)
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   "index"
+    ::= { psuTableEntry 1 }
+psuObject         OBJECT-TYPE
+    SYNTAX        DisplayString (SIZE (0..64))
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "containing object"
+    ::= { psuTableEntry 2 }
+psuCommErr        OBJECT-TYPE
+    SYNTAX        Integer32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Communications error. 0 success, 1 error"
+    ::= { psuTableEntry 3 }
+psuACGood         OBJECT-TYPE
+    SYNTAX        Integer32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "AC is good. 0 success, 1 error"
+    ::= { psuTableEntry 4 }
+psuDCGood         OBJECT-TYPE
+    SYNTAX        Integer32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "DC is good. 0 success, 1 error"
+    ::= { psuTableEntry 5 }
+psuFan            OBJECT-TYPE
+    SYNTAX        Integer32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "PSU Fan RPM"
+    ::= { psuTableEntry 6 }
+
+-- battery
+batteryTable      OBJECT-TYPE
+    SYNTAX        SEQUENCE OF BatteryTableEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   "Battery values and states table"
+    ::= { ibmflashBatteries 10 }
+batteryTableEntry OBJECT-TYPE
+    SYNTAX        BatteryTableEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   "Battery table entry"
+    INDEX         { batteryTableIndex }
+    ::= { batteryTable 1 }
+BatteryTableEntry ::=
+    SEQUENCE {
+        batteryTableIndex   Integer32,
+        batteryObject       DisplayString,
+        batteryName         DisplayString,
+        batteryCell1        Integer32,
+        batteryCell2        Integer32,
+        batteryCell3        Integer32,
+        batteryTotal        Integer32,
+        batteryChgCurr      Integer32,
+        batteryRmngCap      Integer32,
+        batteryFullCap      Integer32
+    }
+
+-- columns
+batteryTableIndex OBJECT-TYPE
+    SYNTAX        Integer32 (0..16)
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   "index"
+    ::= { batteryTableEntry 1 }
+batteryObject     OBJECT-TYPE
+    SYNTAX        DisplayString (SIZE (0..64))
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "containing object"
+    ::= { batteryTableEntry 2 }
+batteryName       OBJECT-TYPE
+    SYNTAX        DisplayString (SIZE (0..64))
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "name"
+    ::= { batteryTableEntry 3 }
+
+batteryCell1      OBJECT-TYPE
+    SYNTAX        Integer32
+    UNITS         "mV"
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Battery Cell #1"
+    ::= { batteryTableEntry 4 }
+
+batteryCell2      OBJECT-TYPE
+    SYNTAX        Integer32
+    UNITS         "mV"
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Battery Cell #2"
+    ::= { batteryTableEntry 5 }
+
+batteryCell3      OBJECT-TYPE
+    SYNTAX        Integer32
+    UNITS         "mV"
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Battery Cell #3"
+    ::= { batteryTableEntry 6 }
+
+batteryTotal      OBJECT-TYPE
+    SYNTAX        Integer32
+    UNITS         "mV"
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Total Battery"
+    ::= { batteryTableEntry 7 }
+
+batteryChgCurr    OBJECT-TYPE
+    SYNTAX        Integer32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Battery Charging Current"
+    ::= { batteryTableEntry 8 }
+
+batteryRmngCap    OBJECT-TYPE
+    SYNTAX        Integer32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Battery Capacity Remaining"
+    ::= {batteryTableEntry 9 }
+
+batteryFullCap    OBJECT-TYPE
+    SYNTAX        Integer32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   "Battery Capacity Full"
+    ::= {batteryTableEntry 10 }
+
+-- *****************************************************
+-- FC
+
+fcTable     OBJECT-TYPE
+    SYNTAX          SEQUENCE OF FCTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Fibre channel info table"
+    ::= { ibmflashInterfaces 1 }
+fcTableEntry OBJECT-TYPE
+    SYNTAX          FCTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "FC table entry"
+    INDEX           { fcTableIndex }
+    ::= { fcTable 1 }
+FCTableEntry ::=
+    SEQUENCE {
+        fcTableIndex        Integer32,
+        fcObject            DisplayString,
+        fcFirmwareVersion   DisplayString,
+        fcPortID            Integer32,
+        fcState             DisplayString,
+        fcWWNN              DisplayString,
+        fcWWPN              DisplayString,
+        fcTopo              DisplayString,
+        fcSpeed             DisplayString,
+        fcTopoConfig        DisplayString,
+        fcSpeedConfig       DisplayString,
+        fcBW                Unsigned32,
+        fcReadBW            Unsigned32,
+        fcWriteBW           Unsigned32,
+        fcIOPS              Unsigned32,
+        fcReadIOPS          Unsigned32,
+        fcWriteIOPS         Unsigned32,
+        fcQueueDepth        Unsigned32,
+        fcReadQueueDepth    Unsigned32,
+        fcWriteQueueDepth   Unsigned32,
+        fcReadAvgLatency    Unsigned32,
+        fcReadMaxLatency    Unsigned32,
+        fcReadSampleLow     Unsigned32,
+        fcReadSampleMed     Unsigned32,
+        fcReadSampleHigh    Unsigned32,
+        fcWriteAvgLatency   Unsigned32,
+        fcWriteMaxLatency   Unsigned32,
+        fcWriteSampleLow    Unsigned32,
+        fcWriteSampleMed    Unsigned32,
+        fcWriteSampleHigh   Unsigned32,
+        fcbs2k              Counter32,
+        fcbs4k              Counter32,
+        fcbs8k              Counter32,
+        fcbs16k             Counter32,
+        fcbs32k             Counter32,
+        fcbs64k             Counter32,
+        fcbs128k            Counter32,
+        fcbs256k            Counter32,
+        fcReadScsiCount     Counter64,
+        fcWriteScsiCount    Counter64,
+        fcReadScsiBytes     Counter64,
+        fcWriteScsiBytes    Counter64,
+        fcCorrMediaErr      Counter32,
+        fcUncorrMediaErr    Counter32,
+        fcTimeTick          Unsigned32,
+        fcalign512          Counter32,
+        fcalign1k           Counter32,
+        fcalign2k           Counter32,
+        fcalign4k           Counter32,
+        fcalign8k           Counter32,
+        fcalign16k          Counter32,
+        fcalign32k          Counter32,
+        fcalign64k          Counter32,
+        fcRMWCount          Counter32,
+        fcLinkDown          Counter32,
+        fcCRCErr            Counter32,
+        fcTXFrames          Counter32,
+        fcRXFrames          Counter32,
+        fcRXErr             Counter32,
+        fcXchgLookupErr     Counter32,
+        fcAbtsCnt           Counter32,
+        fcRscnCnt           Counter32
+    }
+
+--        fcCacheLookup       Integer32,
+
+
+-- columns
+fcTableIndex    OBJECT-TYPE
+    SYNTAX          Integer32 (0..16)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index N.B. Order changed in 900 and 840 SP2"
+    ::= { fcTableEntry 1 }
+
+fcObject        OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC object name"
+    ::= { fcTableEntry 2 }
+
+fcFirmwareVersion OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC firmware version"
+    ::= { fcTableEntry 3 }
+
+fcPortID        OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC port ID"
+    ::= { fcTableEntry 4 }
+
+fcState         OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+      "FC State which indicates the link state of the specified port:
+        None     - No state available
+        No Light - Nothing is plugged into the fc port
+        Offline  - A device is plugged into the fc port, but the linkup
+                   procedure has not completed successfully
+        Online   - The port is online and functional from a link point of view
+        Disabled - The port has been disabled, likely because the system is
+                   restoring memory from disk, or preparing to psuoff."
+    ::= { fcTableEntry 5 }
+
+fcWWNN          OBJECT-TYPE
+    SYNTAX            DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC node name"
+    ::= { fcTableEntry 6 }
+
+fcWWPN          OBJECT-TYPE
+    SYNTAX            DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC port name"
+    ::= { fcTableEntry 7 }
+
+fcTopo          OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "FC Topology indicates specified ports topology:
+            Unknown - A SNMP reporting error has occured
+            None    - The system has not completed linkup so no topology can be
+                      determined
+            PP      - Point to point topology
+            AL      - Arbitrated loop topology
+            Fabric  - Linked up with fabric in point to point
+            F_Port  -
+            FL_Port - Linked up with fabric in arbitrated loop"
+    ::= { fcTableEntry 8 }
+
+fcSpeed         OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "FC Link Speed indicates the specified port's link speed"
+    ::= { fcTableEntry 9 }
+
+fcTopoConfig      OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "FC Topology configuration:
+            Unknown - A SNMP reporting error has occured
+            Auto    -
+            PP      - Point to point topology
+            AL      - Arbitrated loop topology"
+    ::= { fcTableEntry 10 }
+
+fcSpeedConfig     OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "FC Link Speed configuration"
+    ::= { fcTableEntry 11 }
+
+-- Begin stats
+
+fcBW            OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "MB/s"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bandwidth"
+    ::= { fcTableEntry 12 }
+
+fcReadBW        OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "MB/s"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Bandwidth"
+    ::= { fcTableEntry 13 }
+
+fcWriteBW      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "MB/s"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Bandwidth"
+    ::= { fcTableEntry 14 }
+
+fcIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IO's per second"
+    ::= { fcTableEntry 15 }
+
+fcReadIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read IO's per second"
+    ::= { fcTableEntry 16 }
+
+fcWriteIOPS     OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write IO's per second"
+    ::= { fcTableEntry 17 }
+
+fcQueueDepth    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Queue depth"
+    ::= { fcTableEntry 18 }
+
+fcReadQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Queue depth"
+    ::= { fcTableEntry 19 }
+
+fcWriteQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Queue depth"
+    ::= { fcTableEntry 20 }
+
+fcReadAvgLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI read latency"
+    ::= { fcTableEntry 21 }
+
+fcReadMaxLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI read latency"
+    ::= { fcTableEntry 22 }
+
+fcReadSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency <= 1ms"
+    ::= { fcTableEntry 23 }
+
+fcReadSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency in range (1ms, 10ms)"
+    ::= { fcTableEntry 24 }
+
+fcReadSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency >= 10ms"
+    ::= { fcTableEntry 25 }
+
+fcWriteAvgLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI write latency"
+    ::= { fcTableEntry 26 }
+
+fcWriteMaxLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI write latency"
+    ::= { fcTableEntry 27 }
+
+fcWriteSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency <= 1ms"
+    ::= { fcTableEntry 28 }
+
+fcWriteSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency in range (1ms, 10ms)"
+    ::= { fcTableEntry 29 }
+
+fcWriteSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency >= 10ms"
+    ::= { fcTableEntry 30 }
+
+fcbs2k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k SCSI commands"
+    ::= { fcTableEntry 31 }
+
+fcbs4k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k SCSI commands"
+    ::= { fcTableEntry 32 }
+
+fcbs8k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k SCSI commands"
+    ::= { fcTableEntry 33 }
+
+fcbs16k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k SCSI commands"
+    ::= { fcTableEntry 34 }
+
+fcbs32k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k SCSI commands"
+    ::= { fcTableEntry 35 }
+
+fcbs64k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k SCSI commands"
+    ::= { fcTableEntry 36 }
+
+fcbs128k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "128k SCSI commands"
+    ::= { fcTableEntry 37 }
+
+fcbs256k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "256k SCSI commands"
+    ::= { fcTableEntry 38 }
+
+fcReadScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read count"
+    ::= { fcTableEntry 39 }
+
+fcWriteScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write count"
+    ::= { fcTableEntry 40 }
+
+fcReadScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read bytes"
+    ::= { fcTableEntry 41 }
+
+fcWriteScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write bytes"
+    ::= { fcTableEntry 42 }
+
+fcCorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Correctable media errors"
+    ::= { fcTableEntry 43 }
+
+fcUncorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Uncorrectable media errors"
+    ::= { fcTableEntry 44 }
+
+fcTimeTick      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "1/100th seconds"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Time ticks"
+    ::= { fcTableEntry 45 }
+
+fcalign512 OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "512 aligned SCSI commands"
+    ::= { fcTableEntry 46 }
+
+fcalign1k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "1k aligned SCSI commands"
+    ::= { fcTableEntry 47 }
+
+fcalign2k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k aligned SCSI commands"
+    ::= { fcTableEntry 48 }
+
+fcalign4k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k aligned SCSI commands"
+    ::= { fcTableEntry 49 }
+
+fcalign8k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k aligned SCSI commands"
+    ::= { fcTableEntry 50 }
+
+fcalign16k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k aligned SCSI commands"
+    ::= { fcTableEntry 51 }
+
+fcalign32k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k aligned SCSI commands"
+    ::= { fcTableEntry 52 }
+
+fcalign64k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k aligned SCSI commands"
+    ::= { fcTableEntry 53 }
+
+fcRMWCount   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read-Modify-Write Count"
+    ::= { fcTableEntry 54 }
+
+fcLinkDown      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Link Down Count"
+    ::= { fcTableEntry 55 }
+
+fcCRCErr        OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "CRC Errors"
+    ::= { fcTableEntry 56 }
+
+fcTXFrames      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Frames Transmitted"
+    ::= { fcTableEntry 57 }
+
+fcRXFrames      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Frames Received"
+    ::= { fcTableEntry 58 }
+
+fcRXErr         OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "RX Errors"
+    ::= { fcTableEntry 59 }
+
+fcXchgLookupErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Number of invalid xchg records received"
+    ::= { fcTableEntry 60 }
+
+fcAbtsCnt      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Number of ABTS frames received"
+    ::= { fcTableEntry 61 }
+
+fcRscnCnt         OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Number of SCNs received"
+    ::= { fcTableEntry 62 }
+
+-- *****************************************************
+-- IB
+
+ibTable     OBJECT-TYPE
+    SYNTAX          SEQUENCE OF IBTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "InfiniBand port info table"
+    ::= { ibmflashInterfaces 2 }
+ibTableEntry OBJECT-TYPE
+    SYNTAX          IBTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "IB table entry"
+    INDEX           { ibTableIndex }
+    ::= { ibTable 1 }
+IBTableEntry ::=
+    SEQUENCE {
+        ibTableIndex        Integer32,
+        ibObject            DisplayString,
+        ibFirmwareVersion   DisplayString,
+        ibLID               Integer32,
+        ibState             DisplayString,
+        ibBoardGuid         DisplayString,
+        ibPortGuid          DisplayString,
+        ibSystemGuid        DisplayString,
+        ibSpeed             DisplayString,
+        ibBW                Unsigned32,
+        ibReadBW            Unsigned32,
+        ibWriteBW           Unsigned32,
+        ibIOPS              Unsigned32,
+        ibReadIOPS          Unsigned32,
+        ibWriteIOPS         Unsigned32,
+        ibQueueDepth        Unsigned32,
+        ibReadQueueDepth    Unsigned32,
+        ibWriteQueueDepth   Unsigned32,
+        ibReadAvgLatency    Unsigned32,
+        ibReadMaxLatency    Unsigned32,
+        ibReadSampleLow     Unsigned32,
+        ibReadSampleMed     Unsigned32,
+        ibReadSampleHigh    Unsigned32,
+        ibWriteAvgLatency   Unsigned32,
+        ibWriteMaxLatency   Unsigned32,
+        ibWriteSampleLow    Unsigned32,
+        ibWriteSampleMed    Unsigned32,
+        ibWriteSampleHigh   Unsigned32,
+        ibbs2k              Counter32,
+        ibbs4k              Counter32,
+        ibbs8k              Counter32,
+        ibbs16k             Counter32,
+        ibbs32k             Counter32,
+        ibbs64k             Counter32,
+        ibbs128k            Counter32,
+        ibbs256k            Counter32,
+        ibReadScsiCount     Counter64,
+        ibWriteScsiCount    Counter64,
+        ibReadScsiBytes     Counter64,
+        ibWriteScsiBytes    Counter64,
+        ibCorrMediaErr      Counter32,
+        ibUncorrMediaErr    Counter32,
+        ibTimeTick          Unsigned32,
+        ibalign512          Counter32,
+        ibalign1k           Counter32,
+        ibalign2k           Counter32,
+        ibalign4k           Counter32,
+        ibalign8k           Counter32,
+        ibalign16k          Counter32,
+        ibalign32k          Counter32,
+        ibalign64k          Counter32,
+        ibRMWCount          Counter32,
+        ibLinkDown          Counter32,
+        ibCRCErr            Counter32,
+        ibUnalignedReads    Counter32,
+        ibUnalignedWrites   Counter32,
+        ibBounceReads       Counter32,
+        ibBounceWrites      Counter32
+    }
+
+-- columns
+ibTableIndex    OBJECT-TYPE
+    SYNTAX          Integer32 (0..16)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index N.B. Order changed in 900 and 840 SP2"
+    ::= { ibTableEntry 1 }
+
+ibObject        OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IB object name"
+    ::= { ibTableEntry 2 }
+
+ibFirmwareVersion OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IB firmware version"
+    ::= { ibTableEntry 3 }
+
+ibLID             OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IB port Local Identifier (LID)"
+    ::= { ibTableEntry 4 }
+
+ibState         OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+       "IB State which indicates the link state of the specified port:
+        None     - No state available
+        Offline  - The port is enabled but not linked up
+        Online   - The port is online and active
+        Disabled - The port has been disabled, likely because the system is
+                   restoring memory from disk or preparing to psuoff."
+    ::= { ibTableEntry 5 }
+
+ibBoardGuid       OBJECT-TYPE
+    SYNTAX            DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IB Board Global Unique ID"
+    ::= { ibTableEntry 6 }
+
+ibPortGuid        OBJECT-TYPE
+    SYNTAX            DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IB Port Global Unique ID"
+    ::= { ibTableEntry 7 }
+
+ibSystemGuid      OBJECT-TYPE
+    SYNTAX            DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IB System Global Unique ID"
+    ::= { ibTableEntry 8 }
+
+ibSpeed           OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "IB Link Speed indicates the specified port's link speed:
+              Unknown - There is a reporting error.
+              None    - No link speed is available.
+              10Gb   - Linked up in 10 Gigabit mode.
+              20Gb   - Linked up in 20 Gigabit mode.
+              40Gb   - Linked up in 40 Gigabit mode."
+    ::= { ibTableEntry 9 }
+
+-- Begin stats
+
+ibBW            OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bandwidth in MiB/s"
+    ::= { ibTableEntry 10 }
+
+ibReadBW        OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Bandwidth in MiB/s"
+    ::= { ibTableEntry 11 }
+
+ibWriteBW      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Bandwidth in MiB/s"
+    ::= { ibTableEntry 12 }
+
+ibIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IO's per second"
+    ::= { ibTableEntry 13 }
+
+ibReadIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read IO's per second"
+    ::= { ibTableEntry 14 }
+
+ibWriteIOPS     OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write IO's per second"
+    ::= { ibTableEntry 15 }
+
+ibQueueDepth    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Queue depth"
+    ::= { ibTableEntry 16 }
+
+ibReadQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Queue depth"
+    ::= { ibTableEntry 17 }
+
+ibWriteQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Queue depth"
+    ::= { ibTableEntry 18 }
+
+ibReadAvgLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI read latency"
+    ::= { ibTableEntry 19 }
+
+ibReadMaxLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI read latency"
+    ::= { ibTableEntry 20 }
+
+ibReadSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency <= 1ms"
+    ::= { ibTableEntry 21 }
+
+ibReadSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency in range (1ms, 10ms)"
+    ::= { ibTableEntry 22 }
+
+ibReadSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency >= 10ms"
+    ::= { ibTableEntry 23 }
+
+ibWriteAvgLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI write latency"
+    ::= { ibTableEntry 24 }
+
+ibWriteMaxLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI write latency"
+    ::= { ibTableEntry 25 }
+
+ibWriteSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency <= 1ms"
+    ::= { ibTableEntry 26 }
+
+ibWriteSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency in range (1ms, 10ms)"
+    ::= { ibTableEntry 27 }
+
+ibWriteSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency >= 10ms"
+    ::= { ibTableEntry 28 }
+
+ibbs2k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k SCSI commands"
+    ::= { ibTableEntry 29 }
+
+ibbs4k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k SCSI commands"
+    ::= { ibTableEntry 30 }
+
+ibbs8k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k SCSI commands"
+    ::= { ibTableEntry 31 }
+
+ibbs16k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k SCSI commands"
+    ::= { ibTableEntry 32 }
+
+ibbs32k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k SCSI commands"
+    ::= { ibTableEntry 33 }
+
+ibbs64k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k SCSI commands"
+    ::= { ibTableEntry 34 }
+
+ibbs128k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "128k SCSI commands"
+    ::= { ibTableEntry 35 }
+
+ibbs256k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "256k SCSI commands"
+    ::= { ibTableEntry 36 }
+
+ibReadScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read count"
+    ::= { ibTableEntry 37 }
+
+ibWriteScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write count"
+    ::= { ibTableEntry 38 }
+
+ibReadScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read bytes"
+    ::= { ibTableEntry 39 }
+
+ibWriteScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write bytes"
+    ::= { ibTableEntry 40 }
+
+ibCorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Correctable media errors"
+    ::= { ibTableEntry 41 }
+
+ibUncorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Uncorrectable media errors"
+    ::= { ibTableEntry 42 }
+
+ibTimeTick      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "1/100th seconds"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Time ticks"
+    ::= { ibTableEntry 43 }
+
+ibalign512 OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "512 aligned SCSI commands"
+    ::= { ibTableEntry 44 }
+
+ibalign1k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "1k aligned SCSI commands"
+    ::= { ibTableEntry 45 }
+
+ibalign2k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k aligned SCSI commands"
+    ::= { ibTableEntry 46 }
+
+ibalign4k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k aligned SCSI commands"
+    ::= { ibTableEntry 47 }
+
+ibalign8k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k aligned SCSI commands"
+    ::= { ibTableEntry 48 }
+
+ibalign16k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k aligned SCSI commands"
+    ::= { ibTableEntry 49 }
+
+ibalign32k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k aligned SCSI commands"
+    ::= { ibTableEntry 50 }
+
+ibalign64k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k aligned SCSI commands"
+    ::= { ibTableEntry 51 }
+
+ibRMWCount   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read-Modify-Write Count"
+    ::= { ibTableEntry 52 }
+
+ibLinkDown      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Link Down Count"
+    ::= { ibTableEntry 53 }
+
+ibCRCErr        OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "CRC Errors"
+    ::= { ibTableEntry 54 }
+
+ibUnalignedReads      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Aligned Writes"
+    ::= { ibTableEntry 55 }
+
+ibUnalignedWrites      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Unaligned Writes"
+    ::= { ibTableEntry 56 }
+
+ibBounceReads         OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bounce reads"
+    ::= { ibTableEntry 57 }
+
+ibBounceWrites OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bounce writes"
+    ::= { ibTableEntry 58 }
+
+-- *****************************************************
+-- iSCSI
+
+iscsiTable     OBJECT-TYPE
+    SYNTAX          SEQUENCE OF ISCSITableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "iscsi info table"
+    ::= { ibmflashInterfaces 3 }
+iscsiTableEntry OBJECT-TYPE
+    SYNTAX          ISCSITableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "iscsi table entry"
+    INDEX           { iscsiTableIndex }
+    ::= { iscsiTable 1 }
+ISCSITableEntry ::=
+    SEQUENCE {
+        iscsiTableIndex         Integer32,
+        iscsiObject             DisplayString,
+        iscsiFirmwareVersion    DisplayString,
+        iscsiPortID             Integer32,
+        iscsiState              DisplayString,
+        iscsiSpeed              DisplayString,
+        iscsiMAC                DisplayString,
+        iscsiIPv4               DisplayString,
+        iscsiIPv4Mask           DisplayString,
+        iscsiIPv4GW             DisplayString,
+        iscsiIPv4Host           DisplayString,
+        iscsiDuplex             Integer32,
+        iscsiBW                 Unsigned32,
+        iscsiReadBW             Unsigned32,
+        iscsiWriteBW            Unsigned32,
+        iscsiIOPS               Unsigned32,
+        iscsiReadIOPS           Unsigned32,
+        iscsiWriteIOPS          Unsigned32,
+        iscsiQueueDepth         Unsigned32,
+        iscsiReadQueueDepth     Unsigned32,
+        iscsiWriteQueueDepth    Unsigned32,
+        iscsiReadAvgLatency     Unsigned32,
+        iscsiReadMaxLatency     Unsigned32,
+        iscsiReadSampleLow      Unsigned32,
+        iscsiReadSampleMed      Unsigned32,
+        iscsiReadSampleHigh     Unsigned32,
+        iscsiWriteAvgLatency    Unsigned32,
+        iscsiWriteMaxLatency    Unsigned32,
+        iscsiWriteSampleLow     Unsigned32,
+        iscsiWriteSampleMed     Unsigned32,
+        iscsiWriteSampleHigh    Unsigned32,
+        iscsibs2k               Counter32,
+        iscsibs4k               Counter32,
+        iscsibs8k               Counter32,
+        iscsibs16k              Counter32,
+        iscsibs32k              Counter32,
+        iscsibs64k              Counter32,
+        iscsibs128k             Counter32,
+        iscsibs256k             Counter32,
+        iscsiReadScsiCount      Counter64,
+        iscsiWriteScsiCount     Counter64,
+        iscsiReadScsiBytes      Counter64,
+        iscsiWriteScsiBytes     Counter64,
+        iscsiCorrMediaErr       Counter32,
+        iscsiUncorrMediaErr     Counter32,
+        iscsiTimeTick           Unsigned32,
+        iscsialign512           Counter32,
+        iscsialign1k            Counter32,
+        iscsialign2k            Counter32,
+        iscsialign4k            Counter32,
+        iscsialign8k            Counter32,
+        iscsialign16k           Counter32,
+        iscsialign32k           Counter32,
+        iscsialign64k           Counter32,
+        iscsiRMWCount           Counter32,
+        iscsiLinkDown           Counter32,
+        iscsiCRCErr             Counter32,
+        iscsiTXFrames           Counter32,
+        iscsiRXFrames           Counter32
+    }
+
+-- columns
+iscsiTableIndex    OBJECT-TYPE
+    SYNTAX          Integer32 (0..16)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index N.B. Order changed in 900 and 840 SP2"
+    ::= { iscsiTableEntry 1 }
+
+iscsiObject        OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi object name"
+    ::= { iscsiTableEntry 2 }
+
+iscsiFirmwareVersion OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi firmware version"
+    ::= { iscsiTableEntry 3 }
+
+iscsiPortID        OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi port ID"
+    ::= { iscsiTableEntry 4 }
+
+iscsiState         OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+      "iscsi State which indicates the link state of the specified port:
+        None     - No state available
+        No Light - Nothing is plugged into the iscsi port
+        Offline  - A device is plugged into the iscsi port, but the linkup
+                   procedure has not completed successfully
+        Online   - The port is online and functional from a link point of view
+        Disabled - The port has been disabled, likely because the system is
+                   restoring memory from disk, or preparing to psuoff."
+    ::= { iscsiTableEntry 5 }
+
+iscsiSpeed         OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "iscsi Link Speed indicates the specified port's link speed:
+              Unknown - There is a reporting error, or no link speed is available.
+              1Gb     - Linked up in 1 Gigabit mode.
+              2Gb     - Linked up in 2 Gigabit mode.
+              4Gb     - Linked up in 4 Gigabit mode.
+              8Gb     - Linked up in 8 Gigabit mode."
+    ::= { iscsiTableEntry 6 }
+
+iscsiMAC OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi MAC Address"
+    ::= { iscsiTableEntry 7 }
+
+iscsiIPv4 OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi IPv4 Address"
+    ::= { iscsiTableEntry 8 }
+
+iscsiIPv4Mask OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi IPv4 Address Mask"
+    ::= { iscsiTableEntry 9 }
+
+iscsiIPv4GW OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi IPv4 Gateway"
+    ::= { iscsiTableEntry 10 }
+
+iscsiIPv4Host OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "iscsi IPv4 Host Address"
+    ::= { iscsiTableEntry 11 }
+
+iscsiDuplex       OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Duplex"
+    ::= { iscsiTableEntry 12 }
+
+-- Begin stats
+
+iscsiBW            OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bandwidth in MiB/s"
+    ::= { iscsiTableEntry 13 }
+
+iscsiReadBW        OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Bandwidth in MiB/s"
+    ::= { iscsiTableEntry 14 }
+
+iscsiWriteBW      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Bandwidth in MiB/s"
+    ::= { iscsiTableEntry 15 }
+
+iscsiIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IO's per second"
+    ::= { iscsiTableEntry 16 }
+
+iscsiReadIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read IO's per second"
+    ::= { iscsiTableEntry 17 }
+
+iscsiWriteIOPS     OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write IO's per second"
+    ::= { iscsiTableEntry 18 }
+
+iscsiQueueDepth    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Queue depth"
+    ::= { iscsiTableEntry 19 }
+
+iscsiReadQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Queue depth"
+    ::= { iscsiTableEntry 20 }
+
+iscsiWriteQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Queue depth"
+    ::= { iscsiTableEntry 21 }
+
+iscsiReadAvgLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI read latency"
+    ::= { iscsiTableEntry 22 }
+
+iscsiReadMaxLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI read latency"
+    ::= { iscsiTableEntry 23 }
+
+iscsiReadSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency <= 1ms"
+    ::= { iscsiTableEntry 24 }
+
+iscsiReadSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency in range (1ms, 10ms)"
+    ::= { iscsiTableEntry 25 }
+
+iscsiReadSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency >= 10ms"
+    ::= { iscsiTableEntry 26 }
+
+iscsiWriteAvgLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI write latency"
+    ::= { iscsiTableEntry 27 }
+
+iscsiWriteMaxLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI write latency"
+    ::= { iscsiTableEntry 28 }
+
+iscsiWriteSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency <= 1ms"
+    ::= { iscsiTableEntry 29 }
+
+iscsiWriteSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency in range (1ms, 10ms)"
+    ::= { iscsiTableEntry 30 }
+
+iscsiWriteSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency >= 10ms"
+    ::= { iscsiTableEntry 31 }
+
+iscsibs2k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k SCSI commands"
+    ::= { iscsiTableEntry 32 }
+
+iscsibs4k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k SCSI commands"
+    ::= { iscsiTableEntry 33 }
+
+iscsibs8k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k SCSI commands"
+    ::= { iscsiTableEntry 34 }
+
+iscsibs16k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k SCSI commands"
+    ::= { iscsiTableEntry 35 }
+
+iscsibs32k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k SCSI commands"
+    ::= { iscsiTableEntry 36 }
+
+iscsibs64k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k SCSI commands"
+    ::= { iscsiTableEntry 37 }
+
+iscsibs128k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "128k SCSI commands"
+    ::= { iscsiTableEntry 38 }
+
+iscsibs256k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "256k SCSI commands"
+    ::= { iscsiTableEntry 39 }
+
+iscsiReadScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read count"
+    ::= { iscsiTableEntry 40 }
+
+iscsiWriteScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write count"
+    ::= { iscsiTableEntry 41 }
+
+iscsiReadScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read bytes"
+    ::= { iscsiTableEntry 42 }
+
+iscsiWriteScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write bytes"
+    ::= { iscsiTableEntry 43 }
+
+iscsiCorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Correctable media errors"
+    ::= { iscsiTableEntry 44 }
+
+iscsiUncorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Uncorrectable media errors"
+    ::= { iscsiTableEntry 45 }
+
+iscsiTimeTick      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "1/100th seconds"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Time ticks"
+    ::= { iscsiTableEntry 46 }
+
+iscsialign512 OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "512 aligned SCSI commands"
+    ::= { iscsiTableEntry 47 }
+
+iscsialign1k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "1k aligned SCSI commands"
+    ::= { iscsiTableEntry 48 }
+
+iscsialign2k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k aligned SCSI commands"
+    ::= { iscsiTableEntry 49 }
+
+iscsialign4k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k aligned SCSI commands"
+    ::= { iscsiTableEntry 50 }
+
+iscsialign8k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k aligned SCSI commands"
+    ::= { iscsiTableEntry 51 }
+
+iscsialign16k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k aligned SCSI commands"
+    ::= { iscsiTableEntry 52 }
+
+iscsialign32k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k aligned SCSI commands"
+    ::= { iscsiTableEntry 53 }
+
+iscsialign64k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k aligned SCSI commands"
+    ::= { iscsiTableEntry 54 }
+
+iscsiRMWCount   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read-Modify-Write Count"
+    ::= { iscsiTableEntry 55 }
+
+iscsiLinkDown      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Link Down Count"
+    ::= { iscsiTableEntry 56 }
+
+iscsiCRCErr        OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "CRC Errors"
+    ::= { iscsiTableEntry 57 }
+
+iscsiTXFrames      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Frames Transmitted"
+    ::= { iscsiTableEntry 58 }
+
+iscsiRXFrames      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Frames Received"
+    ::= { iscsiTableEntry 59 }
+
+-- *****************************************************
+-- FCoE
+
+fcoeTable     OBJECT-TYPE
+    SYNTAX          SEQUENCE OF FCoETableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Fibre channel over ethernet info table"
+    ::= { ibmflashInterfaces 4 }
+fcoeTableEntry OBJECT-TYPE
+    SYNTAX          FCoETableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "FCoE table entry"
+    INDEX           { fcoeTableIndex }
+    ::= { fcoeTable 1 }
+FCoETableEntry ::=
+    SEQUENCE {
+        fcoeTableIndex        Integer32,
+        fcoeObject            DisplayString,
+        fcoeFirmwareVersion   DisplayString,
+        fcoePortID            Integer32,
+        fcoeState             DisplayString,
+        fcoeWWNN              DisplayString,
+        fcoeWWPN              DisplayString,
+        fcoeTopo              DisplayString,
+        fcoeSpeed             DisplayString,
+        fcoeVLANID            Integer32,
+        fcoeFCFMAC            DisplayString,
+        fcoeVPIMAC            DisplayString,
+        fcoeBW                Unsigned32,
+        fcoeReadBW            Unsigned32,
+        fcoeWriteBW           Unsigned32,
+        fcoeIOPS              Unsigned32,
+        fcoeReadIOPS          Unsigned32,
+        fcoeWriteIOPS         Unsigned32,
+        fcoeQueueDepth        Unsigned32,
+        fcoeReadQueueDepth    Unsigned32,
+        fcoeWriteQueueDepth   Unsigned32,
+        fcoeReadAvgLatency    Unsigned32,
+        fcoeReadMaxLatency    Unsigned32,
+        fcoeReadSampleLow     Unsigned32,
+        fcoeReadSampleMed     Unsigned32,
+        fcoeReadSampleHigh    Unsigned32,
+        fcoeWriteAvgLatency   Unsigned32,
+        fcoeWriteMaxLatency   Unsigned32,
+        fcoeWriteSampleLow    Unsigned32,
+        fcoeWriteSampleMed    Unsigned32,
+        fcoeWriteSampleHigh   Unsigned32,
+        fcoebs2k              Counter32,
+        fcoebs4k              Counter32,
+        fcoebs8k              Counter32,
+        fcoebs16k             Counter32,
+        fcoebs32k             Counter32,
+        fcoebs64k             Counter32,
+        fcoebs128k            Counter32,
+        fcoebs256k            Counter32,
+        fcoeReadScsiCount     Counter64,
+        fcoeWriteScsiCount    Counter64,
+        fcoeReadScsiBytes     Counter64,
+        fcoeWriteScsiBytes    Counter64,
+        fcoeCorrMediaErr      Counter32,
+        fcoeUncorrMediaErr    Counter32,
+        fcoeTimeTick          Unsigned32,
+        fcoealign512          Counter32,
+        fcoealign1k           Counter32,
+        fcoealign2k           Counter32,
+        fcoealign4k           Counter32,
+        fcoealign8k           Counter32,
+        fcoealign16k          Counter32,
+        fcoealign32k          Counter32,
+        fcoealign64k          Counter32,
+        fcoeRMWCount          Counter32,
+        fcoeLinkDown          Counter32,
+        fcoeCRCErr            Counter32,
+        fcoeTXFrames          Counter32,
+        fcoeRXFrames          Counter32,
+        fcoeRXErr             Counter32,
+        fcoeXchgLookupErr     Counter32,
+        fcoeAbtsCnt           Counter32,
+        fcoeRscnCnt           Counter32
+    }
+
+--        fcoeCacheLookup       Integer32,
+
+
+-- columns
+fcoeTableIndex    OBJECT-TYPE
+    SYNTAX          Integer32 (0..16)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index N.B. Order changed in 900 and 840 SP2"
+    ::= { fcoeTableEntry 1 }
+
+fcoeObject        OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC object name"
+    ::= { fcoeTableEntry 2 }
+
+fcoeFirmwareVersion OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..64))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC firmware version"
+    ::= { fcoeTableEntry 3 }
+
+fcoePortID        OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC port ID"
+    ::= { fcoeTableEntry 4 }
+
+fcoeState         OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+      "FC State which indicates the link state of the specified port:
+        None     - No state available
+        No Light - Nothing is plugged into the fcoe port
+        Offline  - A device is plugged into the fcoe port, but the linkup
+                   procedure has not completed successfully
+        Online   - The port is online and functional from a link point of view
+        Disabled - The port has been disabled, likely because the system is
+                   restoring memory from disk, or preparing to psuoff."
+    ::= { fcoeTableEntry 5 }
+
+fcoeWWNN          OBJECT-TYPE
+    SYNTAX            DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC node name"
+    ::= { fcoeTableEntry 6 }
+
+fcoeWWPN          OBJECT-TYPE
+    SYNTAX            DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FC port name"
+    ::= { fcoeTableEntry 7 }
+
+fcoeTopo          OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "FC Topology indicates specified ports topology"
+    ::= { fcoeTableEntry 8 }
+
+fcoeSpeed         OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "FC Link Speed indicates the specified port's link speed"
+    ::= { fcoeTableEntry 9 }
+
+fcoeVLANID            OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "VLAN ID"
+    ::= { fcoeTableEntry 10 }
+
+fcoeFCFMAC            OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "FCF MAC Address"
+    ::= { fcoeTableEntry 11 }
+
+fcoeVPIMAC            OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..32))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "VPI MAC Address"
+    ::= { fcoeTableEntry 12 }
+-- Begin stats
+
+fcoeBW            OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bandwidth in MiB/s"
+    ::= { fcoeTableEntry 13 }
+
+fcoeReadBW        OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Bandwidth in MiB/s"
+    ::= { fcoeTableEntry 14 }
+
+fcoeWriteBW      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Bandwidth in MiB/s"
+    ::= { fcoeTableEntry 15 }
+
+fcoeIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "IO's per second"
+    ::= { fcoeTableEntry 16 }
+
+fcoeReadIOPS      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read IO's per second"
+    ::= { fcoeTableEntry 17 }
+
+fcoeWriteIOPS     OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write IO's per second"
+    ::= { fcoeTableEntry 18 }
+
+fcoeQueueDepth    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Queue depth"
+    ::= { fcoeTableEntry 19 }
+
+fcoeReadQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Queue depth"
+    ::= { fcoeTableEntry 20 }
+
+fcoeWriteQueueDepth OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write Queue depth"
+    ::= { fcoeTableEntry 21 }
+
+fcoeReadAvgLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI read latency"
+    ::= { fcoeTableEntry 22 }
+
+fcoeReadMaxLatency   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI read latency"
+    ::= { fcoeTableEntry 23 }
+
+fcoeReadSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency <= 1ms"
+    ::= { fcoeTableEntry 24 }
+
+fcoeReadSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency in range (1ms, 10ms)"
+    ::= { fcoeTableEntry 25 }
+
+fcoeReadSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI read with latency >= 10ms"
+    ::= { fcoeTableEntry 26 }
+
+fcoeWriteAvgLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average SCSI write latency"
+    ::= { fcoeTableEntry 27 }
+
+fcoeWriteMaxLatency  OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum SCSI write latency"
+    ::= { fcoeTableEntry 28 }
+
+fcoeWriteSampleLow    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency <= 1ms"
+    ::= { fcoeTableEntry 29 }
+
+fcoeWriteSampleMed    OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency in range (1ms, 10ms)"
+    ::= { fcoeTableEntry 30 }
+
+fcoeWriteSampleHigh   OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Samples of SCSI write with latency >= 10ms"
+    ::= { fcoeTableEntry 31 }
+
+fcoebs2k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k SCSI commands"
+    ::= { fcoeTableEntry 32 }
+
+fcoebs4k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k SCSI commands"
+    ::= { fcoeTableEntry 33 }
+
+fcoebs8k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k SCSI commands"
+    ::= { fcoeTableEntry 34 }
+
+fcoebs16k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k SCSI commands"
+    ::= { fcoeTableEntry 35 }
+
+fcoebs32k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k SCSI commands"
+    ::= { fcoeTableEntry 36 }
+
+fcoebs64k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k SCSI commands"
+    ::= { fcoeTableEntry 37 }
+
+fcoebs128k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "128k SCSI commands"
+    ::= { fcoeTableEntry 38 }
+
+fcoebs256k   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "256k SCSI commands"
+    ::= { fcoeTableEntry 39 }
+
+fcoeReadScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read count"
+    ::= { fcoeTableEntry 40 }
+
+fcoeWriteScsiCount OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write count"
+    ::= { fcoeTableEntry 41 }
+
+fcoeReadScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi read bytes"
+    ::= { fcoeTableEntry 42 }
+
+fcoeWriteScsiBytes OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Scsi write bytes"
+    ::= { fcoeTableEntry 43 }
+
+fcoeCorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Correctable media errors"
+    ::= { fcoeTableEntry 44 }
+
+fcoeUncorrMediaErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Uncorrectable media errors"
+    ::= { fcoeTableEntry 45 }
+
+fcoeTimeTick      OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "1/100th seconds"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Time ticks"
+    ::= { fcoeTableEntry 46 }
+
+fcoealign512 OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "512 aligned SCSI commands"
+    ::= { fcoeTableEntry 47 }
+
+fcoealign1k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "1k aligned SCSI commands"
+    ::= { fcoeTableEntry 48 }
+
+fcoealign2k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "2k aligned SCSI commands"
+    ::= { fcoeTableEntry 49 }
+
+fcoealign4k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "4k aligned SCSI commands"
+    ::= { fcoeTableEntry 50 }
+
+fcoealign8k  OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "8k aligned SCSI commands"
+    ::= { fcoeTableEntry 51 }
+
+fcoealign16k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "16k aligned SCSI commands"
+    ::= { fcoeTableEntry 52 }
+
+fcoealign32k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "32k aligned SCSI commands"
+    ::= { fcoeTableEntry 53 }
+
+fcoealign64k OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "64k aligned SCSI commands"
+    ::= { fcoeTableEntry 54 }
+
+fcoeRMWCount   OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read-Modify-Write Count"
+    ::= { fcoeTableEntry 55 }
+
+fcoeLinkDown      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Link Down Count"
+    ::= { fcoeTableEntry 56 }
+
+fcoeCRCErr        OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "CRC Errors"
+    ::= { fcoeTableEntry 57 }
+
+fcoeTXFrames      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Frames Transmitted"
+    ::= { fcoeTableEntry 58 }
+
+fcoeRXFrames      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Frames Received"
+    ::= { fcoeTableEntry 59 }
+
+fcoeRXErr         OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "RX Errors"
+    ::= { fcoeTableEntry 60 }
+
+fcoeXchgLookupErr OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Number of invalid xchg records received"
+    ::= { fcoeTableEntry 61 }
+
+fcoeAbtsCnt      OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Number of ABTS frames received"
+    ::= { fcoeTableEntry 62 }
+
+fcoeRscnCnt         OBJECT-TYPE
+    SYNTAX          Counter32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Number of SCNs received"
+    ::= { fcoeTableEntry 63 }
+
+
+-- *****************************************************
+-- Flashcard
+
+flashcardTable      OBJECT-TYPE
+    SYNTAX          SEQUENCE OF FlashcardTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Flashcard info table"
+    ::= { ibmflashFlashCards 1 }
+flashcardTableEntry     OBJECT-TYPE
+    SYNTAX          FlashcardTableEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "Flashcard table entry"
+    INDEX           { flashTableIndex }
+    ::= { flashcardTable 1 }
+FlashcardTableEntry ::=
+    SEQUENCE {
+        flashTableIndex     Integer32,
+        flashObject         DisplayString,
+        flashSizeMiB        Integer32,
+        flashTempGW         FixedDiv10,
+        flashTempFPGA0      FixedDiv10,
+        flashTempFPGA1      FixedDiv10,
+        flashTempFPGA2      FixedDiv10,
+        flashTempFPGA3      FixedDiv10,
+        flashPower          Integer32,
+        flashHealthState    Integer32,
+        flashOverallHealth  Integer32,
+        flashAvlRemap       Integer32,
+        flashAvlBRP         Integer32,
+        flashBlkWearAvg     Integer32,
+        flashBlkWearMin     Integer32,
+        flashBlkWearMax     Integer32,
+        flashRD512Host      Counter64,
+        flashRD512Xor       Counter64,
+        flashWR512Host      Counter64,
+        flashWR512Xor       Counter64,
+        flashRMW            Counter64,
+        flashCacheHits      Counter64,
+        flashRDCorSucc      Counter64,
+        flashRDCorFail      Counter64,
+        flashRDRtyP1        Counter64,
+        flashRDRtyP2        Counter64,
+        flashRDRtyP3        Counter64,
+        flashRDRtyP4        Counter64,
+        flashRDRtyP5        Counter64,
+        flashRdRtyFail      Counter64,
+        flashRDAccum8k      Counter64,
+        flashRDAccumSft     Counter64,
+        flashRDAccumHrd     Counter64,
+        flashAccumSucc      Counter64,
+        flashAccumFail      Counter64,
+        flashRDLimWrn       Counter64,
+        flashRDLimCrit      Counter64,
+        flashRDScb8k        Counter64,
+        flashRDScbSft       Counter64,
+        flashRDScbHrd       Counter64,
+        flashRDSwpStrp      Counter64,
+        flashRDSwpPge       Counter64,
+        flashMvRD4k         Counter64,
+        flashMvRDHrd        Counter64,
+        flashMvWR4k         Counter64,
+        flashDtWR4k         Counter64,
+        flashXorWR8k        Counter64,
+        flashWRErr          Counter64,
+        flashErase          Counter64,
+        flashEraseErr       Counter64,
+        flashPeCycMax       Counter64,
+        flashPeCycMin       Counter64,
+        flashPeCycMaxDev    Counter64,
+        flashMinRtu         Counter64,
+        flashOOBWarn        Counter64,
+        flashBadBlks        Counter64,
+        flashBusCRCErr      Counter64,
+        flashRdRtyLn0       Counter64,
+        flashRdRtyLn1       Counter64,
+        flashRdRtyLn2       Counter64,
+        flashRdRtyLn3       Counter64,
+        flashRdRtyLn4       Counter64,
+        flashRdRtyLn5       Counter64,
+        flashRdRtyLn6       Counter64,
+        flashRdRtyLn7       Counter64,
+        flashRdRtyLn8       Counter64,
+        flashRdRtyLn9       Counter64,
+        flashWrTotal        Counter64,
+        flashHstWrnPrio     Counter64,
+        flashRecircWrgPrio  Counter64,
+        flashCoalesce       Integer32
+    }
+
+-- columns
+flashTableIndex    OBJECT-TYPE
+    SYNTAX          Integer32 (0..16)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION     "index"
+    ::= { flashcardTableEntry 1 }
+
+flashObject        OBJECT-TYPE
+    SYNTAX          DisplayString (SIZE (0..255))
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Flashcard object name"
+    ::= { flashcardTableEntry 2 }
+
+flashSizeMiB        OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "MiB"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Flashcard Size"
+    ::= { flashcardTableEntry 6 }
+
+flashTempGW         OBJECT-TYPE
+    SYNTAX          FixedDiv10
+    UNITS           "c"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Temperature - Gateway"
+    ::= { flashcardTableEntry 7 }
+
+flashTempFPGA0      OBJECT-TYPE
+    SYNTAX          FixedDiv10
+    UNITS           "c"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Temperature FPGA0"
+    ::= { flashcardTableEntry 8 }
+
+flashTempFPGA1      OBJECT-TYPE
+    SYNTAX          FixedDiv10
+    UNITS           "c"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Temperature FPGA1"
+    ::= { flashcardTableEntry 9 }
+
+flashTempFPGA2      OBJECT-TYPE
+    SYNTAX          FixedDiv10
+    UNITS           "c"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Temperature FPGA2"
+    ::= { flashcardTableEntry 10 }
+
+flashTempFPGA3      OBJECT-TYPE
+    SYNTAX          FixedDiv10
+    UNITS           "c"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Temperature FPGA3"
+    ::= { flashcardTableEntry 11 }
+
+flashPower          OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "w"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Power usage"
+    ::= { flashcardTableEntry 12 }
+
+flashHealthState    OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Health State"
+    ::= { flashcardTableEntry 13 }
+
+flashOverallHealth  OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "%"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Overall Health"
+    ::= { flashcardTableEntry 14 }
+
+flashAvlRemap       OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "%"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "available_remap"
+    ::= { flashcardTableEntry 15 }
+
+flashAvlBRP         OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "%"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "available_brp"
+    ::= { flashcardTableEntry 16 }
+
+flashBlkWearAvg     OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "%"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Average Block Wear"
+    ::= { flashcardTableEntry 17 }
+
+flashBlkWearMin     OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "%"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Minimum Block Wear"
+    ::= { flashcardTableEntry 18 }
+
+flashBlkWearMax     OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "%"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maxiumum Block Wear"
+    ::= { flashcardTableEntry 19 }
+
+flashRD512Host      OBJECT-TYPE
+    SYNTAX          Counter64
+    UNITS           "sectors"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read 512b Host count"
+    ::= { flashcardTableEntry 20 }
+
+flashRD512Xor       OBJECT-TYPE
+    SYNTAX          Counter64
+    UNITS           "sectors"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read 512b XOR count"
+    ::= { flashcardTableEntry 21 }
+
+flashWR512Host      OBJECT-TYPE
+    SYNTAX          Counter64
+    UNITS           "sectors"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write 512b Host count"
+    ::= { flashcardTableEntry 22 }
+
+flashWR512Xor       OBJECT-TYPE
+    SYNTAX          Counter64
+    UNITS           "sectors"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Write 512b XOR count"
+    ::= { flashcardTableEntry 23 }
+
+flashRMW            OBJECT-TYPE
+    SYNTAX          Counter64
+    UNITS           "sectors"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read-Modify-Write count"
+    ::= { flashcardTableEntry 24 }
+
+flashCacheHits      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Cache hits"
+    ::= { flashcardTableEntry 25 }
+
+flashRDCorSucc      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Cor Success"
+    ::= { flashcardTableEntry 26 }
+
+flashRDCorFail      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Cor Fail"
+    ::= { flashcardTableEntry 27 }
+
+flashRDRtyP1        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry Phase 1"
+    ::= { flashcardTableEntry 28 }
+
+flashRDRtyP2        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry Phase 2"
+    ::= { flashcardTableEntry 29 }
+
+flashRDRtyP3        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry Phase 3"
+    ::= { flashcardTableEntry 30 }
+
+flashRDRtyP4        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry Phase 4"
+    ::= { flashcardTableEntry 31 }
+
+flashRDRtyP5        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry Phase 5"
+    ::= { flashcardTableEntry 32 }
+
+flashRdRtyFail      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry Fail"
+    ::= { flashcardTableEntry 33 }
+
+flashRDAccum8k      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Accum 8k"
+    ::= { flashcardTableEntry 34 }
+
+flashRDAccumSft     OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Accum Soft"
+    ::= { flashcardTableEntry 35 }
+
+flashRDAccumHrd     OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Accum Hard"
+    ::= { flashcardTableEntry 36 }
+
+flashAccumSucc      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Accum Success"
+    ::= { flashcardTableEntry 37 }
+
+flashAccumFail      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Accum Fail"
+    ::= { flashcardTableEntry 38 }
+
+flashRDLimWrn       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Limit Warning"
+    ::= { flashcardTableEntry 39 }
+
+flashRDLimCrit      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Limit Critical"
+    ::= { flashcardTableEntry 40 }
+
+flashRDScb8k        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Scrub 8k"
+    ::= { flashcardTableEntry 41 }
+
+flashRDScbSft       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Scrub Soft"
+    ::= { flashcardTableEntry 42 }
+
+flashRDScbHrd       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Read Scrub Hard"
+    ::= { flashcardTableEntry 43 }
+
+flashRDSwpStrp      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Sweep Stripe"
+    ::= { flashcardTableEntry 44 }
+
+flashRDSwpPge       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Sweep Page"
+    ::= { flashcardTableEntry 45 }
+
+flashMvRD4k         OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Move Read 4k"
+    ::= { flashcardTableEntry 46 }
+
+flashMvRDHrd        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Move Read Hard"
+    ::= { flashcardTableEntry 47 }
+
+flashMvWR4k         OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Move Write 4k"
+    ::= { flashcardTableEntry 48 }
+
+flashDtWR4k         OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Flash Data Write 4k"
+    ::= { flashcardTableEntry 49 }
+
+flashXorWR8k        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Flash XOR Write 8k"
+    ::= { flashcardTableEntry 50 }
+
+flashWRErr          OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Flash Write Error"
+    ::= { flashcardTableEntry 51 }
+
+flashErase          OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Flash Erase"
+    ::= { flashcardTableEntry 52 }
+
+flashEraseErr       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Flash Erase Errors"
+    ::= { flashcardTableEntry 53 }
+
+flashPeCycMax       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Maximum PE Cycle"
+    ::= { flashcardTableEntry 54 }
+
+flashPeCycMin       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Mimimum PE Cycle"
+    ::= { flashcardTableEntry 55 }
+
+flashPeCycMaxDev    OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "PE Cycle Max Dev"
+    ::= { flashcardTableEntry 56 }
+
+flashMinRtu         OBJECT-TYPE
+    SYNTAX          Counter64
+    UNITS           "blocks"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Mimimum RTU"
+    ::= { flashcardTableEntry 57 }
+
+flashOOBWarn        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Out of blocks warnings"
+    ::= { flashcardTableEntry 58 }
+
+flashBadBlks        OBJECT-TYPE
+    SYNTAX          Counter64
+    UNITS           "blocks"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bad Blocks"
+    ::= { flashcardTableEntry 59 }
+
+flashBusCRCErr      OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Bus CRC Errors"
+    ::= { flashcardTableEntry 60 }
+
+flashRdRtyLn0       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 0"
+    ::= { flashcardTableEntry 61 }
+
+flashRdRtyLn1       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 1"
+    ::= { flashcardTableEntry 62 }
+
+flashRdRtyLn2       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 2"
+    ::= { flashcardTableEntry 63 }
+
+flashRdRtyLn3       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 3"
+    ::= { flashcardTableEntry 64 }
+
+flashRdRtyLn4       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 4"
+    ::= { flashcardTableEntry 65 }
+
+flashRdRtyLn5       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 5"
+    ::= { flashcardTableEntry 66 }
+
+flashRdRtyLn6       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 6"
+    ::= { flashcardTableEntry 67 }
+
+flashRdRtyLn7       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 7"
+    ::= { flashcardTableEntry 68 }
+
+flashRdRtyLn8       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 8"
+    ::= { flashcardTableEntry 69 }
+
+flashRdRtyLn9       OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          obsolete
+    DESCRIPTION     "Read Retry ln 9"
+    ::= { flashcardTableEntry 70 }
+
+flashWrTotal        OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Fl Wr Total"
+    ::= { flashcardTableEntry 71 }
+
+flashHstWrnPrio     OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Host Wrong Priority"
+    ::= { flashcardTableEntry 72 }
+
+flashRecircWrgPrio  OBJECT-TYPE
+    SYNTAX          Counter64
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Recirc Wrong Priority"
+    ::= { flashcardTableEntry 73 }
+
+flashCoalesce       OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION     "Coalesce"
+    ::= { flashcardTableEntry 74 }
+
+--
+-- notifications
+--
+
+flashMACH OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem machine type"
+    ::= { ibmflashNotifications 1 }
+
+flashSERI OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem serial number"
+    ::= { ibmflashNotifications 2 }
+
+flashERRI OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem error ID"
+    ::= { ibmflashNotifications 3 }
+
+flashERRC OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem error code"
+    ::= { ibmflashNotifications 4 }
+
+flashSWVE OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem software version"
+    ::= { ibmflashNotifications 5 }
+
+flashFRUP OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem FRU part number"
+    ::= { ibmflashNotifications 6 }
+
+flashCLUS OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem cluster name"
+    ::= { ibmflashNotifications 7 }
+
+flashNODE OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem node identifier"
+    ::= { ibmflashNotifications 8 }
+
+flashERRS OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem error sequence number"
+    ::= { ibmflashNotifications 9 }
+
+flashTIME OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem last error time stamp"
+    ::= { ibmflashNotifications 10 }
+
+flashOBJT OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem object type"
+    ::= { ibmflashNotifications 11 }
+
+flashOBJI OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem object ID"
+    ::= { ibmflashNotifications 12 }
+
+flashADD1 OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem Additional data"
+    ::= { ibmflashNotifications 13 }
+
+flashADD2 OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem Additional data"
+    ::= { ibmflashNotifications 14 }
+
+flashCOPY OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem Copy ID"
+    ::= { ibmflashNotifications 15 }
+
+flashMPNO           OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem Machine Part Number"
+    ::= { ibmflashNotifications 16 }
+
+flashOBJN           OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION     "IBM FlashSystem object name"
+    ::= { ibmflashNotifications 17 }
+
+-- *****************************************************
+-- From RFC 2580:
+--   The MODULE-COMPLIANCE macro is used to convey a minimum set of
+--   requirements with respect to implementation of one or more MIB
+--   modules.  It should be noted that the expansion of the MODULE-
+--   COMPLIANCE macro is something which conceptually happens during
+--   implementation and not during run-time.
+
+ibmflashCompliances    OBJECT IDENTIFIER ::= { ibmflashConformance 1 }
+ibmflashGroups         OBJECT IDENTIFIER ::= { ibmflashConformance 2 }
+
+ibmflashCompliance MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION     "The compliance statement for IBM-MIB entities which implement
+                    this MIB"
+    MODULE
+        MANDATORY-GROUPS {
+            ibmflashRequiredObjectsGroup,
+            ibmflashNotifGroup,
+            ibmflashSystemGroup,
+            ibmflashSystemEventGroup,
+            ibmflashSystemDriveGroup,
+            ibmflashSystemArrayGroup,
+            ibmflashSystemVDiskGroup,
+            ibmflashSystemNodeGroup,
+            ibmflashFlashcardGroup,
+            ibmflashBatteryGroup,
+            ibmflashPSUGroup,
+            ibmflashFanGroup,
+            ibmflashFCGroup,
+            ibmflashIBGroup,
+            ibmflashiscsiGroup,
+            ibmflashFCOEGroup
+        }
+    ::= { ibmflashCompliances 1 }
+
+ibmflashComplianceObsolete MODULE-COMPLIANCE
+    STATUS          obsolete
+    DESCRIPTION     "Obsolete entries within this IBM-MIB"
+    MODULE
+        MANDATORY-GROUPS {
+            ibmflashFlashcardObsoleteGroup
+        }
+    ::= { ibmflashCompliances 2 }
+
+-- From RFC 2580:
+--   For conformance purposes, it is useful to define a collection of
+--   related managed objects.  The OBJECT-GROUP macro is used to define
+--   each such collection of related objects.  It should be noted that the
+--   expansion of the OBJECT-GROUP macro is something which conceptually
+--   happens during implementation and not during run-time.
+
+ibmflashRequiredObjectsGroup OBJECT-GROUP
+    OBJECTS {
+        flashMACH,
+        flashSERI,
+        flashERRI,
+        flashERRC,
+        flashSWVE,
+        flashFRUP,
+        flashCLUS,
+        flashNODE,
+        flashERRS,
+        flashTIME,
+        flashOBJT,
+        flashOBJI,
+        flashADD1,
+        flashADD2,
+        flashCOPY,
+        flashMPNO,
+        flashOBJN
+    }
+    STATUS          current
+    DESCRIPTION     "The objects defined in this MIB module that MUST
+         be implemented by a compliant implementation."
+    ::= { ibmflashGroups 1 }
+
+ibmflashNotifGroup NOTIFICATION-GROUP
+    NOTIFICATIONS {
+        flashETrap,
+        flashWTrap,
+        flashITrap
+    }
+     STATUS         current
+     DESCRIPTION    "All notifications defined in this MIB module MUST
+         be implemented by a compliant implementation."
+     ::= { ibmflashGroups 2 }
+
+ibmflashSystemGroup  OBJECT-GROUP
+    OBJECTS {
+        systemType,
+        systemVersion,
+        systemActiveNode,
+        systemNode1IP,
+        systemNode1Mask,
+        systemNode1GW,
+        systemNode1IPMode,
+        systemNode2IP,
+        systemNode2Mask,
+        systemNode2GW,
+        systemNode2IPMode,
+        systemIOPS,
+        systemReadIOPS,
+        systemWriteIOPS,
+        systemBW,
+        systemReadBW,
+        systemWriteBW
+    }
+    STATUS          current
+    DESCRIPTION     "System variables conformance group"
+    ::= { ibmflashGroups 3 }
+
+ibmflashSystemEventGroup OBJECT-GROUP
+    OBJECTS {
+        eventSequence,
+        eventTimestamp,
+        eventObjectType,
+        eventObjectId,
+        eventObjectName,
+        eventCopyId,
+        eventStatus,
+        eventFixed,
+        eventEventId,
+        eventErrorCode,
+        eventDescription
+    }
+    STATUS          current
+    DESCRIPTION     "System Event Table conformance Group"
+    ::= { ibmflashGroups 11 }
+
+ibmflashSystemDriveGroup OBJECT-GROUP
+    OBJECTS {
+        driveId,
+        driveStatus,
+        driveUse,
+        driveCapacity,
+        driveSlotId,
+        driveArrayId,
+        driveEncryption
+    }
+    STATUS          current
+    DESCRIPTION     "System Drive Table conformance Group"
+    ::= { ibmflashGroups 12 }
+
+ibmflashSystemArrayGroup OBJECT-GROUP
+    OBJECTS {
+        arrayId,
+        arrayStatus,
+        arrayCapacity,
+        arrayCapacityUsed,
+        arrayCapacityFree,
+        arrayRAIDLvl,
+        arrayEncryption,
+        arrayVDiskCount
+    }
+    STATUS          current
+    DESCRIPTION     "System Array Table conformance Group"
+    ::= { ibmflashGroups 13 }
+
+ibmflashSystemVDiskGroup OBJECT-GROUP
+    OBJECTS {
+        vdiskId,
+        vdiskName,
+        vdiskStatus,
+        vdiskCapacity,
+        vdiskUID
+    }
+    STATUS          current
+    DESCRIPTION     "System VDisk Table conformance Group"
+    ::= { ibmflashGroups 14 }
+
+ibmflashSystemNodeGroup OBJECT-GROUP
+    OBJECTS {
+        nodePanelName,
+        nodeClusterId,
+        nodeClusterNm,
+        nodeId,
+        nodeName,
+        nodeRelation,
+        nodeStatus,
+        nodeError
+    }
+    STATUS          current
+    DESCRIPTION     "System VDisk Table conformance Group"
+    ::= { ibmflashGroups 15 }
+
+ibmflashFlashcardGroup      OBJECT-GROUP
+    OBJECTS {
+        flashObject,
+        flashSizeMiB,
+        flashTempGW,
+        flashTempFPGA0,
+        flashTempFPGA1,
+        flashTempFPGA2,
+        flashTempFPGA3,
+        flashPower,
+        flashHealthState,
+        flashOverallHealth,
+        flashAvlRemap,
+        flashAvlBRP,
+        flashBlkWearAvg,
+        flashBlkWearMin,
+        flashBlkWearMax,
+        flashRD512Host,
+        flashRD512Xor,
+        flashWR512Host,
+        flashWR512Xor,
+        flashRMW,
+        flashCacheHits,
+        flashRDCorSucc,
+        flashRDCorFail,
+        flashRDAccumSft,
+        flashRDAccumHrd,
+        flashAccumSucc,
+        flashAccumFail,
+        flashRDLimWrn,
+        flashRDLimCrit,
+        flashRDScbSft,
+        flashRDScbHrd,
+        flashMvRD4k,
+        flashMvRDHrd,
+        flashMvWR4k,
+        flashWRErr,
+        flashErase,
+        flashEraseErr,
+        flashPeCycMax,
+        flashPeCycMin,
+        flashPeCycMaxDev,
+        flashMinRtu,
+        flashOOBWarn,
+        flashBadBlks,
+        flashBusCRCErr,
+        flashWrTotal,
+        flashHstWrnPrio,
+        flashRecircWrgPrio,
+        flashCoalesce
+    }
+    STATUS          current
+    DESCRIPTION     "Flashcard variables conformance group"
+    ::= { ibmflashGroups 20 }
+
+ibmflashBatteryGroup    OBJECT-GROUP
+    OBJECTS {
+        batteryObject,
+        batteryName,
+        batteryCell1,
+        batteryCell2,
+        batteryCell3,
+        batteryTotal,
+        batteryChgCurr,
+        batteryRmngCap,
+        batteryFullCap
+    }
+    STATUS          current
+    DESCRIPTION     "Battery Table variables conformance group"
+    ::= { ibmflashGroups 21 }
+
+ibmflashPSUGroup    OBJECT-GROUP
+    OBJECTS {
+        psuObject,
+        psuCommErr,
+        psuACGood,
+        psuDCGood,
+        psuFan
+    }
+    STATUS          current
+    DESCRIPTION     "PSU variables conformance group"
+    ::= { ibmflashGroups 22 }
+
+ibmflashFanGroup    OBJECT-GROUP
+    OBJECTS {
+        fanObject,
+        fanName,
+        fanPWM,
+        fanTemp,
+        fan0,
+        fan1,
+        fan2,
+        fan3
+    }
+    STATUS          current
+    DESCRIPTION     "Fan Table variables conformance group"
+    ::= { ibmflashGroups 23 }
+
+ibmflashFCGroup      OBJECT-GROUP
+    OBJECTS {
+        fcObject,
+        fcFirmwareVersion,
+        fcPortID,
+        fcState,
+        fcWWNN,
+        fcWWPN,
+        fcTopo,
+        fcSpeed,
+        fcTopoConfig,
+        fcSpeedConfig,
+        fcBW,
+        fcReadBW,
+        fcWriteBW,
+        fcIOPS,
+        fcReadIOPS,
+        fcWriteIOPS,
+        fcQueueDepth,
+        fcReadQueueDepth,
+        fcWriteQueueDepth,
+        fcReadAvgLatency,
+        fcReadMaxLatency,
+        fcReadSampleLow,
+        fcReadSampleMed,
+        fcReadSampleHigh,
+        fcWriteAvgLatency,
+        fcWriteMaxLatency,
+        fcWriteSampleLow,
+        fcWriteSampleMed,
+        fcWriteSampleHigh,
+        fcbs2k,
+        fcbs4k,
+        fcbs8k,
+        fcbs16k,
+        fcbs32k,
+        fcbs64k,
+        fcbs128k,
+        fcbs256k,
+        fcReadScsiCount,
+        fcWriteScsiCount,
+        fcReadScsiBytes,
+        fcWriteScsiBytes,
+        fcCorrMediaErr,
+        fcUncorrMediaErr,
+        fcTimeTick,
+        fcalign512,
+        fcalign1k,
+        fcalign2k,
+        fcalign4k,
+        fcalign8k,
+        fcalign16k,
+        fcalign32k,
+        fcalign64k,
+        fcRMWCount,
+        fcLinkDown,
+        fcCRCErr,
+        fcTXFrames,
+        fcRXFrames,
+        fcRXErr,
+        fcXchgLookupErr,
+        fcAbtsCnt,
+        fcRscnCnt
+    }
+    STATUS          current
+    DESCRIPTION     "FC Table variables conformance group"
+    ::= { ibmflashGroups 31 }
+
+ibmflashIBGroup      OBJECT-GROUP
+    OBJECTS {
+        ibObject,
+        ibFirmwareVersion,
+        ibLID,
+        ibState,
+        ibBoardGuid,
+        ibPortGuid,
+        ibSystemGuid,
+        ibSpeed,
+        ibBW,
+        ibReadBW,
+        ibWriteBW,
+        ibIOPS,
+        ibReadIOPS,
+        ibWriteIOPS,
+        ibQueueDepth,
+        ibReadQueueDepth,
+        ibWriteQueueDepth,
+        ibReadAvgLatency,
+        ibReadMaxLatency,
+        ibReadSampleLow,
+        ibReadSampleMed,
+        ibReadSampleHigh,
+        ibWriteAvgLatency,
+        ibWriteMaxLatency,
+        ibWriteSampleLow,
+        ibWriteSampleMed,
+        ibWriteSampleHigh,
+        ibbs2k,
+        ibbs4k,
+        ibbs8k,
+        ibbs16k,
+        ibbs32k,
+        ibbs64k,
+        ibbs128k,
+        ibbs256k,
+        ibReadScsiCount,
+        ibWriteScsiCount,
+        ibReadScsiBytes,
+        ibWriteScsiBytes,
+        ibCorrMediaErr,
+        ibUncorrMediaErr,
+        ibTimeTick,
+        ibalign512,
+        ibalign1k,
+        ibalign2k,
+        ibalign4k,
+        ibalign8k,
+        ibalign16k,
+        ibalign32k,
+        ibalign64k,
+        ibRMWCount,
+        ibLinkDown,
+        ibCRCErr,
+        ibUnalignedReads,
+        ibUnalignedWrites,
+        ibBounceReads,
+        ibBounceWrites
+    }
+    STATUS          current
+    DESCRIPTION     "IB Table variables conformance group"
+    ::= { ibmflashGroups 32 }
+
+ibmflashiscsiGroup      OBJECT-GROUP
+    OBJECTS {
+        iscsiObject,
+        iscsiFirmwareVersion,
+        iscsiPortID,
+        iscsiState,
+        iscsiSpeed,
+        iscsiMAC,
+        iscsiIPv4,
+        iscsiIPv4Mask,
+        iscsiIPv4GW,
+        iscsiIPv4Host,
+        iscsiDuplex,
+        iscsiBW,
+        iscsiReadBW,
+        iscsiWriteBW,
+        iscsiIOPS,
+        iscsiReadIOPS,
+        iscsiWriteIOPS,
+        iscsiQueueDepth,
+        iscsiReadQueueDepth,
+        iscsiWriteQueueDepth,
+        iscsiReadAvgLatency,
+        iscsiReadMaxLatency,
+        iscsiReadSampleLow,
+        iscsiReadSampleMed,
+        iscsiReadSampleHigh,
+        iscsiWriteAvgLatency,
+        iscsiWriteMaxLatency,
+        iscsiWriteSampleLow,
+        iscsiWriteSampleMed,
+        iscsiWriteSampleHigh,
+        iscsibs2k,
+        iscsibs4k,
+        iscsibs8k,
+        iscsibs16k,
+        iscsibs32k,
+        iscsibs64k,
+        iscsibs128k,
+        iscsibs256k,
+        iscsiReadScsiCount,
+        iscsiWriteScsiCount,
+        iscsiReadScsiBytes,
+        iscsiWriteScsiBytes,
+        iscsiCorrMediaErr,
+        iscsiUncorrMediaErr,
+        iscsiTimeTick,
+        iscsialign512,
+        iscsialign1k,
+        iscsialign2k,
+        iscsialign4k,
+        iscsialign8k,
+        iscsialign16k,
+        iscsialign32k,
+        iscsialign64k,
+        iscsiRMWCount,
+        iscsiLinkDown,
+        iscsiCRCErr,
+        iscsiTXFrames,
+        iscsiRXFrames
+    }
+    STATUS          current
+    DESCRIPTION     "iscsi Table variables conformance group"
+    ::= { ibmflashGroups 33 }
+
+ibmflashFCOEGroup      OBJECT-GROUP
+    OBJECTS {
+        fcoeObject,
+        fcoeFirmwareVersion,
+        fcoePortID,
+        fcoeState,
+        fcoeWWNN,
+        fcoeWWPN,
+        fcoeTopo,
+        fcoeSpeed,
+        fcoeVLANID,
+        fcoeFCFMAC,
+        fcoeVPIMAC,
+        fcoeBW,
+        fcoeReadBW,
+        fcoeWriteBW,
+        fcoeIOPS,
+        fcoeReadIOPS,
+        fcoeWriteIOPS,
+        fcoeQueueDepth,
+        fcoeReadQueueDepth,
+        fcoeWriteQueueDepth,
+        fcoeReadAvgLatency,
+        fcoeReadMaxLatency,
+        fcoeReadSampleLow,
+        fcoeReadSampleMed,
+        fcoeReadSampleHigh,
+        fcoeWriteAvgLatency,
+        fcoeWriteMaxLatency,
+        fcoeWriteSampleLow,
+        fcoeWriteSampleMed,
+        fcoeWriteSampleHigh,
+        fcoebs2k,
+        fcoebs4k,
+        fcoebs8k,
+        fcoebs16k,
+        fcoebs32k,
+        fcoebs64k,
+        fcoebs128k,
+        fcoebs256k,
+        fcoeReadScsiCount,
+        fcoeWriteScsiCount,
+        fcoeReadScsiBytes,
+        fcoeWriteScsiBytes,
+        fcoeCorrMediaErr,
+        fcoeUncorrMediaErr,
+        fcoeTimeTick,
+        fcoealign512,
+        fcoealign1k,
+        fcoealign2k,
+        fcoealign4k,
+        fcoealign8k,
+        fcoealign16k,
+        fcoealign32k,
+        fcoealign64k,
+        fcoeRMWCount,
+        fcoeLinkDown,
+        fcoeCRCErr,
+        fcoeTXFrames,
+        fcoeRXFrames,
+        fcoeRXErr,
+        fcoeXchgLookupErr,
+        fcoeAbtsCnt,
+        fcoeRscnCnt
+    }
+    STATUS          current
+    DESCRIPTION     "FCoE Table variables conformance group"
+    ::= { ibmflashGroups 34 }
+
+ibmflashFlashcardObsoleteGroup      OBJECT-GROUP
+    OBJECTS {
+        flashRDRtyP1,
+        flashRDRtyP2,
+        flashRDRtyP3,
+        flashRDRtyP4,
+        flashRDRtyP5,
+        flashRdRtyFail,
+        flashRDAccum8k,
+        flashRDScb8k,
+        flashRDScbSft,
+        flashRDSwpStrp,
+        flashRDSwpPge,
+        flashDtWR4k,
+        flashXorWR8k,
+        flashRdRtyLn0,
+        flashRdRtyLn1,
+        flashRdRtyLn2,
+        flashRdRtyLn3,
+        flashRdRtyLn4,
+        flashRdRtyLn5,
+        flashRdRtyLn6,
+        flashRdRtyLn7,
+        flashRdRtyLn8,
+        flashRdRtyLn9
+    }
+    STATUS          obsolete
+    DESCRIPTION     "Flashcard variables which have been made obsolete with the
+                     update to FlashSystem 900 and FlashSystem 840 SP2"
+    ::= { ibmflashGroups 120 }
+
+END

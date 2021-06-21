@@ -1,0 +1,111 @@
+-- Ericsson Television Limited Standard MIB disclaimer
+-- ###################################################
+-- SNMP MIBs for Ericsson Television Limited products are developed 
+-- primarily for use by Ericsson Television Limited control solutions.
+-- Where MIBs are provided to a third party or other non-Ericsson 
+-- Television Limited person, for the purposes of their development 
+-- of a non-Ericsson Television Limited control or monitoring solution, 
+-- they are provided free of charge, and without obligation on the
+-- part of Ericsson Television Limited to offer priority support, or
+-- changes to suit the third party.
+--
+-- $Date: 2010-02-19 10:55:07 +0000 (Fri, 19 Feb 2010) $
+-- $Revision: 194 $
+
+ETV-Trap-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+   Counter
+      FROM RFC1155-SMI
+   OBJECT-TYPE
+      FROM RFC-1212
+   TRAP-TYPE
+      FROM RFC-1215
+   general
+      FROM ETV-Base-MIB
+   Uint32
+      FROM ETV-Types-TC;
+
+
+-- MIB module holding the trap tables of a TTV device.
+
+trapTable OBJECT-TYPE
+   SYNTAX      SEQUENCE OF TrapEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "This table holds the last 20 enterprise specific TRAP messages sendt."
+   ::= { general 5 }
+
+trapEntry OBJECT-TYPE
+   SYNTAX      TrapEntry
+   ACCESS      not-accessible
+   STATUS      mandatory
+   DESCRIPTION
+         "An entry in the trapTable."
+   INDEX       { trapTableIndex }
+   ::= { trapTable 1 }
+
+TrapEntry ::= SEQUENCE {
+   trapTableIndex       INTEGER,
+   trapSequence         Counter,
+   mibModuleOID         OBJECT IDENTIFIER,
+   currentStatus        Uint32,
+   previousStatus       Uint32
+}
+
+trapTableIndex OBJECT-TYPE
+   SYNTAX      INTEGER (1..20)
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the index to the trap table."
+   ::= { trapEntry 1 }
+
+trapSequence OBJECT-TYPE
+   SYNTAX      Counter
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the sequence number of the trap."
+   ::= { trapEntry 2 }
+
+mibModuleOID OBJECT-TYPE
+   SYNTAX      OBJECT IDENTIFIER
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the OID of a MIB module sending the trap,
+          used to identify the sender."
+   ::= { trapEntry 3 }
+
+currentStatus OBJECT-TYPE
+   SYNTAX      Uint32
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the status/alarm word, as defined in the individual modules."
+   ::= { trapEntry 4 }
+
+previousStatus OBJECT-TYPE
+   SYNTAX      Uint32
+   ACCESS      read-only
+   STATUS      mandatory
+   DESCRIPTION
+         "This is the previous status/alarm word."
+   ::= { trapEntry 5 }
+
+--
+
+statusTrap TRAP-TYPE
+   ENTERPRISE trapTable
+   VARIABLES { trapSequence,
+               mibModuleOID,
+               currentStatus,
+               previousStatus
+ }
+   DESCRIPTION "This TRAP is sent when there is a change in the alarm/status
+               condition of a module"
+   ::= 1
+
+END

@@ -1,0 +1,933 @@
+{
+  "imports": {
+    "class": "imports",
+    "CISCO-SMI": [
+      "ciscoMgmt"
+    ],
+    "CISCO-TC": [
+      "Unsigned32"
+    ],
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "OBJECT-TYPE",
+      "OBJECT-IDENTITY",
+      "IpAddress",
+      "mib-2",
+      "Integer32",
+      "Counter32",
+      "TimeTicks",
+      "MODULE-IDENTITY",
+      "Counter64",
+      "Unsigned32",
+      "iso",
+      "MibIdentifier",
+      "NOTIFICATION-TYPE",
+      "Bits",
+      "Gauge32"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "VariablePointer",
+      "TEXTUAL-CONVENTION",
+      "TimeStamp",
+      "DisplayString",
+      "RowStatus"
+    ]
+  },
+  "tableModifTrackingMIB": {
+    "name": "tableModifTrackingMIB",
+    "oid": "1.3.6.1.2.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2002-11-04 00:00",
+        "description": "Initial version of this MIB module."
+      }
+    ],
+    "lastupdated": "200211040000Z",
+    "organization": "Cisco Systems, Inc.",
+    "contactinfo": " Niraj Gopal Cisco Systems, Inc. 170 W Tasman Drive San Jose, CA 95134 USA Phone: +1 408-527-3347 E-mail: niraj@cisco.com",
+    "description": "The MIB module to track and store the modifications in data of NMS specified MIB tables implemented in an SNMP command responder (traditionally called an SNMP agent). This MIB allows an NMS to register for change monitoring in the tables it is interested in. This MIB then tracks modifications in those registered tables, allowing the NMS to poll one table to determine if others need to be polled. This MIB keeps track of all modifications, including adding a new row, deletion of a row, and modification of an object in a row. It can also be configured to send change notifications to an NMS."
+  },
+  "tmtMIBObjects": {
+    "name": "tmtMIBObjects",
+    "oid": "1.3.6.1.2.1.1.1",
+    "class": "objectidentity"
+  },
+  "tmtRegistration": {
+    "name": "tmtRegistration",
+    "oid": "1.3.6.1.2.1.1.1.1",
+    "class": "objectidentity"
+  },
+  "tmtControl": {
+    "name": "tmtControl",
+    "oid": "1.3.6.1.2.1.1.1.2",
+    "class": "objectidentity"
+  },
+  "tmtHist": {
+    "name": "tmtHist",
+    "oid": "1.3.6.1.2.1.1.1.3",
+    "class": "objectidentity"
+  },
+  "ModificationType": {
+    "name": "ModificationType",
+    "class": "textualconvention",
+    "type": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "rowCreation": 0,
+        "rowDeletion": 1,
+        "rowModification": 2
+      }
+    },
+    "status": "current",
+    "description": "The MIB table data modification types that can be found and recorded. This is a bit map, with each bit representing a different modification type as described below: Bit 0 - rowCreation - Indicating creation of a row in a MIB table. Bit 1 - rowDeletion - Representing deletion of a row in a MIB table. Bit 2 - rowModification - Indicating modification to an object in a row in a MIB table. Setting all defined bits to 1 will enable the NMS to track all the modification types."
+  },
+  "tmtRegistrationTable": {
+    "name": "tmtRegistrationTable",
+    "oid": "1.3.6.1.2.1.1.1.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table to register the MIB tables for monitoring various modification types e.g addition of new rows, deletion of rows and modification in objects of existing rows. The changes in the registered MIB tables' data will be recorded in tmtHistTableModifTable and tmtHistRowModifTable tables. Only the tables that are present in ctmtSupportedTable can be registered. If an NMS is interested in row modifications in only a few objects in a particular table, it can do that by specifying those objects in tmtRegExcludeObjTable."
+  },
+  "tmtRegistrationEntry": {
+    "name": "tmtRegistrationEntry",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationOwner",
+        "implied": 0
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Information for tracking changes in data of MIB table specified in this entry. Deleting an entry in tmtRegistrationTable deletes all corresponding entries in tmtHistTableModifTable and tmtHistRowModifTable tables. Entries in this table may not be changed while the corresponding value of tmtRegistrationTrackModifs is 'trackingModifications'."
+  },
+  "tmtRegistrationOwner": {
+    "name": "tmtRegistrationOwner",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The owner of this entry. The exact semantics of this string are subject to the security policy defined by the security administrator. The value of this variable could be name of the NMS user."
+  },
+  "tmtRegistrationIndex": {
+    "name": "tmtRegistrationIndex",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "An arbitrary number that uniquely identifies the entries in this table. To create an entry a management application should pick a random number."
+  },
+  "tmtRegistrationModifTypeTracked": {
+    "name": "tmtRegistrationModifTypeTracked",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ModificationType",
+      "class": "type"
+    },
+    "default": {
+      "value": {
+        "type": "Bits",
+        "class": "type",
+        "bits": {
+          "rowCreation": 0,
+          "rowDeletion": 1,
+          "rowModification": 2
+        }
+      },
+      "format": "bits"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Indicates the type of MIB table data modifications that will be recorded. Any other type of MIB table data modifications will be ignored e.g. if the NMS has asked to process rowCreation(1) type of modification only, then rowDeletion(2) and rowModification(3) will be ignored. By default all types of MIB table data modifications are recorded."
+  },
+  "tmtRegistrationTableID": {
+    "name": "tmtRegistrationTableID",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The object identifier of the MIB table of interest. The changes in its data will be recorded in tmtHistTableModifTable and tmtHistRowModifTable tables. This must be the OID of the table-defining SEQUENCE OF registration point. A given tmtRegistrationOwner can register a particular MIB table only once."
+  },
+  "tmtRegistrationContextName": {
+    "name": "tmtRegistrationContextName",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The management context from which to obtain changes in tmtRegistrationTableID. This may be wildcarded by leaving characters off the end. For example use 'Repeater' to wildcard to 'Repeater1', 'Repeater2', 'Repeater-999.87b', and so on. To indicate such wildcarding is intended, tmtRegistrationCtxtNameWildcard must be 'true'. Each instance that fills the wildcard is independent of any additional instances, that is, wildcarded objects operate as if there were a separate table entry for each instance that fills the wildcard without having to actually predict all possible instances ahead of time. Operation of this feature assumes that the local system has a list of available contexts against which to apply the wildcard. If the objects are being read from the local system, this is clearly the system's own list of contexts. For a remote system a local version of such a list is not defined by any current standard and may not be available, so this function MAY not be supported."
+  },
+  "tmtRegistrationCtxtNameWildcard": {
+    "name": "tmtRegistrationCtxtNameWildcard",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Control for whether tmtRegistrationContextName is to be treated as fully-specified or wildcarded, with 'true' indicating wildcard."
+  },
+  "tmtRegistrationMaxRowModifHist": {
+    "name": "tmtRegistrationMaxRowModifHist",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 500
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "units": "entries",
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The upper limit on the number of entries that the tmtHistRowModifTable may contain for modifications in the MIB table represented by this entry. A value of 0 will prevent any history from being retained. When the number of entries in tmtHistRowModifTable for a MIB table represented by this entry exceeds this value, the oldest entry will be deleted and a new one will be created."
+  },
+  "tmtRegistrationTrackModifs": {
+    "name": "tmtRegistrationTrackModifs",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "notActive": 1,
+          "ready": 2,
+          "start": 3,
+          "stop": 4,
+          "trackingModifications": 5
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The control to start/stop tracking modifications. The value is 'notActive' as long as tmtRegistrationEntryStatus is not active. When tmtRegistrationEntryStatus becomes active this object goes to 'ready'. This object can be set to 'start' only when its value is 'ready'. Once it is set to 'start', the MIB begins monitoring modifications for the MIB table represented by this entry and this object goes to 'trackingModifications'. This object can be set to 'stop' only when its value is 'trackingModifications'. Once it is set to 'stop', the MIB stops monitoring modifications for the MIB table represented by this entry and this object goes to 'ready'."
+  },
+  "tmtRegistrationEntryStatus": {
+    "name": "tmtRegistrationEntryStatus",
+    "oid": "1.3.6.1.2.1.1.1.1.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The control that allows creation, modification, and deletion of entries. For detailed rules see the DESCRIPTION for tmtRegistrationEntry."
+  },
+  "tmtRegExcludeObjTable": {
+    "name": "tmtRegExcludeObjTable",
+    "oid": "1.3.6.1.2.1.1.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table to specify the objects in a registered MIB table, identified in tmtRegistrationTable, that this MIB WILL NOT monitor for modifications. E.g. if an NMS wants to watch changes in all objects in a MIB table except for a few objects, the NMS can specify those objects in this table indicating this MIB should NOT record changes in these objects. The implementation of this MIB may automatically put fast changing MIB objects e.g. Counters in this table so as to avoid a storm of modification records due to fast changing values of these objects. In this case, those entries will be read-only to the NMS."
+  },
+  "tmtRegExcludeObjEntry": {
+    "name": "tmtRegExcludeObjEntry",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationOwner",
+        "implied": 0
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationIndex",
+        "implied": 0
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegExcludeObjOID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Indicates the MIB object the changes in which WILL NOT be recorded by this MIB. If for a registered MIB, identified in tmtRegistrationTable, there are no entries in this table, this MIB will record changes in all the objects in that table. Entries in this table may not be changed, created or deleted while the corresponding value of tmtRegistrationTrackModifs is 'trackingModifications'."
+  },
+  "tmtRegExcludeObjOID": {
+    "name": "tmtRegExcludeObjOID",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The object identifier of the MIB object, the changes in which, WILL NOT be recorded by this MIB. Please note that this is an implicit wildcard i.e. by specifying a MIB object here, the changes in all its instances will NOT be recorded by this MIB."
+  },
+  "tmtRegExcludeObjEntryStatus": {
+    "name": "tmtRegExcludeObjEntryStatus",
+    "oid": "1.3.6.1.2.1.1.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The control that allows creation, modification, and deletion of entries. For detailed rules see the DESCRIPTION for tmtRegExcludeObjEntry."
+  },
+  "tmtSupportedMIBTable": {
+    "name": "tmtSupportedMIBTable",
+    "oid": "1.3.6.1.2.1.1.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table to specify the list of MIBs, the modifications in which could be tracked by this MIB. This MIB table is read-only and it is always initialized by the SNMP command responder. If a MIB does not exist in this table, no table in that MIB can be registered in the tmtRegistrationTable."
+  },
+  "tmtSupportedMIBEntry": {
+    "name": "tmtSupportedMIBEntry",
+    "oid": "1.3.6.1.2.1.1.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtSupportedMIBOID",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Indicates the MIB table the changes in which can be tracked by this MIB."
+  },
+  "tmtSupportedMIBOID": {
+    "name": "tmtSupportedMIBOID",
+    "oid": "1.3.6.1.2.1.1.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The object identifier of the supported MIB. This must be the OID of the MIB-Module-defining MODULE-IDENTITY registration point."
+  },
+  "tmtControlNotificationsTable": {
+    "name": "tmtControlNotificationsTable",
+    "oid": "1.3.6.1.2.1.1.1.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table to control the notifications sent by this MIB."
+  },
+  "tmtControlNotificationsEntry": {
+    "name": "tmtControlNotificationsEntry",
+    "oid": "1.3.6.1.2.1.1.1.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationOwner",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Notifications control information for a tmtRegistrationOwner. A new entry is automatically created in this table as soon as the first entry is created for a tmtRegistrationOwner in tmtRegistrationTable. Deleting all entries in tmtRegistrationTable for a particular tmtRegistrationOwner deletes this entry as well."
+  },
+  "tmtControlNotificationsEnabled": {
+    "name": "tmtControlNotificationsEnabled",
+    "oid": "1.3.6.1.2.1.1.1.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Indicates whether tmtTableRowModified notifications will or will not be sent when data in a MIB table registered by the tmtRegistrationOwner is modified in the SNMP command responder on the device. Disabling notifications does not prevent table modified messages from being added to tmtHistTableModifTable and tmtHistRowModifTable tables."
+  },
+  "tmtControlNotificationsSent": {
+    "name": "tmtControlNotificationsSent",
+    "oid": "1.3.6.1.2.1.1.1.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "notifications",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of tmtTableRowModified notifications for changes in the MIB tables registered by tmtRegistrationOwner that have been sent. This number may include notifications that were prevented from being transmitted due to reasons such as resource limitations and/or non-connectivity. If one is receiving notifications, one can periodically poll this object to determine if any notifications were missed. If so, a poll of tmtHistTableModifTable and tmtHistRowModifTable might be appropriate."
+  },
+  "tmtHistTableModifTable": {
+    "name": "tmtHistTableModifTable",
+    "oid": "1.3.6.1.2.1.1.1.3.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table listing the MIB tables from the registered MIB tables in tmtRegistrationTable that had their data modified. There will only be one entry per registered MIB table that had a modification in its data. If a registered MIB table had many modifications, tmtHistTableLastModified of the entry corresponding to that registered table will be updated to the time when the last change occurred. This table allows the NMS to find out, in one operation: - If data in a given MIB table for an owner has changed. - If so, when did the last change occur. - And, the count of changes that occurred in the table. (Each SNMP Set request, CLI command or an internal process state change that causes modification in MIB table data is counted as one change. Although they may affect multiple rows in a MIB table.) Using this info the NMS can choose to: - Do nothing if the last change time is older than the time it polled this table last. - Check if the count of changes in the MIB table data is greater than this value at the previous poll plus any modifications done by this NMS. If this is false, it indicates there have been no modifications done by other managers. So, the NMS does not have to do anything. - Look into the tmtHistRowModifTable to find the rows that have changed since the last poll and only download the newly modified rows. - Or Download the entire table."
+  },
+  "tmtHistTableModifEntry": {
+    "name": "tmtHistTableModifEntry",
+    "oid": "1.3.6.1.2.1.1.1.3.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationOwner",
+        "implied": 0
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry for a MIB table registered by an owner that had its data modified."
+  },
+  "tmtHistTableModifCount": {
+    "name": "tmtHistTableModifCount",
+    "oid": "1.3.6.1.2.1.1.1.3.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "It represents the number of modifications in the data of the MIB table represented by tmtRegistrationIndex and tmtRegistrationOwner. A single SNMP Set request, CLI command or an internal process state change that caused change in the MIB data is considered ONE modification. Although they may affect multiple rows in a MIB table. This object can be utilized to determine if the NMS will need to poll the tmtHistRowModifTable to find out if anything has changed. E.g., if the value of this object is 15 at the previous poll by the NMS. The NMS then modified the data in the registered MIB table twice. At the next poll, if the value of this object is greater than 17, then the NMS will know that someone else has also modified the data of this MIB table and it should walk the tmtHistRowModifTable to find out rows that have been modified."
+  },
+  "tmtHistTableModifRowMsgsFlushed": {
+    "name": "tmtHistTableModifRowMsgsFlushed",
+    "oid": "1.3.6.1.2.1.1.1.3.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "messages",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of entries that have been removed from the tmtHistRowModifTable for a MIB table represented by tmtRegistrationIndex and tmtRegistrationOwner in order to make room for new entries. This object can be utilized to determine whether your polling frequency on tmtHistRowModifTable is fast enough and/or the maximum number of entries allowed in the tmtHistRowModifTable for a MIB table represented by tmtRegistrationIndex and tmtRegistrationOwner is large enough such that you are not missing modification messages."
+  },
+  "tmtHistTableModifLastModified": {
+    "name": "tmtHistTableModifLastModified",
+    "oid": "1.3.6.1.2.1.1.1.3.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The time (in thousandth's of a second since the network management portion of the system was last re-initialized) when the last data modification for a MIB table, registered by a particular owner, occurred."
+  },
+  "tmtHistRowModifTable": {
+    "name": "tmtHistRowModifTable",
+    "oid": "1.3.6.1.2.1.1.1.3.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A table listing the rows that have been modified in a registered MIB table for a particular owner. The maximum number of entries in this table is controlled by the tmtRegistrationMaxRowModifHist object in the tmtRegistrationTable."
+  },
+  "tmtHistRowModifEntry": {
+    "name": "tmtHistRowModifEntry",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationOwner",
+        "implied": 0
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationIndex",
+        "implied": 0
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A modification in a row of a registered MIB table. If a single SNMP Set request, CLI command or an internal process state change caused modifications in multiple objects of a single row, only one entry will be created here. But if multiple SNMP Set requests, CLI commands or internal process state changes modify different objects in one row, multiple entries will be created."
+  },
+  "tmtHistRowModifIndex": {
+    "name": "tmtHistRowModifIndex",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A monotonically increasing integer for the sole purpose of indexing history entries. When it reaches the maximum value the agent the value back to 1."
+  },
+  "tmtHistRowModifTimestamp": {
+    "name": "tmtHistRowModifTimestamp",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The The value of sysUpTime when the modification in the row data of a registered MIB table occurred."
+  },
+  "tmtHistRowModifType": {
+    "name": "tmtHistRowModifType",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "ModificationType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The type of modification that has occurred in the row data."
+  },
+  "tmtHistRowModifInstance": {
+    "name": "tmtHistRowModifInstance",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OBJECT IDENTIFIER",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object represents the instance of the row that has been modified. For example: if a row with '171.69.0.0' instance in ipRouteTable is added/deleted/modified, this variable will be set to '171.69.0.0'."
+  },
+  "tmtHistRowModifSource": {
+    "name": "tmtHistRowModifSource",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 1,
+          "commandLine": 2,
+          "snmp": 3,
+          "internal": 4,
+          "http": 5,
+          "xml": 6
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The source of the command that directly or indirectly caused the modification in the data of the row of a registered MIB table. other(1) - None of the types specified below. commandLine(2) - The ubiquitous Command Line Interface. snmp(3) - The Simple Network Management Protocol interface. internal(4) - The MIB data is changed because of changes in the process state e.g., new entries in ipRouteTable are created due to new routes learned by the routing process. http(5) - The Hyper Text Transfer Protocol interface. xml(6) - The eXtensible Markup Language interface."
+  },
+  "tmtHistRowModifSrcAddressType": {
+    "name": "tmtHistRowModifSrcAddressType",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If tmtHistRowModifSource is 'snmp(3)', 'http(5)' or 'xml(6)' this object represents the type of address stored in tmtHistRowModifSourceAddress."
+  },
+  "tmtHistRowModifSourceAddress": {
+    "name": "tmtHistRowModifSourceAddress",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If tmtHistRowModifSource is 'snmp(3)', 'http(5)' or 'xml(6), the internet address of the NMS that did the modification in the data of the row of a registered MIB table. If tmtHistRowModifSource is set to 'commandLine(2)', this object represents the internet address of the VTY terminal. The length is zero if not available or not applicable."
+  },
+  "tmtHistRowModifTerminalUser": {
+    "name": "tmtHistRowModifTerminalUser",
+    "oid": "1.3.6.1.2.1.1.1.3.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 64
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "If tmtHistRowModifSource is 'commandLine(2)', 'snmp(3)' with version 3, 'http(5)' or 'xml(6)' this objects records the name of the user. The length is zero if not available or not applicable."
+  },
+  "tmtMIBNotificationsPrefix": {
+    "name": "tmtMIBNotificationsPrefix",
+    "oid": "1.3.6.1.2.1.1.2",
+    "class": "objectidentity"
+  },
+  "tmtMIBNotifications": {
+    "name": "tmtMIBNotifications",
+    "oid": "1.3.6.1.2.1.1.2.0",
+    "class": "objectidentity"
+  },
+  "tmtTableRowModified": {
+    "name": "tmtTableRowModified",
+    "oid": "1.3.6.1.2.1.1.2.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationTableID"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationContextName"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationCtxtNameWildcard"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifTimestamp"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifType"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifInstance"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifSource"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifSrcAddressType"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifSourceAddress"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifTerminalUser"
+      }
+    ],
+    "status": "current",
+    "description": "This notification is sent when the data in a registered MIB table implemented in the SNMP command responder on the device is modified. This notification can be enabled/disabled by the value set in the tmtControlNotificationsEnabled object."
+  },
+  "tmtMIBConformance": {
+    "name": "tmtMIBConformance",
+    "oid": "1.3.6.1.2.1.1.3",
+    "class": "objectidentity"
+  },
+  "tmtMIBCompliances": {
+    "name": "tmtMIBCompliances",
+    "oid": "1.3.6.1.2.1.1.3.1",
+    "class": "objectidentity"
+  },
+  "tmtMIBGroups": {
+    "name": "tmtMIBGroups",
+    "oid": "1.3.6.1.2.1.1.3.2",
+    "class": "objectidentity"
+  },
+  "tmtMIBCompliance": {
+    "name": "tmtMIBCompliance",
+    "oid": "1.3.6.1.2.1.1.3.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "tmtRegistrationGroup",
+        "module": "TABLE-MODIF-TRACKING-MIB"
+      },
+      {
+        "object": "tmtHistoryGroup",
+        "module": "TABLE-MODIF-TRACKING-MIB"
+      },
+      {
+        "object": "tmtControlGroup",
+        "module": "TABLE-MODIF-TRACKING-MIB"
+      },
+      {
+        "object": "tmtNotificationsGroup",
+        "module": "TABLE-MODIF-TRACKING-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for entities which implement the Cisco Table Modification Tracking MIB."
+  },
+  "tmtRegistrationGroup": {
+    "name": "tmtRegistrationGroup",
+    "oid": "1.3.6.1.2.1.1.3.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationModifTypeTracked"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationTableID"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationContextName"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationCtxtNameWildcard"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationMaxRowModifHist"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationTrackModifs"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegistrationEntryStatus"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtSupportedMIBOID"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtRegExcludeObjEntryStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing the table and MIB objects registration capability."
+  },
+  "tmtControlGroup": {
+    "name": "tmtControlGroup",
+    "oid": "1.3.6.1.2.1.1.3.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtControlNotificationsEnabled"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtControlNotificationsSent"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects providing the control (enable/disable) of Table Modification Tracking MIB notifications."
+  },
+  "tmtHistoryGroup": {
+    "name": "tmtHistoryGroup",
+    "oid": "1.3.6.1.2.1.1.3.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistTableModifCount"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistTableModifRowMsgsFlushed"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistTableModifLastModified"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifTimestamp"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifType"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifInstance"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifSource"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifSrcAddressType"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifSourceAddress"
+      },
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtHistRowModifTerminalUser"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects keeping the history of changes in the data of a MIB table."
+  },
+  "tmtNotificationsGroup": {
+    "name": "tmtNotificationsGroup",
+    "oid": "1.3.6.1.2.1.1.3.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "TABLE-MODIF-TRACKING-MIB",
+        "object": "tmtTableRowModified"
+      }
+    ],
+    "status": "current",
+    "description": "The notification generated by the Table Modification Tracking MIB."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/TABLE-MODIF-TRACKING-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 16:42:56 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "TABLE-MODIF-TRACKING-MIB"
+  }
+}

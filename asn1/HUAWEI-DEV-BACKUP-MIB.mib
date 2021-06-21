@@ -1,0 +1,158 @@
+HUAWEI-DEV-BACKUP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS 
+       hwDev
+                                FROM HUAWEI-DEVICE-MIB	
+       Integer32, OBJECT-TYPE,Unsigned32		
+				FROM SNMPv2-SMI
+       RowStatus
+				FROM SNMPv2-TC;			
+
+hwDevBackup OBJECT IDENTIFIER ::= { hwDev 11 }
+
+
+hwNAndOneTable OBJECT-TYPE
+			SYNTAX SEQUENCE OF HwNAndOneEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"				
+				N+1 backup description table of the ports in board 
+				"
+			::= { hwDevBackup 1 }
+		
+		hwNAndOneEntry OBJECT-TYPE
+			SYNTAX HwNAndOneEntry
+			MAX-ACCESS not-accessible
+			STATUS current
+			DESCRIPTION
+				"
+				N+1 backup description structure of the ports in board 
+				"
+			INDEX { hwNAndOneFrameID,  hwNAndOneSlotID, hwNAndOnePortID }
+			::= { hwNAndOneTable 1 }
+		
+		HwNAndOneEntry ::=
+			SEQUENCE { 
+				hwNAndOneFrameID
+					Integer32,				
+				hwNAndOneSlotID
+					Integer32,
+				hwNAndOnePortID
+					Integer32,
+				hwNAndOneMode
+					INTEGER,
+				hwNAndOnePortType
+					Integer32,				
+				hwNAndOneRowStatus
+					RowStatus,
+	            hwBackupFrameID
+					Integer32,				
+				hwBackupSlotID
+					Integer32,
+				hwBackupPortID
+					Integer32
+			 }			 
+			 
+
+
+		hwNAndOneFrameID OBJECT-TYPE
+			SYNTAX Integer32(0..255)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Failure frame ID for N+1 backup port(0~255)
+				"
+			::= { hwNAndOneEntry 1 }
+			
+	       hwNAndOneSlotID OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Failure board ID for N+1 backup port(0~26)
+				"
+			::= { hwNAndOneEntry 2 }
+			
+	      hwNAndOnePortID OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Failure port ID for N+1 backup port
+				"
+			::= { hwNAndOneEntry 3 }
+			
+	     hwNAndOneMode OBJECT-TYPE
+			SYNTAX INTEGER
+			{
+			  brand(1),
+			  narrow(2),
+			  in(3),
+			  out(4)
+			}
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Broadbrand mode
+				Narrowbrand mode
+				Board in mode
+				Board out mode
+				"
+			::= { hwNAndOneEntry 4 }
+			
+	    hwNAndOnePortType OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"
+				Failure port type that is consistent with the port type of 1.3.6.1.4.1.2011.6.3.3.4.1.2 node
+				"
+			::= { hwNAndOneEntry 5 }
+			
+	     hwNAndOneRowStatus OBJECT-TYPE
+			SYNTAX RowStatus
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				RowStatus operation in board (only support creation and modification )
+				"
+			::= { hwNAndOneEntry 6 }	
+			
+	     hwBackupFrameID OBJECT-TYPE
+			SYNTAX Integer32(0..255)
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Frame ID for N+1 backup port (0~255)
+				"
+			::= { hwNAndOneEntry 7 }
+			
+	     hwBackupSlotID OBJECT-TYPE
+		        SYNTAX Integer32
+		        MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Board ID for N+1 backup port(0~26)
+				"
+			::= { hwNAndOneEntry 8 }
+			
+	     hwBackupPortID OBJECT-TYPE
+			SYNTAX Integer32
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"
+				Backup port ID for N+1 backup port
+				"
+			::= { hwNAndOneEntry 9 }                          
+			
+END			

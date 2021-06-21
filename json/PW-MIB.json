@@ -1,0 +1,1453 @@
+{
+  "imports": {
+    "class": "imports",
+    "INET-ADDRESS-MIB": [
+      "InetAddressType",
+      "InetAddress"
+    ],
+    "PW-TC-MIB": [
+      "PwVcType",
+      "PwOperStatus",
+      "PwVcIndexType",
+      "PwVcIDType",
+      "PwGroupID"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter32",
+      "TimeTicks",
+      "Gauge32",
+      "MibIdentifier",
+      "MODULE-IDENTITY",
+      "experimental",
+      "Bits",
+      "IpAddress",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "iso",
+      "OBJECT-TYPE",
+      "Integer32"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "RowStatus",
+      "StorageType",
+      "TruthValue",
+      "TimeStamp",
+      "DisplayString"
+    ]
+  },
+  "pwVcMIB": {
+    "name": "pwVcMIB",
+    "oid": "1.3.6.1.3.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2003-05-26 12:00",
+        "description": "Moved to draft-ietf-00 status. Changes from previous draft: 1) Change name of pwVcPriority to pwVcSetUpPriority and added pwVcHoldingPriority. 2) Add pwVcIdMappingTable and pwVcPeersMappingTable to help ordered query of the MIB tables for EMS applications. 3) Clarification to work in progress objects. 4) Editorial and typos in descriptions. 5) Added pwVcPerfTotalDiscontinuityTime and pwVcPerfIntervalTimeElapsed. 6) Remove 32 bit counters. "
+      },
+      {
+        "revision": "2002-01-30 12:00",
+        "description": " Changes from -01 draft: 1) Inbound and outbound clarification and name changes. 2) Removing pwVcPeerIpv4Addr and pwVcPeerIpv6Addr, replacing them with pwVcPeerAddr and adding type for address type selection. 3) Adding type for VC OperStatus. 4) Adding pwVcTimeElapsed and pwVcValidIntervals. "
+      },
+      {
+        "revision": "2001-11-07 12:00",
+        "description": "Changes from -00 draft: 1) Remove VcInstance from tables indexes in order to simplify the MIB. 2) Removing APS 1+1 table. 3) Changing hdlcCisco to hdlc in pwVcType. 4) Add description of VC label at pending PW signaling stage. 5) Add interval valid object in interval performance tables. 6) Remove VC APS notification. 7) Change 'conservative'/'liberal' to 'strict'/'loose'. 8) Add objects for interface MTU, use of control word, interface string. 9) Ordering of objects based on functionality. 10) Update operation of pwVcOperStatus. "
+      },
+      {
+        "revision": "2001-07-11 12:00",
+        "description": "draft-00 version"
+      }
+    ],
+    "lastupdated": "200301301200Z",
+    "organization": "Pseudo Wire Edge to Edge Emulation (PWE3) Working Group",
+    "contactinfo": " David Zelig Postal: Corrigent Systems 126, Yigal Alon St. Tel Aviv, ISRAEL Phone: +972-3-6945273 E-mail: davidz@corrigent.com Thomas D. Nadeau Postal: Cisco Systems, Inc. 250 Apollo Drive Chelmsford, MA 01824 Tel: +1-978-497-3051 Email: tnadeau@cisco.com Dave Danenberg Postal: Litchfield Communications, Inc. Pseudo Wire (PW) Management June 2003 Information Base 76 Westbury Park Rd Princeton Building East Watertown, CT 06795 Tel: +1-860-945-1573 x3180 Email: dave_danenberg@litchfieldcomm.com Andrew G. Malis Postal: Vivace Networks, Inc. 2730 Orchard Parkway San Jose, CA 95134 Email: Andy.Malis@vivacenetworks.com Sharon Mantin Postal: AxONLink (Israel) Ltd 9 Bareket St. Petah Tikva 49517, Israel Tel: +972-3-9263972 Email: sharon.mantin@axonlink.com The PWE3 Working Group (email distribution pwe3@ietf.org) ",
+    "description": "This MIB contains managed object definitions for Pseudo Wire operation as in: Pate, P., et al, <draft-ietf-pwe3- framework>, Xiao, X., et al, <draft-ietf-pwe3- requirements>, Martini, L., et al, <draft-martini- l2circuit-trans-mpls>, and Martini, L., et al, <draft-martini-l2circuit-encap-mpls>. The indexes for this MIB are also used to index the PSN- specific tables and the VC-specific tables. The VC Type dictates which VC-specific MIB to use. For example, a 'cep' VC Type requires the use the configuration and status tables within the CEP-MIB. This MIB enable the use of any underlying packet switched network (PSN). Specific tables for the MPLS PSN is currently defined in a separate PW-MPLS-MIB. Tables to support other PSNs (IP, L2TP for example) will be added to this MIB in future revisions. At the time of publication of this version, there are no PWE3 WG documents for all features and objects in this MIB, and the MIB is therefore subject to change based on the WG progress."
+  },
+  "pwVcObjects": {
+    "name": "pwVcObjects",
+    "oid": "1.3.6.1.3.1.1",
+    "class": "objectidentity"
+  },
+  "pwVcConformance": {
+    "name": "pwVcConformance",
+    "oid": "1.3.6.1.3.1.2",
+    "class": "objectidentity"
+  },
+  "pwVcIndexNext": {
+    "name": "pwVcIndexNext",
+    "oid": "1.3.6.1.3.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This object contains an appropriate value to be used for pwVcIndex when creating entries in the pwVcTable. The value 0 indicates that no unassigned entries are available. To obtain the value of pwVcIndex for a new entry in the pwVcTable, the manager issues a management protocol retrieval operation to obtain the current value of pwVcIndex. After each retrieval operation, the agent should modify the value to reflect the next unassigned index. After a manager retrieves a value the agent will determine through its local policy when this index value will be made available for reuse."
+  },
+  "pwVcTable": {
+    "name": "pwVcTable",
+    "oid": "1.3.6.1.3.1.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table specifies information for connecting various emulated services to various tunnel type."
+  },
+  "pwVcEntry": {
+    "name": "pwVcEntry",
+    "oid": "1.3.6.1.3.1.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A row in this table represents an emulated virtual connection (VC) across a packet network. It is indexed by pwVcIndex, which uniquely identifying a singular connection. "
+  },
+  "pwVcIndex": {
+    "name": "pwVcIndex",
+    "oid": "1.3.6.1.3.1.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIndexType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Index for the conceptual row identifying a VC within this PW Emulation VC table."
+  },
+  "pwVcType": {
+    "name": "pwVcType",
+    "oid": "1.3.6.1.3.1.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This value indicate the service to be carried over this VC. Note: the exact set of VC types is yet to be worked out by the WG. "
+  },
+  "pwVcOwner": {
+    "name": "pwVcOwner",
+    "oid": "1.3.6.1.3.1.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "manual": 1,
+          "maintenanceProtocol": 2,
+          "other": 3
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Set by the operator to indicate the protocol responsible for establishing this VC. Value 'manual' is used in all cases where no maintenance protocol (PW signaling) is used to set-up the VC, i.e. require configuration of entries in the VC tables including VC labels, etc. The value 'maintenanceProtocol' is used in case of standard signaling of the VC for the specific PSN, for example LDP for MPLS PSN as specified in <draft- draft-martini- l2circuit-trans-mpls> or L2TP control protocol. Value 'other' is used for other types of signaling."
+  },
+  "pwVcPsnType": {
+    "name": "pwVcPsnType",
+    "oid": "1.3.6.1.3.1.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "mpls": 1,
+          "l2tp": 2,
+          "ip": 3,
+          "mplsOverIp": 4,
+          "gre": 5,
+          "other": 6
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Set by the operator to indicate the PSN type on which this VC will be carried. Based on this object, the relevant PSN table entries are created in the in the PSN specific MIB modules. For example, if mpls(1) is defined, the agent create an entry in pwVcMplsTable, which further define the MPLS PSN configuration. Note: the exact set of PSN types is yet to be worked out by the WG. "
+  },
+  "pwVcSetUpPriority": {
+    "name": "pwVcSetUpPriority",
+    "oid": "1.3.6.1.3.1.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object define the relative set-up priority of the VC in a lowest-to-highest fashion, where 0 is the highest priority. VCs with the same priority are treated with equal priority. Dropped VC will be set 'dormant' (as indicated in pwVcOperStatus). This value is significant if there are competing resources between VCs and the implementation support this feature. If not supported or not relevant, the value of zero MUST be used."
+  },
+  "pwVcHoldingPriority": {
+    "name": "pwVcHoldingPriority",
+    "oid": "1.3.6.1.3.1.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 7
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object define the relative holding priority of the VC in a lowest-to-highest fashion, where 0 is the highest priority. VCs with the same priority are treated with equal priority. Dropped VC will be set 'dormant' (as indicated in pwVcOperStatus). This value is significant if there are competing resources between VCs and the implementation support this feature. If not supported or not relevant, the value of zero MUST be used."
+  },
+  "pwVcInboundMode": {
+    "name": "pwVcInboundMode",
+    "oid": "1.3.6.1.3.1.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "loose": 1,
+          "strict": 2
+        }
+      }
+    },
+    "default": {
+      "default": {
+        "value": "loose",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object is used to enable greater security for implementation that use per platform VC label space. In strict mode, packets coming from the PSN are accepted only from tunnels that are associated to the same VC via the inbound tunnel table in the case of MPLS, or as identified by the source IP address in case of L2TP or IP PSN. The entries in the inbound tunnel table are either explicitly configured or implicitly known by the maintenance protocol used for VC set-up. If such association is not known, not configured or not desired, loose mode should be configured, and the node should accept the packet based on the VC label only regardless of the outer tunnel used to carry the VC."
+  },
+  "pwVcPeerAddrType": {
+    "name": "pwVcPeerAddrType",
+    "oid": "1.3.6.1.3.1.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "ipv4",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "Denotes the address type of the peer node maintenance protocol (signaling) address if PW maintenance protocol is used for the VC creation. It should be set to 'unknown' if PE/PW maintenance protocol is not used, i.e. pwVcOwner is set to 'manual'. "
+  },
+  "pwVcPeerAddr": {
+    "name": "pwVcPeerAddr",
+    "oid": "1.3.6.1.3.1.1.2.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This object conatin the value of of the peer node address of the PW/PE maintenance protocol entity. This object should contain a value of 0 if not relevant (manual configuration of the VC)."
+  },
+  "pwVcID": {
+    "name": "pwVcID",
+    "oid": "1.3.6.1.3.1.1.2.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIDType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls>. and So, et al, <draft-so-pwe3-ethernet>. Note: as specified in l2circuit-trans: It is REQUIRED to assign the same VC ID, and VC type for a given circuit in both directions.",
+    "status": "current",
+    "description": "Used in the outgoing VC ID field within the 'Virtual Circuit FEC Element' when LDP signaling is used or PW ID AVP for L2TP."
+  },
+  "pwVcLocalGroupID": {
+    "name": "pwVcLocalGroupID",
+    "oid": "1.3.6.1.3.1.1.2.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwGroupID",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> and So, et al, <draft-so-pwe3-ethernet.txt>.",
+    "status": "current",
+    "description": "Used in the Group ID field sent to the peer PWES within the maintenance protocol used for VC setup, zero if not used."
+  },
+  "pwVcControlWord": {
+    "name": "pwVcControlWord",
+    "oid": "1.3.6.1.3.1.1.2.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls>",
+    "status": "current",
+    "description": "Define if the control word will be sent with each packet by the local node."
+  },
+  "pwVcLocalIfMtu": {
+    "name": "pwVcLocalIfMtu",
+    "oid": "1.3.6.1.3.1.1.2.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> and So, et al, <draft-so-pwe3-ethernet>.",
+    "status": "current",
+    "description": "If not equal zero, the optional IfMtu object in the maintenance protocol will be sent with this value, representing the locally supported MTU size over the interface (or the virtual interface) associated with the VC."
+  },
+  "pwVcLocalIfString": {
+    "name": "pwVcLocalIfString",
+    "oid": "1.3.6.1.3.1.1.2.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "false",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> and So, et al, <draft-so-pwe3-ethernet.txt>.",
+    "status": "current",
+    "description": "Each VC is associated to an interface (or a virtual interface) in the ifTable of the node as part of the service configuration. This object defines if the maintenance protocol will send the interface's name as appears on the ifTable in the name object as part of the maintenance protocol. If set to false, the optional element will not be sent."
+  },
+  "pwVcRemoteGroupID": {
+    "name": "pwVcRemoteGroupID",
+    "oid": "1.3.6.1.3.1.1.2.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwGroupID",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> and So, et al, <draft-so-pwe3-ethernet.txt>.",
+    "status": "current",
+    "description": "Obtained from the Group ID field as received via the maintenance protocol used for VC setup, zero if not used. Value of 0xFFFF shall be used if the object is yet to be defined by the VC maintenance protocol."
+  },
+  "pwVcRemoteControlWord": {
+    "name": "pwVcRemoteControlWord",
+    "oid": "1.3.6.1.3.1.1.2.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "noControlWord": 1,
+          "withControlWord": 2,
+          "notYetKnown": 3
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> and So, et al, <draft-so-pwe3-ethernet.txt>.",
+    "status": "current",
+    "description": "If maintenance protocol is used for VC establishment, this parameter indicates the received status of the control word usage, i.e. if packets will be received with control word or not. The value of 'notYetKnown' is used while the maintenance protocol has not yet received the indication from the remote node. In manual configuration of the VC this parameters indicate to the local node what is the expected encapsulation for the received packets. "
+  },
+  "pwVcRemoteIfMtu": {
+    "name": "pwVcRemoteIfMtu",
+    "oid": "1.3.6.1.3.1.1.2.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> and So, et al, <draft-so-pwe3-ethernet.txt>.",
+    "status": "current",
+    "description": "The remote interface MTU as (optionally) received from the remote node via the maintenance protocol. Should be zero if this parameter is not available or not used."
+  },
+  "pwVcRemoteIfString": {
+    "name": "pwVcRemoteIfString",
+    "oid": "1.3.6.1.3.1.1.2.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 80
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> and So, et al, <draft-so-pwe3-ethernet>.",
+    "status": "current",
+    "description": "Indicate the interface description string as received by the maintenance protocol, MUST be NULL string if not applicable or not known yet."
+  },
+  "pwVcOutboundVcLabel": {
+    "name": "pwVcOutboundVcLabel",
+    "oid": "1.3.6.1.3.1.1.2.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> Townsley, et al, <draft-ietf-l2tpext-l2tp-base.txt>",
+    "status": "current",
+    "description": "The VC label used in the outbound direction (i.e. toward the PSN). It may be set up manually if owner is 'manual' or automatically otherwise. Examples: For MPLS PSN, it represents the 20 bits of VC tag, for L2TP it represent the 32 bits Session ID. If the label is not yet known (signaling in process), the object should return a value of 0xFFFF."
+  },
+  "pwVcInboundVcLabel": {
+    "name": "pwVcInboundVcLabel",
+    "oid": "1.3.6.1.3.1.1.2.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "reference": "Martini, et al, <draft-martini-l2circuit-trans-mpls> Townsley, et al, <draft-ietf-l2tpext-l2tp-base.txt>",
+    "status": "current",
+    "description": "The VC label used in the inbound direction (i.e. packets received from the PSN. It may be set up manually if owner is 'manual' or automatically otherwise. Examples: For MPLS PSN, it represents the 20 bits of VC tag, for L2TP it represent the 32 bits Session ID. If the label is not yet known (signaling in process), the object should return a value of 0xFFFF."
+  },
+  "pwVcName": {
+    "name": "pwVcName",
+    "oid": "1.3.6.1.3.1.1.2.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The canonical name assigned to the VC."
+  },
+  "pwVcDescr": {
+    "name": "pwVcDescr",
+    "oid": "1.3.6.1.3.1.1.2.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A textual string containing information about the VC. If there is no description this object contains a zero length string."
+  },
+  "pwVcCreateTime": {
+    "name": "pwVcCreateTime",
+    "oid": "1.3.6.1.3.1.1.2.1.23",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "System time when this VC was created."
+  },
+  "pwVcUpTime": {
+    "name": "pwVcUpTime",
+    "oid": "1.3.6.1.3.1.1.2.1.24",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeTicks",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of consecutive ticks this VC has been 'up' in both directions together (i.e. 'up' is observed in pwVcOperStatus.)"
+  },
+  "pwVcAdminStatus": {
+    "name": "pwVcAdminStatus",
+    "oid": "1.3.6.1.3.1.1.2.1.25",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "up": 1,
+          "down": 2,
+          "testing": 3
+        }
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The desired operational status of this VC."
+  },
+  "pwVcOperStatus": {
+    "name": "pwVcOperStatus",
+    "oid": "1.3.6.1.3.1.1.2.1.26",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwOperStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the actual combined operational status of this VC. It is 'up' if both pwVcInboundOperStatus and pwVcOutboundOperStatus are in 'up' state. For all other values, if the VCs in both directions are of the same value it reflects that value, otherwise it is set to the most severe status out of the two statuses. The order of severance from most severe to less severe is: unknown, notPresent, down, lowerLayerDown, dormant, testing, up. The operator may consult the per direction OperStatus for fault isolation per direction."
+  },
+  "pwVcInboundOperStatus": {
+    "name": "pwVcInboundOperStatus",
+    "oid": "1.3.6.1.3.1.1.2.1.27",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwOperStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the actual operational status of this VC in the inbound direction. - down: if PW signaling has not yet finished, or indications available at the service level indicate that the VC is not passing packets. - testing: if AdminStatus at the VC level is set to test. - dormant: The VC is not available because of the required resources are occupied VC with higher priority VCs . - notPresent: Some component is missing to accomplish the set up of the VC. - lowerLayerDown: The underlying PSN is not in OperStatus 'up'. "
+  },
+  "pwVcOutboundOperStatus": {
+    "name": "pwVcOutboundOperStatus",
+    "oid": "1.3.6.1.3.1.1.2.1.28",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwOperStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Indicates the actual operational status of this VC in the outbound direction - down: if PW signaling has not yet finished, or indications available at the service level indicate that the VC is not passing packets. - testing: if AdminStatus at the VC level is set to test. - dormant: The VC is not available because of the required resources are occupied VC with higher priority VCs . - notPresent: Some component is missing to accomplish the set up of the VC. - lowerLayerDown: The underlying PSN is not in OperStatus 'up'. "
+  },
+  "pwVcTimeElapsed": {
+    "name": "pwVcTimeElapsed",
+    "oid": "1.3.6.1.3.1.1.2.1.29",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 900
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of seconds, including partial seconds, that have elapsed since the beginning of the current measurement period. If, for some reason, such as an adjustment in the system's time-of-day clock, the current interval exceeds the maximum value, the agent will return the maximum value."
+  },
+  "pwVcValidIntervals": {
+    "name": "pwVcValidIntervals",
+    "oid": "1.3.6.1.3.1.1.2.1.30",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 96
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of previous 15-minute intervals for which data was collected. An agent with PW capability must be capable of supporting at least n intervals. The minimum value of n is 4, The default of n is 32 and the maximum value of n is 96. The value will be <n> unless the measurement was (re-) started within the last (<n>*15) minutes, in which case the value will be the number of complete 15 minute intervals for which the agent has at least some data. In certain cases (e.g., in the case where the agent is a proxy) it is possible that some intervals are unavailable. In this case, this interval is the maximum interval number for which data is available. "
+  },
+  "pwVcRowStatus": {
+    "name": "pwVcRowStatus",
+    "oid": "1.3.6.1.3.1.1.2.1.31",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "For creating, modifying, and deleting this row."
+  },
+  "pwVcStorageType": {
+    "name": "pwVcStorageType",
+    "oid": "1.3.6.1.3.1.1.2.1.32",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "This variable indicates the storage type for this object."
+  },
+  "pwVcPerfCurrentTable": {
+    "name": "pwVcPerfCurrentTable",
+    "oid": "1.3.6.1.3.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per-VC performance information for the current interval."
+  },
+  "pwVcPerfCurrentEntry": {
+    "name": "pwVcPerfCurrentEntry",
+    "oid": "1.3.6.1.3.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created by the agent for every VC."
+  },
+  "pwVcPerfCurrentInHCPackets": {
+    "name": "pwVcPerfCurrentInHCPackets",
+    "oid": "1.3.6.1.3.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of packets received by the VC (from the PSN) in the current 15 minute interval."
+  },
+  "pwVcPerfCurrentInHCBytes": {
+    "name": "pwVcPerfCurrentInHCBytes",
+    "oid": "1.3.6.1.3.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of bytes received by the VC (from the PSN) in the current 15 minute interval."
+  },
+  "pwVcPerfCurrentOutHCPackets": {
+    "name": "pwVcPerfCurrentOutHCPackets",
+    "oid": "1.3.6.1.3.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of packets forwarded by the VC (to the PSN) in the current 15 minute interval."
+  },
+  "pwVcPerfCurrentOutHCBytes": {
+    "name": "pwVcPerfCurrentOutHCBytes",
+    "oid": "1.3.6.1.3.1.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of bytes forwarded by the VC (to the PSN) in the current 15 minute interval."
+  },
+  "pwVcPerfIntervalTable": {
+    "name": "pwVcPerfIntervalTable",
+    "oid": "1.3.6.1.3.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per-VC performance information for each interval."
+  },
+  "pwVcPerfIntervalEntry": {
+    "name": "pwVcPerfIntervalEntry",
+    "oid": "1.3.6.1.3.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfIntervalNumber",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created agent for every VC."
+  },
+  "pwVcPerfIntervalNumber": {
+    "name": "pwVcPerfIntervalNumber",
+    "oid": "1.3.6.1.3.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 96
+          }
+        ]
+      }
+    },
+    "maxaccess": "not-accessible",
+    "reference": "Tesink, K. 'Definitions of Managed Objects for the SONET/SDH Interface Type', RFC 2558",
+    "status": "current",
+    "description": "A number N, between 1 and 96, which identifies the interval for which the set of statistics is available. The interval identified by 1 is the most recently completed 15 minute interval, and the interval identified by N is the interval immediately preceding the one identified by N-1. The minimum range of N is 1 through 4. The default range is 1 to 32. The maximum range of N is 1 through 96. "
+  },
+  "pwVcPerfIntervalValidData": {
+    "name": "pwVcPerfIntervalValidData",
+    "oid": "1.3.6.1.3.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "This variable indicates if the data for this interval is valid."
+  },
+  "pwVcPerfIntervalTimeElapsed": {
+    "name": "pwVcPerfIntervalTimeElapsed",
+    "oid": "1.3.6.1.3.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The duration of a particular interval in seconds. Adjustments in the system's time-of-day clock, may cause the interval to be greater or less than the normal value. Therefore this actual interval value is provided."
+  },
+  "pwVcPerfIntervalInHCPackets": {
+    "name": "pwVcPerfIntervalInHCPackets",
+    "oid": "1.3.6.1.3.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of packets received by the VC (from the PSN) in a particular 15-minute interval."
+  },
+  "pwVcPerfIntervalInHCBytes": {
+    "name": "pwVcPerfIntervalInHCBytes",
+    "oid": "1.3.6.1.3.1.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of bytes received by the VC (from the PSN) in a particular 15-minute interval."
+  },
+  "pwVcPerfIntervalOutHCPackets": {
+    "name": "pwVcPerfIntervalOutHCPackets",
+    "oid": "1.3.6.1.3.1.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of packets forwarded by the VC (to the PSN) in a particular 15-minute interval."
+  },
+  "pwVcPerfIntervalOutHCBytes": {
+    "name": "pwVcPerfIntervalOutHCBytes",
+    "oid": "1.3.6.1.3.1.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of bytes forwarded by the VC (to the PSN) in a particular 15-minute interval."
+  },
+  "pwVcPerfTotalTable": {
+    "name": "pwVcPerfTotalTable",
+    "oid": "1.3.6.1.3.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides per-VC Performance information from VC start time."
+  },
+  "pwVcPerfTotalEntry": {
+    "name": "pwVcPerfTotalEntry",
+    "oid": "1.3.6.1.3.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created agent for every VC."
+  },
+  "pwVcPerfTotalInHCPackets": {
+    "name": "pwVcPerfTotalInHCPackets",
+    "oid": "1.3.6.1.3.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of packets received by the VC (from the PSN)."
+  },
+  "pwVcPerfTotalInHCBytes": {
+    "name": "pwVcPerfTotalInHCBytes",
+    "oid": "1.3.6.1.3.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of bytes received by the VC (from the PSN)."
+  },
+  "pwVcPerfTotalOutHCPackets": {
+    "name": "pwVcPerfTotalOutHCPackets",
+    "oid": "1.3.6.1.3.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of packets forwarded by the VC (to the PSN)."
+  },
+  "pwVcPerfTotalOutHCBytes": {
+    "name": "pwVcPerfTotalOutHCBytes",
+    "oid": "1.3.6.1.3.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "High capacity counter for number of bytes forwarded by the VC (to the PSN)."
+  },
+  "pwVcPerfTotalDiscontinuityTime": {
+    "name": "pwVcPerfTotalDiscontinuityTime",
+    "oid": "1.3.6.1.3.1.1.5.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion at which any one or more of this row Counter32 or Counter64 suffered a discontinuity. If no such discontinuities have occurred since the last re- initialization of the local management subsystem, then this object contains a zero value."
+  },
+  "pwVcPerfTotalErrorPackets": {
+    "name": "pwVcPerfTotalErrorPackets",
+    "oid": "1.3.6.1.3.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter64",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Counter for number of error at VC level processing, for example packets received with unknown VC label."
+  },
+  "pwVcIdMappingTable": {
+    "name": "pwVcIdMappingTable",
+    "oid": "1.3.6.1.3.1.1.7",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides reverse mapping of the existing VCs based on vc type and VC ID ordering. This table is typically useful for EMS ordered query of existing VCs."
+  },
+  "pwVcIdMappingEntry": {
+    "name": "pwVcIdMappingEntry",
+    "oid": "1.3.6.1.3.1.1.7.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIdMappingVcType",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIdMappingVcID",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIdMappingPeerAddrType",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIdMappingPeerAddr",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIdMappingVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created by the agent for every VC configured by the pwVcTable."
+  },
+  "pwVcIdMappingVcType": {
+    "name": "pwVcIdMappingVcType",
+    "oid": "1.3.6.1.3.1.1.7.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The VC type (indicate the service) of this VC."
+  },
+  "pwVcIdMappingVcID": {
+    "name": "pwVcIdMappingVcID",
+    "oid": "1.3.6.1.3.1.1.7.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIDType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The VC ID of this VC. Zero if the VC is configured manually."
+  },
+  "pwVcIdMappingPeerAddrType": {
+    "name": "pwVcIdMappingPeerAddrType",
+    "oid": "1.3.6.1.3.1.1.7.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "IP address type of the peer node."
+  },
+  "pwVcIdMappingPeerAddr": {
+    "name": "pwVcIdMappingPeerAddr",
+    "oid": "1.3.6.1.3.1.1.7.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "IP address type of the peer node."
+  },
+  "pwVcIdMappingVcIndex": {
+    "name": "pwVcIdMappingVcIndex",
+    "oid": "1.3.6.1.3.1.1.7.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value that represent the VC in the pwVcTable."
+  },
+  "pwVcPeerMappingTable": {
+    "name": "pwVcPeerMappingTable",
+    "oid": "1.3.6.1.3.1.1.8",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table provides reverse mapping of the existing VCs based on vc type and VC ID ordering. This table is typically useful for EMS ordered query of existing VCs."
+  },
+  "pwVcPeerMappingEntry": {
+    "name": "pwVcPeerMappingEntry",
+    "oid": "1.3.6.1.3.1.1.8.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerMappingPeerAddrType",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerMappingPeerAddr",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerMappingVcType",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerMappingVcID",
+        "implied": 0
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerMappingVcIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "An entry in this table is created by the agent for every VC configured in pwVcTable."
+  },
+  "pwVcPeerMappingPeerAddrType": {
+    "name": "pwVcPeerMappingPeerAddrType",
+    "oid": "1.3.6.1.3.1.1.8.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddressType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "IP address type of the peer node."
+  },
+  "pwVcPeerMappingPeerAddr": {
+    "name": "pwVcPeerMappingPeerAddr",
+    "oid": "1.3.6.1.3.1.1.8.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "InetAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "IP address type of the peer node."
+  },
+  "pwVcPeerMappingVcType": {
+    "name": "pwVcPeerMappingVcType",
+    "oid": "1.3.6.1.3.1.1.8.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The VC type (indicate the service) of this VC."
+  },
+  "pwVcPeerMappingVcID": {
+    "name": "pwVcPeerMappingVcID",
+    "oid": "1.3.6.1.3.1.1.8.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIDType",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The VC ID of this VC. Zero if the VC is configured manually."
+  },
+  "pwVcPeerMappingVcIndex": {
+    "name": "pwVcPeerMappingVcIndex",
+    "oid": "1.3.6.1.3.1.1.8.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "PwVcIndexType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value that represent the VC in the pwVcTable."
+  },
+  "pwVcGroups": {
+    "name": "pwVcGroups",
+    "oid": "1.3.6.1.3.1.2.1",
+    "class": "objectidentity"
+  },
+  "pwVcCompliances": {
+    "name": "pwVcCompliances",
+    "oid": "1.3.6.1.3.1.2.2",
+    "class": "objectidentity"
+  },
+  "pwModuleCompliance": {
+    "name": "pwModuleCompliance",
+    "oid": "1.3.6.1.3.1.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "pwVcGroup",
+        "module": "PW-MIB"
+      },
+      {
+        "object": "pwVcPeformanceGroup",
+        "module": "PW-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for agent that support PW operation."
+  },
+  "pwVcGroup": {
+    "name": "pwVcGroup",
+    "oid": "1.3.6.1.3.1.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIndexNext"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcType"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcOwner"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPsnType"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcSetUpPriority"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcHoldingPriority"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcInboundMode"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerAddrType"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerAddr"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcID"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcLocalGroupID"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcControlWord"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcLocalIfMtu"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcLocalIfString"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcRemoteGroupID"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcRemoteControlWord"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcRemoteIfMtu"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcRemoteIfString"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcOutboundVcLabel"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcInboundVcLabel"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcName"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcDescr"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcCreateTime"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcUpTime"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcAdminStatus"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcOperStatus"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcOutboundOperStatus"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcInboundOperStatus"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcTimeElapsed"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcValidIntervals"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcRowStatus"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcStorageType"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for PW VC configuration."
+  },
+  "pwVcPeformanceGroup": {
+    "name": "pwVcPeformanceGroup",
+    "oid": "1.3.6.1.3.1.2.1.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfCurrentInHCPackets"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfCurrentInHCBytes"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfCurrentOutHCPackets"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfCurrentOutHCBytes"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfIntervalValidData"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfIntervalTimeElapsed"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfIntervalInHCPackets"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfIntervalInHCBytes"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfIntervalOutHCPackets"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfIntervalOutHCBytes"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfTotalInHCPackets"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfTotalInHCBytes"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfTotalOutHCPackets"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfTotalOutHCBytes"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfTotalDiscontinuityTime"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPerfTotalErrorPackets"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects needed for PW VC performance."
+  },
+  "pwVcMappingTablesGroup": {
+    "name": "pwVcMappingTablesGroup",
+    "oid": "1.3.6.1.3.1.2.1.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "PW-MIB",
+        "object": "pwVcIdMappingVcIndex"
+      },
+      {
+        "module": "PW-MIB",
+        "object": "pwVcPeerMappingVcIndex"
+      }
+    ],
+    "status": "current",
+    "description": "Collection of objects contained in the reverse mapping tables."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/PW-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:26:22 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "PW-MIB"
+  }
+}

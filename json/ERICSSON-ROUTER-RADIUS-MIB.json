@@ -1,0 +1,944 @@
+{
+  "imports": {
+    "class": "imports",
+    "ERICSSON-ROUTER-SMI": [
+      "eriRouterMgmt"
+    ],
+    "RADIUS-ACC-CLIENT-MIB": [
+      "radiusAccServerEntry",
+      "radiusAccServerAddress",
+      "radiusAccClientServerPortNumber"
+    ],
+    "RADIUS-AUTH-CLIENT-MIB": [
+      "radiusAuthClientServerPortNumber",
+      "radiusAuthServerEntry",
+      "radiusAuthServerAddress"
+    ],
+    "SNMP-FRAMEWORK-MIB": [
+      "SnmpAdminString"
+    ],
+    "SNMPv2-CONF": [
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "OBJECT-TYPE",
+      "Gauge32",
+      "NOTIFICATION-TYPE",
+      "OBJECT-IDENTITY",
+      "Unsigned32",
+      "Integer32",
+      "iso",
+      "Bits",
+      "Counter64",
+      "MibIdentifier",
+      "MODULE-IDENTITY",
+      "Counter32",
+      "TimeTicks"
+    ],
+    "SNMPv2-TC": [
+      "TEXTUAL-CONVENTION",
+      "TruthValue",
+      "DisplayString",
+      "TimeStamp"
+    ]
+  },
+  "eriRouterRadiusMib": {
+    "name": "eriRouterRadiusMib",
+    "oid": "1.3.6.1.4.1.193.218.2.32",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-01-14 18:00",
+        "description": "Updated RBN/rbn/Rbn as ERICSSON-ROUTER/eriRouter/EriRouter to migrate RBN MIB to ERICSSON MIB."
+      },
+      {
+        "revision": "2011-01-19 18:00",
+        "description": "Update CONTACT-INFO & ORGANIZATION. "
+      },
+      {
+        "revision": "2005-03-29 17:00",
+        "description": "Added new objects: eriRouterRadiusAuthStripDomain eriRouterRadiusAcctStripDomain Added new groups: eriRouterRadiusAuthGroup2 eriRouterRadiusAcctGroup2 Added new compliance: eriRouterRadiusCompliance2."
+      },
+      {
+        "revision": "2003-12-16 00:00",
+        "description": "Initial verison."
+      }
+    ],
+    "lastupdated": "201501141800Z",
+    "organization": "Ericsson AB.",
+    "contactinfo": " Ericsson AB. Postal: 100 Headquarters Dr. San Jose, CA 95134 USA Phone: +1 408 750-5000 Fax: +1 408 750-5599 ",
+    "description": "This enterprise MIB supplements the standard Remote Access Dialin User Service (RADIUS) MIBs, namely: RADIUS-AUTH-CLIENT-MIB (RFC 2618) RADIUS-ACC-CLIENT-MIB (RFC 2620) This module defines additional objects and notifications for managing the RADIUS authentication and accounting servers in use by the enterprise system. All mib objects defined in this module are viewed within the context identified in the SNMP protocol (i.e. the community string in v1/v2c or the contextName in v3)."
+  },
+  "eriRouterRadiusMIBNotifications": {
+    "name": "eriRouterRadiusMIBNotifications",
+    "oid": "1.3.6.1.4.1.193.218.2.32.0",
+    "class": "objectidentity"
+  },
+  "eriRouterRadiusMIBObjects": {
+    "name": "eriRouterRadiusMIBObjects",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1",
+    "class": "objectidentity"
+  },
+  "eriRouterRadiusMIBConformance": {
+    "name": "eriRouterRadiusMIBConformance",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2",
+    "class": "objectidentity"
+  },
+  "eriRouterRadiusAuthObjects": {
+    "name": "eriRouterRadiusAuthObjects",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1",
+    "class": "objectidentity"
+  },
+  "eriRouterRadiusAcctObjects": {
+    "name": "eriRouterRadiusAcctObjects",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2",
+    "class": "objectidentity"
+  },
+  "eriRouterRadiusNotifyObjects": {
+    "name": "eriRouterRadiusNotifyObjects",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.3",
+    "class": "objectidentity"
+  },
+  "EriRouterRadiusServerState": {
+    "name": "EriRouterRadiusServerState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unknown": 1,
+          "up": 2,
+          "down": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The current state of a RADIUS server. When a server is initially configured its state is 'unknown'. When requests are sent to this server it will transition to either 'up' or 'down', depending on whether the server replies to the requests. It will then transition between 'up' and 'down' accordingly. It will never transition back to 'unknown'."
+  },
+  "EriRouterRadiusServerReason": {
+    "name": "EriRouterRadiusServerReason",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "responding": 1,
+          "packetTimeout": 2,
+          "serverTimeout": 3,
+          "portDown": 4
+        }
+      }
+    },
+    "status": "current",
+    "description": "When a RADIUS transitions to a new state, this identifies the reason for the transition. Note that there are two types of timeouts: packet-level and server-level. The packet-level timeout is managed via eriRouterRadiusAuthPktTimeout and eriRouterRadiusAcctPktTimeout. The server-level timeout is managed via eriRouterRadiusAuthSrvTimeout and eriRouterRadiusAcctSrvTimeout. All requests will timeout if no response is received within the packet-level timeout window. If there is no configured server-level timeout the server will be transitioned to 'down' immediately. Otherwise the server will transition to 'down' only if no replies have been received from the server within the server-level timeout window."
+  },
+  "eriRouterRadiusAuthPktTimeout": {
+    "name": "eriRouterRadiusAuthPktTimeout",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum amount of time to wait for a response from a RADIUS authorization server before assuming the packet was lost. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAuthSrvTimeout": {
+    "name": "eriRouterRadiusAuthSrvTimeout",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum amount of time to wait for any response from a RADIUS authorization server before assuming the server is unreachable. A value of '0' indicates that there is no timeout value. In this case a server is considered to be unreachable when no response is received within the eriRouterRadiusAuthPktTimeout window. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAuthDeadtime": {
+    "name": "eriRouterRadiusAuthDeadtime",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "units": "minutes",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "After a RADIUS authorization server has been transitioned to 'down' it will be assumed to be unreachable for this interval. After that point the system may start sending requests to the server again. A value of '0' indicates the system may start sending requests to the server immediately. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAuthTries": {
+    "name": "eriRouterRadiusAuthTries",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "units": "tries",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of times the system will attempt to transmit an authorization request to a RADIUS server. If multiple RADIUS authorization servers have been configured retransmissions will cycle through the other servers before being retransmitted to the server that originally failed to respond. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAuthStripDomain": {
+    "name": "eriRouterRadiusAuthStripDomain",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If this object is false, the entire username, including the domain name is sent to the RADIUS server. If true, the domain portion of a structured username is stripped before relaying a request to a RADIUS server. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAuthSrvTable": {
+    "name": "eriRouterRadiusAuthSrvTable",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table augments the radiusAuthServerTable. All entries that exist in that table will have a corresponding entry in this table."
+  },
+  "eriRouterRadiusAuthSrvEntry": {
+    "name": "eriRouterRadiusAuthSrvEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "eriRouterRadiusAuthSrvEntry",
+      "module": "ERICSSON-ROUTER-RADIUS-MIB",
+      "object": "radiusAuthServerEntry"
+    },
+    "status": "current",
+    "description": "A proprietary extension to the radiusAuthServerEntry."
+  },
+  "eriRouterRadiusAuthSrvState": {
+    "name": "eriRouterRadiusAuthSrvState",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterRadiusServerState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current state of the RADIUS server."
+  },
+  "eriRouterRadiusAuthSrvLastChange": {
+    "name": "eriRouterRadiusAuthSrvLastChange",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when this server last changed state. If eriRouterRadiusAuthSrvState is 'unknown' this is effectively the value of sysUpTime when this server was initially configured."
+  },
+  "eriRouterRadiusAuthSrvCounterResetTime": {
+    "name": "eriRouterRadiusAuthSrvCounterResetTime",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion when any of the counters for this RADIUS server experienced a discontinuity. Note: this includes counters in this table as well as those in radiusAuthServerTable."
+  },
+  "eriRouterRadiusAuthSrvSendErrors": {
+    "name": "eriRouterRadiusAuthSrvSendErrors",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.1.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets destined to this RADIUS server which could not be transmitted due to an error. Discontinuities in the value of this counter are indicated by the value of eriRouterRadiusAuthSrvCounterResetTime."
+  },
+  "eriRouterRadiusAcctPktTimeout": {
+    "name": "eriRouterRadiusAcctPktTimeout",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum amount of time to wait for a response from a RADIUS accounting server before assuming the packet was lost. Note: if the system is using a RADIUS server for both authorization and accounting, this object's value will be ignored for that server. Instead the eriRouterRadiusAuthPktTimeout value will be used for all requests going to that server. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAcctSrvTimeout": {
+    "name": "eriRouterRadiusAcctSrvTimeout",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum amount of time to wait for any response from a RADIUS accounting server before assuming the server is unreachable. A value of '0' indicates that there is no timeout value. In this case a server is considered to be unreachable when no response is received within the eriRouterRadiusAcctPktTimeout window. Note: if the system is using a RADIUS server for both authorization and accounting, this object's value will be ignored for that server. Instead the eriRouterRadiusAuthSrvTimeout value will be used for that server. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAcctDeadtime": {
+    "name": "eriRouterRadiusAcctDeadtime",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "units": "minutes",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "After a RADIUS accounting server has been transitioned to 'down' it will be assumed to be unreachable for this interval. After that point the system may start sending accounting records to the server again. A value of '0' indicates the system may start sending records to the server immediately. Note: if the system is using a RADIUS server for both authorization and accounting, this object's value will be ignored for that server. Instead the eriRouterRadiusAuthDeadtime value will be used for that server. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAcctTries": {
+    "name": "eriRouterRadiusAcctTries",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 2147483647
+          }
+        ]
+      }
+    },
+    "units": "retries",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of times the system will attempt to transmit an accounting record to a RADIUS server. If multiple RADIUS accounting servers have been configured retransmissions will cycle through the other servers before being retransmitted to the server that originally failed to respond. Note: if the system is using a RADIUS server for both authorization and accounting, this object's value will be ignored for that server. Instead the eriRouterRadiusAuthTries value will be used for that server. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAcctStripDomain": {
+    "name": "eriRouterRadiusAcctStripDomain",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "If this object is false, the entire username, including the domain name is sent to the RADIUS server. If true, the domain portion of a structured username is stripped before relaying a request to a RADIUS server. The SNMP set command is not supported for this MIB attribute."
+  },
+  "eriRouterRadiusAcctSrvTable": {
+    "name": "eriRouterRadiusAcctSrvTable",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table augments the radiusAccServerTable. All entries that exist in that table will have a corresponding entry in this table."
+  },
+  "eriRouterRadiusAcctSrvEntry": {
+    "name": "eriRouterRadiusAcctSrvEntry",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "eriRouterRadiusAcctSrvEntry",
+      "module": "ERICSSON-ROUTER-RADIUS-MIB",
+      "object": "radiusAccServerEntry"
+    },
+    "status": "current",
+    "description": "A proprietary extension to the radiusAccServerEntry."
+  },
+  "eriRouterRadiusAcctSrvState": {
+    "name": "eriRouterRadiusAcctSrvState",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterRadiusServerState",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The current state of the RADIUS server."
+  },
+  "eriRouterRadiusAcctSrvLastChange": {
+    "name": "eriRouterRadiusAcctSrvLastChange",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.5.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime when this server last changed state. If eriRouterRadiusAcctSrvState is 'unknown' this is effectively the value of sysUpTime when this server was initially configured."
+  },
+  "eriRouterRadiusAcctSrvCounterResetTime": {
+    "name": "eriRouterRadiusAcctSrvCounterResetTime",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.5.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TimeStamp",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value of sysUpTime on the most recent occasion when any of the counters for this RADIUS server experienced a discontinuity. Note: this includes counters in this table as well as those in radiusAccServerTable."
+  },
+  "eriRouterRadiusAcctSrvSendErrors": {
+    "name": "eriRouterRadiusAcctSrvSendErrors",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.2.5.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "units": "packets",
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of packets destined to this RADIUS server which could not be transmitted due to an error. Discontinuities in the value of this counter are indicated by the value of eriRouterRadiusAcctSrvCounterResetTime."
+  },
+  "eriRouterRadiusClientPort": {
+    "name": "eriRouterRadiusClientPort",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1024,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "A system may be configured to use a range of source TCP/IP ports when sending requests to a RADIUS server. When a server transitions to 'up' or 'down' and a state-change notification is generated, an instance of this object is included to indicate which source port was being used when the server changed state."
+  },
+  "eriRouterRadiusContext": {
+    "name": "eriRouterRadiusContext",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 1,
+            "max": 63
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The name of the context in which this server is configured."
+  },
+  "eriRouterRadiusReason": {
+    "name": "eriRouterRadiusReason",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.3.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "EriRouterRadiusServerReason",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The reason for the server's last state change."
+  },
+  "eriRouterRadiusUsername": {
+    "name": "eriRouterRadiusUsername",
+    "oid": "1.3.6.1.4.1.193.218.2.32.1.3.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "SnmpAdminString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 128
+          }
+        ]
+      }
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "The name of the user the system was trying to authenticate or send accouting information for when the RADIUS server transitioned to 'down'. Note: the 'username' is only valid when transitioning due to a packet-level timeout. When transitioning due to any other reason the value for this object will be a zero-length string."
+  },
+  "eriRouterRadiusAuthStateChange": {
+    "name": "eriRouterRadiusAuthStateChange",
+    "oid": "1.3.6.1.4.1.193.218.2.32.0.1",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvState"
+      },
+      {
+        "module": "RADIUS-AUTH-CLIENT-MIB",
+        "object": "radiusAuthServerAddress"
+      },
+      {
+        "module": "RADIUS-AUTH-CLIENT-MIB",
+        "object": "radiusAuthClientServerPortNumber"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusClientPort"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusReason"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusUsername"
+      }
+    ],
+    "status": "current",
+    "description": "This notification signifies that a RADIUS authorization server has transitioned to 'up' or 'down'. Note: if eriRouterRadiusAuthSrvState's value is 'down' and eriRouterRadiusReason's value is 'packetTimeout', then eriRouterRadiusUsername's value will be a username. For all other cases, eriRouterRadiusUsername's value will be a zero-length string."
+  },
+  "eriRouterRadiusAcctStateChange": {
+    "name": "eriRouterRadiusAcctStateChange",
+    "oid": "1.3.6.1.4.1.193.218.2.32.0.2",
+    "class": "notificationtype",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvState"
+      },
+      {
+        "module": "RADIUS-ACC-CLIENT-MIB",
+        "object": "radiusAccServerAddress"
+      },
+      {
+        "module": "RADIUS-ACC-CLIENT-MIB",
+        "object": "radiusAccClientServerPortNumber"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusClientPort"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusReason"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusUsername"
+      }
+    ],
+    "status": "current",
+    "description": "This notification signifies that a RADIUS accounting server has transitioned to 'up' or 'down'. Note: if eriRouterRadiusAcctSrvState's value is 'down' and eriRouterRadiusReason's value is 'packetTimeout', then eriRouterRadiusUsername's value will be a username. For all other cases, eriRouterRadiusUsername's value will be a zero-length string."
+  },
+  "eriRouterRadiusCompliances": {
+    "name": "eriRouterRadiusCompliances",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.1",
+    "class": "objectidentity"
+  },
+  "eriRouterRadiusGroups": {
+    "name": "eriRouterRadiusGroups",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2",
+    "class": "objectidentity"
+  },
+  "eriRouterRadiusCompliance2": {
+    "name": "eriRouterRadiusCompliance2",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.1.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterRadiusAuthGroup2",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusAcctGroup2",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusNotifyGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusAuthNotifyGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusAcctNotifyGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement this MIB."
+  },
+  "eriRouterRadiusAuthGroup2": {
+    "name": "eriRouterRadiusAuthGroup2",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthPktTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthDeadtime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthTries"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvLastChange"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvCounterResetTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvSendErrors"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthStripDomain"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects used to manage RADIUS authentication servers."
+  },
+  "eriRouterRadiusAcctGroup2": {
+    "name": "eriRouterRadiusAcctGroup2",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctPktTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctDeadtime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctTries"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvLastChange"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvCounterResetTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvSendErrors"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctStripDomain"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects used to manage RADIUS accounting servers."
+  },
+  "eriRouterRadiusNotifyGroup": {
+    "name": "eriRouterRadiusNotifyGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusClientPort"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusContext"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusReason"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusUsername"
+      }
+    ],
+    "status": "current",
+    "description": "The collection of objects used only in notifications."
+  },
+  "eriRouterRadiusAuthNotifyGroup": {
+    "name": "eriRouterRadiusAuthNotifyGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2.4",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthStateChange"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for tracking the status of RADIUS authentication servers."
+  },
+  "eriRouterRadiusAcctNotifyGroup": {
+    "name": "eriRouterRadiusAcctNotifyGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2.5",
+    "class": "notificationgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctStateChange"
+      }
+    ],
+    "status": "current",
+    "description": "Notification for tracking the status of RADIUS accounting servers."
+  },
+  "eriRouterRadiusCompliance": {
+    "name": "eriRouterRadiusCompliance",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "eriRouterRadiusAuthGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusAcctGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusNotifyGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusAuthNotifyGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      },
+      {
+        "object": "eriRouterRadiusAcctNotifyGroup",
+        "module": "ERICSSON-ROUTER-RADIUS-MIB"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The compliance statement for SNMP entities which implement this MIB."
+  },
+  "eriRouterRadiusAuthGroup": {
+    "name": "eriRouterRadiusAuthGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthPktTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthDeadtime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthTries"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvLastChange"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvCounterResetTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAuthSrvSendErrors"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The collection of objects used to manage RADIUS authentication servers."
+  },
+  "eriRouterRadiusAcctGroup": {
+    "name": "eriRouterRadiusAcctGroup",
+    "oid": "1.3.6.1.4.1.193.218.2.32.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctPktTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvTimeout"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctDeadtime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctTries"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvState"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvLastChange"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvCounterResetTime"
+      },
+      {
+        "module": "ERICSSON-ROUTER-RADIUS-MIB",
+        "object": "eriRouterRadiusAcctSrvSendErrors"
+      }
+    ],
+    "status": "deprecated",
+    "description": "The collection of objects used to manage RADIUS accounting servers."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/ERICSSON-ROUTER-RADIUS-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:38:15 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "ERICSSON-ROUTER-RADIUS-MIB"
+  }
+}

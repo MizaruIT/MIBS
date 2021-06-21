@@ -1,0 +1,450 @@
+{
+  "imports": {
+    "class": "imports",
+    "LOWPAN-TC-MIB": [
+      "LowpanShortAddress",
+      "LowpanIEEEEUI64Address"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "MODULE-COMPLIANCE",
+      "NOTIFICATION-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "Counter64",
+      "OBJECT-IDENTITY",
+      "iso",
+      "TimeTicks",
+      "OBJECT-TYPE",
+      "NOTIFICATION-TYPE",
+      "Unsigned32",
+      "Bits",
+      "IpAddress",
+      "Integer32",
+      "Gauge32",
+      "MODULE-IDENTITY",
+      "Counter32",
+      "MibIdentifier",
+      "mib-2"
+    ],
+    "SNMPv2-TC": [
+      "DisplayString",
+      "TEXTUAL-CONVENTION",
+      "TruthValue"
+    ]
+  },
+  "lowpanMIB": {
+    "name": "lowpanMIB",
+    "oid": "1.3.6.1.2.1.1",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2007-01-23 13:07",
+        "description": "Initial version, published as RFC XXXX."
+      }
+    ],
+    "lastupdated": "200701231307Z",
+    "organization": "IETF 6lowpan Working Group",
+    "contactinfo": "Ki-Hyung Kim, Editor Ajou University San 5 Wonchun-dong, Yeongtong-gu Suwon-si, Gyeonggi-do 442-749 KOREA Phone: +82 31 219 2433 Email: kkim86@ajou.ac.kr Seung Wha Yoo Ajou University San 5 Wonchun-dong, Yeongtong-gu Suwon-si, Gyeonggi-do 442-749 KOREA Phone: +82 31 219 1603 Email: swyoo@ajou.ac.kr Hamid Mukhtar Ajou University San 5 Wonchun-dong, Yeongtong-gu Suwon-si, Gyeonggi-do 442-749 KOREA Phone: +82 10 2892 2469 Email: hamid@ajou.ac.kr Soohong Daniel Park, Editor Mobile Platform Laboratory, SAMSUNG Electronics 416 Maetan-3dong, Yeongtong-gu Suwon-si, Gyeonggi-do 442-742 KOREA Phone: +82 31 200 4508 Email: soohong.park@samsung.com Support Group E-mail: 6lowpan@ietf.org",
+    "description": "The MIB module for monitoring 6lowpan entities. Copyright (C) The Internet Society 2007. This version of this MIB module is part of RFC XXXX; see the RFC itself for full legal notices."
+  },
+  "lowpanNotifications": {
+    "name": "lowpanNotifications",
+    "oid": "1.3.6.1.2.1.1.0",
+    "class": "objectidentity"
+  },
+  "lowpanObjects": {
+    "name": "lowpanObjects",
+    "oid": "1.3.6.1.2.1.1.1",
+    "class": "objectidentity"
+  },
+  "lowpanConformance": {
+    "name": "lowpanConformance",
+    "oid": "1.3.6.1.2.1.1.2",
+    "class": "objectidentity"
+  },
+  "lowpanDeviceRole": {
+    "name": "lowpanDeviceRole",
+    "oid": "1.3.6.1.2.1.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "coordinator": 0,
+          "router": 1,
+          "endDevice": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The device in 6lowpan can play three roles. coordinator(0) indicates that the device is a PAN Coordinator which is the primary controller of the PAN. Its a full-function device (FFD). It MAY initiate the synchronization of the entire 6LoWPAN by transmitting beacons. router(1) a FFD which has the capability of routing packets to the next hop device in 6LoWPAN. endDevice(2) RFD (Reduced function device) or FFD in a 6LoWPAN, which is neither the coordinator nor a router."
+  },
+  "lowpanDeviceCapabilities": {
+    "name": "lowpanDeviceCapabilities",
+    "oid": "1.3.6.1.2.1.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Bits",
+      "class": "type",
+      "bits": {
+        "alternatePANcoordinator": 0,
+        "deviceType": 1,
+        "powerSource": 2,
+        "recieverOnWhenIdle": 3,
+        "securityCapability": 6,
+        "allocateAddress": 7
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "IEEE Std 802.15.4 specifications section 7.3.1.1.2",
+    "status": "current",
+    "description": "alternatePANcoordinator(0)- The alternate PAN coordinator subfield shall be set to 1 if the device is capable of becoming a PAN coordinator. Otherwise, the alternate PAN coordinator subfield shall be set to 0. deviceType(1) -The device type subfield shall be set to 1 if the device is an FFD. Otherwise, the device type subfield shall be set to 0 to indicate an RFD. powerSource(2)- The power source subfield shall be set to 1 if the device is receiving power from the alternating current mains. Otherwise, the power source subfield shall be set to 0. recieverOnWhenIdle(3) - The receiver on when idle shall be set to 1 if the device does not disable its receiver to conserve power during idle periods. Otherwise, the receiver on when idle subfield shall be set to 0. securityCapability(6)- The security capability subfield shall be set to 1 if the device is capable of sending and receiving MAC frames secured using the security suite. Otherwise the security capability subfield shall be set to 0. allocateAddress(7)- The allocate address subfield shall be set to 1 if the device wishes the coordinator to allocate a short address as a result of the association procedure. If this subfield is set to 0, the special short address of 0 x fffe shall be allocated to the device and returned through the association response command. In this case, the device shall communicate on the PAN using only its 64 bit extended address. BITS 4-5 are reserved."
+  },
+  "lowpanRoutingTable": {
+    "name": "lowpanRoutingTable",
+    "oid": "1.3.6.1.2.1.1.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The routing table entries of a device."
+  },
+  "lowpanRoutingEntry": {
+    "name": "lowpanRoutingEntry",
+    "oid": "1.3.6.1.2.1.1.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanRouteDestAddress",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This entry represents a conceptual row in the routing table. It represents a single routing entry."
+  },
+  "lowpanRouteDestAddress": {
+    "name": "lowpanRouteDestAddress",
+    "oid": "1.3.6.1.2.1.1.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LowpanShortAddress",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The 16-bit short address of destination of this route."
+  },
+  "lowpanRouteNextHopAddress": {
+    "name": "lowpanRouteNextHopAddress",
+    "oid": "1.3.6.1.2.1.1.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LowpanShortAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The short address of the next hop which leads to the destination."
+  },
+  "lowpanRouteProtocol": {
+    "name": "lowpanRouteProtocol",
+    "oid": "1.3.6.1.2.1.1.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "other": 0,
+          "dymoLow": 1,
+          "hiLow": 2,
+          "load": 3
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "IETF 6lowpan WG draft-daniel-6lowpan-load-adhoc-routing (Work in progress), IETF 6lowpan WG draft-montenegro-6lowpan-dymo-low-routing (Work in progress), IETF 6lowpan WG draft-daniel-6lowpan-hilow-hierarchical-routing (Work in progress)",
+    "status": "current",
+    "description": "6lowpan currently supports three routing protocols dymoLow(1) - Dynamic MANET On-demand routing for 6LoWPAN hiLow(2) - Hierarchical Routing over 6LoWPAN load(3) -Ad Hoc On-Demand Distance Vector Routing for 6lowpan"
+  },
+  "lowpanNeighborTable": {
+    "name": "lowpanNeighborTable",
+    "oid": "1.3.6.1.2.1.1.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The neighbor table entries of a device"
+  },
+  "lowpanNeighborEntry": {
+    "name": "lowpanNeighborEntry",
+    "oid": "1.3.6.1.2.1.1.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanNeighborEUI64Address",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "This entry represents a conceptual row in the neighbor table. It represents a single neighbor table entry."
+  },
+  "lowpanNeighborPanID": {
+    "name": "lowpanNeighborPanID",
+    "oid": "1.3.6.1.2.1.1.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65536
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The Personal area network Identifier (PanID) of the neighbor entry."
+  },
+  "lowpanNeighborEUI64Address": {
+    "name": "lowpanNeighborEUI64Address",
+    "oid": "1.3.6.1.2.1.1.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LowpanIEEEEUI64Address",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "The EUI64 bit address of the neighbor entry."
+  },
+  "lowpanNeighborShortAddress": {
+    "name": "lowpanNeighborShortAddress",
+    "oid": "1.3.6.1.2.1.1.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "LowpanShortAddress",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The 16-bit short address of the neighbor entry."
+  },
+  "lowpanNeighborDeviceType": {
+    "name": "lowpanNeighborDeviceType",
+    "oid": "1.3.6.1.2.1.1.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "coordinator": 0,
+          "router": 1,
+          "endDevice": 2
+        }
+      }
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The device type of the neighbor entry."
+  },
+  "lowpanNeighborIsParent": {
+    "name": "lowpanNeighborIsParent",
+    "oid": "1.3.6.1.2.1.1.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value 'true(1)' indicates that the neighbor is a topological parent of the device."
+  },
+  "lowpanUseHierarchicalRouting": {
+    "name": "lowpanUseHierarchicalRouting",
+    "oid": "1.3.6.1.2.1.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The value 'true(1)' indicates that the entity uses tree based routing. 'false(2)' indicates that entity is not using tree based routing."
+  },
+  "lowpanBroadcastSequenceNumber": {
+    "name": "lowpanBroadcastSequenceNumber",
+    "oid": "1.3.6.1.2.1.1.1.6",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 65536
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-only",
+    "reference": "Section 11 draft-ietf-6lowpan-format (work in progress)",
+    "status": "current",
+    "description": "The last value of the sequence number that was added to the 6lowpan broadcast or multicast frame."
+  },
+  "lowpanAckTimeout": {
+    "name": "lowpanAckTimeout",
+    "oid": "1.3.6.1.2.1.1.1.7",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "units": "milli-seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum time allowed for retransmission of a broadcast message"
+  },
+  "lowpanBroadcastRetries": {
+    "name": "lowpanBroadcastRetries",
+    "oid": "1.3.6.1.2.1.1.1.8",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The maximum number of retries allowed for a broadcast message."
+  },
+  "lowpanGroups": {
+    "name": "lowpanGroups",
+    "oid": "1.3.6.1.2.1.1.2.1",
+    "class": "objectidentity"
+  },
+  "lowpanCompliances": {
+    "name": "lowpanCompliances",
+    "oid": "1.3.6.1.2.1.1.2.2",
+    "class": "objectidentity"
+  },
+  "lowpanGeneralGroup": {
+    "name": "lowpanGeneralGroup",
+    "oid": "1.3.6.1.2.1.1.2.1.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanDeviceCapabilities"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanDeviceRole"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanUseHierarchicalRouting"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanAckTimeout"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanBroadcastRetries"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanBroadcastSequenceNumber"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanNeighborDeviceType"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanNeighborPanID"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanNeighborIsParent"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanNeighborShortAddress"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanRouteNextHopAddress"
+      },
+      {
+        "module": "IPV6LOWPAN-MIB",
+        "object": "lowpanRouteProtocol"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects for basic 6lowpan monitoring"
+  },
+  "lowpanCoreCompliance": {
+    "name": "lowpanCoreCompliance",
+    "oid": "1.3.6.1.2.1.1.2.2.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "lowpanGeneralGroup",
+        "module": "IPV6LOWPAN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement the LOWPAN-MIB."
+  },
+  "lowpanCoreReadOnlyCompliance": {
+    "name": "lowpanCoreReadOnlyCompliance",
+    "oid": "1.3.6.1.2.1.1.2.2.2",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "lowpanGeneralGroup",
+        "module": "IPV6LOWPAN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for SNMP entities which implement the LOWPAN-MIB without support for read-write (i.e. in read-only mode) . "
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/IPV6LOWPAN-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 15:16:20 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "IPV6LOWPAN-MIB"
+  }
+}

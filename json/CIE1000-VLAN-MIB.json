@@ -1,0 +1,1331 @@
+{
+  "imports": {
+    "class": "imports",
+    "CIE1000-TC": [
+      "CIE1000Vlan",
+      "CIE1000InterfaceIndex",
+      "CIE1000VlanListQuarter",
+      "CIE1000DisplayString",
+      "CIE1000Unsigned16",
+      "CIE1000RowEditorState",
+      "CIE1000PortList",
+      "CIE1000EtherType"
+    ],
+    "CISCO-IE1000-MIB": [
+      "cie1000SwitchMgmt"
+    ],
+    "SNMPv2-CONF": [
+      "OBJECT-GROUP",
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE"
+    ],
+    "SNMPv2-SMI": [
+      "MODULE-IDENTITY",
+      "OBJECT-TYPE",
+      "Unsigned32",
+      "IpAddress",
+      "Gauge32",
+      "MibIdentifier",
+      "TimeTicks",
+      "NOTIFICATION-TYPE",
+      "Integer32",
+      "Counter64",
+      "Bits",
+      "OBJECT-IDENTITY",
+      "Counter32",
+      "iso"
+    ],
+    "SNMPv2-TC": [
+      "TruthValue",
+      "TEXTUAL-CONVENTION",
+      "DisplayString"
+    ]
+  },
+  "cie1000VlanMib": {
+    "name": "cie1000VlanMib",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2015-01-16 00:00",
+        "description": "Added Shared VLAN Learning table"
+      },
+      {
+        "revision": "2014-07-01 00:00",
+        "description": "Initial version"
+      }
+    ],
+    "lastupdated": "201501160000Z",
+    "organization": "Cisco Systems, Inc.",
+    "contactinfo": "Cisco Systems Customer Service Postal: 170 West Tasman Drive San Jose, CA 95134 USA Tel: +1 800 553-NETS E-mail: cs-snmp@cisco.com",
+    "description": "Private MIB for VLAN."
+  },
+  "CIE1000VlanEgressTagging": {
+    "name": "CIE1000VlanEgressTagging",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "untagThis": 0,
+          "tagThis": 1,
+          "tagAll": 2,
+          "untagAll": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates how egress tagging occurs."
+  },
+  "CIE1000VlanIngressAcceptance": {
+    "name": "CIE1000VlanIngressAcceptance",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "all": 0,
+          "tagged": 1,
+          "untagged": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates the type of frames that are not discarded on ingress w.r.t. VLAN tagging."
+  },
+  "CIE1000VlanPortMode": {
+    "name": "CIE1000VlanPortMode",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "access": 0,
+          "trunk": 1,
+          "hybrid": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Determines the underlying port mode. Access ports are only members of one VLAN, the AccessVlan. Trunk ports are by default members of all VLANs, which can be limited with TrunkVlans. Hybrid ports allow for changing all port VLAN parameters. As trunk ports, hybrid ports are by default members of all VLANs, which can be limited with HybridVlans."
+  },
+  "CIE1000VlanPortType": {
+    "name": "CIE1000VlanPortType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "unaware": 0,
+          "c": 1,
+          "s": 2,
+          "sCustom": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates if a port is VLAN aware, and if so, to which EtherType it is sensitive."
+  },
+  "CIE1000VlanUserType": {
+    "name": "CIE1000VlanUserType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "combined": 0,
+          "admin": 1,
+          "dot1x": 3,
+          "mvrp": 4,
+          "gvrp": 5,
+          "mvr": 6,
+          "voiceVlan": 7,
+          "mstp": 8,
+          "erps": 9,
+          "mep": 10,
+          "evc": 11,
+          "vcl": 12,
+          "rmirror": 13
+        }
+      }
+    },
+    "status": "current",
+    "description": "An integer that indicates the VLAN user type. A value of 'combined' indicates the VLAN settings as programmed to hardware. A value of 'admin' indicates the VLAN settings as programmed by the administrative user, and any other value indicates a software module that changes VLAN settings 'behind the scenes'."
+  },
+  "cie1000VlanMibObjects": {
+    "name": "cie1000VlanMibObjects",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1",
+    "class": "objectidentity"
+  },
+  "cie1000VlanCapabilities": {
+    "name": "cie1000VlanCapabilities",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.1",
+    "class": "objectidentity"
+  },
+  "cie1000VlanCapabilitiesVlanIdMin": {
+    "name": "cie1000VlanCapabilitiesVlanIdMin",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The minimum VLAN ID that can be configured on the device."
+  },
+  "cie1000VlanCapabilitiesVlanIdMax": {
+    "name": "cie1000VlanCapabilitiesVlanIdMax",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The maximum VLAN ID that can be configured on the device."
+  },
+  "cie1000VlanCapabilitiesFidCnt": {
+    "name": "cie1000VlanCapabilitiesFidCnt",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The number of Shared VLAN Learning (SVL) Filter IDs (FIDs) supported by this device. 0 if SVL is not supported."
+  },
+  "cie1000VlanConfig": {
+    "name": "cie1000VlanConfig",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2",
+    "class": "objectidentity"
+  },
+  "cie1000VlanConfigGlobals": {
+    "name": "cie1000VlanConfigGlobals",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1",
+    "class": "objectidentity"
+  },
+  "cie1000VlanConfigGlobalsMain": {
+    "name": "cie1000VlanConfigGlobalsMain",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.1",
+    "class": "objectidentity"
+  },
+  "cie1000VlanConfigGlobalsMainCustomSPortEtherType": {
+    "name": "cie1000VlanConfigGlobalsMainCustomSPortEtherType",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.1.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000EtherType",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1536,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "TPID (EtherType) for ports marked as Custom-S tag aware."
+  },
+  "cie1000VlanConfigGlobalsMainAccessVlans0To1K": {
+    "name": "cie1000VlanConfigGlobalsMainAccessVlans0To1K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.1.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000VlanConfigGlobalsMainAccessVlans1KTo2K": {
+    "name": "cie1000VlanConfigGlobalsMainAccessVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.1.3",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000VlanConfigGlobalsMainAccessVlans2KTo3K": {
+    "name": "cie1000VlanConfigGlobalsMainAccessVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.1.4",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000VlanConfigGlobalsMainAccessVlans3KTo4K": {
+    "name": "cie1000VlanConfigGlobalsMainAccessVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.1.5",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating the enabled access VLANs."
+  },
+  "cie1000VlanConfigGlobalsNameTable": {
+    "name": "cie1000VlanConfigGlobalsNameTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of VLAN names."
+  },
+  "cie1000VlanConfigGlobalsNameEntry": {
+    "name": "cie1000VlanConfigGlobalsNameEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsNameVlanId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains the name of a given VLAN."
+  },
+  "cie1000VlanConfigGlobalsNameVlanId": {
+    "name": "cie1000VlanConfigGlobalsNameVlanId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "cie1000VlanConfigGlobalsNameName": {
+    "name": "cie1000VlanConfigGlobalsNameName",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000DisplayString",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 32
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "VLAN Name. Default for VLAN 1 is 'default'. Default for any other VLAN is 'VLANxxxx', where 'xxxx' is a decimal representation of the VLAN ID with leading zeroes."
+  },
+  "cie1000VlanConfigInterfaces": {
+    "name": "cie1000VlanConfigInterfaces",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2",
+    "class": "objectidentity"
+  },
+  "cie1000VlanConfigInterfacesTable": {
+    "name": "cie1000VlanConfigInterfacesTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of per-port configuration."
+  },
+  "cie1000VlanConfigInterfacesEntry": {
+    "name": "cie1000VlanConfigInterfacesEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesIfIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains the VLAN configuration for a port interface."
+  },
+  "cie1000VlanConfigInterfacesIfIndex": {
+    "name": "cie1000VlanConfigInterfacesIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface index."
+  },
+  "cie1000VlanConfigInterfacesMode": {
+    "name": "cie1000VlanConfigInterfacesMode",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanPortMode",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "VLAN mode of the port."
+  },
+  "cie1000VlanConfigInterfacesAccessVlan": {
+    "name": "cie1000VlanConfigInterfacesAccessVlan",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port VLAN ID the port will be assigned when Mode is Access."
+  },
+  "cie1000VlanConfigInterfacesTrunkNativeVlan": {
+    "name": "cie1000VlanConfigInterfacesTrunkNativeVlan",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port VLAN ID the port will be assigned when Mode is trunk."
+  },
+  "cie1000VlanConfigInterfacesTrunkTagNativeVlan": {
+    "name": "cie1000VlanConfigInterfacesTrunkTagNativeVlan",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether frames classified to TrunkNativeVlan get tagged on egress. Used when Mode is trunk."
+  },
+  "cie1000VlanConfigInterfacesTrunkVlans0KTo1K": {
+    "name": "cie1000VlanConfigInterfacesTrunkVlans0KTo1K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "cie1000VlanConfigInterfacesTrunkVlans1KTo2K": {
+    "name": "cie1000VlanConfigInterfacesTrunkVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "cie1000VlanConfigInterfacesTrunkVlans2KTo3K": {
+    "name": "cie1000VlanConfigInterfacesTrunkVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "cie1000VlanConfigInterfacesTrunkVlans3KTo4K": {
+    "name": "cie1000VlanConfigInterfacesTrunkVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is trunk."
+  },
+  "cie1000VlanConfigInterfacesHybridNativeVlan": {
+    "name": "cie1000VlanConfigInterfacesHybridNativeVlan",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The port VLAN ID the port will be assigned when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridPortType": {
+    "name": "cie1000VlanConfigInterfacesHybridPortType",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.11",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanPortType",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls awareness and whether it reacts to C-tags, S-tags, Custom-S-tags. Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridIngressFiltering": {
+    "name": "cie1000VlanConfigInterfacesHybridIngressFiltering",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.12",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether frames classified to a certain VLAN ID get discarded (true) or not (false) if the port is not member of the VLAN ID. Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridIngressAcceptance": {
+    "name": "cie1000VlanConfigInterfacesHybridIngressAcceptance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.13",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanIngressAcceptance",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls whether frames are accepted on ingress depending on VLAN tag in frame. Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridEgressTagging": {
+    "name": "cie1000VlanConfigInterfacesHybridEgressTagging",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.14",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanEgressTagging",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Controls tagging of frames on egress. tagThis(1) is not allowed. Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridVlans0KTo1K": {
+    "name": "cie1000VlanConfigInterfacesHybridVlans0KTo1K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.15",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridVlans1KTo2K": {
+    "name": "cie1000VlanConfigInterfacesHybridVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.16",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridVlans2KTo3K": {
+    "name": "cie1000VlanConfigInterfacesHybridVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.17",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesHybridVlans3KTo4K": {
+    "name": "cie1000VlanConfigInterfacesHybridVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.18",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating whether the port is member of a VLAN ('1') or not ('0'). Used when Mode is hybrid."
+  },
+  "cie1000VlanConfigInterfacesForbiddenVlans0KTo1K": {
+    "name": "cie1000VlanConfigInterfacesForbiddenVlans0KTo1K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.19",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "First quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "cie1000VlanConfigInterfacesForbiddenVlans1KTo2K": {
+    "name": "cie1000VlanConfigInterfacesForbiddenVlans1KTo2K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.20",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Second quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "cie1000VlanConfigInterfacesForbiddenVlans2KTo3K": {
+    "name": "cie1000VlanConfigInterfacesForbiddenVlans2KTo3K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.21",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Third quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "cie1000VlanConfigInterfacesForbiddenVlans3KTo4K": {
+    "name": "cie1000VlanConfigInterfacesForbiddenVlans3KTo4K",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.1.1.22",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanListQuarter",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Last quarter of bit-array indicating whether the port can ever become a member of a VLAN ('0') or not ('1'). Used in all modes."
+  },
+  "cie1000VlanConfigInterfacesSvlTable": {
+    "name": "cie1000VlanConfigInterfacesSvlTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Shared VLAN Learning (SVL) allows for having one or more VLAN IDs map to the same Filter ID (FID). For a given set of VLANs, if an individual MAC address is learned in one VLAN, that learned information is used in forwarding decisions taken for that address relative to all other VLANs in the given set. fidCnt, which can be found in the capabilities section, indicates the number of FIDs available on this platform. The feature is not available if this number is 0."
+  },
+  "cie1000VlanConfigInterfacesSvlEntry": {
+    "name": "cie1000VlanConfigInterfacesSvlEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesSvlVlanId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "The table is indexed by VLAN ID"
+  },
+  "cie1000VlanConfigInterfacesSvlVlanId": {
+    "name": "cie1000VlanConfigInterfacesSvlVlanId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "cie1000VlanConfigInterfacesSvlFilterId": {
+    "name": "cie1000VlanConfigInterfacesSvlFilterId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Filter ID (FID) used in Shared VLAN Learning. Zero or more VLANs may map into the same FID."
+  },
+  "cie1000VlanConfigInterfacesSvlAction": {
+    "name": "cie1000VlanConfigInterfacesSvlAction",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.2.1.100",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000RowEditorState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Action"
+  },
+  "cie1000VlanConfigInterfacesSvlTableRowEditor": {
+    "name": "cie1000VlanConfigInterfacesSvlTableRowEditor",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.3",
+    "class": "objectidentity"
+  },
+  "cie1000VlanConfigInterfacesSvlTableRowEditorVlanId": {
+    "name": "cie1000VlanConfigInterfacesSvlTableRowEditorVlanId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.3.1",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "cie1000VlanConfigInterfacesSvlTableRowEditorFilterId": {
+    "name": "cie1000VlanConfigInterfacesSvlTableRowEditorFilterId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.3.2",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Unsigned16",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Filter ID (FID) used in Shared VLAN Learning. Zero or more VLANs may map into the same FID."
+  },
+  "cie1000VlanConfigInterfacesSvlTableRowEditorAction": {
+    "name": "cie1000VlanConfigInterfacesSvlTableRowEditorAction",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.2.2.3.100",
+    "nodetype": "scalar",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000RowEditorState",
+      "class": "type"
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "Action"
+  },
+  "cie1000VlanStatus": {
+    "name": "cie1000VlanStatus",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3",
+    "class": "objectidentity"
+  },
+  "cie1000VlanStatusInterfaces": {
+    "name": "cie1000VlanStatusInterfaces",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1",
+    "class": "objectidentity"
+  },
+  "cie1000VlanStatusInterfacesTable": {
+    "name": "cie1000VlanStatusInterfacesTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of per-interface (port) status."
+  },
+  "cie1000VlanStatusInterfacesEntry": {
+    "name": "cie1000VlanStatusInterfacesEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesIfIndex",
+        "implied": 0
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesVlanUser",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains the VLAN configuration for a port interface for a given VLAN user."
+  },
+  "cie1000VlanStatusInterfacesIfIndex": {
+    "name": "cie1000VlanStatusInterfacesIfIndex",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000InterfaceIndex",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "Logical interface index."
+  },
+  "cie1000VlanStatusInterfacesVlanUser": {
+    "name": "cie1000VlanStatusInterfacesVlanUser",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanUserType",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "VLAN user."
+  },
+  "cie1000VlanStatusInterfacesPvid": {
+    "name": "cie1000VlanStatusInterfacesPvid",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Port VLAN ID set by this user."
+  },
+  "cie1000VlanStatusInterfacesUvid": {
+    "name": "cie1000VlanStatusInterfacesUvid",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Untagged VLAN ID set by a user. This may only be populated by non-admin users."
+  },
+  "cie1000VlanStatusInterfacesPortType": {
+    "name": "cie1000VlanStatusInterfacesPortType",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanPortType",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "VLAN Awareness and tag reaction set by this user."
+  },
+  "cie1000VlanStatusInterfacesIngressFiltering": {
+    "name": "cie1000VlanStatusInterfacesIngressFiltering",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Ingress filtering enabled or disabled by this user."
+  },
+  "cie1000VlanStatusInterfacesIngressAcceptance": {
+    "name": "cie1000VlanStatusInterfacesIngressAcceptance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanIngressAcceptance",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "VLAN tagging accepted upon ingress configured by this user."
+  },
+  "cie1000VlanStatusInterfacesEgressTagging": {
+    "name": "cie1000VlanStatusInterfacesEgressTagging",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanEgressTagging",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Egress tagging configured by this user."
+  },
+  "cie1000VlanStatusMemberships": {
+    "name": "cie1000VlanStatusMemberships",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.2",
+    "class": "objectidentity"
+  },
+  "cie1000VlanStatusMembershipsVlanTable": {
+    "name": "cie1000VlanStatusMembershipsVlanTable",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.2.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "Table of per-VLAN, per-VLAN user port memberships."
+  },
+  "cie1000VlanStatusMembershipsVlanEntry": {
+    "name": "cie1000VlanStatusMembershipsVlanEntry",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.2.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusMembershipsVlanVlanId",
+        "implied": 0
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusMembershipsVlanVlanUser",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "Each row contains a port list of VLAN memberships for a given VLAN and VLAN user.The table is sparsely populated, so if a VLAN user doesn't contribute, the row is non-existent."
+  },
+  "cie1000VlanStatusMembershipsVlanVlanId": {
+    "name": "cie1000VlanStatusMembershipsVlanVlanId",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.2.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000Vlan",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "VLAN ID. Valid range is 1 - 4095."
+  },
+  "cie1000VlanStatusMembershipsVlanVlanUser": {
+    "name": "cie1000VlanStatusMembershipsVlanVlanUser",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.2.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000VlanUserType",
+      "class": "type"
+    },
+    "maxaccess": "accessible-for-notify",
+    "status": "current",
+    "description": "VLAN user."
+  },
+  "cie1000VlanStatusMembershipsVlanPortList": {
+    "name": "cie1000VlanStatusMembershipsVlanPortList",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.1.3.2.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "CIE1000PortList",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Port list."
+  },
+  "cie1000VlanMibConformance": {
+    "name": "cie1000VlanMibConformance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2",
+    "class": "objectidentity"
+  },
+  "cie1000VlanMibCompliances": {
+    "name": "cie1000VlanMibCompliances",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.1",
+    "class": "objectidentity"
+  },
+  "cie1000VlanMibGroups": {
+    "name": "cie1000VlanMibGroups",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2",
+    "class": "objectidentity"
+  },
+  "cie1000VlanCapabilitiesInfoGroup": {
+    "name": "cie1000VlanCapabilitiesInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanCapabilitiesVlanIdMin"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanCapabilitiesVlanIdMax"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanCapabilitiesFidCnt"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanConfigGlobalsMainInfoGroup": {
+    "name": "cie1000VlanConfigGlobalsMainInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsMainCustomSPortEtherType"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsMainAccessVlans0To1K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsMainAccessVlans1KTo2K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsMainAccessVlans2KTo3K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsMainAccessVlans3KTo4K"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanConfigGlobalsNameTableInfoGroup": {
+    "name": "cie1000VlanConfigGlobalsNameTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsNameVlanId"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigGlobalsNameName"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanConfigInterfacesTableInfoGroup": {
+    "name": "cie1000VlanConfigInterfacesTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesIfIndex"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesMode"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesAccessVlan"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesTrunkNativeVlan"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesTrunkTagNativeVlan"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesTrunkVlans0KTo1K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesTrunkVlans1KTo2K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesTrunkVlans2KTo3K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesTrunkVlans3KTo4K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridNativeVlan"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridPortType"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridIngressFiltering"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridIngressAcceptance"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridEgressTagging"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridVlans0KTo1K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridVlans1KTo2K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridVlans2KTo3K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesHybridVlans3KTo4K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesForbiddenVlans0KTo1K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesForbiddenVlans1KTo2K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesForbiddenVlans2KTo3K"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesForbiddenVlans3KTo4K"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanConfigInterfacesSvlTableInfoGroup": {
+    "name": "cie1000VlanConfigInterfacesSvlTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesSvlVlanId"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesSvlFilterId"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesSvlAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanConfigInterfacesSvlTableRowEditorInfoGroup": {
+    "name": "cie1000VlanConfigInterfacesSvlTableRowEditorInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.6",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesSvlTableRowEditorVlanId"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesSvlTableRowEditorFilterId"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanConfigInterfacesSvlTableRowEditorAction"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanStatusInterfacesTableInfoGroup": {
+    "name": "cie1000VlanStatusInterfacesTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.7",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesIfIndex"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesVlanUser"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesPvid"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesUvid"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesPortType"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesIngressFiltering"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesIngressAcceptance"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusInterfacesEgressTagging"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanStatusMembershipsVlanTableInfoGroup": {
+    "name": "cie1000VlanStatusMembershipsVlanTableInfoGroup",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.2.8",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusMembershipsVlanVlanId"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusMembershipsVlanVlanUser"
+      },
+      {
+        "module": "CIE1000-VLAN-MIB",
+        "object": "cie1000VlanStatusMembershipsVlanPortList"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects."
+  },
+  "cie1000VlanMibCompliance": {
+    "name": "cie1000VlanMibCompliance",
+    "oid": "1.3.6.1.4.1.9.9.832.1.13.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "cie1000VlanCapabilitiesInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      },
+      {
+        "object": "cie1000VlanConfigGlobalsMainInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      },
+      {
+        "object": "cie1000VlanConfigGlobalsNameTableInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      },
+      {
+        "object": "cie1000VlanConfigInterfacesTableInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      },
+      {
+        "object": "cie1000VlanConfigInterfacesSvlTableInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      },
+      {
+        "object": "cie1000VlanConfigInterfacesSvlTableRowEditorInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      },
+      {
+        "object": "cie1000VlanStatusInterfacesTableInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      },
+      {
+        "object": "cie1000VlanStatusMembershipsVlanTableInfoGroup",
+        "module": "CIE1000-VLAN-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "The compliance statement for the implementation."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/CIE1000-VLAN-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:13:07 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "CIE1000-VLAN-MIB"
+  }
+}

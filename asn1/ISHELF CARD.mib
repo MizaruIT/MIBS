@@ -1,0 +1,2542 @@
+ISHELF-CARD-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY,
+    Unsigned32,
+    Counter32,
+    IpAddress
+        FROM SNMPv2-SMI
+
+    RowStatus,
+    TruthValue,
+    MacAddress
+        FROM SNMPv2-TC
+
+    telstrat,
+    osiIShelf,
+    iShelfCard,
+    iShelfTrap,
+    iShelfTrapGroup,
+    iShelfModules
+        FROM ISHELF-ARCS-MIB
+
+    IShelfLabel,
+    IShelfLocation,
+    IShelfDateTime,
+    IShelfCardType,
+    IShelfAdminState,
+    IShelfOperState,
+    IShelfEthernetPortMode,
+    IShelfPartNumber,
+    IShelfHardwareRevision,
+    IShelfSoftwareRevision,
+    IShelfCardSoftwareRevision,
+    IShelfSerialNumber,
+    IShelfFpga,
+    IShelfModule,
+    IShelfLocation,
+    IShelfLocationType,
+    IShelfOltOntId,
+    IShelfOltPonIndex,
+    IShelfOntType,
+    IShelfOntRegistrationId,
+    IShelfOntSerialNumber,
+    IShelfOntFlashLed,
+    IShelfOntVoiceMessagePlayback,
+    IShelfOntLogicalId,
+    IShelfOntDiscLogicalId,
+    IShelfOntSubscriberLineCardIndex,
+    IShelfOntCustomerLabel,
+    IShelfOntSubscriberLineCardType,
+    IShelfProductId,
+    IShelfCleiCode,
+    IShelfOltPonBandwidthRate,
+    IShelfOltPonLocalGigE,
+    IShelfFilename,
+    IShelfCardRedundancy,
+    IShelfDisableTableIndex,
+	 IShelfOntOperState,
+	 IShelfOntSoftwareImageVersion,
+	 IShelfOntSoftwareImageIndex,
+	 IShelfOntSoftwareImageStatus
+        FROM ISHELF-TC
+    ;
+
+iShelfCardMIB MODULE-IDENTITY
+    LAST-UPDATED "200604280000Z"
+    ORGANIZATION "TelStrat"
+    CONTACT-INFO "
+        TelStrat
+        6900 K Avenue
+        Plano, TX, USA 75074
+
+        Main Phone: 972-543-3500
+        Main Fax: 972-424-2909
+        Support Phone: 888-658-8572
+        Support Fax: 918-610-9975
+        Email:  AccessCustomerSupport@telstrat.com"
+    DESCRIPTION "The MIB module for managing Card provisioning."
+    REVISION "200604280000Z"
+    DESCRIPTION "Beta Release"
+    ::= { iShelfModules 3 }
+
+-- %PRIVATEHEADER
+-- %CLICMDPREFIX card
+-- %CLICMDABBR group
+iShelfCardGroup OBJECT IDENTIFIER ::= { iShelfCard 1 }
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR olt
+iShelfOltCard OBJECT IDENTIFIER ::= { iShelfCard 2 }
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR ont
+iShelfOntCard OBJECT IDENTIFIER ::= { iShelfCard 3 }
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR egw
+iShelfEgwCard OBJECT IDENTIFIER ::= { iShelfCard 4 }
+
+-- %CLICMDPREFIX service
+-- %CLICMDABBR group
+iShelfServicability OBJECT IDENTIFIER ::= { iShelfCard 5 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfCardTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- %DEEPCPUGET XlateDeepGet 10000 ROW 
+-- %ROWSTRUCT USER
+-- %CLICMDPREFIX card
+-- %CLICMDABBR table
+-- %CLISHOWGROUP table
+iShelfCardTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfCardEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "the card associated data"
+    ::= { iShelfCardGroup 1 }
+
+iShelfCardEntry OBJECT-TYPE
+    SYNTAX      IShelfCardEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "each row identifies a card"
+    INDEX       { iShelfCardLocation }
+    ::= { iShelfCardTable 1 }
+
+IShelfCardEntry ::=
+    SEQUENCE {
+        iShelfCardLocation
+            IShelfLocation,
+        iShelfCardExpectedCardType
+            IShelfCardType,
+        iShelfCardActualCardType
+            IShelfCardType,
+        iShelfCardAdminState
+            IShelfAdminState,
+        iShelfCardOperState
+            IShelfOperState,
+        iShelfCardAction
+            INTEGER,
+        iShelfCardRedundancyStatus
+            IShelfCardRedundancy,
+        iShelfCardOltUplink
+            INTEGER,
+        iShelfCardRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL location
+-- %CLIWIDTH 8
+-- %CLISHOWGROUP table
+-- %CLICMDABBR location
+iShelfCardLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "the node/shelf/slot location of the card."
+    ::= { iShelfCardEntry 1 }
+
+-- %SETINACTIVE
+-- %CLICMDABBR expected
+-- %CLICOLLABEL expected
+-- %CLISHOWGROUP table
+iShelfCardExpectedCardType OBJECT-TYPE
+    SYNTAX      IShelfCardType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "the expected type of the card present in the system.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfCardEntry 2 }
+
+-- %CLICOLLABEL actual
+-- %CLISHOWGROUP table
+-- %CLICMDABBR actual
+iShelfCardActualCardType OBJECT-TYPE
+    SYNTAX      IShelfCardType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "the actual type of the card present in the system."
+    ::= { iShelfCardEntry 3 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR admin
+-- %CLICOLLABEL admin
+-- %CLISHOWGROUP table
+iShelfCardAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "the administrative state of the card
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { unlock }
+    ::= { iShelfCardEntry 4 }
+
+-- %CLICOLLABEL oper
+-- %CLISHOWGROUP table
+-- %CLICMDABBR oper
+iShelfCardOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "the operational state of the card"
+    ::= { iShelfCardEntry 5 }
+
+-- %CLIOPTION
+-- %CLICOLLABEL action
+-- %CLICMDABBR action
+iShelfCardAction OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    noAction(0),
+                    resetCard(1)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Setting this will result in the associated
+         action being performed on the card.  A Get of this object
+         will indicate the last performed action."
+    ::= { iShelfCardEntry 6 }
+
+-- %DEEPCPUOBJ
+-- %CLICOLLABEL redundancy
+-- %CLISHOWGROUP table
+-- %CLICMDABBR redundancy
+iShelfCardRedundancyStatus OBJECT-TYPE
+    SYNTAX      IShelfCardRedundancy
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The redundancy status of this card."
+    ::= { iShelfCardEntry 7 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLICMDABBR uplink
+-- %CLICOLLABEL uplink
+-- %CLISHOWGROUP table
+iShelfCardOltUplink OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    default(0),
+                    local(1),
+                    remote(2),
+                    both(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The uplink that is used if this is an OLT card. This object has no effect
+         on card types that are not OLT.
+         Local will utilize the local GigEthernet port as the uplink.
+         Remote will utilize the backplane cell bus to a separate uplink card.
+         Both will enable the ability to utilize both the local GigEthernet port
+         and the backplane cell bus.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { default }
+    ::= { iShelfCardEntry 8 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP table
+-- %CLICMDABBR rowstatus
+iShelfCardRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfCardEntry 9 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfCardInventoryTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR inventory
+-- %CLISHOWGROUP inventory
+iShelfCardInventoryTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfCardInventoryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "table of card equipment information"
+    ::= { iShelfCardGroup 2 }
+
+iShelfCardInventoryEntry OBJECT-TYPE
+    SYNTAX      IShelfCardInventoryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "each row identifies a card.  A row is only present if
+         the card is known."
+    INDEX       { iShelfCardInventoryLocation,
+                  iShelfCardInventoryCardType }
+    ::= { iShelfCardInventoryTable 1 }
+
+IShelfCardInventoryEntry ::=
+    SEQUENCE {
+        iShelfCardInventoryLocation
+            IShelfLocation,
+        iShelfCardInventoryCardType
+            IShelfCardType,
+        iShelfCardInventoryPartNumber
+            IShelfPartNumber,
+        iShelfCardInventoryHardwareRevision
+            IShelfHardwareRevision,
+        iShelfCardInventorySoftwareRevision
+            IShelfCardSoftwareRevision,
+        iShelfCardInventoryFlashSoftwareRevision
+            IShelfCardSoftwareRevision,
+        iShelfCardInventoryDate
+            IShelfDateTime,
+        iShelfCardInventorySerialNumber
+            IShelfSerialNumber,
+        iShelfCardInventoryFpga
+            IShelfFpga,
+        iShelfCardInventoryCleiCode
+            IShelfCleiCode,
+        iShelfCardInventoryProductId
+            IShelfProductId,
+        iShelfCardInventoryFpga2
+            IShelfFpga
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP inventory.1
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventoryLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The node/shelf/slot location of the card."
+    ::= { iShelfCardInventoryEntry 1 }
+
+-- %CLICOLLABEL Type
+-- %CLISHOWGROUP inventory.1
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventoryCardType OBJECT-TYPE
+    SYNTAX      IShelfCardType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This attribute indicates type of card."
+    ::= { iShelfCardInventoryEntry 2 }
+
+-- %CLICOLLABEL PartNo
+-- %CLISHOWGROUP inventory.1
+iShelfCardInventoryPartNumber OBJECT-TYPE
+    SYNTAX      IShelfPartNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute indicates the number used to identify the
+         card, options, and its revision number."
+    ::= { iShelfCardInventoryEntry 3 }
+
+-- %CLICOLLABEL HWRev
+-- %CLISHOWGROUP inventory.1
+-- %CLIWIDTH 9
+iShelfCardInventoryHardwareRevision OBJECT-TYPE
+    SYNTAX      IShelfHardwareRevision
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This attribute indicates the hardware revision of the card."
+    ::= { iShelfCardInventoryEntry 4 }
+
+-- %CLISHOWGROUP inventory.1
+iShelfCardInventorySoftwareRevision OBJECT-TYPE
+    SYNTAX      IShelfCardSoftwareRevision
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This attribute indicates the running software revision of the card."
+    ::= { iShelfCardInventoryEntry 5 }
+
+-- %CLISHOWGROUP inventory.1
+iShelfCardInventoryFlashSoftwareRevision OBJECT-TYPE
+    SYNTAX      IShelfCardSoftwareRevision
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This attribute indicates the flash software revision of the card."
+    ::= { iShelfCardInventoryEntry 6 }
+
+-- %CLICOLLABEL Date
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventoryDate OBJECT-TYPE
+    SYNTAX      IShelfDateTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute indicates the release date of the
+         firmware for the card."
+    ::= { iShelfCardInventoryEntry 7 }
+
+-- %CLICOLLABEL Serial
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventorySerialNumber OBJECT-TYPE
+    SYNTAX      IShelfSerialNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This attribute indicates the serial number of the card."
+    ::= { iShelfCardInventoryEntry 8 }
+
+-- %CLICOLLABEL Fpga
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventoryFpga OBJECT-TYPE
+    SYNTAX      IShelfFpga
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute indicates the revision number of the
+         Field-Programmable Gate Array (FPGA) logic chip."
+    ::= { iShelfCardInventoryEntry 9 }
+
+-- %CLICOLLABEL CLEI
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventoryCleiCode OBJECT-TYPE
+    SYNTAX      IShelfCleiCode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This attribute indicates the CLEI code of the card."
+    ::= { iShelfCardInventoryEntry 10 }
+
+-- %CLICOLLABEL ProdId
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventoryProductId OBJECT-TYPE
+    SYNTAX      IShelfProductId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This attribute indicates the product ID of the card."
+    ::= { iShelfCardInventoryEntry 11 }
+
+-- %CLICOLLABEL Fpga2
+-- %CLISHOWGROUP inventory.2
+iShelfCardInventoryFpga2 OBJECT-TYPE
+    SYNTAX      IShelfFpga
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute indicates the revision number of the
+         2nd Field-Programmable Gate Array (FPGA) logic chip if the card
+         is so equipped."
+    ::= { iShelfCardInventoryEntry 12 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfImageTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- DEEPCPUGET XlateDeepGet 10000 ROW 
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX card
+-- %CLICMDABBR image
+-- %CLISHOWGROUP image
+iShelfImageTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfImageEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfCardGroup 3 }
+
+iShelfImageEntry OBJECT-TYPE
+    SYNTAX      IShelfImageEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Shows revision information for running images."
+    INDEX       { iShelfImageLocation,
+                  iShelfImageCardModule,
+                  iShelfImageModule,
+                  iShelfImageType }
+    ::= { iShelfImageTable 1 }
+
+IShelfImageEntry ::=
+    SEQUENCE {
+        iShelfImageLocation
+            IShelfLocation,
+        iShelfImageCardModule
+            INTEGER,
+        iShelfImageModule
+            IShelfModule,
+        iShelfImageType
+            INTEGER,
+        iShelfImageCardType
+            IShelfCardType,
+        iShelfImageRevision
+            IShelfCardSoftwareRevision,
+        iShelfImageDateAndTime
+            IShelfDateTime,
+        iShelfImageFirmwareRevision
+            IShelfFpga,
+        iShelfImageFirmwareRevision2
+            IShelfFpga
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP image
+iShelfImageLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The node/shelf/slot location of the module."
+    ::= { iShelfImageEntry 1 }
+
+-- %CLICOLLABEL Card
+-- %CLISHOWGROUP image
+iShelfImageCardModule OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    main(1),
+                    exp1(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A single slot card will only have a main entry.
+         A dual slot card will have a main and exp1 entry."
+    ::= { iShelfImageEntry 2 }
+
+-- %CLICOLLABEL Module
+-- %CLISHOWGROUP image
+iShelfImageModule OBJECT-TYPE
+    SYNTAX      IShelfModule
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The module type of software."
+    ::= { iShelfImageEntry 3 }
+    
+-- %CLICOLLABEL Type
+-- %CLISHOWGROUP image
+iShelfImageType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    ramActv(0),
+                    flashSby(1),
+                    flashBkup(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The memory type of software. ramActv is the version currently running.
+                 flashSby is the version in flash that will run when the card is reset.
+                 flashBkup is the previously downloaded version in flash."
+    ::= { iShelfImageEntry 4 }
+
+-- %CLICOLLABEL CardType
+-- %CLISHOWGROUP image
+iShelfImageCardType OBJECT-TYPE
+    SYNTAX      IShelfCardType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The type of the card."
+    ::= { iShelfImageEntry 5 }
+
+-- for DeepGet()
+-- not any more %CLICOLLABEL ImgRev
+-- %CLISHOWGROUP image
+iShelfImageRevision OBJECT-TYPE
+    SYNTAX      IShelfCardSoftwareRevision
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The revision number of the software."
+    ::= { iShelfImageEntry 6 }
+
+-- %CLICOLLABEL DateAndTime
+-- %CLISHOWGROUP image
+-- %CLIWIDTH 12
+iShelfImageDateAndTime OBJECT-TYPE
+    SYNTAX      IShelfDateTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The date/time the software module was created."
+    ::= { iShelfImageEntry 7 }
+
+-- %CLICOLLABEL FirmRev
+-- %CLISHOWGROUP image
+-- %CLIWIDTH 9
+iShelfImageFirmwareRevision OBJECT-TYPE
+    SYNTAX      IShelfFpga
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Additional revision info (FW Rev) for FPGA and DSP module types."
+    ::= { iShelfImageEntry 8 }
+
+-- %CLICOLLABEL FirmRev2
+-- %CLISHOWGROUP image
+-- %CLIWIDTH 9
+iShelfImageFirmwareRevision2 OBJECT-TYPE
+    SYNTAX      IShelfFpga
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Additional revision info (FW Rev) for FPGA2 and DSP module types if so equipped."
+    ::= { iShelfImageEntry 9 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltPonTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX card
+-- %CLICMDABBR oltpon
+-- %CLISHOWGROUP oltpon
+iShelfOltPonTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltPonEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains the provisioning for the OLT PON interface. Provisioning
+         of the PON at this level is basically turning the transmit laser on or off.
+         The table also contains various PON-level statistics."
+    ::= { iShelfOltCard 1 }
+
+iShelfOltPonEntry OBJECT-TYPE
+    SYNTAX      IShelfOltPonEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row controls a separate PON interface."
+    INDEX       { iShelfOltPonLocation,
+                  iShelfOltPonIndex }
+    ::= { iShelfOltPonTable 1 }
+
+IShelfOltPonEntry ::=
+    SEQUENCE {
+        iShelfOltPonLocation
+            IShelfLocation,
+        iShelfOltPonIndex
+            IShelfOltPonIndex,
+        iShelfOltPonAdminState
+            IShelfAdminState,
+        iShelfOltPonOperState
+            IShelfOperState,
+        iShelfOltPonUsTotalAal5Bandwidth
+            IShelfOltPonBandwidthRate,
+        iShelfOltPonDsTotalAal5Bandwidth
+            IShelfOltPonBandwidthRate,
+        iShelfOltPonUsAvailAal5Bandwidth
+            IShelfOltPonBandwidthRate,
+        iShelfOltPonDsAvailAal5Bandwidth
+            IShelfOltPonBandwidthRate,
+        iShelfOltPonUsUsedAal12Bandwidth
+            IShelfOltPonBandwidthRate,
+        iShelfOltPonDsUsedAal12Bandwidth
+            IShelfOltPonBandwidthRate,
+        iShelfOltPonInCells
+            Counter32,
+        iShelfOltPonInHecErrors
+            Counter32,
+        iShelfOltPonInLengthErrors
+            Counter32,
+        iShelfOltPonInPayloadTypeErrors
+            Counter32,
+        iShelfOltPonInInvalidVCErrors
+            Counter32,
+        iShelfOltPonOutCells
+            Counter32,
+        iShelfOltPonRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL loc
+-- %CLISHOWGROUP oltpon.1
+-- %CLISHOWGROUP oltpon.2
+-- %CLISHOWGROUP oltpon.3
+-- %CLIWIDTH 6
+iShelfOltPonLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The PON interface resides on the OLT card at this location."
+    ::= { iShelfOltPonEntry 1 }
+
+-- %CLICOLLABEL pon
+-- %CLISHOWGROUP oltpon.1
+-- %CLISHOWGROUP oltpon.2
+-- %CLISHOWGROUP oltpon.3
+-- %CLIWIDTH 3
+iShelfOltPonIndex OBJECT-TYPE
+    SYNTAX      IShelfOltPonIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The PON index on the OLT card. There are 2 types of OLT cards:
+         a two PON and a four PON version."
+    ::= { iShelfOltPonEntry 2 }
+
+-- %CLICOLLABEL admin
+-- %CLISHOWGROUP oltpon.1
+iShelfOltPonAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The provisioned administrative state of the PON. Note that in
+         the locked state, the transmit laser is off. Likewise, in the
+         unlocked state, the transmit laser is on."
+    DEFVAL      { lock }
+    ::= { iShelfOltPonEntry 3 }
+
+-- for DeepGet() 
+-- %CLICOLLABEL oper
+-- %CLISHOWGROUP oltpon.1
+iShelfOltPonOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The current operational state of the PON."
+    ::= { iShelfOltPonEntry 4 }
+
+-- %CLICOLLABEL usTotAAL5
+-- %CLISHOWGROUP oltpon.2
+iShelfOltPonUsTotalAal5Bandwidth OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the total available AAL5
+         bandwidth upstream for this PON at system initialization.
+         The manager computes used AAL5 bandwidth upstream as
+         follows:  UsUsedAal5 = UsTotalAal5 - UsAvailAal5 - UsUsedAal12."
+    ::= { iShelfOltPonEntry 5 }
+
+-- %CLICOLLABEL dsTotAAL5
+-- %CLISHOWGROUP oltpon.2
+iShelfOltPonDsTotalAal5Bandwidth OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the total available AAL5
+         bandwidth downstream for this PON at system initialization.
+         The manager computes used AAL5 bandwidth downstream as
+         follows:  DsUsedAal5 = DsTotlaAal5 - DsAvailAal5 - DsUsedAal12."
+    ::= { iShelfOltPonEntry 6 }
+
+-- %CLICOLLABEL usAvAAL5
+-- %CLISHOWGROUP oltpon.2
+iShelfOltPonUsAvailAal5Bandwidth OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the currently available AAL5
+         bandwidth upstream for this PON.  This object is maintained by
+         the OLT as bandwidth is managed.  It may be used for auditing
+         purposes by the manager.
+
+         AAL5 traffic is used for data and SDV services."
+    ::= { iShelfOltPonEntry 7 }
+
+-- %CLICOLLABEL dsAvAAL5
+-- %CLISHOWGROUP oltpon.2
+iShelfOltPonDsAvailAal5Bandwidth OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the currently available AAL5
+         bandwidth downstream for this PON.  This object is maintained
+         by the OLT as bandwidth is managed.  It may be used for auditing
+         purposes by the manager.
+
+         AAL5 traffic is used for data and SDV services."
+    ::= { iShelfOltPonEntry 8 }
+
+-- %CLICOLLABEL usUsedAAL5
+-- %CLISHOWGROUP oltpon.2
+iShelfOltPonUsUsedAal12Bandwidth OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the currently used AAL1/2
+         bandwidth upstream for this PON.  This object is maintained
+         by the OLT as bandwidth is managed.  It may be used for
+         auditing purposes by the manager.
+
+         AAL1/2 traffic is used for T1 and POTS services, respectively."
+    ::= { iShelfOltPonEntry 9 }
+
+-- %CLICOLLABEL dsUsedAAL5
+-- %CLISHOWGROUP oltpon.2
+iShelfOltPonDsUsedAal12Bandwidth OBJECT-TYPE
+    SYNTAX      IShelfOltPonBandwidthRate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the currently used AAL1/2
+         bandwidth downstream for this PON.  This object is maintained
+         by the OLT as bandwidth is managed.  It may be used for
+         auditing purposes by the manager.
+
+         AAL1/2 traffic is used for T1 and POTS services, respectively."
+    ::= { iShelfOltPonEntry 10 }
+
+-- %CLICOLLABEL inCells
+-- %CLISHOWGROUP oltpon.3
+iShelfOltPonInCells OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the number of valid cells
+         received on this PON interface."
+    ::= { iShelfOltPonEntry 11 }
+
+-- %CLICOLLABEL inHECErr
+-- %CLISHOWGROUP oltpon.3
+iShelfOltPonInHecErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the number of cells with HEC
+         errors received on this PON interface."
+    ::= { iShelfOltPonEntry 12 }
+
+-- %CLICOLLABEL inLenErr
+-- %CLISHOWGROUP oltpon.3
+iShelfOltPonInLengthErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the number of cells with length
+         errors received on this PON interface."
+    ::= { iShelfOltPonEntry 13 }
+
+-- %CLICOLLABEL inTypeErr
+-- %CLISHOWGROUP oltpon.3
+iShelfOltPonInPayloadTypeErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the number of cells with payload
+         type errors received on this PON interface."
+    ::= { iShelfOltPonEntry 14 }
+
+-- %CLICOLLABEL inInvVcErr
+-- %CLISHOWGROUP oltpon.3
+iShelfOltPonInInvalidVCErrors OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the number of cells with an
+         unknown VC received on this PON interface."
+    ::= { iShelfOltPonEntry 15 }
+
+-- %CLICOLLABEL outCells
+-- %CLISHOWGROUP oltpon.3
+iShelfOltPonOutCells OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the number of cells transmitted
+         on this PON interface."
+    ::= { iShelfOltPonEntry 16 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLISHOWGROUP oltpon.1
+iShelfOltPonRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfOltPonEntry 17 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOltPonCardTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR oltponcard
+-- %CLISHOWGROUP oltponcard
+iShelfOltPonCardTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOltPonCardEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table represents the card specific configuation for the OLT PON
+         line cards.  A row in this table exists for each provisioned OLT PON
+         card.
+
+         Rows in this table are automatically created when an OLT PON is
+         provisioned."
+
+    ::= { iShelfOltCard 2 }
+
+iShelfOltPonCardEntry OBJECT-TYPE
+    SYNTAX      IShelfOltPonCardEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each entry contains the global information for one OLT PON
+         line card."
+    INDEX       { iShelfOltPonCardLocation }
+    ::= { iShelfOltPonCardTable 1 }
+
+IShelfOltPonCardEntry ::=
+    SEQUENCE {
+        iShelfOltPonCardLocation
+            IShelfLocation,
+        iShelfOltPonCardIndex
+            IShelfOltPonIndex,
+        iShelfOltPonCardLocalGigE
+            IShelfOltPonLocalGigE,
+        iShelfOltPonCardCarrierIspVlanTag
+            INTEGER,
+        iShelfOltPonCardLabel
+            IShelfLabel,
+        iShelfOltPonCardAdminState
+            IShelfAdminState,
+        iShelfOltPonCardOperState
+            IShelfOperState,
+        iShelfOltPonCardRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP oltponcard.1
+-- %CLICOLLABEL Location
+iShelfOltPonCardLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the location of the OLT PON line card."
+    ::= { iShelfOltPonCardEntry 1 }
+
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonCardIndex OBJECT-TYPE
+    SYNTAX      IShelfOltPonIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The PON index on the OLT card. There are 2 types of OLT cards:
+         a two PON and a four PON version."
+    ::= { iShelfOltPonCardEntry 2 }
+
+-- %CLISHOWGROUP oltponcard.1
+-- %CLICOLLABEL LocalGigE
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonCardLocalGigE OBJECT-TYPE
+    SYNTAX      IShelfOltPonLocalGigE
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Sets whether this card used a Local GigE for the OLT PON ports on this OLT PON card"
+    DEFVAL      { no }
+    ::= { iShelfOltPonCardEntry 3 }
+
+-- %CLISHOWGROUP oltponcard.1
+-- %CLICOLLABEL IspVlanTab
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonCardCarrierIspVlanTag OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Determines selection of the OLT PON Carrier ISP VLAN Tag."
+    DEFVAL      { 0 }
+    ::= { iShelfOltPonCardEntry 4 }
+
+-- %CLISHOWGROUP oltponcard.1
+-- %CLIOPTION
+-- %SETINACTIVE
+iShelfOltPonCardLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "A user description of the OLT PON card."
+    ::= { iShelfOltPonCardEntry 5 }
+
+-- %CLISHOWGROUP oltponcard.1
+iShelfOltPonCardAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to unlock and lock the services for
+         this OLT PON line card."
+    DEFVAL      { lock }
+    ::= { iShelfOltPonCardEntry 6 }
+
+-- %CLISHOWGROUP oltponcard.1
+iShelfOltPonCardOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates whether or not this OLT PON
+         line card is capable of performing its services.  Valid
+         values are enabled, disabled, and unknown.  A value of disabled
+         indicates the line card is present, but for some reason it is
+         not capable of performing its service, e.g., actual vs. expected
+         line card type mismatch.  A value of unknown indicates the line
+         card is not present."
+    DEFVAL      { unknown }
+    ::= { iShelfOltPonCardEntry 7 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLIIGNORE
+iShelfOltPonCardRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOltPonCardEntry 8 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntDiscoveryTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR ontdisctable
+-- %CLISHOWGROUP ontdisctable
+iShelfOntDiscoveryTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntDiscoveryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntCard 1 }
+
+iShelfOntDiscoveryEntry OBJECT-TYPE
+    SYNTAX      IShelfOntDiscoveryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntDiscoveryLocation,
+                  iShelfOntDiscoveryPonIndex,
+                  iShelfOntDiscoveryOntId }
+    ::= { iShelfOntDiscoveryTable 1 }
+
+IShelfOntDiscoveryEntry ::=
+    SEQUENCE {
+        iShelfOntDiscoveryLocation
+            IShelfLocation,
+        iShelfOntDiscoveryPonIndex
+            IShelfOltPonIndex,
+        iShelfOntDiscoveryOntId
+            IShelfOltOntId,
+        iShelfOntDiscoveryRangeDistance
+            Unsigned32,
+        iShelfOntDiscoveryActualType
+            IShelfOntType,
+        iShelfOntDiscoveryRegistrationId
+            IShelfOntRegistrationId,
+        iShelfOntDiscoverySerialNumber
+            IShelfOntSerialNumber,
+        iShelfOntDiscoveryFlashLed
+            IShelfOntFlashLed,
+        iShelfOntDiscoveryVoiceMessagePlayback
+            IShelfOntVoiceMessagePlayback,
+        iShelfOntDiscoveryLogicalId
+            IShelfOntDiscLogicalId,
+        iShelfOntDiscoveryReset
+            TruthValue,
+        iShelfOntDiscoveryOperState
+            IShelfOntOperState,
+        iShelfOntDiscoveryRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP ontdisctable.1
+-- %CLISHOWGROUP ontdisctable.2
+iShelfOntDiscoveryLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the node/shelf/slot on which the
+         ONT was discovered."
+    ::= { iShelfOntDiscoveryEntry 1 }
+
+-- %CLICOLLABEL PonIdx
+-- %CLISHOWGROUP ontdisctable.1
+-- %CLISHOWGROUP ontdisctable.2
+iShelfOntDiscoveryPonIndex OBJECT-TYPE
+    SYNTAX      IShelfOltPonIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the PON number on which the
+         ONT was discovered."
+    ::= { iShelfOntDiscoveryEntry 2 }
+
+-- %CLICOLLABEL OntId
+-- %CLISHOWGROUP ontdisctable.1
+-- %CLISHOWGROUP ontdisctable.2
+iShelfOntDiscoveryOntId OBJECT-TYPE
+    SYNTAX      IShelfOltOntId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the logical location of the
+         ONT with respect to the PON interface supporting the ONT."
+    ::= { iShelfOntDiscoveryEntry 3 }
+
+-- %CLICOLLABEL RangeDis
+-- %CLISHOWGROUP ontdisctable.1
+iShelfOntDiscoveryRangeDistance OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object represents an approximate measure of
+         distance to the ONT (in meters).  This value is computed
+         from a formula based on OLT hardware measured round trip
+         delay.  The value will be accurate to +/- 50 meters."
+    ::= { iShelfOntDiscoveryEntry 4 }
+
+-- %CLICOLLABEL Actual
+-- %CLISHOWGROUP ontdisctable.1
+iShelfOntDiscoveryActualType OBJECT-TYPE
+    SYNTAX      IShelfOntType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the actual type of the ONT that
+         was discovered."
+    ::= { iShelfOntDiscoveryEntry 5 }
+
+-- %CLICOLLABEL RegId
+-- %CLISHOWGROUP ontdisctable.1
+iShelfOntDiscoveryRegistrationId OBJECT-TYPE
+    SYNTAX      IShelfOntRegistrationId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the registration ID reported by the
+         ONT.  This value is assigned via buttset provisioning."
+    ::= { iShelfOntDiscoveryEntry 6 }
+
+-- %CLICOLLABEL Serial
+-- %CLISHOWGROUP ontdisctable.1
+iShelfOntDiscoverySerialNumber OBJECT-TYPE
+    SYNTAX      IShelfOntSerialNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the physical ID assigned to the ONT.
+         This value is a globally unique value assigned by the OSI
+         manufacturing process."
+    ::= { iShelfOntDiscoveryEntry 7 }
+
+-- %CLICOLLABEL FlashLed
+-- %CLISHOWGROUP ontdisctable.2
+-- %SETINACTIVE
+iShelfOntDiscoveryFlashLed OBJECT-TYPE
+    SYNTAX      IShelfOntFlashLed
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object can be used by the manager to flash the
+         CPU LED on an ONT.  This may be useful to report status to
+         personnel installing ONTs in the field.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { normal }
+    ::= { iShelfOntDiscoveryEntry 8 }
+
+-- %CLICOLLABEL MsgPlayback
+-- %CLISHOWGROUP ontdisctable.2
+-- %SETINACTIVE
+iShelfOntDiscoveryVoiceMessagePlayback OBJECT-TYPE
+    SYNTAX      IShelfOntVoiceMessagePlayback
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object can be used by the manager to playback a
+         voice message on port 1 of the integrated POTS subscriber line card.
+         There is a pre-defined set of messages taht can be played.  Voice
+         message playback can only be turned on if the discovery entry is not
+         linked to provisioning.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { off }
+    ::= { iShelfOntDiscoveryEntry 9 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ontdisctable.2
+-- %CLICOLLABEL LogicalId
+iShelfOntDiscoveryLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntDiscLogicalId
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The logical Id associated with the discovered ONT.
+         Setting this attribute to a non-zero value will link the provisioning
+         associated with that logical value to the physical ONT described
+         by this row.  Setting this field to 0 will cause the unlinking of
+         provisioning associated with this entry and cause the associated ONT
+         to be reset.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfOntDiscoveryEntry 10 }
+
+-- %CLICOLLABEL Reset
+-- %CLISHOWGROUP ontdisctable.2
+iShelfOntDiscoveryReset OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Setting this object to true will cause the associated ONT
+         to be reset."
+    DEFVAL      { false }
+    ::= { iShelfOntDiscoveryEntry 11 }
+
+-- %CLISHOWGROUP ontdisctable.2
+iShelfOntDiscoveryOperState OBJECT-TYPE
+    SYNTAX      IShelfOntOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object is indicates whether or not this ONT is capable
+         of performing its services.  Valid values are enabled, disabled and
+         unknown.  A value of disabled indicates the ONT is missing or has
+         not been discovered.  A value of unknown indicates the ONT status
+         is unavailable, e.g. there is a commnications problem retrieving
+         the information."
+    DEFVAL      { unknown }
+    ::= { iShelfOntDiscoveryEntry 12 }
+
+-- %ROWSTATUSTYPE FIXED
+iShelfOntDiscoveryRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfOntDiscoveryEntry 13 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntRemoteInventoryTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR ontreminvtable
+-- %CLISHOWGROUP ontreminvtable
+iShelfOntRemoteInventoryTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntRemoteInventoryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table provides management access to the ONT remote
+         inventory as stored in the ONT non-volatile memory.  An ONT may
+         have several remote inventory blocks.  This table is indexed by
+         an index value that indicates the block.  There is a remote inventory
+         block for each field replacable component.
+
+         Each ONT has a main remote inventory block pertaining to the ONT
+         itself.  ONTs supporting expansion cards have remote inventory
+         blocks for each expansion card.
+
+         Rows in this table are automatically created and destroyed as ONTs
+         are discovered and lost.
+
+         For ONTs supporting expansion cards, entries in this table will
+         come and go as cards are inserted and removed, respectively."
+    ::= { iShelfOntCard 2 }
+
+iShelfOntRemoteInventoryEntry OBJECT-TYPE
+    SYNTAX      IShelfOntRemoteInventoryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry corresponds to one remote inventory block."
+    INDEX       { iShelfOntRemoteInventoryLocation,
+                  iShelfOntRemoteInventoryPonIndex,
+                  iShelfOntRemoteInventoryOntId,
+                  iShelfOntRemoteInventoryIndex }
+    ::= { iShelfOntRemoteInventoryTable 1 }
+
+IShelfOntRemoteInventoryEntry ::=
+    SEQUENCE {
+        iShelfOntRemoteInventoryLocation
+            IShelfLocation,
+        iShelfOntRemoteInventoryPonIndex
+            IShelfOltPonIndex,
+        iShelfOntRemoteInventoryOntId
+            IShelfOltOntId,
+        iShelfOntRemoteInventoryIndex
+            INTEGER,
+        iShelfOntRemoteInventoryProductId
+            IShelfProductId,
+        iShelfOntRemoteInventorySerialNumber
+            IShelfOntSerialNumber,
+        iShelfOntRemoteInventoryPartNumber
+            IShelfPartNumber,
+        iShelfOntRemoteInventoryCleiCode
+            IShelfCleiCode,
+        iShelfOntRemoteInventoryMacAddress1
+            MacAddress,
+        iShelfOntRemoteInventoryMacAddress2
+            MacAddress,
+        iShelfOntRemoteInventoryMacAddress3
+            MacAddress,
+        iShelfOntRemoteInventoryMacAddress4
+            MacAddress,
+        iShelfOntRemoteInventoryStatus
+            INTEGER
+    }
+
+-- %CLICOLLABEL Location
+-- %CLISHOWGROUP ontreminvtable.1
+-- %CLISHOWGROUP ontreminvtable.3
+iShelfOntRemoteInventoryLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Node/Shelf/Slot of the OLT
+         hosting the ONT."
+    ::= { iShelfOntRemoteInventoryEntry 1 }
+
+-- %CLICOLLABEL PonIdx
+-- %CLISHOWGROUP ontreminvtable.1
+iShelfOntRemoteInventoryPonIndex OBJECT-TYPE
+    SYNTAX      IShelfOltPonIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the PON interface that is hosting
+         the ONT."
+    ::= { iShelfOntRemoteInventoryEntry 2 }
+
+-- %CLISHOWGROUP ontreminvtable.1
+-- %CLICOLLABEL OntId
+iShelfOntRemoteInventoryOntId OBJECT-TYPE
+    SYNTAX      IShelfOltOntId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the OLT assigned ONT id on the PON."
+    ::= { iShelfOntRemoteInventoryEntry 3 }
+
+-- %CLIWIDTH 4
+-- %CLISHOWGROUP ontreminvtable.1
+-- %CLICOLLABEL Idx
+iShelfOntRemoteInventoryIndex OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    main(1),
+                    exp1(2),
+                    exp2(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the type of remote inventory
+         block.  The value of main indicates the remote inventory block
+         for the base ONT.  The value exp1 indicates the remote inventory
+         block for the first expansion card.  The value exp2 indicates the
+         remote inventory block for the second expansion card.  The
+         expansion card instances will only be present if the ONT type
+         has expansion card slots and an expansion card is inserted in the
+         slot."
+    ::= { iShelfOntRemoteInventoryEntry 4 }
+
+-- %CLISHOWGROUP ontreminvtable.1
+-- %CLICOLLABEL ProdId
+iShelfOntRemoteInventoryProductId OBJECT-TYPE
+    SYNTAX      IShelfProductId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the product Id for the ONT."
+    ::= { iShelfOntRemoteInventoryEntry 5 }
+
+-- %CLISHOWGROUP ontreminvtable.1
+-- %CLICOLLABEL Serial
+iShelfOntRemoteInventorySerialNumber OBJECT-TYPE
+    SYNTAX      IShelfOntSerialNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the ONT serial number."
+    ::= { iShelfOntRemoteInventoryEntry 6 }
+
+-- %CLISHOWGROUP ontreminvtable.1
+-- %CLICOLLABEL PartNo
+iShelfOntRemoteInventoryPartNumber OBJECT-TYPE
+    SYNTAX      IShelfPartNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the ONT part number."
+    ::= { iShelfOntRemoteInventoryEntry 7 }
+
+-- %CLICOLLABEL CLEI
+-- %CLISHOWGROUP ontreminvtable.1
+iShelfOntRemoteInventoryCleiCode OBJECT-TYPE
+    SYNTAX      IShelfCleiCode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the ONT CLEI code."
+    ::= { iShelfOntRemoteInventoryEntry 8 }
+
+-- %CLISHOWGROUP ontreminvtable.2
+-- %CLICOLLABEL MacAddress1
+iShelfOntRemoteInventoryMacAddress1 OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the MAC address of Ethernet
+         port one(1) of the integrated Ethernet subscriber line card.
+         Note:  this object only exists for the main remote inventory
+         index."
+    ::= { iShelfOntRemoteInventoryEntry 9 }
+
+-- %CLISHOWGROUP ontreminvtable.2
+-- %CLICOLLABEL MacAddress2
+iShelfOntRemoteInventoryMacAddress2 OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the MAC address of Ethernet
+         port one(1) of the integrated Ethernet subscriber line card.
+         Note:  this object only exists for the main remote inventory
+         index."
+    ::= { iShelfOntRemoteInventoryEntry 10 }
+
+-- %CLISHOWGROUP ontreminvtable.2
+-- %CLICOLLABEL MacAddress3
+iShelfOntRemoteInventoryMacAddress3 OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the MAC address of Ethernet
+         port one(1) of the integrated Ethernet subscriber line card.
+         Note:  this object only exists for the main remote inventory
+         index."
+    ::= { iShelfOntRemoteInventoryEntry 11 }
+
+-- %CLISHOWGROUP ontreminvtable.2
+-- %CLICOLLABEL MacAddress4
+iShelfOntRemoteInventoryMacAddress4 OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the MAC address of Ethernet
+         port one(1) of the integrated Ethernet subscriber line card.
+         Note:  this object only exists for the main remote inventory
+         index."
+    ::= { iShelfOntRemoteInventoryEntry 12 }
+
+-- %CLISHOWGROUP ontreminvtable.3
+-- %CLICOLLABEL Status
+iShelfOntRemoteInventoryStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    unknown(0),
+                    good(1),        -- remote inventory is good
+                    unreadable(2),  -- could not read remote inventory
+                    crcBad(3),      -- CRC is bad
+                    versionBad(4),  -- version is bad
+                    notPresent(5)   -- card holding remote inventory not present
+            }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the status of the remote
+         inventory."
+    DEFVAL      { unknown }
+    ::= { iShelfOntRemoteInventoryEntry 13 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntImageTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX card
+-- %CLICMDABBR ontimage
+iShelfOntImageTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntImageEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfOntCard 3 }
+
+iShelfOntImageEntry OBJECT-TYPE
+    SYNTAX      IShelfOntImageEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfOntImageLocation,
+                  iShelfOntImagePonIndex,
+                  iShelfOntImageOntId,
+                  iShelfOntImageIndex }
+    ::= { iShelfOntImageTable 1 }
+
+IShelfOntImageEntry ::=
+    SEQUENCE {
+        iShelfOntImageLocation
+            IShelfLocation,
+        iShelfOntImagePonIndex
+            IShelfOltPonIndex,
+        iShelfOntImageOntId
+            IShelfOltOntId,
+        iShelfOntImageIndex
+            IShelfOntSoftwareImageIndex,
+        iShelfOntImageVersion
+            IShelfOntSoftwareImageVersion,
+        iShelfOntImageIsCommitted
+            TruthValue,
+        iShelfOntImageIsActive
+            TruthValue,
+        iShelfOntImageIsValid
+            TruthValue,
+        iShelfOntImageStatus
+            IShelfOntSoftwareImageStatus
+    }
+
+-- %CLICOLLABEL Location
+iShelfOntImageLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The node/shelf/slot location of the module."
+    ::= { iShelfOntImageEntry 1 }
+
+-- %CLICOLLABEL PonIdx
+iShelfOntImagePonIndex OBJECT-TYPE
+    SYNTAX      IShelfOltPonIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the PON interface that is hosting
+         the ONT."
+    ::= { iShelfOntImageEntry 2 }
+
+-- %CLICOLLABEL OntId
+iShelfOntImageOntId OBJECT-TYPE
+    SYNTAX      IShelfOltOntId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the OLT assigned ONT id on the PON."
+    ::= { iShelfOntImageEntry 3 }
+
+-- %CLICOLLABEL Index
+iShelfOntImageIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSoftwareImageIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Software image (a or b)."
+    ::= { iShelfOntImageEntry 4 }
+
+-- %CLICOLLABEL Version
+iShelfOntImageVersion OBJECT-TYPE
+    SYNTAX      IShelfOntSoftwareImageVersion
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The revision number of the software."
+    ::= { iShelfOntImageEntry 5 }
+
+-- %CLICOLLABEL Committed
+-- %CLIWIDTH 9
+iShelfOntImageIsCommitted OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates whether the software image
+         is committed (True) or uncommitted (False)."
+    ::= { iShelfOntImageEntry 6 }
+
+-- %CLICOLLABEL Active
+-- %CLIWIDTH 6
+iShelfOntImageIsActive OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates whether the software image
+         is activate (True) or inactive (False)."
+    ::= { iShelfOntImageEntry 7 }
+
+-- %CLICOLLABEL Valid
+-- %CLIWIDTH 5
+iShelfOntImageIsValid OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates whether the software image
+         is valid (True) or invalid (False)."
+    ::= { iShelfOntImageEntry 8 }
+
+iShelfOntImageStatus OBJECT-TYPE
+    SYNTAX      IShelfOntSoftwareImageStatus
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates the state of the last TFTP
+         get operation."
+    ::= { iShelfOntImageEntry 9 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntDisableTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR ontdisabletable
+-- %CLISHOWGROUP ontdisabletable
+iShelfOntDisableTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntDisableEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Indicates the disabled ONTs in the system."
+    ::= { iShelfOntCard 4 }
+
+iShelfOntDisableEntry OBJECT-TYPE
+    SYNTAX      IShelfOntDisableEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each row indicates a disabled ONT."
+    INDEX       { iShelfOntDisableSerialNumber }
+    ::= { iShelfOntDisableTable 1 }
+
+IShelfOntDisableEntry ::=
+    SEQUENCE {
+        iShelfOntDisableLocation
+            IShelfLocation,
+        iShelfOntDisableSerialNumber
+            IShelfOntSerialNumber,
+        iShelfOntDisableRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ontdisabletable
+iShelfOntDisableSerialNumber OBJECT-TYPE
+    SYNTAX      IShelfOntSerialNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the serial number of the ONT unit."
+    ::= { iShelfOntDisableEntry 1 }
+
+-- %CLISHOWGROUP ontdisabletable
+iShelfOntDisableLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Node/Shelf/Slot on which this
+         ONT should be disabled."
+    ::= { iShelfOntDisableEntry 2 }
+
+-- %ROWSTATUSTYPE RFC
+-- %CLIIGNORE
+iShelfOntDisableRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntDisableEntry 3 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntProvisioningTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %DEEPGET CUSTOM 0 ROW
+-- %CLICMDPREFIX card
+-- %CLICMDABBR ontprovtable
+-- %CLISHOWGROUP ontprovtable
+iShelfOntProvisioningTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntProvisioningEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The ONT provisioning table is used for global ONT provisioning.
+         Entries in this table are created at the request of the management application.
+         The table is indexed by ONT logical ID.
+
+         This table supports pre-provisioning of an ONT.  The management application may
+         create an entry in this table before the ONT is present in the system.
+
+         The global administrative state of the ONT is also controlled by this table.
+         By setting the administrative state it is possible to enable/disable all
+         services provided by the ONT."
+    ::= { iShelfOntCard 5 }
+
+iShelfOntProvisioningEntry OBJECT-TYPE
+    SYNTAX      IShelfOntProvisioningEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry contains global provisioning information for a single ONT."
+    INDEX       { iShelfOntProvisioningLogicalId }
+    ::= { iShelfOntProvisioningTable 1 }
+
+IShelfOntProvisioningEntry ::=
+    SEQUENCE {
+        iShelfOntProvisioningLogicalId
+            IShelfOntLogicalId,
+        iShelfOntProvisioningExpectedType
+            IShelfOntType,
+        iShelfOntProvisioningActualType
+            IShelfOntType,
+        iShelfOntProvisioningAdminState
+            IShelfAdminState,
+        iShelfOntProvisioningOperState
+            IShelfOntOperState,
+        iShelfOntProvisioningSerialNumber
+            IShelfOntSerialNumber,
+        iShelfOntProvisioningRegistrationId
+            IShelfOntRegistrationId,
+        iShelfOntProvisioningLocation
+            IShelfLocation,
+        iShelfOntProvisioningPonIndex
+            IShelfOltPonIndex,
+        iShelfOntProvisioningOntId
+            IShelfOltOntId,
+        iShelfOntProvisioningCustomerLabel
+            IShelfOntCustomerLabel,
+        iShelfOntProvisioningCustomerRecordId
+            IShelfLabel,
+        iShelfOntProvisioningRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ontprovtable.1
+-- %CLISHOWGROUP ontprovtable.2
+-- %CLISHOWGROUP ontprovtable.3
+-- %CLISHOWGROUP ontprovtable.4
+iShelfOntProvisioningLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the logical ID of the ONT."
+    ::= { iShelfOntProvisioningEntry 1 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL expType
+-- %CLISHOWGROUP ontprovtable.1
+iShelfOntProvisioningExpectedType OBJECT-TYPE
+    SYNTAX      IShelfOntType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the expected (i.e., provisioned)
+         type of the ONT.  Changing the type of a linked ONT is not allowed.
+
+         If the actual type of a discovered ONT is different from this type,
+         the mismatch will be reported via a trap to the management system.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntProvisioningEntry 2 }
+
+-- %CLICOLLABEL actType
+-- %CLISHOWGROUP ontprovtable.1
+iShelfOntProvisioningActualType OBJECT-TYPE
+    SYNTAX      IShelfOntType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the actual type of the discovered
+         ONT.  If the ONT is not present the type will be unknown."
+    DEFVAL      { unknown }
+    ::= { iShelfOntProvisioningEntry 3 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP ontprovtable.1
+iShelfOntProvisioningAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to unlock and lock the services performed by this ONT.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { unlock }
+    ::= { iShelfOntProvisioningEntry 4 }
+
+-- %CLISHOWGROUP ontprovtable.1
+iShelfOntProvisioningOperState OBJECT-TYPE
+    SYNTAX      IShelfOntOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object is indicates whether or not this ONT is capable
+         of performing its services.  Valid values are enabled, disabled and
+         unknown.  A value of disabled indicates the ONT is missing or has
+         not been discovered.  A value of unknown indicates the ONT status
+         is unavailable, e.g. there is a commnications problem retrieving
+         the information."
+    DEFVAL      { unknown }
+    ::= { iShelfOntProvisioningEntry 5 }
+
+-- %SETINACTIVE
+-- %CLISHOWGROUP ontprovtable.2
+-- %CLIOPTION
+iShelfOntProvisioningSerialNumber OBJECT-TYPE
+    SYNTAX      IShelfOntSerialNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the physical ID assigned to the ONT.  This value
+         is a globally unique value assigned by the OSI manufacturing process.
+
+         For the preprovisioning case, this object can be set to an expected value if
+         desired.
+
+         Once a unit has been discovered and linked, this field will be updated (if necessary)
+         with the actual serial number of the discovered unit.
+
+         Once the serial number has been populated it may only be reset to a NULL value.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntProvisioningEntry 6 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP ontprovtable.4
+iShelfOntProvisioningRegistrationId OBJECT-TYPE
+    SYNTAX      IShelfOntRegistrationId
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the registration ID reported by the ONT.  This
+         value is assigned via buttset provisioning.
+
+         This object is only used during the initial discovery and provisioning linkage
+         process.  Once a given unit has been linked to provisioning the serial number
+         object will be used for any identification in the future.
+
+         This object is ignored if the serial number object has a non-NULL value.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    DEFVAL      { 0 }
+    ::= { iShelfOntProvisioningEntry 7 }
+
+-- %CLISHOWGROUP ontprovtable.1
+iShelfOntProvisioningLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Node/Shelf/Slot of the OLT supporting this ONT.
+         This object is populated during the discovery link process.
+
+         Once this object has been populated it will be persisted and will not change unless
+         the provisioning/discovery link is broken via the management interface."
+    ::= { iShelfOntProvisioningEntry 8 }
+
+-- %CLISHOWGROUP ontprovtable.1
+-- %CLICOLLABEL pon
+-- %CLIWIDTH 3
+iShelfOntProvisioningPonIndex OBJECT-TYPE
+    SYNTAX      IShelfOltPonIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the PON Interface that is supporting the ONT.
+         This object is populated during the discovery link process.
+
+         Once this object has been populated it will be persisted and will not change unless
+         the provisioning/discovery link is broken via the management interface."
+    ::= { iShelfOntProvisioningEntry 9 }
+
+-- %CLISHOWGROUP ontprovtable.1
+-- %CLICOLLABEL ont
+-- %CLIWIDTH 3
+iShelfOntProvisioningOntId OBJECT-TYPE
+    SYNTAX      IShelfOltOntId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the location of the ONT on the PON interface.
+         This object is populated during the discovery link process.
+
+         Once this object has been populated it will be persisted and will not change unless
+         the provisioning/discovery link is broken via the management interface."
+    ::= { iShelfOntProvisioningEntry 10 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP ontprovtable.3
+-- %CLICOLLABEL customer
+iShelfOntProvisioningCustomerLabel OBJECT-TYPE
+    SYNTAX      IShelfOntCustomerLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the customer/owner of the ONT.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntProvisioningEntry 11 }
+
+-- %SETINACTIVE
+-- %CLIOPTION
+-- %CLISHOWGROUP ontprovtable.4
+-- %CLICOLLABEL recordId
+iShelfOntProvisioningCustomerRecordId OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the location of the ONT.
+         NOTE:  this object can only be modified with a non-active rowStatus."
+    ::= { iShelfOntProvisioningEntry 12 }
+
+-- %CLISHOWGROUP ontprovtable.2
+-- %ROWSTATUSTYPE RFC
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+iShelfOntProvisioningRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntProvisioningEntry 13 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfOntSubscriberLineCardTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR ontslctable
+-- %CLISHOWGROUP ontslctable
+iShelfOntSubscriberLineCardTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfOntSubscriberLineCardEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table represents the slots of the ONT that are capable
+         of holding subscriber line cards.  A row in this table exists for
+         each slot.
+
+         Rows in this table are automatically created when an ONT is provisioned.
+
+         The number of slots for an ONT is determiend by the ONT type.  Rows in
+         this table are alos created for ONTs with integrated interfaces.
+         Therefore, both integrate and expansion slots are supported by this table.
+
+         Global provisioning of the subscriber line card ports is also supported
+         by this table.
+
+         For expansion slots, the management application is able to provision
+         the expected type.  Pre-provisioning of expansion slots is supported.
+         When the actual expansion card is plugged in, a check will be made to
+         verify the correct type.  If the type is correct, the provisioning
+         will automatically be applied to the ONT subscriber line card."
+    ::= { iShelfOntCard 6 }
+
+iShelfOntSubscriberLineCardEntry OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Each entry contains the global information for one ONT
+         subscriber line card."
+    INDEX       { iShelfOntSubscriberLineCardLogicalId,
+                  iShelfOntSubscriberLineCardIndex }
+    ::= { iShelfOntSubscriberLineCardTable 1 }
+
+IShelfOntSubscriberLineCardEntry ::=
+    SEQUENCE {
+        iShelfOntSubscriberLineCardLogicalId
+            IShelfOntLogicalId,
+        iShelfOntSubscriberLineCardIndex
+            IShelfOntSubscriberLineCardIndex,
+        iShelfOntSubscriberLineCardExpectedType
+            IShelfOntSubscriberLineCardType,
+        iShelfOntSubscriberLineCardActualType
+            IShelfOntSubscriberLineCardType,
+        iShelfOntSubscriberLineCardExpectedPortCount
+            INTEGER,
+        iShelfOntSubscriberLineCardAdminState
+            IShelfAdminState,
+        iShelfOntSubscriberLineCardOperState
+            IShelfOperState,
+        iShelfOntSubscriberLineCardRowStatus
+            RowStatus
+    }
+
+-- %CLISHOWGROUP ontslctable
+iShelfOntSubscriberLineCardLogicalId OBJECT-TYPE
+    SYNTAX      IShelfOntLogicalId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the logical ID of the ONT."
+    ::= { iShelfOntSubscriberLineCardEntry 1 }
+
+-- %CLISHOWGROUP ontslctable
+iShelfOntSubscriberLineCardIndex OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "This object identifies the subscriber line card slot."
+    ::= { iShelfOntSubscriberLineCardEntry 2 }
+
+-- %CLISHOWGROUP ontslctable
+-- %CLICOLLABEL expType
+iShelfOntSubscriberLineCardExpectedType OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the expected type of the
+         subscriber line card.  Note that this value is only writeable
+         for non-integrated line cards.  For integrated line card slots
+         this value is automatically initialized according to the actual
+         type.  For non-integrated slots this value is initialized to
+         a value of unknown.
+
+         NOTE:  This object should actually be read-create however
+         this causes validation issues with some tools with the row status
+         as other objects in the table are truely read-write.  This object
+         is not setable after creation but must be deleted and recreated."
+    ::= { iShelfOntSubscriberLineCardEntry 3 }
+
+-- %CLISHOWGROUP ontslctable
+-- %CLICOLLABEL actType
+iShelfOntSubscriberLineCardActualType OBJECT-TYPE
+    SYNTAX      IShelfOntSubscriberLineCardType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the actual plug-in type of the
+         subscriber line card."
+    DEFVAL      { empty }
+    ::= { iShelfOntSubscriberLineCardEntry 4 }
+
+-- %CLISHOWGROUP ontslctable
+-- %CLICOLLABEL numPort
+iShelfOntSubscriberLineCardExpectedPortCount OBJECT-TYPE
+    SYNTAX      INTEGER (1..8)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the number of expected subscriber
+         line card ports for this slot.  For non-integrated slots that are
+         empty, this value will be zero."
+    ::= { iShelfOntSubscriberLineCardEntry 5 }
+
+-- %CLISHOWGROUP ontslctable
+iShelfOntSubscriberLineCardAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to unlock and lock the services for
+         this subscriber line card."
+    DEFVAL      { unlock }
+    ::= { iShelfOntSubscriberLineCardEntry 6 }
+
+-- %CLISHOWGROUP ontslctable
+iShelfOntSubscriberLineCardOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object indicates whether or not this subscriber
+         line card is capable of performing its services.  Valid
+         values are enabled, disabled, and unknown.  A value of disabled
+         indicates the line card is present, but for some reason it is
+         not capable of performing its service, e.g., actual vs. expected
+         line card type mismatch.  A value of unknown indicates the line
+         card is not present."
+    DEFVAL      { unknown }
+    ::= { iShelfOntSubscriberLineCardEntry 7 }
+
+-- %CLISHOWGROUP ontslctable
+-- %CLICOLLABEL RowStatus
+-- %ROWSTATUSTYPE RFC
+iShelfOntSubscriberLineCardRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used for row creation, modification and
+         deletion. Modification of objects within the row is only allowed
+         when the row is not in the active state. In the case of an active
+         row (already created), the row must be made notInService prior to
+         modifying any settable objects. The notInService setting has no
+         impact on the underlying object but is used to cause atomic updates
+         of the row once it is moved to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)
+            notReady (3)
+            createAndGo (4)
+            createAndWait (5)
+            destroy (6)"
+    ::= { iShelfOntSubscriberLineCardEntry 8 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfEgwPortTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR egwport
+-- %CLISHOWGROUP egwport
+iShelfEgwPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfEgwPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "This object identifies the"
+    ::= { iShelfEgwCard 1 }
+
+iShelfEgwPortEntry OBJECT-TYPE
+    SYNTAX      IShelfEgwPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION ""
+    INDEX       { iShelfEgwPortLocation }
+    ::= { iShelfEgwPortTable 1 }
+
+IShelfEgwPortEntry ::=
+    SEQUENCE {
+        iShelfEgwPortLocation
+            IShelfLocation,
+        iShelfEgwPortAdminState
+            IShelfAdminState,
+        iShelfEgwPortOperState
+            IShelfOperState,
+        iShelfEgwPortAdminMode
+            IShelfEthernetPortMode,
+        iShelfEgwPortOperMode
+            IShelfEthernetPortMode,
+        iShelfEgwPortBootProto
+            INTEGER,
+        iShelfEgwPortIpAddress
+            IpAddress,
+        iShelfEgwPortNetMask
+            IpAddress,
+        iShelfEgwPortGateway
+            IpAddress,
+        iShelfEgwPortMacAddress
+            MacAddress,
+        iShelfEgwPortAction
+            INTEGER,
+        iShelfEgwPortLabel
+            IShelfLabel,
+        iShelfEgwPortRowStatus
+            RowStatus
+    }
+
+-- %CLICOLLABEL location
+-- %CLISHOWGROUP egwport.1
+-- %CLISHOWGROUP egwport.2
+-- %CLISHOWGROUP egwport.3
+iShelfEgwPortLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfEgwPortEntry 1 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL adstate
+-- %CLISHOWGROUP egwport.1
+-- %CLIOPTION
+iShelfEgwPortAdminState OBJECT-TYPE
+    SYNTAX      IShelfAdminState
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object sets the desired state of the port.
+         Either locked or unlocked.
+
+         NOTE:  setting this object to locked will prevent any
+         remote access to the shelf via the EGW ethernet port."
+    DEFVAL      { unlock }
+    ::= { iShelfEgwPortEntry 2 }
+
+-- %CLICOLLABEL opstate
+-- %CLISHOWGROUP egwport.1
+iShelfEgwPortOperState OBJECT-TYPE
+    SYNTAX      IShelfOperState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { unknown }
+    ::= { iShelfEgwPortEntry 3 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL admode
+-- %CLISHOWGROUP egwport.1
+-- %CLIOPTION
+iShelfEgwPortAdminMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This is the desired speed/duplex settings for the port.
+         NOTE: this object is only settable when the row is not active."
+    DEFVAL      { auto }
+    ::= { iShelfEgwPortEntry 4 }
+
+-- %CLICOLLABEL opmode
+-- %CLISHOWGROUP egwport.1
+iShelfEgwPortOperMode OBJECT-TYPE
+    SYNTAX      IShelfEthernetPortMode
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    DEFVAL      { unknown }
+    ::= { iShelfEgwPortEntry 5 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL bootp
+-- %CLISHOWGROUP egwport.2
+-- %CLIOPTION
+iShelfEgwPortBootProto OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(1),
+                    dhcp(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the protocol used to define the
+         ip address.
+
+         If set to none the IpAddres, NetMask, and Gateway objects need to
+         be populated with static information.
+
+         If set to dhcp DHCP protocol will be used to populate the IpAddress,
+         NetMask, and Gateway objects with DHCP provided values.
+
+         NOTE: this object is only settable when the row is not active."
+    DEFVAL      { dhcp }
+    ::= { iShelfEgwPortEntry 6 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL ipaddr
+-- %CLISHOWGROUP egwport.2
+-- %CLIOPTION
+iShelfEgwPortIpAddress OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the IpAddress associated with the port.
+         If the protocol object is DHCP this indicates the current DHCP
+         acquired value.  If the protocol is none, it is the staticly
+         assigned value.
+
+         The object is only settable when the protocol object value is none.
+
+         NOTE: this object is only settable when the row is not active."
+    DEFVAL      { 0 }
+    ::= { iShelfEgwPortEntry 7 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL mask
+-- %CLISHOWGROUP egwport.2
+-- %CLIOPTION
+iShelfEgwPortNetMask OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Network Mask associated with the port.
+         If the protocol object is DHCP this indicates the current DHCP
+         acquired value.  If the protocol is none, it is the staticly
+         assigned value.
+
+         The object is only settable when the protocol object value is none.
+
+         NOTE: this object is only settable when the row is not active."
+    DEFVAL      { 0 }
+    ::= { iShelfEgwPortEntry 8 }
+
+-- %SETINACTIVE
+-- %CLICOLLABEL gateway
+-- %CLISHOWGROUP egwport.2
+-- %CLIOPTION
+iShelfEgwPortGateway OBJECT-TYPE
+    SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Gateway address associated with the port.
+         If the protocol object is DHCP this indicates the current DHCP
+         acquired value.  If the protocol is none, it is the staticly
+         assigned value.
+
+         The object is only settable when the protocol object value is none.
+
+         NOTE: this object is only settable when the row is not active."
+    DEFVAL      { 0 }
+    ::= { iShelfEgwPortEntry 9 }
+
+-- %CLICOLLABEL mac
+-- %CLISHOWGROUP egwport.1
+iShelfEgwPortMacAddress OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION ""
+    ::= { iShelfEgwPortEntry 10 }
+
+-- %CLICOLLABEL action
+iShelfEgwPortAction OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none(0),
+                    dhcpRelease(1),
+                    dhcpRenew(2),
+                    dhcpReleaseRenew(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is provided for performing operations on
+         the link.  The object is write-only.  reading it will always
+         indicate 'none'.
+
+         The following actions are defined:
+             dhcpRelease - release an address acquired via DHCP
+                 This action is only applicable if the protocol is dhcp
+                 NOTE: this action will prevent access to the system via
+                 this ethernet port.
+             dhcpRenew - attempt to get an address via DHCP
+                 This action is only applicable if the protocol is dhcp
+             dhcpReleaseRenew - release and renew an address via DHCP
+                 This action is only applicable if the protocol is dhcp
+                 NOTE:  this action will prevent access to the system via
+                 this ethernet port until a new DHCP lease is acquired."
+    DEFVAL      { none }
+    ::= { iShelfEgwPortEntry 11 }
+
+-- %CLICOLLABEL Label
+-- %CLISHOWGROUP egwport.3
+-- %CLIOPTION
+iShelfEgwPortLabel OBJECT-TYPE
+    SYNTAX      IShelfLabel
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The user label for this port."
+    ::= { iShelfEgwPortEntry 12 }
+
+-- %ROWSTATUSTYPE FIXED
+-- %CLICOLLABEL RowStatus
+-- %CLIWIDTH 12
+-- %CLISHOWGROUP egwport.3
+iShelfEgwPortRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to modify the status of the
+         associated row.  Settable objects within the row can only
+         be modified when the row is in the notInService state.
+         The notInService setting has no impact on the underlying
+         Object but is used to cause atomic updates of the row
+         once it is move to the active state.
+
+         The supported values of RowStatus are:
+            active (1)
+            notInService (2)"
+    ::= { iShelfEgwPortEntry 13 }
+
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfPanicDumpTable -
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- %CLICMDPREFIX card
+-- %CLICMDABBR panic
+iShelfPanicDumpTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IShelfPanicDumpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains a list of panic files that are
+         stored in non-volatile memory.  The management application can
+         do a TFTP get to pull the panic dump information."
+    ::= { iShelfServicability 1 }
+
+iShelfPanicDumpEntry OBJECT-TYPE
+    SYNTAX      IShelfPanicDumpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Each entry identifies the filename of a panic dump."
+    INDEX       { iShelfPanicDumpLocationType,
+                  iShelfPanicDumpLocation,
+                  iShelfPanicDumpIndex }
+    ::= { iShelfPanicDumpTable 1 }
+
+IShelfPanicDumpEntry ::=
+    SEQUENCE {
+        iShelfPanicDumpLocationType
+            IShelfLocationType,
+        iShelfPanicDumpLocation
+            IShelfLocation,
+        iShelfPanicDumpIndex
+            INTEGER,
+        iShelfPanicDumpFilename
+            IShelfFilename
+    }
+
+iShelfPanicDumpLocationType OBJECT-TYPE
+    SYNTAX      IShelfLocationType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies if the location is a physical
+         or logical address."
+    ::= { iShelfPanicDumpEntry 1 }
+
+iShelfPanicDumpLocation OBJECT-TYPE
+    SYNTAX      IShelfLocation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the Node/Shelf/Slot of the card
+         for physical addresses or the ONT logical id for logical addresses."
+    ::= { iShelfPanicDumpEntry 2 }
+
+iShelfPanicDumpIndex OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the panic index.  Currently,
+         only one panic dump is saved per slot."
+    ::= { iShelfPanicDumpEntry 3 }
+
+iShelfPanicDumpFilename OBJECT-TYPE
+    SYNTAX      IShelfFilename
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object identifies the filename containing the
+         panic dump.  The manager can do a TFTP get on this filename
+         to obtain a copy of the dump."
+    ::= { iShelfPanicDumpEntry 4 }
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- iShelfTrapGroup Members
+--
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+iShelfPanicDumpAvailableTrap NOTIFICATION-TYPE
+    OBJECTS     { iShelfPanicDumpFilename }
+    STATUS      current
+    DESCRIPTION
+        "This trap is generated whenever a slot or ONT panic dump
+         file becomes available.  The filename object is indexed by
+             iShelfPanicDumpLocationType,
+             iShelfPanicDumpLocation,
+             iShelfPanicDumpIndex."
+    ::= { iShelfTrapGroup 4 }
+
+END

@@ -1,0 +1,1186 @@
+{
+  "imports": {
+    "class": "imports",
+    "ADVA-MIB": [
+      "fsp150cm"
+    ],
+    "CM-IP-MIB": [
+      "ipManagementTunnelEntry",
+      "cmIpInterfaceEntry"
+    ],
+    "OSPF-MIB": [
+      "ospfNbrEntry",
+      "OspfAuthenticationType",
+      "DesignatedRouterPriority",
+      "AreaID",
+      "RouterID",
+      "HelloRange"
+    ],
+    "SNMPv2-CONF": [
+      "NOTIFICATION-GROUP",
+      "MODULE-COMPLIANCE",
+      "OBJECT-GROUP"
+    ],
+    "SNMPv2-SMI": [
+      "IpAddress",
+      "OBJECT-IDENTITY",
+      "NOTIFICATION-TYPE",
+      "Counter64",
+      "iso",
+      "MibIdentifier",
+      "Unsigned32",
+      "Integer32",
+      "OBJECT-TYPE",
+      "Counter32",
+      "Gauge32",
+      "Bits",
+      "TimeTicks",
+      "MODULE-IDENTITY"
+    ],
+    "SNMPv2-TC": [
+      "RowStatus",
+      "TruthValue",
+      "DisplayString",
+      "StorageType",
+      "TEXTUAL-CONVENTION"
+    ]
+  },
+  "f3OspfMIB": {
+    "name": "f3OspfMIB",
+    "oid": "1.3.6.1.4.1.2544.1.12.35",
+    "class": "moduleidentity",
+    "revisions": [
+      {
+        "revision": "2014-10-06 00:00",
+        "description": " Notes from release 201410060000Z, (1) MIB version ready for release FSP150CC 6.6.CC."
+      }
+    ],
+    "lastupdated": "201410060000Z",
+    "organization": "ADVA Optical Networking",
+    "contactinfo": " Jakub Nadolski ADVA Optical Networking, Inc. Tel: +48 58 7716 421 E-mail: jnadolski@advaoptical.com Postal: ul. Slaska 35 81-310 Gdynia, Poland",
+    "description": "This module defines the OSPF MIB definitions used by the F3 (FSP150CM/CC) product lines. Copyright (C) ADVA Optical Networking."
+  },
+  "OspfMetricType": {
+    "name": "OspfMetricType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "e1": 1,
+          "e2": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The metric type can be specified to define how the cost of redistributed routes are to be calculated. A metric type of E1 means that the redistribution cost plus the cost to the ASBR is used for the route while a metric type of E2 means that only the redistributed cost is used."
+  },
+  "OspfRedistributionType": {
+    "name": "OspfRedistributionType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "none": 1,
+          "rip": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "Enables redistribution of routes of a specific protocol or kind into OSPF. The only supported type is RIP."
+  },
+  "OspfState": {
+    "name": "OspfState",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "enabled": 1,
+          "disabled": 2,
+          "passive": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "Allows user configuration of the behavior associated with the OSPF interface. ENABLED - OSPF is enabled and the interface will send HELLOs and form adjacencies. DISABLED - the interface is not advertised and does not participate in OSPF message exchanges. PASSIVE - the interface will be advertised as a stub link but will not participate in OSPF message exchange."
+  },
+  "OspfAreaType": {
+    "name": "OspfAreaType",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "normal": 1,
+          "stub": 2
+        }
+      }
+    },
+    "status": "current",
+    "description": "The OSPF area type."
+  },
+  "OspfRole": {
+    "name": "OspfRole",
+    "class": "textualconvention",
+    "type": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "bdr": 1,
+          "dr": 2,
+          "drother": 3
+        }
+      }
+    },
+    "status": "current",
+    "description": "The OSPF role of the neighbor router."
+  },
+  "f3OspfConfigObjects": {
+    "name": "f3OspfConfigObjects",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1",
+    "class": "objectidentity"
+  },
+  "f3OspfConformance": {
+    "name": "f3OspfConformance",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2",
+    "class": "objectidentity"
+  },
+  "f3OspfRouterTable": {
+    "name": "f3OspfRouterTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to OSPF Router instance for configuration purposes."
+  },
+  "f3OspfRouterEntry": {
+    "name": "f3OspfRouterEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterIndex",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3OspfRouterTable."
+  },
+  "f3OspfRouterIndex": {
+    "name": "f3OspfRouterIndex",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RouterID",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A 32-bit integer uniquely identifying the router in the Autonomous System. By convention, to ensure uniqueness, this should default to the value of one of the router's IP interface addresses."
+  },
+  "f3OspfRouterMetricType": {
+    "name": "f3OspfRouterMetricType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfMetricType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The metric type can be specified to define how the cost of redistributed routes are to be calculated. This attribute must be set to zero if f3OspfRouterMetric has been specified."
+  },
+  "f3OspfRouterMetric": {
+    "name": "f3OspfRouterMetric",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 16777214
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The metric value to use as the default cost to be associated with any redistributed routes. This attribute must be set to zero if the f3OspfRouterMetricType has been specified"
+  },
+  "f3OspfRouterRedistributionType": {
+    "name": "f3OspfRouterRedistributionType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfRedistributionType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The redistribution type is used to enable redistribution of routes of a specified protocol."
+  },
+  "f3OspfRouterNumAttachedAreas": {
+    "name": "f3OspfRouterNumAttachedAreas",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "Number of attached areas for the OSPF Router."
+  },
+  "f3OspfRouterAreaBdrRtrStatus": {
+    "name": "f3OspfRouterAreaBdrRtrStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "TruthValue",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "A flag to note whether this router is an Area Border Router."
+  },
+  "f3OspfRouterStorageType": {
+    "name": "f3OspfRouterStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of storage configured for this entry."
+  },
+  "f3OspfRouterRowStatus": {
+    "name": "f3OspfRouterRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.1.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3OspfRouterRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with f3OspfRouterRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3OspfRouterRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "f3OspfAreaTable": {
+    "name": "f3OspfAreaTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to OSPF Area configuration purposes."
+  },
+  "f3OspfAreaEntry": {
+    "name": "f3OspfAreaEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "indices": [
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaId",
+        "implied": 0
+      }
+    ],
+    "status": "current",
+    "description": "A conceptual row in the f3OspfAreaTable."
+  },
+  "f3OspfAreaId": {
+    "name": "f3OspfAreaId",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AreaID",
+      "class": "type"
+    },
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A 32-bit integer uniquely identifying an area. Area ID 0.0.0.0 is used for the OSPF backbone."
+  },
+  "f3OspfAreaType": {
+    "name": "f3OspfAreaType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfAreaType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of an area."
+  },
+  "f3OspfAreaAuthType": {
+    "name": "f3OspfAreaAuthType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfAuthenticationType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The authentication type specifies whether no authentication, simple authentication, or MD5 authentication is required for this area. Keying information must be configured on a per-interface basis. This only applies to non-stubby areas."
+  },
+  "f3OspfAreaDefaultCost": {
+    "name": "f3OspfAreaDefaultCost",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Unsigned32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 0,
+            "max": 16777215
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The default cost for summary LSA's announced to stubby areas. This only applies to stubby areas."
+  },
+  "f3OspfAreaSpfRuns": {
+    "name": "f3OspfAreaSpfRuns",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Counter32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "A count of the number of times the Shortest Path algorithm has been run for this area."
+  },
+  "f3OspfAreaLsaCount": {
+    "name": "f3OspfAreaLsaCount",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Gauge32",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The total number of link state advertisements in this area's link state database, excluding AS-external LSAs."
+  },
+  "f3OspfAreaStorageType": {
+    "name": "f3OspfAreaStorageType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "StorageType",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The type of storage configured for this entry."
+  },
+  "f3OspfAreaRowStatus": {
+    "name": "f3OspfAreaRowStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.2.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "RowStatus",
+      "class": "type"
+    },
+    "maxaccess": "read-create",
+    "status": "current",
+    "description": "The status of this row. An entry MUST NOT exist in the active state unless all objects in the entry have an appropriate value, as described in the description clause for each writable object. The values of f3OspfAreaRowStatus supported are createAndGo(4) and destroy(6). All mandatory attributes must be specified in a single SNMP SET request with f3OspfAreaRowStatus value as createAndGo(4). Upon successful row creation, this object has a value of active(1). The f3OspfAreaRowStatus object may be modified if the associated instance of this object is equal to active(1)."
+  },
+  "f3OspfIpInterfaceExtTable": {
+    "name": "f3OspfIpInterfaceExtTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to OSPF Interface configuration purposes. This table extends cmIpInterfaceTable from CM-IP-MIB."
+  },
+  "f3OspfIpInterfaceExtEntry": {
+    "name": "f3OspfIpInterfaceExtEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "f3OspfIpInterfaceExtEntry",
+      "module": "F3-OSPF-MIB",
+      "object": "cmIpInterfaceEntry"
+    },
+    "status": "current",
+    "description": "A conceptual row in the f3OspfIpInterfaceExtTable."
+  },
+  "f3OspfIpInterfaceExtStatus": {
+    "name": "f3OspfIpInterfaceExtStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfState",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "enabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF admin status for the IP Interface."
+  },
+  "f3OspfIpInterfaceExtAreaId": {
+    "name": "f3OspfIpInterfaceExtAreaId",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AreaID",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "00000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The Area ID with which this IP Interface is associated."
+  },
+  "f3OspfIpInterfaceExtIfType": {
+    "name": "f3OspfIpInterfaceExtIfType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "broadcast": 1,
+          "nbma": 2,
+          "pointToPoint": 3,
+          "pointToMultipoint": 5
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF interface type for the IP Interface."
+  },
+  "f3OspfIpInterfaceExtHelloInterval": {
+    "name": "f3OspfIpInterfaceExtHelloInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HelloRange",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds between OSPF Hello packets for the IP Interface."
+  },
+  "f3OspfIpInterfaceExtRtrDeadInterval": {
+    "name": "f3OspfIpInterfaceExtRtrDeadInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 40,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds that must pass from the last received Hello packet before a neighbor router is declared down."
+  },
+  "f3OspfIpInterfaceExtRetransInterval": {
+    "name": "f3OspfIpInterfaceExtRetransInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds for the Retransmit Timer Interval value for the IP Interface. The value is used when retransmitting Database Description and Link State Request packets."
+  },
+  "f3OspfIpInterfaceExtRtrPriority": {
+    "name": "f3OspfIpInterfaceExtRtrPriority",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DesignatedRouterPriority",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF router priority for the IP Interface. The router with the highest priority will be more eligible to become Designated Router. Setting the value to 0 makes the router ineligible to become the Designated Router."
+  },
+  "f3OspfIpInterfaceExtCost": {
+    "name": "f3OspfIpInterfaceExtCost",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The cost associated with the IP Interface for use in the Shortest Path calculations."
+  },
+  "f3OspfIpInterfaceExtAuthType": {
+    "name": "f3OspfIpInterfaceExtAuthType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfAuthenticationType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF authentication type for the IP Interface. This value supersedes the authentication type defined for the Area."
+  },
+  "f3OspfIpInterfaceExtAuthKey": {
+    "name": "f3OspfIpInterfaceExtAuthKey",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.3.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": "0000000000000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF authentication key for the IP Interface. If the authentication type is Simple, the authentication key is limited to 8 characters. If the authentication type is MD5, the authentication key is up to 16 characters."
+  },
+  "f3OspfIpMgmtTunnelExtTable": {
+    "name": "f3OspfIpMgmtTunnelExtTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "A list of entries corresponding to OSPF Interface configuration purposes. This table extends ipManagementTunnelTable from CM-IP-MIB."
+  },
+  "f3OspfIpMgmtTunnelExtEntry": {
+    "name": "f3OspfIpMgmtTunnelExtEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "f3OspfIpMgmtTunnelExtEntry",
+      "module": "F3-OSPF-MIB",
+      "object": "ipManagementTunnelEntry"
+    },
+    "status": "current",
+    "description": "A conceptual row in the f3OspfIpMgmtTunnelExtTable."
+  },
+  "f3OspfIpMgmtTunnelExtStatus": {
+    "name": "f3OspfIpMgmtTunnelExtStatus",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfState",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "enabled",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF admin status for the IP Management Tunnel."
+  },
+  "f3OspfIpMgmtTunnelExtAreaId": {
+    "name": "f3OspfIpMgmtTunnelExtAreaId",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.2",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "AreaID",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "00000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The Area ID with which this IP Management Tunnel is associated."
+  },
+  "f3OspfIpMgmtTunnelExtIfType": {
+    "name": "f3OspfIpMgmtTunnelExtIfType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.3",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "INTEGER",
+      "class": "type",
+      "constraints": {
+        "enumeration": {
+          "broadcast": 1,
+          "nbma": 2,
+          "pointToPoint": 3,
+          "pointToMultipoint": 5
+        }
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF interface type for the IP Management Tunnel."
+  },
+  "f3OspfIpMgmtTunnelExtHelloInterval": {
+    "name": "f3OspfIpMgmtTunnelExtHelloInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.4",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "HelloRange",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 10,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds between OSPF Hello packets for the IP Management Tunnel."
+  },
+  "f3OspfIpMgmtTunnelExtRtrDeadInterval": {
+    "name": "f3OspfIpMgmtTunnelExtRtrDeadInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.5",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 40,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds that must pass from the last received Hello packet before a neighbor router is declared down."
+  },
+  "f3OspfIpMgmtTunnelExtRetransInterval": {
+    "name": "f3OspfIpMgmtTunnelExtRetransInterval",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.6",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": 5,
+        "format": "decimal"
+      }
+    },
+    "units": "seconds",
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The number of seconds for the Retransmit Timer Interval value for the IP Interface. The value is used when retransmitting Database Description and Link State Request packets."
+  },
+  "f3OspfIpMgmtTunnelExtRtrPriority": {
+    "name": "f3OspfIpMgmtTunnelExtRtrPriority",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.7",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "DesignatedRouterPriority",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": 1,
+        "format": "decimal"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF router priority for the IP Management Tunnel. The router with the highest priority will be more eligible to become Designated Router. Setting the value to 0 makes the router ineligible to become the Designated Router."
+  },
+  "f3OspfIpMgmtTunnelExtCost": {
+    "name": "f3OspfIpMgmtTunnelExtCost",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.8",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "Integer32",
+      "class": "type",
+      "constraints": {
+        "range": [
+          {
+            "min": 1,
+            "max": 65535
+          }
+        ]
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The cost associated with the IP Management Tunnel for use in the Shortest Path calculations."
+  },
+  "f3OspfIpMgmtTunnelExtAuthType": {
+    "name": "f3OspfIpMgmtTunnelExtAuthType",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.9",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfAuthenticationType",
+      "class": "type"
+    },
+    "default": {
+      "default": {
+        "value": "none",
+        "format": "enum"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF authentication type for the IP Management Tunnel. This value supersedes the authentication type defined for the Area."
+  },
+  "f3OspfIpMgmtTunnelExtAuthKey": {
+    "name": "f3OspfIpMgmtTunnelExtAuthKey",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.4.1.10",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OCTET STRING",
+      "class": "type",
+      "constraints": {
+        "size": [
+          {
+            "min": 0,
+            "max": 16
+          }
+        ]
+      }
+    },
+    "default": {
+      "default": {
+        "value": "0000000000000000",
+        "format": "hex"
+      }
+    },
+    "maxaccess": "read-write",
+    "status": "current",
+    "description": "The OSPF authentication key for the IP Management Tunnel. If the authentication type is Simple, the authentication key is limited to 8 characters. If the authentication type is MD5, the authentication key is up to 16 characters."
+  },
+  "f3OspfNbrExtTable": {
+    "name": "f3OspfNbrExtTable",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.5",
+    "nodetype": "table",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "status": "current",
+    "description": "This table extends ospfNbrTable from OSPF-MIB."
+  },
+  "f3OspfNbrExtEntry": {
+    "name": "f3OspfNbrExtEntry",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.5.1",
+    "nodetype": "row",
+    "class": "objecttype",
+    "maxaccess": "not-accessible",
+    "augmention": {
+      "name": "f3OspfNbrExtEntry",
+      "module": "F3-OSPF-MIB",
+      "object": "ospfNbrEntry"
+    },
+    "status": "current",
+    "description": "A conceptual row in the f3OspfNbrExtTable."
+  },
+  "f3OspfNbrExtRole": {
+    "name": "f3OspfNbrExtRole",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.1.5.1.1",
+    "nodetype": "column",
+    "class": "objecttype",
+    "syntax": {
+      "type": "OspfRole",
+      "class": "type"
+    },
+    "maxaccess": "read-only",
+    "status": "current",
+    "description": "The OSPF role for this neighbor router."
+  },
+  "f3OspfCompliances": {
+    "name": "f3OspfCompliances",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.1",
+    "class": "objectidentity"
+  },
+  "f3OspfGroups": {
+    "name": "f3OspfGroups",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.2",
+    "class": "objectidentity"
+  },
+  "f3OspfCompliance": {
+    "name": "f3OspfCompliance",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.1.1",
+    "class": "modulecompliance",
+    "modulecompliance": [
+      {
+        "object": "f3OspfRouterGroup",
+        "module": "F3-OSPF-MIB"
+      },
+      {
+        "object": "f3OspfAreaGroup",
+        "module": "F3-OSPF-MIB"
+      },
+      {
+        "object": "f3OspfIpInterfaceExtGroup",
+        "module": "F3-OSPF-MIB"
+      },
+      {
+        "object": "f3OspfIpMgmtTunnelExtGroup",
+        "module": "F3-OSPF-MIB"
+      },
+      {
+        "object": "f3OspfNbrExtGroup",
+        "module": "F3-OSPF-MIB"
+      }
+    ],
+    "status": "current",
+    "description": "Describes the requirements for conformance to the F3-OSPF-MIB compilance."
+  },
+  "f3OspfRouterGroup": {
+    "name": "f3OspfRouterGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.2.1",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterMetricType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterMetric"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterRedistributionType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterNumAttachedAreas"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterAreaBdrRtrStatus"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterStorageType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfRouterRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the OSPF Router."
+  },
+  "f3OspfAreaGroup": {
+    "name": "f3OspfAreaGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.2.2",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaAuthType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaDefaultCost"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaSpfRuns"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaLsaCount"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaStorageType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfAreaRowStatus"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage the OSPF Area."
+  },
+  "f3OspfIpInterfaceExtGroup": {
+    "name": "f3OspfIpInterfaceExtGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.2.3",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtStatus"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtAreaId"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtIfType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtHelloInterval"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtRtrDeadInterval"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtRetransInterval"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtRtrPriority"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtCost"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtAuthType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpInterfaceExtAuthKey"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage OSPF configuration of IP Interface."
+  },
+  "f3OspfIpMgmtTunnelExtGroup": {
+    "name": "f3OspfIpMgmtTunnelExtGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.2.4",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtStatus"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtAreaId"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtIfType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtHelloInterval"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtRtrDeadInterval"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtRetransInterval"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtRtrPriority"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtCost"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtAuthType"
+      },
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfIpMgmtTunnelExtAuthKey"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage OSPF configuration of IP Management Tunnel."
+  },
+  "f3OspfNbrExtGroup": {
+    "name": "f3OspfNbrExtGroup",
+    "oid": "1.3.6.1.4.1.2544.1.12.35.2.2.5",
+    "class": "objectgroup",
+    "objects": [
+      {
+        "module": "F3-OSPF-MIB",
+        "object": "f3OspfNbrExtRole"
+      }
+    ],
+    "status": "current",
+    "description": "A collection of objects used to manage OSPF configuration of OSPF Neighbor."
+  },
+  "meta": {
+    "comments": [
+      "ASN.1 source file://MIBS/asn1/F3-OSPF-MIB.mib",
+      "Produced by pysmi-0.3.4 at Tue Apr 20 18:40:53 2021",
+      "On host samy-ThinkPad-T495s platform Linux version 5.8.0-50-generic by user root",
+      "Using Python version 3.8.5 (default, Jan 27 2021, 15:41:15) "
+    ],
+    "module": "F3-OSPF-MIB"
+  }
+}
