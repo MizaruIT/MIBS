@@ -24,6 +24,7 @@ cd MIBS;
 
 ### Use example(s) <a name="use-examples"/>
 **Adding to the Linux DB**
+
 You can add the MIB files into the directory **/usr/share/snmp/mibs**, thus when using snmp tools, you will get more information.
 ```sh
 # From the MIBS directory
